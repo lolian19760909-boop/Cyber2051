@@ -38,7 +38,7 @@ export function assemblePrompt(input){
  if(!Array.isArray(preset?.prompts))throw new TypeError('装配提示需要正式预设 JSON');
  const vars=input.vars||createVarStore(),globalVars=input.globalVars||createVarStore(),warnings=[],used=[],injections=[...(input.injections||[])],separators=new Set(),byId=new Map(preset.prompts.map(p=>[p.identifier,p]));
  const fields={...supplies,lastUserMessage:history.findLast(m=>m.role==='user')?.content??supplies.lastUserMessage??'',lastCharMessage:history.findLast(m=>m.role==='assistant')?.content??'',lastMessage:history.at(-1)?.content??''};
- const context={...input.macroContext,vars,globalVars,fields,history:input.macroHistory||history,now,random,warnings,generationType,chatId:input.chatId,chatMetadata:input.chatMetadata,messageVariables:input.messageVariables||{},outlets:input.worldInfo?.outlets||{},instruct:input.instruct,contextTemplate:input.contextTemplate,sysprompt:input.sysprompt,maxContext:preset.openai_max_context,maxTokens:preset.openai_max_tokens};
+ const context={...input.macroContext,vars,globalVars,fields,history:input.macroHistory||history,now,random,warnings,generationType,chatId:input.chatId,chatMetadata:input.chatMetadata,messageVariables:input.messageVariables||{},outlets:input.worldInfo?.outlets||{},instruct:input.instruct??preset.instruct,contextTemplate:input.contextTemplate??preset.context,sysprompt:input.sysprompt??preset.sysprompt,maxContext:preset.openai_max_context,maxTokens:preset.openai_max_tokens};
  const expand=(text,extra={})=>expandMacros(text,{...context,...extra}).text;
  // PromptManager resolves all ordered prompt bodies before filling built-in fields and overrides.
  const ordered=[];
