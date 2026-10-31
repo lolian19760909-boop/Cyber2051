@@ -178,3 +178,6 @@ id_ed25519
 /工程文件/卡片源码/工坊/001-创意工坊装载-审阅稿.js
 /工程文件/卡片源码/工坊/002-卡更新器-审阅稿.js
 /工程文件/资源/**/*.md
+
+# This vendor dist directory is required runtime source, not a build output.
+!/工程文件/网页独立版/src/models/native/yaml/dist/
