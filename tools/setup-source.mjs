@@ -3,6 +3,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {spawnSync} from 'node:child_process';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+fs.mkdirSync(path.join(root,'工程文件/网页独立版/reports'),{recursive:true});
 const suite=path.join(root,'工程文件/配套扩展/tavern-runtime-suite');
 const patch=path.join(root,'工程文件/配套扩展/patches/runtime-suite-motion.patch');
 const git=args=>spawnSync('git',['-C',suite,...args],{encoding:'utf8'});
