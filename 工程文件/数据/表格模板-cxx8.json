@@ -1,0 +1,211 @@
+{
+  "mate": {
+    "type": "chatSheets",
+    "version": 1,
+    "updateConfigUiSentinel": -1,
+    "globalInjectionConfig": {
+      "readableEntryPlacement": { "position": "before_char", "depth": 2, "order": 99981 },
+      "wrapperPlacement": { "position": "before_char", "depth": 2, "order": 99980 }
+    }
+  },
+  "sheet_cxx_actor": {
+    "uid": "sheet_cxx_actor",
+    "name": "角色档案表",
+    "sourceData": {
+      "note": "记录当前故事中已登场角色的基本档案；每个角色占一行，由卡内引擎写入。\n- 列1: 角色键 - 角色稳定标识（如 wb_118），必须唯一，不随改名变化。\n- 列2: 名称 - 角色的当前显示名。\n- 列3: 类型 - 只允许填写‘主角’、‘同行者’、‘敌人’、‘中立’或‘路人’。\n- 列4: 位置 - 当前所在地点；未知时留空。\n- 列5: 章节 - 该角色最后出场的章节标记。\n- 列6: 状态 - 只允许填写‘在场’、‘离场’、‘死亡’或‘未知’。\n- 列7: 更新回合 - 最后一次写入该行的回合号。",
+      "initNode": "开局确认时由卡内引擎批量写入 1～4 个已登场角色。",
+      "insertNode": "新角色首次登场并进入角色列表时由卡内引擎插入；仅被提及、未登场的角色不建行。\nSQL示例: INSERT INTO cxx_actor (row_id, actor_key, name, kind, location, chapter, status, updated_turn) VALUES ((SELECT COALESCE(MAX(row_id), 0) + 1 FROM cxx_actor), 'wb_118', '丰川祥子', '主角', '赤羽', '第一章', '在场', 3);",
+      "updateNode": "角色改名、移动、出场章节或状态变化时更新对应列；不要整行重建。\nSQL示例: UPDATE cxx_actor SET location = '弦卷集团', updated_turn = 7 WHERE actor_key = 'wb_118';",
+      "deleteNode": "仅在角色被剧情明确移除（永久退场且不再出现）时删除；暂时离场只改状态。\nSQL示例: DELETE FROM cxx_actor WHERE actor_key = 'wb_900';",
+      "ddl": "CREATE TABLE cxx_actor ( -- 角色档案表\n  row_id INTEGER PRIMARY KEY, -- 行号\n  actor_key TEXT NOT NULL UNIQUE, -- 角色键\n  name TEXT NOT NULL, -- 名称\n  kind TEXT NOT NULL DEFAULT '中立' CHECK(kind IN ('主角', '同行者', '敌人', '中立', '路人')), -- 类型\n  location TEXT, -- 位置\n  chapter TEXT, -- 章节\n  status TEXT NOT NULL DEFAULT '未知' CHECK(status IN ('在场', '离场', '死亡', '未知')), -- 状态\n  updated_turn INTEGER NOT NULL DEFAULT 0 CHECK(updated_turn >= 0) -- 更新回合\n);"
+    },
+    "content": [["row_id", "角色键", "名称", "类型", "位置", "章节", "状态", "更新回合"]],
+    "updateConfig": { "uiSentinel": -1, "contextDepth": -1, "updateFrequency": -1, "batchSize": -1, "skipFloors": -1 },
+    "exportConfig": {
+      "enabled": true, "splitByRow": true, "entryName": "角色档案表", "entryType": "constant", "keywords": "", "preventRecursion": true,
+      "injectionTemplate": "",
+      "extraIndexEnabled": false, "extraIndexEntryName": "角色档案表-索引", "extraIndexColumns": [], "extraIndexColumnModes": {}, "extraIndexInjectionTemplate": "",
+      "entryPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 10000 },
+      "extraIndexPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 10010 },
+      "fixedEntryPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 99990 },
+      "fixedIndexPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 99991 },
+      "injectIntoWorldbook": false
+    },
+    "orderNo": 0
+  },
+  "sheet_cxx_actor_stat": {
+    "uid": "sheet_cxx_actor_stat",
+    "name": "角色数值表",
+    "sourceData": {
+      "note": "记录每个角色的当前数值；每个角色占一行，由卡内数值引擎写入，AI 不直接改。\n- 列1: 角色键 - 对应角色档案表的角色键，唯一。\n- 列2: 生命 - 当前生命值，0 以上。\n- 列3: 理智 - 当前理智值，0 到 100。\n- 列4: 疲劳 - 当前疲劳值，0 到 100。\n- 列5: 金钱 - 当前持有现金，非负整数。\n- 列6: 扩展数值 - 其他核心数值的紧凑 JSON，如 {\"体质\":12}；无则留空。\n- 列7: 更新回合 - 最后一次写入的回合号。",
+      "initNode": "开局确认时与角色档案表同一批写入。",
+      "insertNode": "新增角色时由引擎同时插入本行；缺行时读取按默认值补齐，不写空行。\nSQL示例: INSERT INTO cxx_actor_stat (row_id, actor_key, hp, sanity, fatigue, yen, extra_json, updated_turn) VALUES ((SELECT COALESCE(MAX(row_id), 0) + 1 FROM cxx_actor_stat), 'wb_118', 80, 100, 0, 3200, NULL, 3);",
+      "updateNode": "任何数值变化都由引擎更新对应列，不整行替换。\nSQL示例: UPDATE cxx_actor_stat SET fatigue = fatigue + 10, updated_turn = 7 WHERE actor_key = 'wb_118';",
+      "deleteNode": "角色被永久移除时连同档案一起删除；否则不删。\nSQL示例: DELETE FROM cxx_actor_stat WHERE actor_key = 'wb_900';",
+      "ddl": "CREATE TABLE cxx_actor_stat ( -- 角色数值表\n  row_id INTEGER PRIMARY KEY, -- 行号\n  actor_key TEXT NOT NULL UNIQUE, -- 角色键\n  hp INTEGER NOT NULL DEFAULT 80 CHECK(hp >= 0), -- 生命\n  sanity INTEGER NOT NULL DEFAULT 100 CHECK(sanity BETWEEN 0 AND 100), -- 理智\n  fatigue INTEGER NOT NULL DEFAULT 0 CHECK(fatigue BETWEEN 0 AND 100), -- 疲劳\n  yen INTEGER NOT NULL DEFAULT 0 CHECK(yen >= 0), -- 金钱\n  extra_json TEXT, -- 扩展数值\n  updated_turn INTEGER NOT NULL DEFAULT 0 CHECK(updated_turn >= 0) -- 更新回合\n);"
+    },
+    "content": [["row_id", "角色键", "生命", "理智", "疲劳", "金钱", "扩展数值", "更新回合"]],
+    "updateConfig": { "uiSentinel": -1, "contextDepth": -1, "updateFrequency": -1, "batchSize": -1, "skipFloors": -1 },
+    "exportConfig": {
+      "enabled": true, "splitByRow": true, "entryName": "角色数值表", "entryType": "constant", "keywords": "", "preventRecursion": true,
+      "injectionTemplate": "",
+      "extraIndexEnabled": false, "extraIndexEntryName": "角色数值表-索引", "extraIndexColumns": [], "extraIndexColumnModes": {}, "extraIndexInjectionTemplate": "",
+      "entryPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 10001 },
+      "extraIndexPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 10011 },
+      "fixedEntryPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 99990 },
+      "fixedIndexPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 99991 },
+      "injectIntoWorldbook": false
+    },
+    "orderNo": 1
+  },
+  "sheet_cxx_inventory": {
+    "uid": "sheet_cxx_inventory",
+    "name": "背包表",
+    "sourceData": {
+      "note": "记录每个角色持有的物品；一个角色的一种物品占一行，由卡内引擎写入。\n- 列1: 角色键 - 持有者角色键。\n- 列2: 物品键 - 物品稳定标识，对应物品定义表。\n- 列3: 数量 - 持有数量，正整数。\n- 列4: 品质 - 只允许填写‘破损’、‘普通’、‘精良’、‘稀有’或‘传说’。\n- 列5: 获得回合 - 首次获得的回合号。\n- 列6: 备注 - 补充信息，不超过 120 字。",
+      "initNode": "开局确认时按初始装备写入。",
+      "insertNode": "获得新物品时插入；已有同角色同物品则改为累加数量，不插重复行。\nSQL示例: INSERT INTO cxx_inventory (row_id, actor_key, item_key, count, quality, acquired_turn, note) VALUES ((SELECT COALESCE(MAX(row_id), 0) + 1 FROM cxx_inventory), 'wb_118', 'item_katana', 1, '普通', 5, NULL);",
+      "updateNode": "数量、品质变化时更新；数量归零则删除该行。\nSQL示例: UPDATE cxx_inventory SET count = count - 1 WHERE actor_key = 'wb_118' AND item_key = 'item_katana';",
+      "deleteNode": "物品全部消耗、卖出或丢失时删除该行；数量未归零不删。\nSQL示例: DELETE FROM cxx_inventory WHERE actor_key = 'wb_118' AND item_key = 'item_katana' AND count = 0;",
+      "ddl": "CREATE TABLE cxx_inventory ( -- 背包表\n  row_id INTEGER PRIMARY KEY, -- 行号\n  actor_key TEXT NOT NULL, -- 角色键\n  item_key TEXT NOT NULL, -- 物品键\n  count INTEGER NOT NULL DEFAULT 1 CHECK(count > 0), -- 数量\n  quality TEXT NOT NULL DEFAULT '普通' CHECK(quality IN ('破损', '普通', '精良', '稀有', '传说')), -- 品质\n  acquired_turn INTEGER NOT NULL DEFAULT 0 CHECK(acquired_turn >= 0), -- 获得回合\n  note TEXT CHECK(note IS NULL OR LENGTH(note) <= 120), -- 备注\n  UNIQUE(actor_key, item_key)\n);"
+    },
+    "content": [["row_id", "角色键", "物品键", "数量", "品质", "获得回合", "备注"]],
+    "updateConfig": { "uiSentinel": -1, "contextDepth": -1, "updateFrequency": -1, "batchSize": -1, "skipFloors": -1 },
+    "exportConfig": {
+      "enabled": true, "splitByRow": true, "entryName": "背包表", "entryType": "constant", "keywords": "", "preventRecursion": true,
+      "injectionTemplate": "",
+      "extraIndexEnabled": false, "extraIndexEntryName": "背包表-索引", "extraIndexColumns": [], "extraIndexColumnModes": {}, "extraIndexInjectionTemplate": "",
+      "entryPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 10002 },
+      "extraIndexPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 10012 },
+      "fixedEntryPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 99990 },
+      "fixedIndexPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 99991 },
+      "injectIntoWorldbook": false
+    },
+    "orderNo": 2
+  },
+  "sheet_cxx_equipment": {
+    "uid": "sheet_cxx_equipment",
+    "name": "装备表",
+    "sourceData": {
+      "note": "记录角色每个装备槽位的当前装备；一个角色一个槽位占一行，由卡内引擎写入。\n- 列1: 角色键 - 穿戴者角色键。\n- 列2: 槽位 - 只允许填写‘主手’、‘副手’、‘头部’、‘躯干’、‘腿部’、‘义体’。\n- 列3: 物品键 - 该槽位装备的物品键；空槽不建行。\n- 列4: 已安装 - 只允许 0 或 1，表示义体是否完成安装。\n- 列5: 更新回合 - 最后一次写入的回合号。",
+      "initNode": "开局确认时按初始装备写入；空槽不建行。",
+      "insertNode": "某槽位首次装上东西时插入；替换装备用更新。\nSQL示例: INSERT INTO cxx_equipment (row_id, actor_key, slot, item_key, installed, updated_turn) VALUES ((SELECT COALESCE(MAX(row_id), 0) + 1 FROM cxx_equipment), 'wb_118', '主手', 'item_katana', 1, 5);",
+      "updateNode": "换装或义体安装状态变化时更新。\nSQL示例: UPDATE cxx_equipment SET item_key = 'item_pistol', updated_turn = 8 WHERE actor_key = 'wb_118' AND slot = '主手';",
+      "deleteNode": "槽位空出来时删除该行。\nSQL示例: DELETE FROM cxx_equipment WHERE actor_key = 'wb_118' AND slot = '副手';",
+      "ddl": "CREATE TABLE cxx_equipment ( -- 装备表\n  row_id INTEGER PRIMARY KEY, -- 行号\n  actor_key TEXT NOT NULL, -- 角色键\n  slot TEXT NOT NULL CHECK(slot IN ('主手', '副手', '头部', '躯干', '腿部', '义体')), -- 槽位\n  item_key TEXT NOT NULL, -- 物品键\n  installed INTEGER NOT NULL DEFAULT 1 CHECK(installed IN (0, 1)), -- 已安装\n  updated_turn INTEGER NOT NULL DEFAULT 0 CHECK(updated_turn >= 0), -- 更新回合\n  UNIQUE(actor_key, slot)\n);"
+    },
+    "content": [["row_id", "角色键", "槽位", "物品键", "已安装", "更新回合"]],
+    "updateConfig": { "uiSentinel": -1, "contextDepth": -1, "updateFrequency": -1, "batchSize": -1, "skipFloors": -1 },
+    "exportConfig": {
+      "enabled": true, "splitByRow": true, "entryName": "装备表", "entryType": "constant", "keywords": "", "preventRecursion": true,
+      "injectionTemplate": "",
+      "extraIndexEnabled": false, "extraIndexEntryName": "装备表-索引", "extraIndexColumns": [], "extraIndexColumnModes": {}, "extraIndexInjectionTemplate": "",
+      "entryPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 10003 },
+      "extraIndexPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 10013 },
+      "fixedEntryPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 99990 },
+      "fixedIndexPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 99991 },
+      "injectIntoWorldbook": false
+    },
+    "orderNo": 3
+  },
+  "sheet_cxx_item_def": {
+    "uid": "sheet_cxx_item_def",
+    "name": "物品定义表",
+    "sourceData": {
+      "note": "记录所有物品的静态定义；一种物品占一行，全局一份，不按角色重复。\n- 列1: 物品键 - 物品稳定标识，唯一。\n- 列2: 名称 - 物品显示名。\n- 列3: 类别 - 只允许填写‘武器’、‘防具’、‘义体’、‘消耗品’、‘材料’或‘杂项’。\n- 列4: 效果摘要 - 一句话说明用途或数值效果，不超过 80 字。\n- 列5: 价值 - 参考价格，非负整数。\n- 列6: 备注 - 补充信息，不超过 120 字。",
+      "initNode": "开局确认时写入开局涉及的物品定义。",
+      "insertNode": "出现此前未定义的物品时插入；已存在同物品键则更新。\nSQL示例: INSERT INTO cxx_item_def (row_id, item_key, name, category, effect, price, note) VALUES ((SELECT COALESCE(MAX(row_id), 0) + 1 FROM cxx_item_def), 'item_katana', '旧式 katana', '武器', '近战伤害 +6', 1200, NULL);",
+      "updateNode": "物品效果或价格被改写时更新；不要因角色持有数变化而改本表。\nSQL示例: UPDATE cxx_item_def SET price = 1400 WHERE item_key = 'item_katana';",
+      "deleteNode": "物品从世界观中彻底移除时才删除；玩家卖掉不算。\nSQL示例: DELETE FROM cxx_item_def WHERE item_key = 'item_obsolete';",
+      "ddl": "CREATE TABLE cxx_item_def ( -- 物品定义表\n  row_id INTEGER PRIMARY KEY, -- 行号\n  item_key TEXT NOT NULL UNIQUE, -- 物品键\n  name TEXT NOT NULL, -- 名称\n  category TEXT NOT NULL DEFAULT '杂项' CHECK(category IN ('武器', '防具', '义体', '消耗品', '材料', '杂项')), -- 类别\n  effect TEXT CHECK(effect IS NULL OR LENGTH(effect) <= 80), -- 效果摘要\n  price INTEGER NOT NULL DEFAULT 0 CHECK(price >= 0), -- 价值\n  note TEXT CHECK(note IS NULL OR LENGTH(note) <= 120) -- 备注\n);"
+    },
+    "content": [["row_id", "物品键", "名称", "类别", "效果摘要", "价值", "备注"]],
+    "updateConfig": { "uiSentinel": -1, "contextDepth": -1, "updateFrequency": -1, "batchSize": -1, "skipFloors": -1 },
+    "exportConfig": {
+      "enabled": false, "splitByRow": false, "entryName": "物品定义表", "entryType": "constant", "keywords": "", "preventRecursion": true,
+      "injectionTemplate": "",
+      "extraIndexEnabled": false, "extraIndexEntryName": "物品定义表-索引", "extraIndexColumns": [], "extraIndexColumnModes": {}, "extraIndexInjectionTemplate": "",
+      "entryPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 10004 },
+      "extraIndexPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 10014 },
+      "fixedEntryPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 99990 },
+      "fixedIndexPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 99991 },
+      "injectIntoWorldbook": false
+    },
+    "orderNo": 4
+  },
+  "sheet_cxx_fact": {
+    "uid": "sheet_cxx_fact",
+    "name": "事实流水表",
+    "sourceData": {
+      "note": "记录已结算的事实事件（购买、装备、成长分配等）；一次结算占一行，用于幂等与审计。\n- 列1: 事实键 - 事实稳定标识，唯一。\n- 列2: 回合 - 所属回合号。\n- 列3: 类型 - 只允许填写‘购买’、‘装备’、‘成长’、‘战斗’或‘其他’。\n- 列4: 载荷摘要 - 该次结算的紧凑摘要，不超过 400 字。\n- 列5: 凭据哈希 - 结算凭据的哈希，用于重复检测。",
+      "initNode": "开局确认时无需写行。",
+      "insertNode": "每次结算成功后写一行；同一事实键重复写入必须被忽略。\nSQL示例: INSERT INTO cxx_fact (row_id, fact_key, turn_no, kind, payload, receipt) VALUES ((SELECT COALESCE(MAX(row_id), 0) + 1 FROM cxx_fact), 'fact_20261025_01', 7, '购买', '买入手枪 -800', 'ab12cd34');",
+      "updateNode": "事实行写入后不再修改；需要更正时新增一条更正事实。\nSQL示例: UPDATE cxx_fact SET payload = payload WHERE fact_key = 'fact_20261025_01';",
+      "deleteNode": "不删除；删楼回滚由插件层处理。\nSQL示例: 禁止删除。",
+      "ddl": "CREATE TABLE cxx_fact ( -- 事实流水表\n  row_id INTEGER PRIMARY KEY, -- 行号\n  fact_key TEXT NOT NULL UNIQUE, -- 事实键\n  turn_no INTEGER NOT NULL DEFAULT 0 CHECK(turn_no >= 0), -- 回合\n  kind TEXT NOT NULL DEFAULT '其他' CHECK(kind IN ('购买', '装备', '成长', '战斗', '其他')), -- 类型\n  payload TEXT CHECK(payload IS NULL OR LENGTH(payload) <= 400), -- 载荷摘要\n  receipt TEXT -- 凭据哈希\n);"
+    },
+    "content": [["row_id", "事实键", "回合", "类型", "载荷摘要", "凭据哈希"]],
+    "updateConfig": { "uiSentinel": -1, "contextDepth": -1, "updateFrequency": -1, "batchSize": -1, "skipFloors": -1 },
+    "exportConfig": {
+      "enabled": false, "splitByRow": false, "entryName": "事实流水表", "entryType": "constant", "keywords": "", "preventRecursion": true,
+      "injectionTemplate": "",
+      "extraIndexEnabled": false, "extraIndexEntryName": "事实流水表-索引", "extraIndexColumns": [], "extraIndexColumnModes": {}, "extraIndexInjectionTemplate": "",
+      "entryPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 10005 },
+      "extraIndexPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 10015 },
+      "fixedEntryPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 99990 },
+      "fixedIndexPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 99991 },
+      "injectIntoWorldbook": false
+    },
+    "orderNo": 5
+  },
+  "sheet_cxx_pending_tx": {
+    "uid": "sheet_cxx_pending_tx",
+    "name": "待定事务表",
+    "sourceData": {
+      "note": "记录未落定或失败待重放的结算事务；一张票据占一行，由卡内引擎维护。\n- 列1: 事务键 - 票据稳定标识，唯一。\n- 列2: 状态 - 只允许填写‘待处理’、‘已应用’或‘失败’。\n- 列3: 事件摘要 - 本次事务的事件摘要，不超过 400 字。\n- 列4: 钱包快照 - 事务开始时的钱包摘要，不超过 200 字。\n- 列5: 问题列表 - 需要人工或重放的问题，不超过 200 字。",
+      "initNode": "开局无票据。",
+      "insertNode": "一次多表写入开始前插入‘待处理’票据。\nSQL示例: INSERT INTO cxx_pending_tx (row_id, tx_key, status, events, wallet_before, issues) VALUES ((SELECT COALESCE(MAX(row_id), 0) + 1 FROM cxx_pending_tx), 'tx_20261025_01', '待处理', '购买手枪', '{\"yen\":3200}', NULL);",
+      "updateNode": "写完后置‘已应用’；异常置‘失败’并保留详情。\nSQL示例: UPDATE cxx_pending_tx SET status = '已应用' WHERE tx_key = 'tx_20261025_01';",
+      "deleteNode": "已应用且超过保留期的票据可删除；失败票据必须保留。\nSQL示例: DELETE FROM cxx_pending_tx WHERE status = '已应用' AND row_id < 5;",
+      "ddl": "CREATE TABLE cxx_pending_tx ( -- 待定事务表\n  row_id INTEGER PRIMARY KEY, -- 行号\n  tx_key TEXT NOT NULL UNIQUE, -- 事务键\n  status TEXT NOT NULL DEFAULT '待处理' CHECK(status IN ('待处理', '已应用', '失败')), -- 状态\n  events TEXT CHECK(events IS NULL OR LENGTH(events) <= 400), -- 事件摘要\n  wallet_before TEXT CHECK(wallet_before IS NULL OR LENGTH(wallet_before) <= 200), -- 钱包快照\n  issues TEXT CHECK(issues IS NULL OR LENGTH(issues) <= 200) -- 问题列表\n);"
+    },
+    "content": [["row_id", "事务键", "状态", "事件摘要", "钱包快照", "问题列表"]],
+    "updateConfig": { "uiSentinel": -1, "contextDepth": -1, "updateFrequency": -1, "batchSize": -1, "skipFloors": -1 },
+    "exportConfig": {
+      "enabled": false, "splitByRow": false, "entryName": "待定事务表", "entryType": "constant", "keywords": "", "preventRecursion": true,
+      "injectionTemplate": "",
+      "extraIndexEnabled": false, "extraIndexEntryName": "待定事务表-索引", "extraIndexColumns": [], "extraIndexColumnModes": {}, "extraIndexInjectionTemplate": "",
+      "entryPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 10006 },
+      "extraIndexPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 10016 },
+      "fixedEntryPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 99990 },
+      "fixedIndexPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 99991 },
+      "injectIntoWorldbook": false
+    },
+    "orderNo": 6
+  },
+  "sheet_cxx_turn_index": {
+    "uid": "sheet_cxx_turn_index",
+    "name": "回合索引表",
+    "sourceData": {
+      "note": "记录每个回合的摘要与涉及实体；一个回合占一行，供提示词摘要使用。\n- 列1: 回合 - 回合号，唯一。\n- 列2: 摘要 - 该回合发生的事，不超过 300 字。\n- 列3: 涉及实体 - 相关角色键或物品键，逗号分隔，不超过 200 字。",
+      "initNode": "开局确认时写入第 0 回合摘要。",
+      "insertNode": "每回合结束后写入一行。\nSQL示例: INSERT INTO cxx_turn_index (row_id, turn_no, summary, entities) VALUES ((SELECT COALESCE(MAX(row_id), 0) + 1 FROM cxx_turn_index), 7, '在河闸食堂遇见丰川祥子', 'wb_118');",
+      "updateNode": "同一回合摘要被更正时更新。\nSQL示例: UPDATE cxx_turn_index SET summary = '在河闸食堂遇见丰川祥子并交换情报' WHERE turn_no = 7;",
+      "deleteNode": "回滚该回合时删除对应行。\nSQL示例: DELETE FROM cxx_turn_index WHERE turn_no = 7;",
+      "ddl": "CREATE TABLE cxx_turn_index ( -- 回合索引表\n  row_id INTEGER PRIMARY KEY, -- 行号\n  turn_no INTEGER NOT NULL UNIQUE CHECK(turn_no >= 0), -- 回合\n  summary TEXT CHECK(summary IS NULL OR LENGTH(summary) <= 300), -- 摘要\n  entities TEXT CHECK(entities IS NULL OR LENGTH(entities) <= 200) -- 涉及实体\n);"
+    },
+    "content": [["row_id", "回合", "摘要", "涉及实体"]],
+    "updateConfig": { "uiSentinel": -1, "contextDepth": -1, "updateFrequency": -1, "batchSize": -1, "skipFloors": -1 },
+    "exportConfig": {
+      "enabled": false, "splitByRow": false, "entryName": "回合索引表", "entryType": "constant", "keywords": "", "preventRecursion": true,
+      "injectionTemplate": "",
+      "extraIndexEnabled": false, "extraIndexEntryName": "回合索引表-索引", "extraIndexColumns": [], "extraIndexColumnModes": {}, "extraIndexInjectionTemplate": "",
+      "entryPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 10007 },
+      "extraIndexPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 10017 },
+      "fixedEntryPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 99990 },
+      "fixedIndexPlacement": { "position": "at_depth_as_system", "depth": 2, "order": 99991 },
+      "injectIntoWorldbook": false
+    },
+    "orderNo": 7
+  }
+}

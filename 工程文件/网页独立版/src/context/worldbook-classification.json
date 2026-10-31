@@ -1,0 +1,3287 @@
+{
+  "schema": 1,
+  "scope": "独立前端203条维护分类；不是玩家玩法清单，不改变启停或提示正文。",
+  "groups": [
+    {
+      "id": "core-protocol",
+      "label": "核心协议"
+    },
+    {
+      "id": "gameplay-domain",
+      "label": "玩法域"
+    },
+    {
+      "id": "narrative-output",
+      "label": "叙事与输出"
+    },
+    {
+      "id": "historical-disabled",
+      "label": "历史停用"
+    }
+  ],
+  "domains": [
+    {
+      "id": "database",
+      "label": "状态与更新协议"
+    },
+    {
+      "id": "presentation",
+      "label": "正文与显示协议"
+    },
+    {
+      "id": "configuration",
+      "label": "配置占位"
+    },
+    {
+      "id": "character",
+      "label": "人物"
+    },
+    {
+      "id": "organization",
+      "label": "组织与势力"
+    },
+    {
+      "id": "place",
+      "label": "地点与区域"
+    },
+    {
+      "id": "world",
+      "label": "世界设定"
+    },
+    {
+      "id": "identity",
+      "label": "玩家身份"
+    },
+    {
+      "id": "chapter",
+      "label": "章节叙事"
+    },
+    {
+      "id": "quest",
+      "label": "委托"
+    },
+    {
+      "id": "equipment",
+      "label": "物品与装配"
+    },
+    {
+      "id": "economy",
+      "label": "经济与账目"
+    },
+    {
+      "id": "growth",
+      "label": "人物成长"
+    },
+    {
+      "id": "combat",
+      "label": "战斗与主动状态"
+    },
+    {
+      "id": "narrative",
+      "label": "叙事与文风"
+    }
+  ],
+  "relationshipPolicy": "依赖/互斥仅登记已核实关系；空数组不宣称没有潜在关联，不作为运行时开关。核心变量模式仍由原所有者决定。",
+  "entries": [
+    {
+      "bookId": "card",
+      "entryId": "0",
+      "title": "数据库更新格式 · 额外解析",
+      "group": "core-protocol",
+      "domains": [
+        "database"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [
+        {
+          "bookId": "card",
+          "entryId": "1"
+        }
+      ],
+      "mutuallyExclusiveWith": [
+        {
+          "bookId": "card",
+          "entryId": "79"
+        }
+      ],
+      "mixedResponsibilities": [
+        "更新格式",
+        "数值与装备事件",
+        "钱包与委托",
+        "在场人物记录"
+      ],
+      "activation": "variable-mode",
+      "featureToggleEligible": false,
+      "owner": "src/app/variables.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "1",
+      "title": "数据库当前状态",
+      "group": "core-protocol",
+      "domains": [
+        "database"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "2",
+      "title": "[已停用]旧关系变量规则",
+      "group": "historical-disabled",
+      "domains": [
+        "database"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "explicitly-retired",
+      "featureToggleEligible": false,
+      "evidence": "原条目明确标注已停用，正文为空。"
+    },
+    {
+      "bookId": "card",
+      "entryId": "3",
+      "title": "世界观",
+      "group": "narrative-output",
+      "domains": [
+        "world"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "4",
+      "title": "高松灯(Takamatsu Tomori)",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "5",
+      "title": "都筑诗船",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "6",
+      "title": "千早爱音(Chihaya Anon)",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "7",
+      "title": "长崎素世(Nagasaki Soyo)",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "8",
+      "title": "椎名立希(Shiina Taki)",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "9",
+      "title": "要乐奈(Kaname Raana)",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "10",
+      "title": "丰川祥子(Togawa Sakiko)",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "11",
+      "title": "若叶睦（Wakaba Mutsumi）",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "12",
+      "title": "三角初华(Misumi Uika)",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "13",
+      "title": "祐天寺若麦(Yutenji Nyamu)",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "14",
+      "title": "八幡海铃(Yahata Umiri)",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "16",
+      "title": "月岛麻里奈",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "17",
+      "title": "真次凛凛子",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "18",
+      "title": "纯田真奈",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "19",
+      "title": "mygo原作剧情推进（请勿开启）",
+      "group": "historical-disabled",
+      "domains": [
+        "narrative"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "explicitly-retired",
+      "featureToggleEligible": false,
+      "evidence": "原注释明确请勿开启，正文为2020年原作时间线；保留历史参考。"
+    },
+    {
+      "bookId": "card",
+      "entryId": "20",
+      "title": "【梦境】（游玩开局9时打开）",
+      "group": "narrative-output",
+      "domains": [
+        "narrative"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "scenario-conditioned",
+      "featureToggleEligible": false,
+      "review": "原注释称开局9开启；当前目录ordinal9对应id10，但当前该开局正文未见梦境启用接线，不能据注释自动开启。待作者后续玩法方案确认。"
+    },
+    {
+      "bookId": "card",
+      "entryId": "21",
+      "title": "地点：LIVE HOUSE SPACE (已关闭)",
+      "group": "narrative-output",
+      "domains": [
+        "place"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "22",
+      "title": "学校：月之森女子学园",
+      "group": "narrative-output",
+      "domains": [
+        "place"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "23",
+      "title": "学校：羽丘女子学园",
+      "group": "narrative-output",
+      "domains": [
+        "place"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "24",
+      "title": "学校：花咲川女子学院",
+      "group": "narrative-output",
+      "domains": [
+        "place"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "25",
+      "title": "乐队：Poppin'Party",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "26",
+      "title": "偶像组合：Sumimi",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "27",
+      "title": "乐队：Ave Mujica",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "28",
+      "title": "乐队：MyGO!!!!!",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "29",
+      "title": "乐队：CRYCHIC",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "33",
+      "title": "乐队：Hello, Happy World!",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "37",
+      "title": "地点：RING-Live!（RiNG社区核心场馆）",
+      "group": "narrative-output",
+      "domains": [
+        "place"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "38",
+      "title": "地点：LIVE HOUSE CiRCLE",
+      "group": "narrative-output",
+      "domains": [
+        "place"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "40",
+      "title": "选项（可选）",
+      "group": "narrative-output",
+      "domains": [
+        "narrative",
+        "presentation"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "41",
+      "title": "状态栏",
+      "group": "core-protocol",
+      "domains": [
+        "presentation"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [
+        "场景与角色显示",
+        "后续状态更新约定"
+      ],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "42",
+      "title": "编年史（子条目）",
+      "group": "narrative-output",
+      "domains": [
+        "world"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "43",
+      "title": "义体与医疗（子条目）",
+      "group": "narrative-output",
+      "domains": [
+        "world"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "44",
+      "title": "地区与治安（子条目）",
+      "group": "narrative-output",
+      "domains": [
+        "world"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "45",
+      "title": "名词解释（子条目）",
+      "group": "narrative-output",
+      "domains": [
+        "world"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "46",
+      "title": "机偶体系（子条目）",
+      "group": "narrative-output",
+      "domains": [
+        "world"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "47",
+      "title": "弦卷塔",
+      "group": "narrative-output",
+      "domains": [
+        "place"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "48",
+      "title": "新日本时代广场",
+      "group": "narrative-output",
+      "domains": [
+        "place"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "49",
+      "title": "user人设：公司员工",
+      "group": "narrative-output",
+      "domains": [
+        "identity"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [
+        {
+          "bookId": "card",
+          "entryId": "50"
+        },
+        {
+          "bookId": "card",
+          "entryId": "51"
+        },
+        {
+          "bookId": "card",
+          "entryId": "52"
+        }
+      ],
+      "mixedResponsibilities": [],
+      "activation": "identity-conditioned",
+      "featureToggleEligible": false,
+      "owner": "卡片源码/运行时/identity.js",
+      "review": "出身资料按实际人物档案使用，非新增玩法开关。"
+    },
+    {
+      "bookId": "card",
+      "entryId": "50",
+      "title": "user人设：街头小子",
+      "group": "narrative-output",
+      "domains": [
+        "identity"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [
+        {
+          "bookId": "card",
+          "entryId": "49"
+        },
+        {
+          "bookId": "card",
+          "entryId": "51"
+        },
+        {
+          "bookId": "card",
+          "entryId": "52"
+        }
+      ],
+      "mixedResponsibilities": [],
+      "activation": "identity-conditioned",
+      "featureToggleEligible": false,
+      "owner": "卡片源码/运行时/identity.js",
+      "review": "出身资料按实际人物档案使用，非新增玩法开关。"
+    },
+    {
+      "bookId": "card",
+      "entryId": "51",
+      "title": "user人设：青年学生",
+      "group": "narrative-output",
+      "domains": [
+        "identity"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [
+        {
+          "bookId": "card",
+          "entryId": "49"
+        },
+        {
+          "bookId": "card",
+          "entryId": "50"
+        },
+        {
+          "bookId": "card",
+          "entryId": "52"
+        }
+      ],
+      "mixedResponsibilities": [],
+      "activation": "identity-conditioned",
+      "featureToggleEligible": false,
+      "owner": "卡片源码/运行时/identity.js",
+      "review": "出身资料按实际人物档案使用，非新增玩法开关。"
+    },
+    {
+      "bookId": "card",
+      "entryId": "52",
+      "title": "user人设：自定义",
+      "group": "narrative-output",
+      "domains": [
+        "identity"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [
+        {
+          "bookId": "card",
+          "entryId": "49"
+        },
+        {
+          "bookId": "card",
+          "entryId": "50"
+        },
+        {
+          "bookId": "card",
+          "entryId": "51"
+        }
+      ],
+      "mixedResponsibilities": [],
+      "activation": "identity-conditioned",
+      "featureToggleEligible": false,
+      "owner": "卡片源码/运行时/identity.js",
+      "review": "出身资料按实际人物档案使用，非新增玩法开关。"
+    },
+    {
+      "bookId": "card",
+      "entryId": "53",
+      "title": "社会常识强调",
+      "group": "narrative-output",
+      "domains": [
+        "world"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "54",
+      "title": "委托系统（终端行动页）",
+      "group": "gameplay-domain",
+      "domains": [
+        "quest",
+        "economy"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "55",
+      "title": "经济常识（日元与账目）",
+      "group": "gameplay-domain",
+      "domains": [
+        "economy"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "56",
+      "title": "[正文玩法] 剧情与结算规则",
+      "group": "gameplay-domain",
+      "domains": [
+        "narrative",
+        "equipment",
+        "growth",
+        "combat",
+        "economy"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [
+        "玩家行动与叙事依据",
+        "物品与装配",
+        "成长成果",
+        "战斗与主动状态",
+        "实际交易与去重结算"
+      ],
+      "activation": "source-default",
+      "featureToggleEligible": false,
+      "review": "同一条混合多个规则领域；未拆分职责前不得作为单个玩法开关。"
+    },
+    {
+      "bookId": "card",
+      "entryId": "57",
+      "title": "[config_override]",
+      "group": "core-protocol",
+      "domains": [
+        "configuration"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "reserved",
+      "featureToggleEligible": false,
+      "review": "空配置占位，默认关闭；无废弃证据，不归历史。"
+    },
+    {
+      "bookId": "card",
+      "entryId": "58",
+      "title": "东京都2051 正文显示协议",
+      "group": "core-protocol",
+      "domains": [
+        "presentation"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "59",
+      "title": "文风强调：平实叙事",
+      "group": "narrative-output",
+      "domains": [
+        "narrative",
+        "presentation"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "60",
+      "title": "[database_plot]物品目录：义体 · 循环系统",
+      "group": "gameplay-domain",
+      "domains": [
+        "equipment"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "61",
+      "title": "[database_plot]物品目录：义体 · 神经系统",
+      "group": "gameplay-domain",
+      "domains": [
+        "equipment"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "62",
+      "title": "[database_plot]物品目录：义体 · 额皮质",
+      "group": "gameplay-domain",
+      "domains": [
+        "equipment"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "63",
+      "title": "[database_plot]物品目录：义体 · 手掌",
+      "group": "gameplay-domain",
+      "domains": [
+        "equipment"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "64",
+      "title": "[database_plot]物品目录：义体 · 面部／视觉",
+      "group": "gameplay-domain",
+      "domains": [
+        "equipment"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "65",
+      "title": "[database_plot]物品目录：义体 · 操作系统",
+      "group": "gameplay-domain",
+      "domains": [
+        "equipment"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "66",
+      "title": "[database_plot]物品目录：义体 · 骨骼",
+      "group": "gameplay-domain",
+      "domains": [
+        "equipment"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "67",
+      "title": "[database_plot]物品目录：义体 · 表皮系统",
+      "group": "gameplay-domain",
+      "domains": [
+        "equipment"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "68",
+      "title": "[database_plot]物品目录：义体 · 臂部",
+      "group": "gameplay-domain",
+      "domains": [
+        "equipment"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "69",
+      "title": "[database_plot]物品目录：义体 · 腿部",
+      "group": "gameplay-domain",
+      "domains": [
+        "equipment"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "70",
+      "title": "[database_plot]物品目录：武器 · 精准步枪",
+      "group": "gameplay-domain",
+      "domains": [
+        "equipment"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "71",
+      "title": "[database_plot]物品目录：武器 · 近战武器",
+      "group": "gameplay-domain",
+      "domains": [
+        "equipment"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "72",
+      "title": "[database_plot]物品目录：武器 · 霰弹枪",
+      "group": "gameplay-domain",
+      "domains": [
+        "equipment"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "73",
+      "title": "[database_plot]物品目录：武器 · 手枪",
+      "group": "gameplay-domain",
+      "domains": [
+        "equipment"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "74",
+      "title": "[database_plot]物品目录：武器 · 左轮",
+      "group": "gameplay-domain",
+      "domains": [
+        "equipment"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "75",
+      "title": "[database_plot]物品目录：武器 · 突击步枪",
+      "group": "gameplay-domain",
+      "domains": [
+        "equipment"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "76",
+      "title": "[database_plot]物品目录：武器 · 冲锋枪",
+      "group": "gameplay-domain",
+      "domains": [
+        "equipment"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "77",
+      "title": "[database_plot]物品目录：武器 · 狙击步枪",
+      "group": "gameplay-domain",
+      "domains": [
+        "equipment"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "78",
+      "title": "[database_plot]物品目录：武器 · 机枪",
+      "group": "gameplay-domain",
+      "domains": [
+        "equipment"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "81",
+      "title": "企业：弦卷集团",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "82",
+      "title": "企业：丰川财阀／丰川重工",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "83",
+      "title": "企业：太平洋防务",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "84",
+      "title": "企业：联邦科技",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "85",
+      "title": "企业：军用科技",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "86",
+      "title": "长征与黑墙",
+      "group": "narrative-output",
+      "domains": [
+        "world"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "87",
+      "title": "网络与心智",
+      "group": "narrative-output",
+      "domains": [
+        "world"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "91",
+      "title": "地点：来生",
+      "group": "narrative-output",
+      "domains": [
+        "place"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "88",
+      "title": "馬橋心玖",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "89",
+      "title": "須賀蕾葉",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "93",
+      "title": "剧情：盗芯之夜入口",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "94",
+      "title": "[章节资料]盗芯之夜 · 小委托之后",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs",
+      "review": "保留旧章节资料与现有阶段资料；默认关闭不表示废弃，是否归并待后续设计。"
+    },
+    {
+      "bookId": "card",
+      "entryId": "95",
+      "title": "[章节资料]盗芯之夜 · 录音里的房间",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs",
+      "review": "保留旧章节资料与现有阶段资料；默认关闭不表示废弃，是否归并待后续设计。"
+    },
+    {
+      "bookId": "card",
+      "entryId": "96",
+      "title": "[章节资料]盗芯之夜 · 来生的桌边",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs",
+      "review": "保留旧章节资料与现有阶段资料；默认关闭不表示废弃，是否归并待后续设计。"
+    },
+    {
+      "bookId": "card",
+      "entryId": "97",
+      "title": "[章节资料]盗芯之夜 · 把准备做完",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs",
+      "review": "保留旧章节资料与现有阶段资料；默认关闭不表示废弃，是否归并待后续设计。"
+    },
+    {
+      "bookId": "card",
+      "entryId": "98",
+      "title": "[章节资料]盗芯之夜 · 303酒店",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs",
+      "review": "保留旧章节资料与现有阶段资料；默认关闭不表示废弃，是否归并待后续设计。"
+    },
+    {
+      "bookId": "card",
+      "entryId": "99",
+      "title": "[章节资料]盗芯之夜 · 取件与临时藏身",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs",
+      "review": "保留旧章节资料与现有阶段资料；默认关闭不表示废弃，是否归并待后续设计。"
+    },
+    {
+      "bookId": "card",
+      "entryId": "100",
+      "title": "[章节资料]盗芯之夜 · 门关上以后",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs",
+      "review": "保留旧章节资料与现有阶段资料；默认关闭不表示废弃，是否归并待后续设计。"
+    },
+    {
+      "bookId": "card",
+      "entryId": "101",
+      "title": "[章节资料]盗芯之夜 · 逃出酒店",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs",
+      "review": "保留旧章节资料与现有阶段资料；默认关闭不表示废弃，是否归并待后续设计。"
+    },
+    {
+      "bookId": "card",
+      "entryId": "106",
+      "title": "泽海奏多",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "107",
+      "title": "汐见萤",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "108",
+      "title": "伊泽枣",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "109",
+      "title": "琴平凪",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "110",
+      "title": "滨崎茉幌",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "111",
+      "title": "和泉朋花",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "112",
+      "title": "矢仓蓬咲",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "113",
+      "title": "梅里千樱梨",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "114",
+      "title": "四宫宁月",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "115",
+      "title": "薇欧拉",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "116",
+      "title": "户山香澄",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "117",
+      "title": "花园多惠",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "118",
+      "title": "牛込里美",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "119",
+      "title": "山吹沙绫",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "120",
+      "title": "市谷有咲",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "121",
+      "title": "美竹兰",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "122",
+      "title": "青叶摩卡",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "123",
+      "title": "上原绯玛丽",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "124",
+      "title": "宇田川巴",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "125",
+      "title": "羽泽鸫",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "126",
+      "title": "弦卷心",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "127",
+      "title": "濑田薰",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "128",
+      "title": "北泽育美",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "129",
+      "title": "松原花音",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "130",
+      "title": "奥泽美咲",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "131",
+      "title": "丸山彩",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "132",
+      "title": "冰川日菜",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "133",
+      "title": "白鹭千圣",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "134",
+      "title": "大和麻弥",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "135",
+      "title": "若宫伊芙",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "136",
+      "title": "凑友希那",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "137",
+      "title": "冰川纱夜",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "138",
+      "title": "今井莉莎",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "139",
+      "title": "宇田川亚子",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "140",
+      "title": "白金燐子",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "141",
+      "title": "仓田真白",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "142",
+      "title": "桐谷透子",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "143",
+      "title": "广町七深",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "144",
+      "title": "二叶筑紫",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "145",
+      "title": "八潮瑠唯",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "146",
+      "title": "和奏瑞依",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "147",
+      "title": "朝日六花",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "148",
+      "title": "佐藤益木",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "149",
+      "title": "鳰原令王那",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "150",
+      "title": "珠手知由",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "151",
+      "title": "鰐部七菜",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "152",
+      "title": "户山明日香",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "153",
+      "title": "主线一·盗芯之前 · 小委托之后",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "154",
+      "title": "主线一·盗芯之前 · 录音里的房间",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "155",
+      "title": "主线一·盗芯之前 · 来生的桌边",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "156",
+      "title": "主线一·盗芯之前 · 把准备做完",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "157",
+      "title": "主线二·盗芯之夜 · 进入酒店与套房取件",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "158",
+      "title": "主线二·盗芯之夜 · 夹层避险与门内命案",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "159",
+      "title": "主线二·盗芯之夜 · 断联、护匣受损与活体接入",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "160",
+      "title": "主线二·盗芯之夜 · 冲出封锁与搭档生死结算",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "161",
+      "title": "主线三·双魂与暗流 · 安全屋初见与老街诊断",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "162",
+      "title": "主线三·双魂与暗流 · 寻找心玖与恢复喵梦联系",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "163",
+      "title": "主线三·双魂与暗流 · 八咫鸟外围与网监探员",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "164",
+      "title": "主线三·双魂与暗流 · 核心会面与联系有咲",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "165",
+      "title": "主线三·双魂与暗流 · 原始记录、外环公路与旧友重逢",
+      "group": "narrative-output",
+      "domains": [
+        "chapter"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "166",
+      "title": "暗池：地点与设施",
+      "group": "narrative-output",
+      "domains": [
+        "place"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "167",
+      "title": "荒川下城：地点与设施",
+      "group": "narrative-output",
+      "domains": [
+        "place"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "168",
+      "title": "走廊里的第二把锁 · 了解现场与协助意愿",
+      "group": "narrative-output",
+      "domains": [
+        "quest"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "169",
+      "title": "走廊里的第二把锁 · 核对线索与实际处置",
+      "group": "narrative-output",
+      "domains": [
+        "quest"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "170",
+      "title": "走廊里的第二把锁 · 结果与交接",
+      "group": "narrative-output",
+      "domains": [
+        "quest"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "171",
+      "title": "借条背面 · 确认委托范围",
+      "group": "narrative-output",
+      "domains": [
+        "quest"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "172",
+      "title": "借条背面 · 核对线索与实际处置",
+      "group": "narrative-output",
+      "domains": [
+        "quest"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "173",
+      "title": "借条背面 · 结果与交接",
+      "group": "narrative-output",
+      "domains": [
+        "quest"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "174",
+      "title": "退水线上的白漆 · 了解现场与协助意愿",
+      "group": "narrative-output",
+      "domains": [
+        "quest"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "175",
+      "title": "退水线上的白漆 · 核对线索与实际处置",
+      "group": "narrative-output",
+      "domains": [
+        "quest"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "176",
+      "title": "退水线上的白漆 · 结果与交接",
+      "group": "narrative-output",
+      "domains": [
+        "quest"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "177",
+      "title": "一只饭盒的重量 · 确认委托范围",
+      "group": "narrative-output",
+      "domains": [
+        "quest"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "178",
+      "title": "一只饭盒的重量 · 核对线索与实际处置",
+      "group": "narrative-output",
+      "domains": [
+        "quest"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "179",
+      "title": "一只饭盒的重量 · 结果与交接",
+      "group": "narrative-output",
+      "domains": [
+        "quest"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "story-progress",
+      "featureToggleEligible": false,
+      "owner": "src/gameplay/content.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "181",
+      "title": "企业：生物技术",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "182",
+      "title": "企业：泽塔科技",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "183",
+      "title": "企业：创伤小组",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "184",
+      "title": "企业：夜氏公司",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "185",
+      "title": "企业：轨道航空",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "186",
+      "title": "企业：苏石化",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "187",
+      "title": "企业：沛卓石化",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "188",
+      "title": "企业：健立",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "189",
+      "title": "企业：宪法军火",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "190",
+      "title": "企业：全食品",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "191",
+      "title": "企业：德拉曼",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "192",
+      "title": "企业：高加索",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "193",
+      "title": "企业：岐路司",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "194",
+      "title": "企业：迪纳拉科技",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "195",
+      "title": "企业：乌鸦微控",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "196",
+      "title": "企业：海啸",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "197",
+      "title": "企业：预算武器",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "198",
+      "title": "企业：达拉理工",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "199",
+      "title": "企业：诺科他",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "200",
+      "title": "企业：新闻54",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "201",
+      "title": "企业：全球新闻社",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "202",
+      "title": "企业：世界卫星通讯",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "203",
+      "title": "企业：KTech",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "204",
+      "title": "街头势力：虎爪组",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "205",
+      "title": "街头势力：漩涡帮",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "206",
+      "title": "街头势力：兽群",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "207",
+      "title": "街头势力：圣莲会",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "208",
+      "title": "街头势力：六番街联防会",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "209",
+      "title": "街头势力：红花互助会",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "210",
+      "title": "街头势力：八咫鸟",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "211",
+      "title": "街头势力：清道夫",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "212",
+      "title": "街头势力：乱刀众",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "213",
+      "title": "街头势力：远雷运输队与外环车队",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "214",
+      "title": "街头势力：灰旗团",
+      "group": "narrative-output",
+      "domains": [
+        "organization"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "215",
+      "title": "森川柚枼",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "216",
+      "title": "琳星夜",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "217",
+      "title": "Vesper",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "79",
+      "title": "数据库更新格式 · 正文解析",
+      "group": "core-protocol",
+      "domains": [
+        "database"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [
+        {
+          "bookId": "card",
+          "entryId": "1"
+        }
+      ],
+      "mutuallyExclusiveWith": [
+        {
+          "bookId": "card",
+          "entryId": "0"
+        }
+      ],
+      "mixedResponsibilities": [
+        "更新格式",
+        "数值与装备事件",
+        "钱包与委托",
+        "在场人物记录"
+      ],
+      "activation": "variable-mode",
+      "featureToggleEligible": false,
+      "owner": "src/app/variables.mjs"
+    },
+    {
+      "bookId": "card",
+      "entryId": "80",
+      "title": "旧变量配置（已合并）",
+      "group": "historical-disabled",
+      "domains": [
+        "database"
+      ],
+      "sourceEnabled": false,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "explicitly-retired",
+      "featureToggleEligible": false,
+      "evidence": "原注释明确旧变量配置已合并，正文仅为{}。"
+    }
+  ]
+}

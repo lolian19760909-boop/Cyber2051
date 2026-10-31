@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-07",
+  "note": "Current maintained source extraction; no card embedding or preview card.",
+  "sources": [
+    {
+      "file": "工程文件/卡片源码/运行时/gameplay.js",
+      "sha256": "97a37c8e70b7b7086aebaffb6c7ad8a970df953f290dca0ef3dfeca938a4293e"
+    },
+    {
+      "file": "工程文件/卡片源码/运行时/talents.js",
+      "sha256": "11ff09a0f7c19210a1ac49b58cce7b1c8b8f31a5d23d04ac87f95ab60280f44d"
+    },
+    {
+      "file": "工程文件/卡片源码/运行时/talent-data.js",
+      "sha256": "57a27f5b3390bcca16d5b30c5058894514ad1c588ed0c0bef66f193e62db4a17"
+    },
+    {
+      "file": "工程文件/卡片源码/运行时/talent-effects.js",
+      "sha256": "a4d9b0e1f68343d9a2b8e2d813054ef1b154fa6b3a5df79ffb0633052e74a560"
+    },
+    {
+      "file": "工程文件/卡片源码/运行时/growth-rules.js",
+      "sha256": "3a02b5b35a84179b224816ec861e0aa66999c7b4b75b77899f8f57b901ca80c7"
+    }
+  ]
+}

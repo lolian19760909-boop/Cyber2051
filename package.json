@@ -1,0 +1,23 @@
+{
+  "name": "cyber2051-p4-engineering-handoff",
+  "version": "2.3.0",
+  "private": true,
+  "description": "P4 engineering sources and offline handoff dependencies",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build:p4-ui": "node 接手工具/p4.cjs build",
+    "test:p4-ui": "node 接手工具/p4.cjs regression",
+    "test:p4-cleanup": "node 接手工具/p4.cjs ui",
+    "audit:p4-style": "node 接手工具/p4.cjs audit",
+    "setup:source": "node tools/setup-source.mjs"
+  },
+  "dependencies": {
+    "acorn": "8.16.0",
+    "lodash": "4.18.1",
+    "@adobe/css-tools": "4.4.4",
+    "playwright": "1.62.1",
+    "playwright-core": "1.62.1"
+  }
+}

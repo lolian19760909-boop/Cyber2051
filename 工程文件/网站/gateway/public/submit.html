@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>投稿 · 创意工坊 · 东京都2051</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/workshop/theme.css?v=motion20261027"><script src="/workshop/theme-runtime.js?v=motion20261027"></script><script>CxxThemeRuntime.install(window);</script><link rel="stylesheet" href="/site.css?v=motion20261027"><link rel="stylesheet" href="/workshop/poster-system.css?v=motion20261027">
+<script src="/i18n.js?v=site-accounts-20261031"></script>
+<script src="/user.js?v=account-ui-20261031"></script>
+<link rel="stylesheet" href="/workshop/submission-format.css?v=submission20261006">
+<script src="/workshop/submission-template.js?v=submission20261006"></script>
+<script src="/workshop/submission-view.js?v=submission20261006"></script>
+<script src="/workshop/contract-form.js?v=submission20261006"></script>
+<script src="/workshop/site-ui.js?v=motion20261027" defer></script></head>
+<body class="site submit-page poster-theme">
+<a class="skip-link" href="#main" data-ui-zh="跳到内容" data-ui-en="Skip to content" data-ui-ja="本文へ移動">跳到内容</a>
+<header class="site-header">
+  <div class="bar">
+    <a class="logo" href="/"><span class="cube"></span>TOKYO 2051</a>
+    <nav class="nav">
+      <a href="/" data-i18n="nav.home">首页</a><a href="/recent.html" data-ui-zh="近期详情" data-ui-en="Latest details" data-ui-ja="最近の情報">近期详情</a><a href="/play/" data-ui-zh="开始游玩" data-ui-en="Play now" data-ui-ja="プレイする">开始游玩</a>
+      <a class="on" href="/workshop.html" data-i18n="nav.ws">创意工坊</a>
+      <a href="/workshop/" data-i18n="nav.fb">留言墙</a>
+      <a href="/recent.html#download" data-i18n="nav.dl">卡下载</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap narrow">
+<div class="page-register" aria-hidden="true"><span>04 / SUBMISSION</span><span>TOKYO 2051</span></div>
+  <header class="page-masthead"><h1 class="page-title" data-i18n="sub.title">我要投稿</h1>
+  <p class="page-sub" data-ui-zh="填写资料、检查正文，再提交审核。你的内容不会在投稿时直接安装给玩家。" data-ui-en="Describe your submission, check the content, then submit for review. Submitting does not install it for players." data-ui-ja="資料と本文を確認して審査に提出します。投稿だけでプレイヤーへ導入されることはありません。">填写资料、检查正文，再提交审核。你的内容不会在投稿时直接安装给玩家。</p></header>
+  <nav class="section-tabs" aria-label="投稿步骤 / Submission steps / 投稿手順"><a href="#basic-title"><span aria-hidden="true">01 / </span><span data-ui-zh="基础资料" data-ui-en="Basics" data-ui-ja="基本情報">基础资料</span></a><a href="#content-title"><span aria-hidden="true">02 / </span><span data-ui-zh="投稿正文" data-ui-en="Content" data-ui-ja="本文">投稿正文</span></a><a href="#send-title"><span aria-hidden="true">03 / </span><span data-ui-zh="检查与提交" data-ui-en="Review" data-ui-ja="確認">检查与提交</span></a></nav><div id="form-panel" class="panel">
+    <div id="loginbar" class="toolbar login-actions">
+      <span id="loginstate" class="meta" role="status" aria-live="polite">正在检查登录状态……</span>
+      <a id="mylink" href="/my.html" hidden data-ui-zh="我的投稿" data-ui-en="My posts" data-ui-ja="マイ投稿">我的投稿</a>
+      <button id="loginbtn" class="btn sm" hidden data-i18n="sub.login.btn">登录 / 注册</button>
+      <button id="cancel-login" class="btn sm ghost" hidden data-ui-zh="取消登录" data-ui-en="Cancel login" data-ui-ja="ログインを中止">取消登录</button>
+      <button id="logoutbtn" class="btn sm ghost" hidden data-ui-zh="退出登录" data-ui-en="Sign out" data-ui-ja="ログアウト">退出登录</button>
+    </div>
+    <section class="form-section" aria-labelledby="basic-title">
+      <h2 id="basic-title" class="form-section-title" data-ui-zh="1 · 基础资料" data-ui-en="1 · Basic details" data-ui-ja="1 · 基本情報">1 · 基础资料</h2>
+      <label class="fld" for="type" data-i18n="sub.type">类型</label>
+      <select id="type"></select>
+      <p><a href="/workshop/submission-guide.html" target="_blank" rel="noopener" data-ui-zh="填写指南与完整示例（新窗口）" data-ui-en="Writing guide and complete examples (new tab)" data-ui-ja="記入ガイドと完成例（新しいタブ）">填写指南与完整示例（新窗口）</a></p>
+      <p class="hint" data-ui-zh="首期开放 NPC 人物、玩家人设与任务委托。其他类别的历史稿继续保留。" data-ui-en="NPCs, player backgrounds and quests are open. Existing posts in other categories are retained." data-ui-ja="NPC・プレイヤー背景・依頼を受付中です。他の種類の旧稿は保持されます。">首期开放 NPC 人物、玩家人设与任务委托。其他类别的历史稿继续保留。</p>
+      <label class="fld" for="title" data-i18n="sub.title.f">标题（必填，最多 60 字）</label>
+      <input id="title" maxlength="60" required data-ui-ph-zh="给这份投稿起个名字" data-ui-ph-en="Name this submission" data-ui-ph-ja="投稿の名前">
+      <label class="fld" for="summary" data-ui-zh="一句话简介（必填）" data-ui-en="One-sentence summary (required)" data-ui-ja="一文の概要（必須）">一句话简介（必填）</label>
+      <textarea id="summary" maxlength="2000" required data-ui-ph-zh="它是什么、怎么用、有哪些亮点……" data-ui-ph-en="What is it, how is it used, and what makes it interesting?" data-ui-ph-ja="内容、使い方、見どころなど…"></textarea>
+      <details class="form-options">
+        <summary data-ui-zh="署名与标签（可选）" data-ui-en="Credit and tags (optional)" data-ui-ja="名義とタグ（任意）">署名与标签（可选）</summary>
+        <label class="fld" for="author" data-i18n="sub.author">署名（可选，最多 24 字）</label>
+        <input id="author" maxlength="24" data-ui-ph-zh="匿名" data-ui-ph-en="Anonymous" data-ui-ph-ja="匿名">
+        <label class="fld" for="tags" data-i18n="sub.tags">标签（逗号分隔，最多 8 个）</label>
+        <input id="tags" data-ui-ph-zh="例如：调查,支线" data-ui-ph-en="For example: investigation, side story" data-ui-ph-ja="例：調査,サイドストーリー">
+      </details>
+    </section>
+    <section class="form-section" aria-labelledby="content-title">
+      <h2 id="content-title" class="form-section-title" data-ui-zh="2 · 主体内容" data-ui-en="2 · Main content" data-ui-ja="2 · 投稿本文">2 · 投稿正文</h2>
+      <div id="contract-form"><p class="hint" data-ui-zh="正在读取模板与地点目录……" data-ui-en="Loading templates and locations…" data-ui-ja="テンプレートと場所を読み込んでいます…">正在读取模板与地点目录……</p></div>
+      <button type="button" class="btn ghost" id="preview-content" data-ui-zh="校验与预览" data-ui-en="Check and preview" data-ui-ja="検証とプレビュー">校验与预览</button><div id="content-preview" aria-live="polite"></div>
+      <details class="form-options"><summary data-ui-zh="技术详情" data-ui-en="Technical details" data-ui-ja="技術情報">技术详情</summary><pre id="preview-json" class="jsonbox"></pre></details>
+      <details id="original-draft" class="form-options" hidden><summary data-ui-zh="查看修改前原稿（保留不变）" data-ui-en="Original draft (preserved)" data-ui-ja="変更前の原稿（保持）">查看修改前原稿（保留不变）</summary><pre id="payload"></pre><button type="button" class="btn ghost" id="export-original">导出原稿 / Export original</button></details>
+    </section>
+    <section class="form-section" aria-labelledby="send-title">
+      <h2 id="send-title" class="form-section-title" data-ui-zh="4 · 成稿预览与提交" data-ui-en="4 · Preview and submit" data-ui-ja="4 · 確認して提出">3 · 检查并提交</h2>
+      <div id="attachment-controls">
+        <label class="fld" for="file" data-i18n="sub.file">附件（可选，≤10MB；.png / .json / .txt / .js）</label>
+        <input id="file" type="file" accept=".png,.json,.txt,.js">
+        <p class="hint" data-ui-zh="附件审核后单独下载，不会自动安装或执行。任务投稿不使用附件。" data-ui-en="Approved attachments are separate downloads; they are not installed or executed automatically. Task submissions do not use attachments." data-ui-ja="承認された添付は個別ダウンロード用です。自動導入・実行はしません。任務投稿には添付を使いません。">附件审核后单独下载，不会自动安装或执行。任务投稿不使用附件。</p>
+      </div>
+      <p class="hint" data-ui-zh="每小时最多 10 次投稿、改稿或附件操作。内容须为本人原创或已获授权；修改会重新进入待审核。" data-ui-en="Up to 10 submission, edit or attachment actions per hour. Use your own or authorized content; edits return to review." data-ui-ja="投稿・編集・添付は合計で毎時 10 回まで。本人制作または許可済みの内容を使用してください。編集後は再審査になります。">每小时最多 10 次投稿、改稿或附件操作。内容须为本人原创或已获授权；修改会重新进入待审核。</p>
+      <div class="toolbar form-actions">
+        <button id="send" class="btn" data-i18n="sub.send">提交投稿</button>
+        <button id="export-draft" class="btn ghost" data-ui-zh="导出投稿草稿" data-ui-en="Export draft" data-ui-ja="下書きを書き出す">导出投稿草稿</button>
+        <button id="export-package" class="btn ghost" hidden data-ui-zh="下载已审兼容包" data-ui-en="Download reviewed package" data-ui-ja="承認済みパッケージ">下载已审兼容包</button>
+        <a href="/workshop.html" data-i18n="sub.back">← 返回目录</a>
+      </div>
+      <p id="msg" class="msg" role="status" aria-live="polite"></p>
+    </section>
+  </div>
+  <section id="submission-success" class="panel submission-success" hidden tabindex="-1" aria-labelledby="success-title">
+    <h2 id="success-title" data-ui-zh="已提交，等待审核" data-ui-en="Submitted for review" data-ui-ja="提出しました・審査待ち">已提交，等待审核</h2>
+    <p id="success-description" role="status" aria-live="polite"></p>
+    <div id="keybox" class="keybox" style="display:none">
+      <strong data-ui-zh="额外的编辑密钥，请保密：" data-ui-en="Additional edit key — keep it private:" data-ui-ja="追加の編集キー・非公開にしてください：">额外的编辑密钥，请保密：</strong>
+      <p><code id="keyval"></code></p>
+      <div class="toolbar"><button id="copy-key" class="btn ghost" data-ui-zh="复制密钥" data-ui-en="Copy key" data-ui-ja="キーをコピー">复制密钥</button><button id="export-key" class="btn ghost" data-ui-zh="保存编辑凭据" data-ui-en="Save edit credentials" data-ui-ja="編集情報を保存">保存编辑凭据</button></div>
+      <p class="hint" data-ui-zh="登录作者可直接在“我的投稿”管理。早期匿名稿仍需原编辑密钥；请勿公开凭据文件。" data-ui-en="Signed-in authors can manage this in My posts. Older anonymous posts still need their original edit key. Keep the credentials file private." data-ui-ja="ログインした作者はマイ投稿で管理できます。旧匿名投稿には元の編集キーが必要です。編集情報ファイルは公開しないでください。">登录作者可直接在“我的投稿”管理。早期匿名稿仍需原编辑密钥；请勿公开凭据文件。</p>
+    </div>
+    <p id="attachment-result" class="msg" role="status" aria-live="polite"></p>
+    <button id="retry-attachment" class="btn ghost" hidden data-ui-zh="重试上传附件" data-ui-en="Retry attachment" data-ui-ja="添付を再送信">重试上传附件</button>
+    <div class="toolbar"><a class="btn" href="/my.html" data-ui-zh="去我的投稿" data-ui-en="Go to my posts" data-ui-ja="マイ投稿へ">去我的投稿</a><button id="new-submission" class="btn ghost" data-ui-zh="再投一份" data-ui-en="Start another" data-ui-ja="もう一件投稿">再投一份</button></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="fline"><span data-i18n="footer.line">CYBER2051.TOP · 粉丝二创作品，与官方无关</span></div>
+</footer>
+
+<script>
+'use strict';
+const $ = (id) => document.getElementById(id);
+const authHeaders = (extra) => CXXUser.headers(extra);
+const submissionStrings=new Map();
+const SL=(zh,en,ja)=>{const lang=window.CXXI18N?.current()||'zh';const value=window.CXXUI?.t?window.CXXUI.t(zh,en,ja):lang==='en'?en:lang==='ja'?ja:zh;submissionStrings.set(value,[zh,en,ja]);return value;};
+let loginName=null,loginPending=false;
+function renderLogin(name){
+  loginName=name;
+  $('loginstate').textContent=name?SL('已登录：','Signed in: ','ログイン中：')+name:SL('提交需要 登录 / 注册；草稿可随时导出。','Sign in to submit; drafts can be exported anytime.','提出にはログインが必要です。下書きはいつでも書き出せます。');
+  $('loginbtn').hidden=Boolean(name);$('logoutbtn').hidden=!name;$('mylink').hidden=!name;
+}
+$('loginbtn').addEventListener('click',async()=>{
+  if(loginPending)return;loginPending=true;$('loginbtn').disabled=true;$('cancel-login').hidden=false;
+  try{const user=await CXXUser.login({onState:state=>{$('loginstate').textContent=state.message;}});renderLogin(user.displayName);}
+  catch(e){$('loginstate').textContent=e.message;}
+  finally{loginPending=false;$('loginbtn').disabled=false;$('cancel-login').hidden=true;}
+});
+$('cancel-login').addEventListener('click',()=>CXXUser.cancelLogin());
+$('logoutbtn').addEventListener('click',()=>{CXXUser.logout();renderLogin(null);});
+document.addEventListener('cxx-user-changed',e=>{if(!loginPending)renderLogin(e.detail.account?.displayName||null);});
+CXXUser.check().then(user=>renderLogin(user?.displayName||null)).catch(()=>{$('loginstate').textContent=SL('暂时无法检查登录状态，可以重试登录。','Could not check login. You can retry login.','ログイン状態を確認できません。再度ログインできます。');$('loginbtn').hidden=false;});
+function renderTypes(){const value=$('type').value;$('type').replaceChildren();for(const form of CxxSubmissionTemplate.templates){const o=document.createElement('option');o.value=form.type;o.textContent=SL(...form.title);$('type').append(o);}if([...$('type').options].some(o=>o.value===value))$('type').value=value;}
+renderTypes();
+const contractForm = CxxContractForm($('contract-form'));
+let paused=false,lastPreview=null,previewTicket=0;
+let editing = null, completed=false,submitting=false,dirty=false,created=null,attachmentFile=null,uploading=false;
+const editId = new URLSearchParams(location.search).get('edit');
+const templateOf = value => value==='character'?'npc':value;
+const typeOf = value => ['encounter','function_zone'].includes(value)?'world_factor':value==='side_story'?'contract':value;
+function typeChanged() { $('attachment-controls').hidden=typeOf($('type').value)==='contract'||paused; contractForm.setKind(templateOf($('type').value));lastPreview=null;previewTicket++;$('content-preview').replaceChildren();$('preview-json').textContent=''; }
+$('type').addEventListener('change', typeChanged);
+const initialType=new URLSearchParams(location.search).get('type');if([...$('type').options].some(o=>o.value===initialType))$('type').value=initialType;
+typeChanged();
+function downloadJson(value, name) {
+  const url=URL.createObjectURL(new Blob([JSON.stringify(value,null,2)+'\n'],{type:'application/json'}));
+  const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+async function formData(validate=true) {
+  if(paused)throw Error(SL('该类别暂停改投，可导出原稿。','This category is paused. Export the original instead.','この種類の改稿は停止中です。原稿を書き出せます。'));
+  await contractForm.ready;
+  const payload=contractForm.read({validate});
+  if(!payload||typeof payload!=='object'||Array.isArray(payload))throw Error(SL('内容须为 JSON 对象','Content must be a JSON object','本文は JSON オブジェクトにしてください'));
+  if(validate&&!$('title').value.trim()){$('title').focus?.();throw Error(SL('请填写标题','Please enter a title','タイトルを入力してください'));}
+  if(validate&&!$('summary').reportValidity())throw Error(SL('请填写一句话简介','Add a one-sentence summary','一文の概要を記入してください'));
+  const file=typeOf($('type').value)==='contract'?null:$('file').files?.[0];
+  if(file&&file.size>10*1024*1024)throw Error(SL('附件超过 10MB，请换一个文件。','Attachment exceeds 10MB. Choose another file.','添付は 10MB 以下にしてください。'));
+  return {type:typeOf($('type').value),title:$('title').value.trim(),authorName:$('author').value.trim(),tags:$('tags').value.split(/[,，]/).map(s=>s.trim()).filter(Boolean).slice(0,8),summary:$('summary').value.trim(),payload};
+}
+function say(text,kind=''){const el=$('msg');el.textContent=text;el.className='msg '+kind;}
+async function validatePreview(data){
+ const r=await fetch('/api/workshop/content/preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}),j=await r.json();
+ if(!r.ok||!j.ok)throw Error(j.message||SL('内容校验失败','Content validation failed','内容の検証に失敗しました'));
+ return j.preview;
+}
+$('preview-content').addEventListener('click',async()=>{const ticket=++previewTicket;try{const data=await formData(),preview=await validatePreview(data);if(ticket!==previewTicket)return;lastPreview=preview;CxxSubmissionView.render($('content-preview'),preview);$('preview-json').textContent=JSON.stringify({title:data.title,validation:preview,payload:data.payload},null,2);say(SL('校验通过；请阅读成稿后提交审核。','Validated. Read the draft before submitting for review.','検証済みです。本文を確認して審査に提出してください。'),'ok');}catch(e){if(ticket!==previewTicket)return;lastPreview=null;$('content-preview').replaceChildren();say(e.message,'err');}});
+function showComplete(){
+  completed=true;dirty=false;$('send').disabled=true;$('form-panel').hidden=true;$('submission-success').hidden=false;
+  $('success-description').textContent=SL('内容已保存并进入待审核。审核通过后公开展示；发行和玩家安装另行进行。','Your content is saved and awaiting review. Approval makes it public; release and player installation are separate.','内容を保存して審査待ちになりました。承認後に公開され、配信と導入は別途行います。')+(editing?' #'+editing.id+' · rev'+editing.revision:' #'+created.id);
+  $('submission-success').focus?.();$('submission-success').scrollIntoView?.({behavior:'auto',block:'start'});
+}
+$('export-draft').addEventListener('click',async()=>{try{downloadJson(paused?editing:await formData(false),'workshop-submission-draft.json');say(SL('已导出草稿；这份草稿还不是已审安装包。','Draft exported. This is not a reviewed install package.','下書きを書き出しました。承認済み導入パッケージではありません。'),'ok');}catch(e){say(e.message,'err');}});
+$('export-package').addEventListener('click',async()=>{
+  try{const r=await fetch('/api/workshop/submissions/'+editing.id+'/contract-package',{cache:'no-store'}),j=await r.json();if(!r.ok||!j.ok)throw Error(SL('该修订尚未审核','This revision has not been approved','この版は承認されていません'));downloadJson(j.artifact.package,j.artifact.package.id+'-'+j.artifact.package.version+'.json');say(SL('已导出未签名内容定义；官方签名发行后玩家才能订阅。','Unsigned definition exported. Players can subscribe after official signed release.','未署名の定義を書き出しました。公式署名配信後に購読できます。'),'ok');}catch(e){say(e.message,'err');}
+});
+const editReady = (async () => {
+  if(!editId)return;
+  if(!/^\d+$/.test(editId))throw Error(SL('改稿编号无效','Invalid edit ID','編集番号が無効です'));
+  const r=await fetch('/api/workshop/submissions/'+editId+'/edit',{headers:authHeaders(),cache:'no-store'}),j=await r.json();
+  if(!r.ok||!j.ok)throw Error(SL('请以作者身份登录后打开改稿','Sign in as the author to edit this post','作者としてログインしてから編集してください'));
+  editing=j.item;await contractForm.ready;
+  for(const [field,key]of [['title','title'],['summary','summary'],['author','authorName'],['type','type']])$(field).value=editing[key]||'';
+  $('tags').value=editing.tags.join(',');$('payload').textContent=JSON.stringify(editing.payload,null,2);$('original-draft').hidden=false;
+  const kind=editing.payload.templateKind||templateOf(editing.type);$('type').value=kind==='npc'?'character':kind;
+  paused=editing.status==='withdrawn'||!CxxSubmissionTemplate.isOpen(editing.type,editing.payload);$('type').disabled=paused;
+  if(paused){const o=document.createElement('option');o.value=kind;o.textContent=SL('历史稿（暂停改投）','Legacy post (paused)','旧稿（改稿停止）');$('type').append(o);$('type').value=kind;}
+  typeChanged();if(!paused)contractForm.fill(editing.payload);
+  $('send').disabled=paused;$('preview-content').disabled=paused;
+  if(!paused&&editing.payload.templateVersion!==CxxSubmissionTemplate.version)say(SL('已带入能识别的原稿栏目；请对照原文补齐缺项，保存前不会修改原稿。','Recognized fields loaded. Complete missing fields against the original before saving.','認識できた欄を読み込みました。原稿と照合し不足欄を補ってください。'));
+  $('send').removeAttribute('data-i18n');$('send').textContent=SL('保存改稿（重新待审）','Save edits (review again)','変更を保存（再審査）');
+  $('export-package').hidden=editing.status!=='approved'||editing.type==='code_component';if(paused)say(SL('历史稿保留，可导出或在我的投稿中撤回。','Legacy post retained. Export it or withdraw it from My posts.','旧稿を保持しています。書き出し、またはマイ投稿から取下げができます。'));else if(editing.payload.templateVersion===CxxSubmissionTemplate.version)say(SL('正在编辑 ','Editing ','編集中：')+'#'+editing.id+' · rev'+editing.revision);
+})().catch(error=>{say(error.message,'err');$('send').disabled=true;});
+async function uploadAttachment(){
+  if(uploading||!(editing||created)||!attachmentFile)return;
+  uploading=true;$('retry-attachment').hidden=true;$('attachment-result').textContent=SL('正在上传附件……','Uploading attachment…','添付を送信しています…');
+  try{
+    const bytes=new Uint8Array(await attachmentFile.arrayBuffer());
+    const target=editing||created;
+    const r=await fetch('/api/workshop/submissions/'+target.id+'/attachment',{method:'POST',headers:authHeaders({...(!editing&&created?.editKey?{'X-Edit-Key':created.editKey}:{}),'X-Filename':encodeURIComponent(attachmentFile.name),'Content-Type':'application/octet-stream'}),body:bytes});
+    if(!r.ok)throw Error(SL('投稿已保存，但附件未上传成功。','Post saved, but attachment upload failed.','投稿は保存済みですが、添付の送信に失敗しました。'));
+    const result=await r.json();if(editing){editing.revision=result.revision;editing.status='pending';showComplete();}
+    $('attachment-result').textContent=SL('附件也已上传，等待审核。','Attachment uploaded and awaiting review.','添付も送信しました。審査待ちです。');$('attachment-result').className='msg ok';attachmentFile=null;
+  }catch(e){$('attachment-result').textContent=e.message;$('attachment-result').className='msg err';$('retry-attachment').hidden=false;}
+  finally{uploading=false;}
+}
+$('export-original').addEventListener('click',()=>{if(editing)downloadJson(editing,'workshop-original-'+editing.id+'-rev'+editing.revision+'.json');});
+$('retry-attachment').addEventListener('click',uploadAttachment);
+$('send').addEventListener('click',async()=>{
+  if(submitting||completed||paused)return;
+  submitting=true;$('send').disabled=true;
+  try{
+  say('');let data;
+  try{await editReady;data=await formData();await validatePreview(data);if(editId&&!editing)throw Error(SL('改稿载入失败，请重新登录','Could not load edits. Sign in again.','編集を読み込めません。再ログインしてください。'));}
+  catch(e){say(e.message,'err');return;}
+  say(SL('提交中……','Submitting…','送信中…'));
+  try{
+    const r=await fetch(editing?'/api/workshop/submissions/'+editing.id+'/update':'/api/workshop/submissions',{method:'POST',headers:authHeaders({'Content-Type':'application/json'}),body:JSON.stringify({...data,...(editing?{baseRevision:editing.revision}:{})})});
+    const j=await r.json().catch(()=>({}));
+    if(editing&&r.ok&&j.ok){editing.revision=j.revision;editing.status='pending';$('export-package').hidden=true;attachmentFile=data.type==='contract'?null:$('file').files?.[0];showComplete();if(attachmentFile)await uploadAttachment();}
+    else if(r.status===201&&j.editKey){created={id:j.id,editKey:j.editKey};$('keyval').textContent=j.editKey;$('keybox').style.display='block';attachmentFile=data.type==='contract'?null:$('file').files?.[0];showComplete();if(attachmentFile)await uploadAttachment();}
+    else if(r.status===401){renderLogin(null);say(SL('登录已过期，请重新登录后提交；填写内容仍保留。','Login expired. Sign in again; your draft is kept.','ログイン期限切れです。入力を保持しています。再ログインしてください。'),'err');}
+    else if(r.status===409)say(SL('这份稿件已被更新。请先导出当前草稿，再重新打开改稿对照。','This post changed elsewhere. Export your draft, then reopen the editor to compare.','別の場所で更新されました。下書きを書き出してから編集を開き直してください。'),'err');
+    else if(r.status===429)say(SL('操作太频繁，请稍后再试；填写内容仍保留。','Too many actions. Retry later; your draft is kept.','操作が多すぎます。入力は保持しています。後で再試行してください。'),'err');
+    else if(j.message)say(j.message,'err');
+    else say(SL('提交未成功，请检查填写内容后重试。','Submission failed. Check your entries and retry.','提出できませんでした。入力を確認して再試行してください。'),'err');
+  }catch{say(SL('网络中断，未确认是否提交成功。请先在“我的投稿”确认，避免重复投稿。','Connection lost; submission is unconfirmed. Check My posts before retrying to avoid duplicates.','接続が途切れ、提出結果を確認できません。重複を避けるためマイ投稿を確認してください。'),'err');}
+  }finally{submitting=false;$('send').disabled=completed||paused;}
+});
+$('copy-key').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(created.editKey);$('attachment-result').textContent=SL('密钥已复制，请保密。','Key copied. Keep it private.','キーをコピーしました。非公開にしてください。');}catch{$('attachment-result').textContent=SL('复制未成功，可选中上方密钥手动复制。','Copy failed. Select the key above and copy it manually.','上のキーを選択して手動でコピーしてください。');}});
+$('export-key').addEventListener('click',()=>{if(created)downloadJson({id:created.id,editKey:created.editKey},'workshop-edit-credentials-'+created.id+'.json');});
+$('new-submission').addEventListener('click',()=>{
+  if(editing){location.href='/workshop/submit.html';return;}
+  if(uploading)return;
+  for(const id of ['title','author','tags','summary','file'])$(id).value='';
+  $('type').value='character';contractForm.reset();typeChanged();
+  created=null;attachmentFile=null;completed=false;dirty=false;$('keyval').textContent='';$('keybox').style.display='none';
+  $('submission-success').hidden=true;$('form-panel').hidden=false;$('send').disabled=false;say('');$('title').focus?.();
+});
+document.addEventListener?.('input',event=>{if($('form-panel').contains?.(event.target)){dirty=true;previewTicket++;lastPreview=null;$('content-preview').replaceChildren();$('preview-json').textContent='';}});
+document.addEventListener?.('change',event=>{if($('form-panel').contains?.(event.target)){dirty=true;previewTicket++;lastPreview=null;$('content-preview').replaceChildren();$('preview-json').textContent='';}});
+window.addEventListener?.('beforeunload',event=>{if(dirty&&!completed){event.preventDefault();event.returnValue='';}});
+document.addEventListener?.('cxx-lang-changed',()=>{
+  if(!paused)renderTypes();if(lastPreview)CxxSubmissionView.render($('content-preview'),lastPreview);
+  if(!loginPending)renderLogin(loginName);
+  if(editing)$('send').textContent=SL('保存改稿（重新待审）','Save edits (review again)','変更を保存（再審査）');
+  if(completed)showComplete();
+  for(const id of ['msg','attachment-result']){const el=$(id);const value=submissionStrings.get(el.textContent);if(value)el.textContent=SL(...value);}
+});
+</script>
+</body>
+</html>

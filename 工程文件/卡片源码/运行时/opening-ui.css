@@ -1,0 +1,1165 @@
+/* Character creation: the "捏人台" layout (DESIGN.md 10.10).
+   Steps on the left, a stage that follows the current choice in the middle, the options panel on the right,
+   and the command bar across the foot. Profile and story steps bring their own two-column view,
+   so their panel spans the stage. */
+.cxx-opening-flow {
+  box-sizing: border-box;
+  container-type: inline-size;
+  container-name: cxx-opening;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 232px minmax(0,1fr) 448px;
+  grid-template-rows: minmax(0,1fr) auto auto;
+  grid-template-areas: "rail stage body" "feedback feedback feedback" "foot foot foot";
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  overscroll-behavior: contain;
+  color-scheme: dark;
+  background: color-mix(in srgb, var(--cxx-canvas) 92%, transparent);
+  color: var(--cxx-on-canvas);
+  font: 16px/1.6 var(--cxx-font-ui);
+  scrollbar-width: thin;
+  scrollbar-color: var(--cxx-line) transparent;
+}
+
+.cxx-opening-flow *,
+.cxx-opening-flow *::before,
+.cxx-opening-flow *::after {
+  box-sizing: border-box;
+}
+
+.cxx-opening-flow[hidden],
+.cxx-opening-flow [hidden] {
+  display: none!important;
+}
+
+.cxx-opening-flow button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.cxx-opening-flow button:disabled {
+  cursor: default;
+  opacity: .5;
+}
+
+.cxx-opening-flow :is(button,input,select,textarea,summary):focus-visible {
+  outline: 2px solid var(--cxx-interactive);
+  outline-offset: 2px;
+}
+
+/* The brand line and step counter stay for assistive technology; the rail shows the steps. */
+.opening-header {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Step rail ---------- */
+.opening-steps {
+  grid-area: rail;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+  overflow: auto;
+  padding: 20px 0 16px 20px;
+  border-right: 1px solid var(--cxx-line);
+}
+
+.opening-steps>button {
+  flex: none;
+  display: grid;
+  grid-template-columns: 30px minmax(0,1fr);
+  align-items: center;
+  min-height: 48px;
+  padding: 4px 12px;
+  border: 0;
+  border-left: 2px solid transparent;
+  background: transparent;
+  color: var(--cxx-on-canvas-muted);
+  text-align: left;
+  font-size: 15px;
+  transition: background-color .16s,color .16s;
+}
+
+.opening-step-num {
+  color: inherit;
+  font: var(--cxx-weight-latin) 14px/1 var(--cxx-font-latin);
+  font-variant-numeric: tabular-nums;
+}
+
+.opening-step-value {
+  grid-column: 2;
+  overflow: hidden;
+  color: var(--cxx-on-canvas-muted);
+  font-size: 13px;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.opening-steps>button[data-complete=true] {
+  color: var(--cxx-on-canvas);
+}
+
+.opening-steps>button[aria-current=step] {
+  border-left-color: var(--cxx-structure);
+  background: color-mix(in srgb, var(--cxx-structure) 12%, transparent);
+  color: var(--cxx-heading);
+  font-weight: 600;
+}
+
+@media (hover:hover) and (pointer:fine) {
+  .opening-steps>button:hover:enabled:not([aria-current=step]) {
+    color: var(--cxx-on-canvas);
+  }
+}
+
+/* ---------- Stage ---------- */
+.opening-stage {
+  grid-area: stage;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-right: 1px solid var(--cxx-line);
+  background: var(--cxx-canvas);
+}
+
+.opening-stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(0deg,color-mix(in srgb, var(--cxx-canvas) 92%, transparent),transparent 55%);
+}
+
+.opening-stage-art {
+  position: absolute;
+  inset: 0;
+}
+
+.opening-stage-art>img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+[data-cxx-theme="yellow"] .opening-stage-art[data-kind=scene]>img {
+  /* Scene pictures follow the theme like the game hub (DESIGN.md 10.8). */
+  filter: url(#cxx-scene-yellow);
+}
+
+[data-cxx-theme="night"] .opening-stage-art[data-kind=scene]>img {
+  filter: grayscale(1) brightness(.6);
+}
+
+.opening-stage-art>.identity-art-custom {
+  position: absolute;
+  inset: 0;
+}
+
+/* Cyberware icons and the attribute chart sit centred above the caption. */
+.opening-stage-art[data-kind=radar] {
+  display: grid;
+  place-items: center;
+  padding: 32px 32px 160px;
+}
+
+.opening-forge-bench {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.opening-forge-bench::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  width: 520px;
+  height: 120px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse,color-mix(in srgb,var(--loadout-grade) 30%,transparent),transparent 70%);
+}
+
+.opening-forge-ring {
+  position: absolute;
+  left: 50%;
+  top: 60%;
+  width: 420px;
+  height: 70px;
+  transform: translateX(-50%);
+  border: 1px solid color-mix(in srgb,var(--loadout-grade) 60%,transparent);
+  border-radius: 50%;
+}
+
+.opening-forge-hero {
+  position: relative;
+  width: 62%;
+  max-width: 480px;
+  z-index: 2;
+  filter: drop-shadow(0 18px 30px color-mix(in srgb,var(--cxx-shadow) 67%,transparent));
+}
+
+.opening-forge-hero img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.opening-forge-stats {
+  position: absolute;
+  right: 28px;
+  top: 24px;
+  display: grid;
+  gap: 8px;
+  width: min(220px,calc(100% - 56px));
+  margin: 0;
+  z-index: 4;
+}
+
+.opening-forge-stats>div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  color: var(--cxx-on-canvas-muted);
+  font-size: 13px;
+}
+
+.opening-forge-stats dd {
+  margin: 0;
+  color: var(--cxx-on-canvas);
+  font: var(--cxx-weight-latin) 15px/1.4 var(--cxx-font-latin);
+  font-variant-numeric: tabular-nums;
+}
+
+.opening-stage>.cxx-visual-project { z-index:3; }
+
+.opening-radar {
+  width: 100%;
+  height: 100%;
+  max-width: 560px;
+}
+
+.opening-radar text {
+  fill: var(--cxx-on-canvas-muted);
+  font: 13px var(--cxx-font-ui);
+}
+
+.opening-radar .opening-radar-value {
+  fill: var(--cxx-on-canvas);
+  font: var(--cxx-weight-latin) 15px var(--cxx-font-latin);
+}
+
+.opening-radar .opening-radar-web {
+  fill: none;
+  stroke: var(--cxx-line);
+}
+
+.opening-radar .opening-radar-anchor {
+  fill: none;
+  stroke: var(--cxx-on-canvas-muted);
+  stroke-dasharray: 4 4;
+}
+
+.opening-radar .opening-radar-shape {
+  fill: color-mix(in srgb, var(--cxx-structure) 22%, transparent);
+  stroke: var(--cxx-structure);
+  stroke-width: 2;
+}
+
+.opening-stage-caption {
+  position: absolute;
+  z-index: 1;
+  left: 28px;
+  right: 28px;
+  bottom: 24px;
+}
+
+.opening-stage-caption small {
+  color: var(--cxx-on-canvas-muted);
+  font: var(--cxx-weight-latin) 12px/1.3 var(--cxx-font-latin);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.opening-stage-caption h3 {
+  margin: 2px 0 0;
+  color: var(--cxx-heading);
+  font-size: var(--cxx-size-title);
+  line-height: 1.2;
+  font-weight: var(--cxx-weight-heading);
+}
+
+.opening-stage-caption p {
+  max-width: 36em;
+  margin: 8px 0 0;
+  color: var(--cxx-on-canvas);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.opening-stage-scan {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: var(--cxx-structure);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- Options panel ---------- */
+.cxx-opening-flow .opening-body {
+  grid-area: body;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 22px 24px;
+  background: var(--cxx-panel);
+  color: var(--cxx-text);
+  scroll-padding: 16px;
+}
+
+.cxx-opening-flow .opening-body>* {
+  flex: none;
+}
+
+.cxx-opening-flow .opening-body h2:focus-visible {
+  outline: none;
+}
+
+/* Profile, story and draft recovery use their own wide view. */
+.cxx-opening-flow:is([data-step=preferences],[data-step=profile],[data-step=scenario],[data-restore=true]) .opening-stage {
+  display: none;
+}
+
+.cxx-opening-flow:is([data-step=preferences],[data-step=profile],[data-step=scenario],[data-restore=true]) .opening-body {
+  grid-column: stage-start / body-end;
+}
+
+.cxx-opening-flow[data-step=profile] .opening-body {
+  padding: 0;
+  overflow: hidden;
+}
+
+.cxx-opening-flow[data-step=scenario] .opening-body {
+  padding: 16px 24px;
+}
+
+/* The selected origin's description is read aloud; the stage shows it on screen. */
+.opening-origin-description {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+/* ---------- Command bar ---------- */
+.opening-footer {
+  grid-area: foot;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 64px;
+  padding: 8px 24px;
+  border-top: 1px solid var(--cxx-line);
+  background: var(--cxx-canvas);
+}
+
+.opening-key {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  color: var(--cxx-on-canvas-muted);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.cxx-game-menu .opening-key {
+  display: inline-flex;
+}
+
+.opening-kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 28px;
+  height: 24px;
+  padding: 0 6px;
+  border: 1px solid currentColor;
+  font: var(--cxx-weight-latin) 13px/1 var(--cxx-font-latin);
+}
+
+.opening-footnote {
+  margin-right: auto;
+  color: var(--cxx-on-canvas-muted);
+  font-size: 14px;
+}
+
+.cxx-opening-flow :is(.opening-back,.opening-next) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--cxx-line);
+  background: var(--cxx-panel);
+  color: var(--cxx-text);
+  white-space: nowrap;
+  transition: background-color .16s,border-color .16s,filter .16s;
+}
+
+.cxx-opening-flow .opening-next {
+  border-color: var(--cxx-interactive);
+  background: var(--cxx-interactive);
+  color: var(--cxx-on-interactive);
+  font-weight: 700;
+}
+
+@media (hover:hover) and (pointer:fine) {
+  .cxx-opening-flow .opening-back:hover:enabled {
+    border-color: var(--cxx-interactive);
+  }
+
+  .cxx-opening-flow .opening-next:hover:enabled {
+    filter: brightness(1.1);
+  }
+}
+
+.cxx-opening-flow .opening-body :is(.opening-back,.opening-next) {
+  align-self: flex-start;
+}
+
+/* ---------- Notices and recovery ---------- */
+.cxx-opening-flow .opening-feedback {
+  grid-area: feedback;
+  display: grid;
+  gap: 8px;
+  padding: 10px 24px;
+  border-top: 1px solid var(--cxx-line);
+  background: var(--cxx-panel);
+  color: var(--cxx-text);
+}
+
+.opening-notice-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.opening-notice-row .opening-notice,
+.cxx-opening-flow .opening-notice {
+  flex: 1;
+  margin: 0;
+  padding-left: 12px;
+  border-left: 3px solid var(--cxx-attention);
+  font-size: 15px;
+}
+
+.cxx-opening-flow .opening-guide,
+.opening-recovery button {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--cxx-interactive);
+  background: transparent;
+  color: var(--cxx-interactive);
+}
+
+.opening-error-details>summary {
+  min-height: 44px;
+  align-content: center;
+  color: var(--cxx-muted);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.opening-recovery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.opening-recovery p {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--cxx-muted);
+  font-size: 14px;
+}
+
+.opening-recovery textarea {
+  flex-basis: 100%;
+  min-height: 120px;
+  padding: 8px;
+  border: 1px solid var(--cxx-line);
+  background: var(--cxx-canvas);
+  color: var(--cxx-text);
+  font: 13px/1.5 var(--cxx-font-mono);
+}
+
+/* ---------- Story step: band and scene directory, then the story page ---------- */
+.opening-scenario {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  flex: 1 0 auto;
+}
+
+.opening-scenario-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.opening-scenario-toolbar button,
+.opening-crumbs button,
+.opening-special {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--cxx-line);
+  background: var(--cxx-panel);
+  color: var(--cxx-text);
+}
+
+.opening-scenario-toolbar span {
+  color: var(--cxx-muted);
+  font-size: 14px;
+}
+
+.opening-scenario-toolbar select {
+  margin-left: auto;
+  min-height: 44px;
+  max-width: 100%;
+  padding: 0 12px;
+  border: 1px solid var(--cxx-line);
+  background: var(--cxx-canvas);
+  color: var(--cxx-text);
+  font: inherit;
+  font-size: 16px;
+}
+
+.opening-scenario iframe {
+  display: block;
+  width: 100%;
+  flex: 1;
+  min-height: 420px;
+  border: 1px solid var(--cxx-line);
+  background: var(--cxx-canvas);
+}
+
+.cxx-opening-flow .opening-crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  color: var(--cxx-muted);
+  font-size: 14px;
+}
+
+.cxx-opening-flow .opening-crumbs>*+*::before {
+  content: '›';
+  margin-right: 8px;
+  color: var(--cxx-muted);
+}
+
+.cxx-opening-flow .opening-band-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(min(100%,340px),1fr));
+  gap: 16px;
+}
+
+.cxx-opening-flow .opening-band-card {
+  position: relative;
+  min-height: 300px;
+  overflow: hidden;
+  padding: 0;
+  border: 1px solid var(--cxx-line);
+  background: var(--cxx-canvas);
+  color: var(--cxx-on-canvas);
+  text-align: left;
+  transition: border-color .16s;
+}
+
+.cxx-opening-flow .opening-band-background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(.55);
+}
+
+.cxx-opening-flow .opening-band-hero {
+  position: absolute;
+  right: -4%;
+  bottom: -30%;
+  height: 130%;
+  width: auto;
+  max-width: 75%;
+  object-fit: contain;
+  object-position: right bottom;
+}
+
+.cxx-opening-flow .opening-band-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg,color-mix(in srgb, var(--cxx-canvas) 92%, transparent),transparent 60%);
+}
+
+.cxx-opening-flow .opening-band-copy {
+  position: absolute;
+  z-index: 1;
+  left: 20px;
+  right: 20px;
+  bottom: 16px;
+  display: grid;
+  gap: 2px;
+}
+
+.cxx-opening-flow .opening-band-copy small {
+  color: var(--cxx-on-canvas-muted);
+  font: var(--cxx-weight-latin) 12px/1.3 var(--cxx-font-latin);
+  letter-spacing: .14em;
+}
+
+.cxx-opening-flow .opening-band-copy h3 {
+  margin: 0;
+  color: var(--cxx-on-canvas);
+  font: var(--cxx-weight-latin) 32px/1.1 var(--cxx-font-latin);
+}
+
+.cxx-opening-flow .opening-band-copy p {
+  margin: 0;
+  color: var(--cxx-on-canvas-muted);
+  font-size: 14px;
+}
+
+.cxx-opening-flow .opening-band-copy b {
+  margin-top: 6px;
+  color: var(--cxx-interactive);
+  font-size: 14px;
+}
+
+.cxx-opening-flow .opening-character-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(150px,1fr));
+  gap: 12px;
+}
+
+.cxx-opening-flow .opening-character-card {
+  display: grid;
+  grid-template-rows: 220px auto auto;
+  gap: 2px;
+  overflow: hidden;
+  padding: 0 0 10px;
+  border: 1px solid var(--cxx-line);
+  background: var(--cxx-raised);
+  color: var(--cxx-text);
+  text-align: left;
+  transition: border-color .16s;
+}
+
+.cxx-opening-flow .opening-character-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.cxx-opening-flow .opening-character-card :is(strong,small) {
+  padding: 0 12px;
+}
+
+.cxx-opening-flow .opening-character-card small {
+  color: var(--cxx-muted);
+  font-size: 13px;
+}
+
+.cxx-opening-flow .opening-special {
+  align-self: flex-start;
+  color: var(--cxx-heading);
+}
+
+.cxx-opening-flow .opening-scene-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(min(100%,320px),1fr));
+  gap: 12px;
+}
+
+.cxx-opening-flow .opening-scene-card {
+  display: grid;
+  grid-template-columns: 120px minmax(0,1fr);
+  gap: 14px;
+  min-height: 132px;
+  overflow: hidden;
+  padding: 0 14px 0 0;
+  border: 1px solid var(--cxx-line);
+  background: var(--cxx-raised);
+  color: var(--cxx-text);
+  text-align: left;
+  transition: border-color .16s;
+}
+
+.cxx-opening-flow .opening-scene-card img {
+  width: 120px;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.cxx-opening-flow .opening-scene-card>div {
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  padding: 10px 0;
+}
+
+.cxx-opening-flow .opening-scene-card small {
+  color: var(--cxx-muted);
+  font: var(--cxx-weight-latin) 12px/1.3 var(--cxx-font-latin);
+  letter-spacing: .14em;
+}
+
+.cxx-opening-flow .opening-scene-card h3 {
+  margin: 0;
+  color: var(--cxx-heading);
+  font-size: 18px;
+}
+
+.cxx-opening-flow .opening-scene-card p {
+  margin: 0;
+  color: var(--cxx-muted);
+  font-size: 14px;
+}
+
+.cxx-opening-flow .opening-scene-card b {
+  color: var(--cxx-interactive);
+  font-size: 14px;
+}
+
+@media (hover:hover) and (pointer:fine) {
+  .cxx-opening-flow :is(.opening-band-card,.opening-character-card,.opening-scene-card,.opening-scenario-toolbar button,.opening-crumbs button,.opening-special):hover:enabled {
+    border-color: var(--cxx-interactive);
+  }
+}
+
+/* ---------- Final check ---------- */
+.cxx-opening-flow .opening-review {
+  display: grid;
+  gap: 12px;
+}
+
+.cxx-opening-flow .opening-review-card {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--cxx-line);
+  border-top: 2px solid var(--cxx-structure);
+  background: color-mix(in srgb, var(--cxx-raised) 60%, transparent);
+}
+
+.cxx-opening-flow .opening-review-card small {
+  color: var(--cxx-muted);
+  font: var(--cxx-weight-latin) 12px/1.3 var(--cxx-font-latin);
+  letter-spacing: .14em;
+}
+
+.cxx-opening-flow .opening-review-card h3 {
+  margin: 0;
+  color: var(--cxx-heading);
+  font-size: 20px;
+  font-weight: var(--cxx-weight-heading);
+}
+
+.cxx-opening-flow .opening-review-card p {
+  margin: 0;
+  color: var(--cxx-text);
+  font-size: 15px;
+}
+
+.cxx-opening-flow .opening-review-card label {
+  display: grid;
+  grid-template-columns: 6em minmax(0,1fr);
+  align-items: center;
+  gap: 12px;
+  color: var(--cxx-muted);
+  font-size: 14px;
+}
+
+.cxx-opening-flow .opening-review-card select {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--cxx-line);
+  border-radius: 0;
+  background: var(--cxx-canvas);
+  color: var(--cxx-text);
+  font: inherit;
+  font-size: 16px;
+}
+
+.cxx-opening-flow .opening-worldbook-notice {
+  padding-left: 12px;
+  border-left: 2px solid var(--cxx-line-strong);
+  color: var(--cxx-muted)!important;
+  font-size: 14px!important;
+}
+
+@supports (corner-shape: bevel) {
+  .cxx-opening-flow :is(.opening-back,.opening-next,.opening-guide,.opening-scenario-toolbar button,.opening-crumbs button,.opening-special) {
+    border-radius: var(--cxx-cut-s) 0;
+    corner-shape: bevel;
+  }
+
+  .cxx-opening-flow :is(.opening-band-card,.opening-character-card,.opening-scene-card,.opening-review-card) {
+    border-radius: var(--cxx-cut-m) 0;
+    corner-shape: bevel;
+  }
+}
+
+/* Root columns follow the actual portal; descendants query that same root. */
+.cxx-opening-flow[data-layout=narrow] { grid-template-columns:196px minmax(0,1fr) 380px; }
+.cxx-opening-flow[data-layout=compact] {
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:auto 200px minmax(0,1fr) auto auto;
+  grid-template-areas:"rail" "stage" "body" "feedback" "foot";
+}
+.cxx-opening-flow[data-layout=compact][data-step=loadout] { grid-template-rows:auto 220px minmax(0,1fr) auto auto; }
+@container cxx-opening (max-width:1100px) {
+
+  .opening-steps {
+    padding-left: 12px;
+  }
+
+  .opening-stage-caption p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+}
+
+/* ---------- Phones: steps across the top, stage above the options ---------- */
+@container cxx-opening (max-width:760px) {
+
+  .opening-steps {
+    flex-direction: row;
+    gap: 4px;
+    padding: 2px 12px;
+    border-right: 0;
+    border-bottom: 1px solid var(--cxx-line);
+    scrollbar-width: none;
+  }
+
+  .opening-steps>button {
+    display: flex;
+    gap: 6px;
+    min-height: 44px;
+    padding: 0 10px;
+    border-left: 0;
+    border-bottom: 2px solid transparent;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .opening-steps>button[aria-current=step] {
+    border-bottom-color: var(--cxx-structure);
+  }
+
+  .opening-step-value {
+    display: none;
+  }
+
+  .opening-stage {
+    border-right: 0;
+  }
+
+  .opening-stage-caption {
+    left: 16px;
+    right: 16px;
+    bottom: 12px;
+  }
+
+  .opening-stage-caption h3 {
+    font-size: var(--cxx-size-title-sm);
+  }
+
+  .opening-stage-caption p {
+    display: none;
+  }
+
+  .opening-stage-art[data-kind=radar] {
+    padding: 8px 8px 56px;
+  }
+
+  .opening-forge-hero { width:56%; }
+  .opening-forge-stats { display:none; }
+  .cxx-opening-flow[data-step=loadout] .opening-stage-caption h3 { font-size:22px; }
+
+  .cxx-opening-flow:is([data-step=preferences],[data-step=profile],[data-step=scenario],[data-restore=true]) .opening-body {
+    grid-column: 1;
+    grid-row: 2 / 4;
+  }
+
+  .cxx-opening-flow .opening-body {
+    padding: 16px;
+  }
+
+  .cxx-opening-flow[data-step=scenario] .opening-body {
+    padding: 12px;
+  }
+
+  .opening-footer {
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 0;
+    padding: 10px 12px 14px;
+  }
+
+  .cxx-game-menu .opening-key,
+  .opening-footnote {
+    display: none;
+  }
+
+  .opening-footer .opening-next {
+    flex: 1;
+    min-width:0;
+    white-space:normal;
+  }
+  .opening-mirror-choice label { flex-direction:column;align-items:stretch; }
+  .opening-mirror-choice select { width:100%;min-width:0; }
+
+  .cxx-opening-flow .opening-feedback {
+    padding: 8px 12px;
+  }
+
+  .opening-notice-row {
+    flex-wrap: wrap;
+  }
+
+  .cxx-opening-flow .opening-band-card {
+    min-height: 200px;
+  }
+
+  .cxx-opening-flow .opening-character-grid {
+    grid-template-columns: repeat(auto-fill,minmax(110px,1fr));
+  }
+
+  .cxx-opening-flow .opening-character-card {
+    grid-template-rows: 150px auto auto;
+  }
+
+  .cxx-opening-flow .opening-character-card img {
+    height: 150px;
+  }
+
+  .opening-scenario iframe {
+    min-height: 520px;
+  }
+
+  .cxx-opening-flow .opening-review-card label {
+    grid-template-columns: minmax(0,1fr);
+    gap: 4px;
+  }
+}
+
+/* ---------- Short landscape windows ---------- */
+@media (max-height:500px) {
+  .opening-steps {
+    padding-top: 8px;
+  }
+
+  .opening-steps>button {
+    min-height: 44px;
+  }
+
+  .opening-step-value {
+    display: none;
+  }
+
+  .opening-stage-caption p {
+    display: none;
+  }
+
+  .opening-footer {
+    min-height: 52px;
+    padding: 4px 16px;
+  }
+
+  .cxx-game-menu .opening-key {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .cxx-opening-flow * {
+    transition: none!important;
+    animation: none!important;
+  }
+}
+.cxx-opening-flow .opening-own-scenes{margin:0 0 24px}
+.cxx-opening-flow .opening-own-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}
+.cxx-opening-flow .opening-own-grid button{min-height:72px;padding:18px;text-align:left}
+.cxx-opening-flow .opening-own-grid small{display:block;margin-top:8px;color:var(--cxx-muted,#aaa)}
+.cxx-opening-flow .opening-scenario>label{display:grid;gap:10px;margin:18px 0}
+.cxx-opening-flow .opening-scenario textarea{box-sizing:border-box;width:100%;min-height:220px;padding:16px;font:inherit;line-height:1.8;color:inherit;background:rgba(0,0,0,.35);border:1px solid #555;resize:vertical}
+.cxx-opening-flow .opening-written-preview{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.9;padding:18px;border-left:2px solid #61c7ce;background:rgba(0,0,0,.18)}
+.cxx-opening-flow .opening-mirror-choice {margin:24px 0 0;padding:16px 0;border:0;border-top:1px solid var(--cxx-line);min-width:0;}
+.cxx-opening-flow .opening-mirror-choice legend {font-weight:600;font-size:18px;color:var(--cxx-cyan);padding:0 12px 0 0;}
+.cxx-opening-flow .opening-mirror-choice label {display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.cxx-opening-flow .opening-mirror-choice select {max-width:100%;min-height:44px;color:var(--cxx-text);background:var(--cxx-panel);border:1px solid var(--cxx-line);padding:8px;font:inherit;font-size:16px;}
+
+/* Equivalent actual-width rules for hosts without CSS container queries. */
+.cxx-opening-flow:is([data-layout=narrow],[data-layout=compact]) .opening-steps {
+    padding-left: 12px;
+  }
+.cxx-opening-flow:is([data-layout=narrow],[data-layout=compact]) .opening-stage-caption p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+.cxx-opening-flow[data-layout=compact] .opening-steps {
+    flex-direction: row;
+    gap: 4px;
+    padding: 2px 12px;
+    border-right: 0;
+    border-bottom: 1px solid var(--cxx-line);
+    scrollbar-width: none;
+  }
+.cxx-opening-flow[data-layout=compact] .opening-steps>button {
+    display: flex;
+    gap: 6px;
+    min-height: 44px;
+    padding: 0 10px;
+    border-left: 0;
+    border-bottom: 2px solid transparent;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+.cxx-opening-flow[data-layout=compact] .opening-steps>button[aria-current=step] {
+    border-bottom-color: var(--cxx-structure);
+  }
+.cxx-opening-flow[data-layout=compact] .opening-step-value {
+    display: none;
+  }
+.cxx-opening-flow[data-layout=compact] .opening-stage {
+    border-right: 0;
+  }
+.cxx-opening-flow[data-layout=compact] .opening-stage-caption {
+    left: 16px;
+    right: 16px;
+    bottom: 12px;
+  }
+.cxx-opening-flow[data-layout=compact] .opening-stage-caption h3 {
+    font-size: var(--cxx-size-title-sm);
+  }
+.cxx-opening-flow[data-layout=compact] .opening-stage-caption p {
+    display: none;
+  }
+.cxx-opening-flow[data-layout=compact] .opening-stage-art[data-kind=radar] {
+    padding: 8px 8px 56px;
+  }
+.cxx-opening-flow[data-layout=compact] .opening-forge-hero { width:56%; }
+.cxx-opening-flow[data-layout=compact] .opening-forge-stats { display:none; }
+.cxx-opening-flow[data-layout=compact][data-step=loadout] .opening-stage-caption h3 { font-size:22px; }
+.cxx-opening-flow[data-layout=compact]:is([data-step=preferences],[data-step=profile],[data-step=scenario],[data-restore=true]) .opening-body {
+    grid-column: 1;
+    grid-row: 2 / 4;
+  }
+.cxx-opening-flow[data-layout=compact] .opening-body {
+    padding: 16px;
+  }
+.cxx-opening-flow[data-layout=compact][data-step=scenario] .opening-body {
+    padding: 12px;
+  }
+.cxx-opening-flow[data-layout=compact] .opening-footer {
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 0;
+    padding: 10px 12px 14px;
+  }
+.cxx-game-menu .cxx-opening-flow[data-layout=compact] .opening-key,
+.cxx-opening-flow[data-layout=compact] .opening-footnote {
+    display: none;
+  }
+.cxx-opening-flow[data-layout=compact] .opening-footer .opening-next {
+    flex: 1;
+    min-width:0;
+    white-space:normal;
+  }
+.cxx-opening-flow[data-layout=compact] .opening-mirror-choice label { flex-direction:column;align-items:stretch; }
+.cxx-opening-flow[data-layout=compact] .opening-mirror-choice select { width:100%;min-width:0; }
+.cxx-opening-flow[data-layout=compact] .opening-feedback {
+    padding: 8px 12px;
+  }
+.cxx-opening-flow[data-layout=compact] .opening-notice-row {
+    flex-wrap: wrap;
+  }
+.cxx-opening-flow[data-layout=compact] .opening-band-card {
+    min-height: 200px;
+  }
+.cxx-opening-flow[data-layout=compact] .opening-character-grid {
+    grid-template-columns: repeat(auto-fill,minmax(110px,1fr));
+  }
+.cxx-opening-flow[data-layout=compact] .opening-character-card {
+    grid-template-rows: 150px auto auto;
+  }
+.cxx-opening-flow[data-layout=compact] .opening-character-card img {
+    height: 150px;
+  }
+.cxx-opening-flow[data-layout=compact] .opening-scenario iframe {
+    min-height: 520px;
+  }
+.cxx-opening-flow[data-layout=compact] .opening-review-card label {
+    grid-template-columns: minmax(0,1fr);
+    gap: 4px;
+  }
+
+
+/* A short native chat portal has the same constraints as a short window. */
+
+  .cxx-opening-flow[data-short=true] .opening-steps {
+    padding-top: 8px;
+  }
+
+  .cxx-opening-flow[data-short=true] .opening-steps>button {
+    min-height: 44px;
+  }
+
+  .cxx-opening-flow[data-short=true] .opening-step-value {
+    display: none;
+  }
+
+  .cxx-opening-flow[data-short=true] .opening-stage-caption p {
+    display: none;
+  }
+
+  .cxx-opening-flow[data-short=true] .opening-footer {
+    min-height: 52px;
+    padding: 4px 16px;
+  }
+
+  .cxx-game-menu .cxx-opening-flow[data-short=true] .opening-key {
+    display: none;
+  }

@@ -1,0 +1,13 @@
+.tavern-visual-manager{display:grid;gap:10px;margin-block:12px}
+.tavern-visual-manager p{margin:0}
+.tavern-visual-manager label{display:grid;gap:6px}
+.tavern-visual-actions{display:flex;flex-wrap:wrap;gap:8px}
+.tavern-visual-actions label{max-width:100%}
+.tavern-visual-actions input{max-width:100%}
+.tavern-visual-preview{box-sizing:border-box;width:min(960px,94vw);height:min(720px,90dvh);padding:12px;background:#17191f;color:#e7e8ed;border:1px solid #777;border-radius:8px;overflow:auto}
+.tavern-visual-preview[open]{display:flex;flex-direction:column;gap:12px}
+.tavern-visual-preview::backdrop{background:#0009}
+.tavern-visual-preview header,.tavern-visual-preview footer{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+.tavern-visual-preview header strong{flex:1;overflow-wrap:anywhere}
+.tavern-visual-preview .tavern-visual-stage{flex:1;min-height:180px;position:relative}
+.tavern-visual-preview pre{max-height:180px;overflow:auto;white-space:pre-wrap;word-break:break-word}

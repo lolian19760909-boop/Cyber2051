@@ -1,0 +1,15 @@
+{
+  "note": "用户报告的八条心声，周边为中性缩短夹具；不包含玩家完整存档。",
+  "raw": "<cxx-story>\n她转过身。\n\n<cxx-say speaker=\"千早爱音\" expression=\"shocked\">「噫？！」</cxx-say>\n\n千早爱音【心声，未说出口】【constricted_pupils】：什、什么时候冒出来的？！完全没有听到脚步声啊！\n\n千早爱音【心声，未说出口】【sadness】：呜哇，我在说什么胡话啊！谁会闲着没事约在飘着机油味和馊水味的红花街死胡同里碰头啊？！这种借口连小孩子都骗不过去吧！\n\n千早爱音【心声，未说出口】【sadness】：求求你了，别问了，赶紧顺着台阶给我指一条去大马路的方向吧……我脚底下的打底袜已经彻底被冷水泡透了啊！\n\n千早爱音【心声，未说出口】【constricted_pupils】：啊啊啊啊说漏嘴了！为什么要把没钱这种事主动喊出来啊千早爱音！你是笨蛋吗？！这样不就等于承认自己被抢光了吗！\n\n千早爱音【心声，未说出口】【sadness】：完蛋了，丢脸丢到大平洋对岸去了……\n\n千早爱音【心声，未说出口】【smile】：太好了……不是清道夫也不是强盗！真的只是个普通的高中男生！\n\n千早爱音【心声，未说出口】【constricted_pupils】：杀了我吧。现在立刻，有一架运兵车从天而降把我轰成碎渣都行。\n\n千早爱音【心声，未说出口】【sadness】：金枪鱼蛋黄酱饭团……在伦敦那半年天天啃冷冰冰的硬面包和水煮豆子，我已经半年多没吃过米饭了呜呜呜呜……\n\n<cxx-say speaker=\"布川奏\" expression=\"normal\">「需要帮忙吗？」</cxx-say>\n</cxx-story>\n<ztl>{\"date\":\"2051年3月28日星期二\",\"time\":\"17:15\",\"location\":\"东京都红花街死胡同外巷道\",\"characters\":[{\"name\":\"千早爱音\",\"outfit\":\"浅灰色卫衣\",\"thought\":\"请给我指一下路。\"}]}</ztl>\n<xuan>1. 指路\n2. 分享食物\n3. 等待\n4. 询问\n5. 告别</xuan>",
+  "correct": "<cxx-story>\n她转过身。\n\n<cxx-say speaker=\"千早爱音\" expression=\"shocked\">「噫？！」</cxx-say>\n\n<cxx-say speaker=\"千早爱音\" expression=\"constricted_pupils\" kind=\"thought\">什、什么时候冒出来的？！完全没有听到脚步声啊！</cxx-say>\n\n<cxx-say speaker=\"千早爱音\" expression=\"sadness\" kind=\"thought\">呜哇，我在说什么胡话啊！谁会闲着没事约在飘着机油味和馊水味的红花街死胡同里碰头啊？！这种借口连小孩子都骗不过去吧！</cxx-say>\n\n<cxx-say speaker=\"千早爱音\" expression=\"sadness\" kind=\"thought\">求求你了，别问了，赶紧顺着台阶给我指一条去大马路的方向吧……我脚底下的打底袜已经彻底被冷水泡透了啊！</cxx-say>\n\n<cxx-say speaker=\"千早爱音\" expression=\"constricted_pupils\" kind=\"thought\">啊啊啊啊说漏嘴了！为什么要把没钱这种事主动喊出来啊千早爱音！你是笨蛋吗？！这样不就等于承认自己被抢光了吗！</cxx-say>\n\n<cxx-say speaker=\"千早爱音\" expression=\"sadness\" kind=\"thought\">完蛋了，丢脸丢到大平洋对岸去了……</cxx-say>\n\n<cxx-say speaker=\"千早爱音\" expression=\"smile\" kind=\"thought\">太好了……不是清道夫也不是强盗！真的只是个普通的高中男生！</cxx-say>\n\n<cxx-say speaker=\"千早爱音\" expression=\"constricted_pupils\" kind=\"thought\">杀了我吧。现在立刻，有一架运兵车从天而降把我轰成碎渣都行。</cxx-say>\n\n<cxx-say speaker=\"千早爱音\" expression=\"sadness\" kind=\"thought\">金枪鱼蛋黄酱饭团……在伦敦那半年天天啃冷冰冰的硬面包和水煮豆子，我已经半年多没吃过米饭了呜呜呜呜……</cxx-say>\n\n<cxx-say speaker=\"布川奏\" expression=\"normal\">「需要帮忙吗？」</cxx-say>\n</cxx-story>\n<ztl>{\"date\":\"2051年3月28日星期二\",\"time\":\"17:15\",\"location\":\"东京都红花街死胡同外巷道\",\"characters\":[{\"name\":\"千早爱音\",\"outfit\":\"浅灰色卫衣\",\"thought\":\"请给我指一下路。\"}]}</ztl>\n<xuan>1. 指路\n2. 分享食物\n3. 等待\n4. 询问\n5. 告别</xuan>",
+  "bare": [
+    "千早爱音【心声，未说出口】【constricted_pupils】：什、什么时候冒出来的？！完全没有听到脚步声啊！",
+    "千早爱音【心声，未说出口】【sadness】：呜哇，我在说什么胡话啊！谁会闲着没事约在飘着机油味和馊水味的红花街死胡同里碰头啊？！这种借口连小孩子都骗不过去吧！",
+    "千早爱音【心声，未说出口】【sadness】：求求你了，别问了，赶紧顺着台阶给我指一条去大马路的方向吧……我脚底下的打底袜已经彻底被冷水泡透了啊！",
+    "千早爱音【心声，未说出口】【constricted_pupils】：啊啊啊啊说漏嘴了！为什么要把没钱这种事主动喊出来啊千早爱音！你是笨蛋吗？！这样不就等于承认自己被抢光了吗！",
+    "千早爱音【心声，未说出口】【sadness】：完蛋了，丢脸丢到大平洋对岸去了……",
+    "千早爱音【心声，未说出口】【smile】：太好了……不是清道夫也不是强盗！真的只是个普通的高中男生！",
+    "千早爱音【心声，未说出口】【constricted_pupils】：杀了我吧。现在立刻，有一架运兵车从天而降把我轰成碎渣都行。",
+    "千早爱音【心声，未说出口】【sadness】：金枪鱼蛋黄酱饭团……在伦敦那半年天天啃冷冰冰的硬面包和水煮豆子，我已经半年多没吃过米饭了呜呜呜呜……"
+  ]
+}

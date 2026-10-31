@@ -1,0 +1,71 @@
+/* Shared UI roles, emitted into each document and Shadow Root by the card build. */
+:root, :host {
+  --cxx-ink: var(--cxx-theme-ink,#08080b);
+  --cxx-panel: var(--cxx-theme-panel,#120a0d);
+  --cxx-raised: var(--cxx-theme-raised,#211217);
+  /* Existing opening book/card surfaces share this red tint. */
+  --cxx-narrative-panel: #6a1820;
+  --cxx-text: var(--cxx-theme-text,#e6e9e8);
+  --cxx-muted: var(--cxx-theme-muted,#b5b8bd);
+  --cxx-line: var(--cxx-theme-line,#71343f);
+  --cxx-shadow: #000;
+  /* Shared neutral scrim for modal surfaces. */
+  --cxx-scrim: #06080b;
+  --cxx-red: #f25964;
+  --cxx-red-soft: #ffb5bc;
+  --cxx-cyan: #6ecbd0;
+  --cxx-cyan-soft: #b9e8eb;
+  --cxx-yellow: #f5ce51;
+  --cxx-yellow-soft: #fce8a0;
+  --cxx-amber: var(--cxx-yellow);
+  /* Equipment grades retain their existing five distinct meanings. */
+  --cxx-grade-1: #bbc3ca;
+  --cxx-grade-2: #7ac995;
+  --cxx-grade-3: #65bcec;
+  --cxx-grade-4: #c58ae9;
+  --cxx-grade-5: #f2bb68;
+  --cxx-ally: var(--cxx-cyan);
+  --cxx-enemy: var(--cxx-red);
+  --cxx-font-ui: "Microsoft YaHei UI","Microsoft YaHei","PingFang SC","Noto Sans CJK SC",system-ui,sans-serif;
+  --cxx-font-display: Bahnschrift,"Arial Narrow",var(--cxx-font-ui);
+  --cxx-font-mono: Consolas,"Cascadia Mono","SFMono-Regular",monospace;
+  /* Existing status-card surfaces retained under explicit roles. */
+  --cxx-status-accent-light: #512127;
+  --cxx-status-accent-panel: #461c23;
+  --cxx-selected-panel: #183b3d;
+  --cxx-status-selected-panel: var(--cxx-selected-panel);
+  /* Existing commission difficulty cues. */
+  --cxx-risk-low: var(--cxx-cyan);
+  --cxx-risk-medium: var(--cxx-yellow);
+  --cxx-risk-high: var(--cxx-red);
+  --cxx-status-card-raised: #291318;
+  /* Brother theme roles: concrete values are carried by the document root. */
+  --cxx-canvas: var(--cxx-theme-canvas,#100f14);
+  --cxx-on-canvas: var(--cxx-theme-on-canvas,#ebe7e5);
+  --cxx-on-canvas-muted: var(--cxx-theme-on-canvas-muted,#a59a9c);
+  --cxx-line-strong: var(--cxx-theme-line-strong,#f2534c);
+  --cxx-heading: var(--cxx-theme-heading,#f2534c);
+  --cxx-structure: var(--cxx-theme-structure,#f2534c);
+  --cxx-interactive: var(--cxx-theme-interactive,#52e0e8);
+  --cxx-on-interactive: var(--cxx-theme-on-interactive,#100f14);
+  --cxx-selected: var(--cxx-theme-selected,#4f171b);
+  --cxx-on-selected: var(--cxx-theme-on-selected,#ffffff);
+  --cxx-attention: var(--cxx-theme-attention,#ffd43f);
+  --cxx-on-attention: var(--cxx-theme-on-attention,#100f14);
+  --cxx-danger: var(--cxx-theme-danger,#f2534c);
+  --cxx-font-latin: var(--cxx-theme-font-latin,Rajdhani,Bahnschrift,var(--cxx-font-ui));
+  --cxx-font-label: var(--cxx-theme-font-label,Rajdhani,Bahnschrift,var(--cxx-font-ui));
+  --cxx-weight-latin: var(--cxx-theme-weight-latin,600);
+  --cxx-weight-heading: var(--cxx-theme-weight-heading,600);
+  --cxx-track: var(--cxx-theme-track,.12em);
+  --cxx-size-display: var(--cxx-theme-size-display,32px);
+  --cxx-size-title: var(--cxx-theme-size-title,30px);
+  --cxx-size-display-sm: var(--cxx-theme-size-display-sm,26px);
+  --cxx-size-title-sm: var(--cxx-theme-size-title-sm,26px);
+  --cxx-preview-red: linear-gradient(90deg,#100f14 0 34%,#f2534c 34% 67%,#52e0e8 67%);
+  --cxx-preview-yellow: linear-gradient(90deg,#e9d042 0 34%,#0b0b0b 34% 67%,#00f0ff 67%);
+  --cxx-preview-night: linear-gradient(90deg,#0d0f12 0 34%,#eceef1 34% 67%,#e3262e 67%);
+  --cxx-cut-s: var(--cxx-theme-cut-s,10px);
+  --cxx-cut-m: var(--cxx-theme-cut-m,12px);
+  --cxx-cut-l: var(--cxx-theme-cut-l,16px);
+}

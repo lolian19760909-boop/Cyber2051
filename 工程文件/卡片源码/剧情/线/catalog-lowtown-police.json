@@ -1,0 +1,98 @@
+{
+ "schema": 1,
+ "id": "catalog-lowtown-police",
+ "title": "退水线上的白漆",
+ "track": "commission",
+ "summary": "抽水站外的白漆线一夜向里挪了三米。线内的摊贩被要求交搬迁费，警用频道却把它记作普通占道纠纷。",
+ "mapId": "tokyo-central",
+ "placeId": "catalog-lowtown-police",
+ "pay": 0,
+ "nodes": [
+  {
+   "id": "P1",
+   "title": "了解现场与协助意愿",
+   "lore": 174,
+   "locations": [
+    {
+     "mapId": "tokyo-central",
+     "placeId": "catalog-lowtown-police"
+    }
+   ],
+   "conditions": {
+    "assisted": "当前人物实际介入泵站外纠纷，当事人说明围挡、收费与通路争议"
+   },
+   "outcomes": {
+    "wait": {
+     "label": "当事人或当前人物明确暂缓处理",
+     "effect": "pause"
+    },
+    "decline": {
+     "label": "当前人物实际拒绝介入或终止本次委托",
+     "effect": "jump",
+     "target": "P3"
+    }
+   }
+  },
+  {
+   "id": "P2",
+   "title": "核对线索与实际处置",
+   "lore": 175,
+   "requires": [
+    "P1"
+   ],
+   "conditions": {
+    "passage": "人行出口已实际安排或明确仍受阻的原因",
+    "basis": "实际比对工单签字、旧边线、摊位收据或路线单，并确认各证据能证明的范围"
+   },
+   "outcomes": {
+    "wait": {
+     "label": "实际暂缓调查或等待当事人补充依据",
+     "effect": "pause"
+    },
+    "stop": {
+     "label": "当事人实际终止调查或目标已无法继续",
+     "effect": "jump",
+     "target": "P3"
+    }
+   }
+  },
+  {
+   "id": "P3",
+   "title": "结果与交接",
+   "lore": 176,
+   "requires": [
+    "P2"
+   ],
+   "conditions": {
+    "reported": "当前人物已向相关当事人说明实际结果、物品或通路状态及未解决事项"
+   },
+   "choices": {
+    "resolution": {
+     "overcharge": "越界收费得到证据支持，已实际登记受理或谈成退款处理",
+     "legitimate": "检修依据得到核实，双方实际谈定临时摊位或车辆时段",
+     "unresolved": "依据仍不足或协商失败，已说明未决争议与当前通路状态",
+     "withdrawn": "尚未完成调查即明确退出，并向当事人说明没有完成的工作"
+    }
+   },
+   "endingChoice": "resolution",
+   "endings": {
+    "overcharge": {
+     "id": "overcharge",
+     "title": "越界收费进入处理"
+    },
+    "legitimate": {
+     "id": "legitimate",
+     "title": "检修与临时通行安排"
+    },
+    "unresolved": {
+     "id": "unresolved",
+     "title": "工单争议尚未解决"
+    },
+    "withdrawn": {
+     "id": "withdrawn",
+     "title": "本次协助已退出"
+    }
+   }
+  }
+ ]
+}

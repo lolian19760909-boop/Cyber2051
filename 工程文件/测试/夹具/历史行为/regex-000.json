@@ -1,0 +1,18 @@
+{
+  "id": "21d245e4-dfe4-4a83-a340-030599077e86",
+  "scriptName": "状态栏1",
+  "findRegex": "<ztl>\\s*({[\\s\\S]*?})\\s*<\\/ztl>|(?=<StatusPlaceHolderImpl\\/>)",
+  "replaceString": "",
+  "trimStrings": [],
+  "placement": [
+    1,
+    2
+  ],
+  "disabled": false,
+  "markdownOnly": true,
+  "promptOnly": false,
+  "runOnEdit": true,
+  "substituteRegex": 0,
+  "minDepth": null,
+  "maxDepth": 1
+}

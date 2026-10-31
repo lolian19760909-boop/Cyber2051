@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),{spawn}=require('node:child_process'),assert=require('node:assert/strict');
+const {chromium}=require('../../独立制卡器/workbench/node_modules/playwright');
+const root=path.resolve(__dirname,'../..'),suite=path.join(root,'配套扩展/tavern-runtime-suite'),out=process.env.CXX_EVIDENCE||path.join(root,'.cache/ui-motion-20261024');
+(async()=>{let browser,server;const report={scope:'Real Suite extension entry with controlled host and model',errors:[]};try{fs.mkdirSync(out,{recursive:true});
+ server=spawn(process.execPath,['test/serve.mjs'],{cwd:suite,env:{...process.env,TRS_TEST_PORT:'8897'},stdio:['ignore','pipe','pipe'],windowsHide:true});
+ const url=await new Promise((resolve,reject)=>{server.stdout.once('data',data=>resolve(data.toString().trim()));server.once('error',reject);server.once('exit',code=>reject(Error('Server exited '+code)));});
+ browser=await chromium.launch({channel:'msedge',headless:true});const page=await browser.newPage();page.on('pageerror',e=>report.errors.push(e.message));await page.goto(url);await page.locator('#check:enabled').waitFor();await page.locator('#check').click();await page.waitForFunction(()=>['完整检查通过','检查失败'].includes(document.querySelector('#status').textContent),{},{timeout:90000});
+ report.result=JSON.parse(await page.locator('#report').textContent());assert.equal(report.result.status,'完整检查通过');assert.deepEqual(report.result.errors,[]);assert.deepEqual(report.errors,[]);report.pass=true;
+ }catch(error){report.pass=false;report.failure=error.stack;process.exitCode=1;}finally{await browser?.close();server?.kill();fs.writeFileSync(path.join(out,'suite-full-browser.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report));}})();

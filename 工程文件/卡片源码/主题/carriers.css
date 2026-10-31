@@ -1,0 +1,68 @@
+/* Authored red/yellow/night palette carriers; inherited by iframe and Shadow Root surfaces. */
+:root[data-cxx-theme="yellow"]{
+  --cxx-theme-ink: #0b0b0b;
+  --cxx-theme-panel: #0b0b0b;
+  --cxx-theme-raised: #1d1d1d;
+  --cxx-theme-text: #f4f2ea;
+  --cxx-theme-muted: #a9a79c;
+  --cxx-theme-line: #2b2b2b;
+  --cxx-theme-canvas: #0b0b0b;
+  --cxx-theme-on-canvas: #f4f2ea;
+  --cxx-theme-on-canvas-muted: #a9a79c;
+  --cxx-theme-line-strong: #e9d042;
+  --cxx-theme-heading: #e9d042;
+  --cxx-theme-structure: #e9d042;
+  --cxx-theme-interactive: #00f0ff;
+  --cxx-theme-on-interactive: #0b0b0b;
+  --cxx-theme-selected: #0b0b0b;
+  --cxx-theme-on-selected: #e9d042;
+  --cxx-theme-attention: #00f0ff;
+  --cxx-theme-on-attention: #0b0b0b;
+  --cxx-theme-danger: #ff5c7a;
+  --cxx-theme-font-latin: "Bahnschrift Condensed",Bahnschrift,Rajdhani,var(--cxx-font-ui);
+  --cxx-theme-font-label: "Bahnschrift Condensed",Bahnschrift,Rajdhani,var(--cxx-font-ui);
+  --cxx-theme-weight-latin: 700;
+  --cxx-theme-weight-heading: 700;
+  --cxx-theme-track: .16em;
+  --cxx-theme-size-display: 56px;
+  --cxx-theme-size-title: 40px;
+  --cxx-theme-size-display-sm: 40px;
+  --cxx-theme-size-title-sm: 32px;
+  --cxx-theme-cut-s: 12px;
+  --cxx-theme-cut-m: 16px;
+  --cxx-theme-cut-l: 16px;
+}
+
+:root[data-cxx-theme="night"]{
+  --cxx-theme-ink: #0d0f12;
+  --cxx-theme-panel: #13161a;
+  --cxx-theme-raised: #1a1e23;
+  --cxx-theme-text: #eceef1;
+  --cxx-theme-muted: #8d949d;
+  --cxx-theme-line: #2a2f36;
+  --cxx-theme-canvas: #0d0f12;
+  --cxx-theme-on-canvas: #eceef1;
+  --cxx-theme-on-canvas-muted: #8d949d;
+  --cxx-theme-line-strong: #eceef1;
+  --cxx-theme-heading: #eceef1;
+  --cxx-theme-structure: #eceef1;
+  --cxx-theme-interactive: #ffffff;
+  --cxx-theme-on-interactive: #0d0f12;
+  --cxx-theme-selected: #eceef1;
+  --cxx-theme-on-selected: #0d0f12;
+  --cxx-theme-attention: #e3262e;
+  --cxx-theme-on-attention: #ffffff;
+  --cxx-theme-danger: #ff5a61;
+  --cxx-theme-font-latin: Bahnschrift,Rajdhani,var(--cxx-font-ui);
+  --cxx-theme-font-label: var(--cxx-font-mono);
+  --cxx-theme-weight-latin: 400;
+  --cxx-theme-weight-heading: 300;
+  --cxx-theme-track: .16em;
+  --cxx-theme-size-display: 36px;
+  --cxx-theme-size-title: 34px;
+  --cxx-theme-size-display-sm: 28px;
+  --cxx-theme-size-title-sm: 28px;
+  --cxx-theme-cut-s: 0px;
+  --cxx-theme-cut-m: 0px;
+  --cxx-theme-cut-l: 0px;
+}

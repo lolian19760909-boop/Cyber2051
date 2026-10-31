@@ -1,0 +1,609 @@
+{
+  "at": "2026-10-02T07:05:53.243Z",
+  "touched": 17,
+  "skipped": 80,
+  "totalOld": 677,
+  "totalNew": 677,
+  "totalB4030": 102,
+  "files": [
+    {
+      "file": "helper\\000.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "opening\\alternate\\000.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "opening\\alternate\\001.txt",
+      "changed": true,
+      "oldRefs": 1,
+      "newRefs": 1,
+      "b4030Refs": 0
+    },
+    {
+      "file": "opening\\alternate\\002.txt",
+      "changed": true,
+      "oldRefs": 1,
+      "newRefs": 1,
+      "b4030Refs": 1
+    },
+    {
+      "file": "opening\\alternate\\003.txt",
+      "changed": true,
+      "oldRefs": 1,
+      "newRefs": 1,
+      "b4030Refs": 1
+    },
+    {
+      "file": "opening\\alternate\\004.txt",
+      "changed": true,
+      "oldRefs": 1,
+      "newRefs": 1,
+      "b4030Refs": 1
+    },
+    {
+      "file": "opening\\alternate\\005.txt",
+      "changed": true,
+      "oldRefs": 1,
+      "newRefs": 1,
+      "b4030Refs": 1
+    },
+    {
+      "file": "opening\\alternate\\006.txt",
+      "changed": true,
+      "oldRefs": 1,
+      "newRefs": 1,
+      "b4030Refs": 1
+    },
+    {
+      "file": "opening\\alternate\\007.txt",
+      "changed": true,
+      "oldRefs": 1,
+      "newRefs": 1,
+      "b4030Refs": 1
+    },
+    {
+      "file": "opening\\alternate\\008.txt",
+      "changed": true,
+      "oldRefs": 1,
+      "newRefs": 1,
+      "b4030Refs": 1
+    },
+    {
+      "file": "opening\\alternate\\009.txt",
+      "changed": true,
+      "oldRefs": 1,
+      "newRefs": 1,
+      "b4030Refs": 1
+    },
+    {
+      "file": "opening\\alternate\\010.txt",
+      "changed": true,
+      "oldRefs": 1,
+      "newRefs": 1,
+      "b4030Refs": 1
+    },
+    {
+      "file": "opening\\alternate\\011.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 2
+    },
+    {
+      "file": "opening\\alternate\\012.txt",
+      "changed": true,
+      "oldRefs": 1,
+      "newRefs": 1,
+      "b4030Refs": 1
+    },
+    {
+      "file": "opening\\alternate\\013.txt",
+      "changed": true,
+      "oldRefs": 1,
+      "newRefs": 1,
+      "b4030Refs": 1
+    },
+    {
+      "file": "opening\\alternate\\014.txt",
+      "changed": true,
+      "oldRefs": 1,
+      "newRefs": 1,
+      "b4030Refs": 1
+    },
+    {
+      "file": "opening\\alternate\\015.txt",
+      "changed": true,
+      "oldRefs": 1,
+      "newRefs": 1,
+      "b4030Refs": 1
+    },
+    {
+      "file": "opening\\alternate\\016.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 1
+    },
+    {
+      "file": "opening\\alternate\\017.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 1
+    },
+    {
+      "file": "opening\\alternate\\018.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 2
+    },
+    {
+      "file": "opening\\alternate\\019.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 20
+    },
+    {
+      "file": "opening\\alternate\\020.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 10
+    },
+    {
+      "file": "opening\\alternate\\021.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 2
+    },
+    {
+      "file": "opening\\alternate\\022.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 20
+    },
+    {
+      "file": "opening\\alternate\\023.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "opening\\alternate\\024.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "opening\\first_mes.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 3
+    },
+    {
+      "file": "regex\\000.txt",
+      "changed": true,
+      "oldRefs": 331,
+      "newRefs": 331,
+      "b4030Refs": 44
+    },
+    {
+      "file": "regex\\001.txt",
+      "changed": true,
+      "oldRefs": 331,
+      "newRefs": 331,
+      "b4030Refs": 44
+    },
+    {
+      "file": "regex\\002.txt",
+      "changed": true,
+      "oldRefs": 1,
+      "newRefs": 1,
+      "b4030Refs": 1
+    },
+    {
+      "file": "regex\\003.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "regex\\004.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 1
+    },
+    {
+      "file": "regex\\005.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "regex\\006.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "regex\\007.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 2
+    },
+    {
+      "file": "regex\\008.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "regex\\009.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "regex\\010.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "regex\\011.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "regex\\012.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 18
+    },
+    {
+      "file": "regex\\013.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 10
+    },
+    {
+      "file": "regex\\014.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 15
+    },
+    {
+      "file": "regex\\015.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\000.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\001.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\002.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\003.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\004.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\005.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\006.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\007.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\008.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\009.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\010.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\011.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\012.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\013.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\014.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\015.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\016.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\017.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\018.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\019.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\020.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\021.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\022.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\023.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\024.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\025.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\026.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\027.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\028.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\029.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\030.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\031.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\032.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\033.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\034.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\035.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\036.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\037.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\038.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\039.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\040.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\041.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\042.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\043.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\044.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\045.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\046.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\047.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\048.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\049.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\050.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\051.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\052.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    },
+    {
+      "file": "worldbook\\053.txt",
+      "changed": false,
+      "oldRefs": 0,
+      "b4030Refs": 0
+    }
+  ]
+}

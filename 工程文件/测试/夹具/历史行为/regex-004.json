@@ -1,0 +1,18 @@
+{
+  "id": "5932266d-22e7-47bd-98f3-98fc5edac7b2",
+  "scriptName": "MVU1",
+  "disabled": false,
+  "runOnEdit": true,
+  "findRegex": "/<UpdateVariable>(?:(?!<\\/?UpdateVariable>)[\\s\\S])*?<(Analysis|Analyze)>((?:(?!<\\/?UpdateVariable>)[\\s\\S])*?)<\\/\\1>(?:(?!<\\/?UpdateVariable>)[\\s\\S])*?<\\/UpdateVariable>/gi",
+  "trimStrings": [],
+  "replaceString": "",
+  "placement": [
+    1,
+    2
+  ],
+  "substituteRegex": 0,
+  "minDepth": null,
+  "maxDepth": 3,
+  "markdownOnly": true,
+  "promptOnly": false
+}

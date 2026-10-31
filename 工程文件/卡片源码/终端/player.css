@@ -1,0 +1,5 @@
+/* Only the shared terminal's embedded player view. */
+.app.embedded:not([data-compact=true])[data-tab='人物'] .scene{min-height:440px;height:clamp(440px,calc(100dvh - 415px),570px)}
+.app.embedded:not([data-compact=true])[data-tab='人物'] .human>svg{max-height:100%}
+.app.embedded:not([data-compact=true]) .title{margin-bottom:12px}
+.app.embedded :is(p:not(.eyebrow),.drawer li){font-size:var(--read-size);overflow-wrap:anywhere}

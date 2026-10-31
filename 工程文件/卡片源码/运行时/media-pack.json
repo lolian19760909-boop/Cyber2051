@@ -1,0 +1,1028 @@
+{
+  "schema": 1,
+  "id": "4bc07aa28601e1a80201d49d0cd67797b3475a934389cd87dfb0fdb2c0b5faff",
+  "files": [
+    {
+      "file": "2051CG_RING_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/548653075070d756/2051CG_RING_midnight.png",
+      "bytes": 2136008,
+      "sha256": "548653075070d75607a4ca881ed8c27be5de73a7743caf6321d3ae1e7d871f86",
+      "common": true
+    },
+    {
+      "file": "2051CG_RING_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/346a4961cedb2dd9/2051CG_RING_morning.png",
+      "bytes": 2973835,
+      "sha256": "346a4961cedb2dd902935fbbf4dec581127cd6cf269f142ecf859a1106f52b9d",
+      "common": false
+    },
+    {
+      "file": "2051CG_T1_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/240758b16a18b411/2051CG_T1_morning.png",
+      "bytes": 2316489,
+      "sha256": "240758b16a18b4117854a255d567c1b61b145b5bf001491a88363f425b15aa19",
+      "common": false
+    },
+    {
+      "file": "2051CG_T2_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/45a73c3799867bbc/2051CG_T2_morning.png",
+      "bytes": 2361612,
+      "sha256": "45a73c3799867bbcadd2d644f972bcb77e0252a1a446901a4e7f2d14815d2e80",
+      "common": false
+    },
+    {
+      "file": "2051CG_T3_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/106b95de78218f82/2051CG_T3_morning.png",
+      "bytes": 2288615,
+      "sha256": "106b95de78218f82e1d3994efcc409de706367896598f5f2b4912999ea4cc40c",
+      "common": false
+    },
+    {
+      "file": "2051CG_T4_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/01cbe5533fe398fd/2051CG_T4_morning.png",
+      "bytes": 2452918,
+      "sha256": "01cbe5533fe398fd4390f769643e947105576b04e2e80d51c05434053bfd5126",
+      "common": false
+    },
+    {
+      "file": "2051CG_T5_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/a00b4db86bf6b93f/2051CG_T5_morning.png",
+      "bytes": 1871330,
+      "sha256": "a00b4db86bf6b93f2469b21a729635a3c8009726a9bdc52a1be2c52bdc843656",
+      "common": false
+    },
+    {
+      "file": "2051CG_T6_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/afbf119b255b3b26/2051CG_T6_morning.png",
+      "bytes": 1923295,
+      "sha256": "afbf119b255b3b26de101842a5db13f0b09a1e3bc5445f74c744a1d27bc523ec",
+      "common": false
+    },
+    {
+      "file": "2051CG_T7_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/14d19225a0d536f6/2051CG_T7_morning.png",
+      "bytes": 1844077,
+      "sha256": "14d19225a0d536f62e9c35839e1a92ef20600a96cce85c5bc0fff2f5865ca9ca",
+      "common": false
+    },
+    {
+      "file": "2051CG_T8_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/b64369732e75d5a4/2051CG_T8_midnight.png",
+      "bytes": 1989312,
+      "sha256": "b64369732e75d5a48d8dc4ab4ba1ebe743708f44ad8e6d8a360ba0b368dc9051",
+      "common": false
+    },
+    {
+      "file": "2051CG_T9_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/26b551cb591a2be8/2051CG_T9_midnight.png",
+      "bytes": 2016616,
+      "sha256": "26b551cb591a2be82d69dff20dbbb238301a8e655bda54e2d069abd517904fec",
+      "common": false
+    },
+    {
+      "file": "2051CG_ark_Mutsumihouse_bedroom_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/9f3c7a305f386156/2051CG_ark_Mutsumihouse_bedroom_morning.png",
+      "bytes": 1882244,
+      "sha256": "9f3c7a305f386156df694897de70b2ee414d7e6d57be24b6075b18c9d67db958",
+      "common": false
+    },
+    {
+      "file": "2051CG_ark_Mutsumihouse_room_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/8a54eba75152b110/2051CG_ark_Mutsumihouse_room_morning.png",
+      "bytes": 2533978,
+      "sha256": "8a54eba75152b11060c398f89b04d335490b9711ff44213ed4ca0b4ac3e79032",
+      "common": false
+    },
+    {
+      "file": "2051CG_ark_Mutsumihouse_yard_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/f6fa42c36d357724/2051CG_ark_Mutsumihouse_yard_morning.png",
+      "bytes": 3067728,
+      "sha256": "f6fa42c36d357724a63c5507f59371092e801a40ad88a93c489f3285b9decc99",
+      "common": false
+    },
+    {
+      "file": "2051CG_ark_restaurant_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/9e79118386d63f3b/2051CG_ark_restaurant_morning.png",
+      "bytes": 2149858,
+      "sha256": "9e79118386d63f3b844289e626d9966d02c26d98cc714a268782be00dede2855",
+      "common": false
+    },
+    {
+      "file": "2051CG_core_Togawa Aisle.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/08390d23e3be9046/2051CG_core_Togawa%20Aisle.png",
+      "bytes": 2014623,
+      "sha256": "08390d23e3be90469a735adeeedc1d17e7f0213e31ea43074230d2367076cb07",
+      "common": false
+    },
+    {
+      "file": "2051CG_core_Togawa Entrance.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/6fe4e2a923221d2a/2051CG_core_Togawa%20Entrance.png",
+      "bytes": 2194890,
+      "sha256": "6fe4e2a923221d2ac7966ab3c48ed02eb3dce0a2f60e3a1d68a855a9c9747a99",
+      "common": false
+    },
+    {
+      "file": "2051CG_core_Togawa restroom_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/5f6e8d803aec53c9/2051CG_core_Togawa%20restroom_morning.png",
+      "bytes": 2472705,
+      "sha256": "5f6e8d803aec53c9c00766364c3ff66c5795f63642d4f22bc396fd1c2b4990a6",
+      "common": false
+    },
+    {
+      "file": "2051CG_core_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/af5a688a059d4b21/2051CG_core_midnight.png",
+      "bytes": 6018836,
+      "sha256": "af5a688a059d4b2194d04084c0f632dc0b2284f388d08f7f1dda858992a4f51c",
+      "common": true
+    },
+    {
+      "file": "2051CG_core_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/49304315c92bb762/2051CG_core_morning.png",
+      "bytes": 2708826,
+      "sha256": "49304315c92bb762022cbc14304f5d8a69ad4f2636b768d15636fba2a224139c",
+      "common": false
+    },
+    {
+      "file": "2051CG_core_mujica hideout_armory.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/280e798e3bf74e4a/2051CG_core_mujica%20hideout_armory.png",
+      "bytes": 1792972,
+      "sha256": "280e798e3bf74e4a1f9c90b67c4e54e451f5f5cc01f0ee32340c8c453ecad696",
+      "common": false
+    },
+    {
+      "file": "2051CG_core_mujica hideout_balcony.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/4a8d17968f602f6f/2051CG_core_mujica%20hideout_balcony.png",
+      "bytes": 2036273,
+      "sha256": "4a8d17968f602f6f7a602e50bfcf5aa8d03aa13adbc7b4b039cfe223ff5377ee",
+      "common": true
+    },
+    {
+      "file": "2051CG_core_mujica hideout_baseroom_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/4c04e894546c57bc/2051CG_core_mujica%20hideout_baseroom_morning.png",
+      "bytes": 1841420,
+      "sha256": "4c04e894546c57bc565adfcffba5c9fcbea8d76e6cae6ceba48457291887bcef",
+      "common": false
+    },
+    {
+      "file": "2051CG_core_mujica hideout_bedroom_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/dd9684c16914dd1d/2051CG_core_mujica%20hideout_bedroom_morning.png",
+      "bytes": 1821399,
+      "sha256": "dd9684c16914dd1d315032191c13f5f6e77349559c58cbe401d93f0493cbe444",
+      "common": false
+    },
+    {
+      "file": "2051CG_core_mujica hideout_missionnary room_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/b9c730afe09786f5/2051CG_core_mujica%20hideout_missionnary%20room_morning.png",
+      "bytes": 1610230,
+      "sha256": "b9c730afe09786f536a5c788ff564d5853d59fb8c0a87b8f239994a3d55bca47",
+      "common": false
+    },
+    {
+      "file": "2051CG_core_soyohouse_bathroom.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/f6080616517246c6/2051CG_core_soyohouse_bathroom.png",
+      "bytes": 1807756,
+      "sha256": "f6080616517246c6adf81bf9c2ab6cc0201ff5b1a777acf2031af3dd66dd9725",
+      "common": false
+    },
+    {
+      "file": "2051CG_core_soyohouse_bedroom_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/8503cece7d2ecd4a/2051CG_core_soyohouse_bedroom_midnight.png",
+      "bytes": 2127681,
+      "sha256": "8503cece7d2ecd4ace327afdc634daea7f793975ee91ec499362259db29686a6",
+      "common": false
+    },
+    {
+      "file": "2051CG_core_soyohouse_outside_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/3320afdb4399cd47/2051CG_core_soyohouse_outside_midnight.png",
+      "bytes": 2220274,
+      "sha256": "3320afdb4399cd4727b878816d469200d3f12cb3c614849555fc4bab07f94ee4",
+      "common": false
+    },
+    {
+      "file": "2051CG_core_soyohouse_room_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/3551be7231ff8a05/2051CG_core_soyohouse_room_midnight.png",
+      "bytes": 2141425,
+      "sha256": "3551be7231ff8a057f203949983bfeabeee62f9ef5839482fef890995f9bdfd3",
+      "common": false
+    },
+    {
+      "file": "2051CG_core_soyohouse_swimpool_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/14a28a0b3625fc9a/2051CG_core_soyohouse_swimpool_midnight.png",
+      "bytes": 2249854,
+      "sha256": "14a28a0b3625fc9a56e9ba0e978421a2347919a6f6608c473e63394624d0a035",
+      "common": false
+    },
+    {
+      "file": "2051CG_darkpool_Ranahouse.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/647a4a69ecd2ae16/2051CG_darkpool_Ranahouse.png",
+      "bytes": 1922081,
+      "sha256": "647a4a69ecd2ae1615f137e3ac03ac6f2fc3ffd59862f53a01b9f9a3694aabc7",
+      "common": false
+    },
+    {
+      "file": "2051CG_darkpool_Ranahouse_bedroom.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/7d5f3123f41b02a5/2051CG_darkpool_Ranahouse_bedroom.png",
+      "bytes": 2091500,
+      "sha256": "7d5f3123f41b02a5fd6727e77cc55e7a74b66b70a69f469a1e4d1b9b761fe595",
+      "common": false
+    },
+    {
+      "file": "2051CG_darkpool_backyard_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/3f7c31905d905853/2051CG_darkpool_backyard_midnight.png",
+      "bytes": 2064303,
+      "sha256": "3f7c31905d9058536f0cbde76c1127c2c5323f313ba28e3bca36658c1a41027f",
+      "common": false
+    },
+    {
+      "file": "2051CG_darkpool_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/5e1ea777de6667dd/2051CG_darkpool_midnight.png",
+      "bytes": 2790960,
+      "sha256": "5e1ea777de6667ddf42cd56720879211865f1dbd93a0f5092516c434d2cb15aa",
+      "common": false
+    },
+    {
+      "file": "2051CG_darkpool_midnight2.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/1486a33f96209c03/2051CG_darkpool_midnight2.png",
+      "bytes": 2446980,
+      "sha256": "1486a33f96209c037cd450bce2d4b4a2b3dc50dead28e2b69459e79d3c98503a",
+      "common": false
+    },
+    {
+      "file": "2051CG_darkpool_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/5f2a47b1d9e277ed/2051CG_darkpool_morning.png",
+      "bytes": 3029848,
+      "sha256": "5f2a47b1d9e277ed7a88db48b06659b41ea9da76dacd404f5b4bf432d753a14e",
+      "common": false
+    },
+    {
+      "file": "2051CG_darkpool_nyamuhouse_bedroom.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/61e9240a8964eec2/2051CG_darkpool_nyamuhouse_bedroom.png",
+      "bytes": 1632856,
+      "sha256": "61e9240a8964eec25f9ec67c79848c9913bae705c1238091d9eebe171fc89377",
+      "common": false
+    },
+    {
+      "file": "2051CG_darkpool_nyamuhouse_diningroom.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/0521d269c2939d3c/2051CG_darkpool_nyamuhouse_diningroom.png",
+      "bytes": 1856995,
+      "sha256": "0521d269c2939d3c84adf45518431b5a8c16ed91ea843034b11d25d31d490022",
+      "common": false
+    },
+    {
+      "file": "2051CG_darkpool_nyamuhouse_outside_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/832299196ea398b4/2051CG_darkpool_nyamuhouse_outside_midnight.png",
+      "bytes": 1979334,
+      "sha256": "832299196ea398b40def19823f9f6dad66c98ebf7058494a863a4e2a4184e3d0",
+      "common": false
+    },
+    {
+      "file": "2051CG_darkpool_nyamuhouse_room_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/e0f92c5a639346a7/2051CG_darkpool_nyamuhouse_room_midnight.png",
+      "bytes": 1729746,
+      "sha256": "e0f92c5a639346a7d8a19fd6f754abc053820b10a9cbc24eb5b9a68d90b5ba54",
+      "common": false
+    },
+    {
+      "file": "2051CG_darkpool_takihouse_bedroom_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/0648166f661c613c/2051CG_darkpool_takihouse_bedroom_midnight.png",
+      "bytes": 1955528,
+      "sha256": "0648166f661c613cefa2bb54bc3ded350f9208e9d6adc7b95bdf96de1fd9210f",
+      "common": false
+    },
+    {
+      "file": "2051CG_darkpool_takihouse_out_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/97f3e498a8f83b41/2051CG_darkpool_takihouse_out_midnight.png",
+      "bytes": 2513176,
+      "sha256": "97f3e498a8f83b419a2b8459a31c503871963a1c9e52258d2ee631d778a8e0c5",
+      "common": false
+    },
+    {
+      "file": "2051CG_darkpool_takihouse_room_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/ec00a6baec3c9724/2051CG_darkpool_takihouse_room_midnight.png",
+      "bytes": 2106840,
+      "sha256": "ec00a6baec3c97243933d2cb418cb8dc18f9e69d4134c0054bb55349d5c74d21",
+      "common": false
+    },
+    {
+      "file": "2051CG_lowtown_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/0b49c2eb2038acbc/2051CG_lowtown_midnight.png",
+      "bytes": 2811851,
+      "sha256": "0b49c2eb2038acbc558adf466facc5dd0b9ed9dcf7bf01e95b67e80737a205e7",
+      "common": false
+    },
+    {
+      "file": "2051CG_lowtown_midnight2.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/22962e483a207bd8/2051CG_lowtown_midnight2.png",
+      "bytes": 2148967,
+      "sha256": "22962e483a207bd8dd5d197430b606ede2f5e2f948134fd4fd9e93f5e7812e21",
+      "common": false
+    },
+    {
+      "file": "2051CG_lowtown_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/d167b5dcb3dd4b73/2051CG_lowtown_morning.png",
+      "bytes": 3313960,
+      "sha256": "d167b5dcb3dd4b739cc73ed0e7b27bc7db1a680f3b546cde7a0229b0ce43dee3",
+      "common": false
+    },
+    {
+      "file": "2051CG_lowtown_morning2.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/c703bd8d007d6511/2051CG_lowtown_morning2.png",
+      "bytes": 2456630,
+      "sha256": "c703bd8d007d651179cdd8e7369498fcfda45f22b4de873f6e55016ae15562a0",
+      "common": false
+    },
+    {
+      "file": "2051CG_lowtown_morning3.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/555117b61a06d5af/2051CG_lowtown_morning3.png",
+      "bytes": 2327989,
+      "sha256": "555117b61a06d5afbf44754896c2f84633777218bd770fb1b6b533bb822f0b45",
+      "common": false
+    },
+    {
+      "file": "2051CG_lowtown_sakihouse_balcony.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/c81a491d58821229/2051CG_lowtown_sakihouse_balcony.png",
+      "bytes": 2598627,
+      "sha256": "c81a491d5882122934591f52db663ccdfa685fb4c646b49a617ef71af9e5e7e5",
+      "common": false
+    },
+    {
+      "file": "2051CG_lowtown_sakihouse_balcony_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/81e0445e3ae26af2/2051CG_lowtown_sakihouse_balcony_morning.png",
+      "bytes": 2287681,
+      "sha256": "81e0445e3ae26af293b0af9d8490cff3f680b162dc28cb0242840c289ea81378",
+      "common": false
+    },
+    {
+      "file": "2051CG_lowtown_sakihouse_bathroom_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/acf99e7fca9c42c5/2051CG_lowtown_sakihouse_bathroom_morning.png",
+      "bytes": 2400190,
+      "sha256": "acf99e7fca9c42c5fbb5c0c6667732b63a19ecb118a5b7e3a4903ecd2f286954",
+      "common": false
+    },
+    {
+      "file": "2051CG_lowtown_sakihouse_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/12b19eedbd8cff19/2051CG_lowtown_sakihouse_morning.png",
+      "bytes": 2460326,
+      "sha256": "12b19eedbd8cff194ea78bb8c7707b43dd19cb8d614251a4af7b748700a29788",
+      "common": false
+    },
+    {
+      "file": "2051CG_neonring_Umirihouse_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/3d6147a5dd18322e/2051CG_neonring_Umirihouse_midnight.png",
+      "bytes": 2368785,
+      "sha256": "3d6147a5dd18322ee51d04f693bb6185b31bc4eaac6d7fca5fd9f4d964bd4d8c",
+      "common": false
+    },
+    {
+      "file": "2051CG_neonring_alley_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/f2a003c8355b6660/2051CG_neonring_alley_midnight.png",
+      "bytes": 1945756,
+      "sha256": "f2a003c8355b66602eef8117e3477e0aa9bab9c063099d95559e98d005565d5c",
+      "common": false
+    },
+    {
+      "file": "2051CG_neonring_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/59e4a3573477fada/2051CG_neonring_midnight.png",
+      "bytes": 2724129,
+      "sha256": "59e4a3573477fadacbc2db3c6c004af278f18c30b0dfc6b5b052053064931852",
+      "common": false
+    },
+    {
+      "file": "2051CG_neonring_midnight2.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/df784c14a878c934/2051CG_neonring_midnight2.png",
+      "bytes": 2906069,
+      "sha256": "df784c14a878c934191c8aade52980af22d42cb0bcd6cebee2dd9957908670c4",
+      "common": false
+    },
+    {
+      "file": "2051CG_neonring_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/a2377ba26270484f/2051CG_neonring_morning.png",
+      "bytes": 2682791,
+      "sha256": "a2377ba26270484fe2376360c6fb5ec480f32a6eb7898936886613a0b9e622d7",
+      "common": false
+    },
+    {
+      "file": "2051CG_neonring_morning2.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/78ee50c24b84db0f/2051CG_neonring_morning2.png",
+      "bytes": 3005287,
+      "sha256": "78ee50c24b84db0f8b96c5cc3ab26fbc4540fb43fb73e16411ea6bad600c0896",
+      "common": false
+    },
+    {
+      "file": "2051CG_neonring_uikahouse_bedroom_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/a93b84b2cba1e5e1/2051CG_neonring_uikahouse_bedroom_midnight.png",
+      "bytes": 1935414,
+      "sha256": "a93b84b2cba1e5e1cf2641433b2387ee0514a7ba4800384fbfb7a5d0b1dd3cdd",
+      "common": false
+    },
+    {
+      "file": "2051CG_neonring_uikahouse_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/ea48f369a6ca283b/2051CG_neonring_uikahouse_midnight.png",
+      "bytes": 2264290,
+      "sha256": "ea48f369a6ca283be93249686af3fa30613fe702f830f68f2066206b27018d0f",
+      "common": false
+    },
+    {
+      "file": "2051CG_redflower_midnight.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/112a36f54fbe5acb/2051CG_redflower_midnight.png",
+      "bytes": 2028393,
+      "sha256": "112a36f54fbe5acbb46e7959039019af30b07112442a939157cccfd024aa66b3",
+      "common": false
+    },
+    {
+      "file": "2051CG_redflower_morning.png",
+      "url": "https://cyber2051.top/img/galgame/backgrounds/4fae06cd125412f2/2051CG_redflower_morning.png",
+      "bytes": 2510002,
+      "sha256": "4fae06cd125412f281925cd61eadac32e88733d9464efec79814bdbb8242abaf",
+      "common": false
+    },
+    {
+      "file": "Tomorin_tachi_normal.png",
+      "url": "https://cyber2051.top/img/galgame/standing/a7f3cb78ce69e17b/Tomorin_tachi_normal.png",
+      "bytes": 1749206,
+      "sha256": "a7f3cb78ce69e17b3e685b5d6a7159bedb1207ed19afc85dd131275f576e07c5",
+      "common": true
+    },
+    {
+      "file": "Tomorin_tachi_smile.png",
+      "url": "https://cyber2051.top/img/galgame/standing/46ded2d1e85c2f41/Tomorin_tachi_smile.png",
+      "bytes": 1748430,
+      "sha256": "46ded2d1e85c2f41fe9ebaee113da34dd4a5d09911a821a4df879b18a4ef880d",
+      "common": false
+    },
+    {
+      "file": "Tomorin_tachi_blush.png",
+      "url": "https://cyber2051.top/img/galgame/standing/8d4718eb74b6bd04/Tomorin_tachi_blush.png",
+      "bytes": 1749504,
+      "sha256": "8d4718eb74b6bd04d594f10fa212b199350bcdb8c1e7f0cb00f3c28c0224fd34",
+      "common": false
+    },
+    {
+      "file": "Tomorin_tachi_serious.png",
+      "url": "https://cyber2051.top/img/galgame/standing/2b62f3f3d757fa67/Tomorin_tachi_serious.png",
+      "bytes": 1748210,
+      "sha256": "2b62f3f3d757fa673e32de59f93727e9e1f5a0b1816ce7443c290cdaf7fa8c96",
+      "common": false
+    },
+    {
+      "file": "Tomorin_tachi_sadness.png",
+      "url": "https://cyber2051.top/img/galgame/standing/7b1fb18b84cf43d8/Tomorin_tachi_sadness.png",
+      "bytes": 1747945,
+      "sha256": "7b1fb18b84cf43d894a4fef16a6ca4b6162dfd8f107e159f59d36cb09f6e1065",
+      "common": false
+    },
+    {
+      "file": "Tomorin_tachi_shocked.png",
+      "url": "https://cyber2051.top/img/galgame/standing/aeb16dcff89ea4a1/Tomorin_tachi_shocked.png",
+      "bytes": 1747604,
+      "sha256": "aeb16dcff89ea4a1e7883706d3ef5d47a7f60823855758297934710fd5231180",
+      "common": false
+    },
+    {
+      "file": "Tomorin_tachi_constricted pupils.png",
+      "url": "https://cyber2051.top/img/galgame/standing/d12cbf0b1e0e96a6/Tomorin_tachi_constricted%20pupils.png",
+      "bytes": 1748170,
+      "sha256": "d12cbf0b1e0e96a65142a11b9d1a0613ab51374e4bc4697bf3b57f1fdab8e154",
+      "common": false
+    },
+    {
+      "file": "Tomorin_tachi_yandere trance.png",
+      "url": "https://cyber2051.top/img/galgame/standing/08c0aa96ceb4ddd9/Tomorin_tachi_yandere%20trance.png",
+      "bytes": 1750825,
+      "sha256": "08c0aa96ceb4ddd928e2729cdc554a3423dbef33c133bb4c58f6d3acbf668bbf",
+      "common": false
+    },
+    {
+      "file": "Anon_tachi_normal.png",
+      "url": "https://cyber2051.top/img/galgame/standing/3b9bf5ea3a58d289/Anon_tachi_normal.png",
+      "bytes": 1827631,
+      "sha256": "3b9bf5ea3a58d289fc1e53e139f9d9a2a7b189380c95050c95a2ed34982bb79a",
+      "common": true
+    },
+    {
+      "file": "Anon_tachi_smile.png",
+      "url": "https://cyber2051.top/img/galgame/standing/f063bc3cbdc7931c/Anon_tachi_smile.png",
+      "bytes": 1828051,
+      "sha256": "f063bc3cbdc7931cfc233dc9e6b14bb7a9f5d2b1ab2fdabca89af7902a625718",
+      "common": false
+    },
+    {
+      "file": "Anon_tachi_blush.png",
+      "url": "https://cyber2051.top/img/galgame/standing/87faae3f6e216869/Anon_tachi_blush.png",
+      "bytes": 1828873,
+      "sha256": "87faae3f6e2168692dfa2b70ace81916c0e479f601240367e586a429b904efc1",
+      "common": false
+    },
+    {
+      "file": "Anon_tachi_serious.png",
+      "url": "https://cyber2051.top/img/galgame/standing/01ae38d48146c393/Anon_tachi_serious.png",
+      "bytes": 1828067,
+      "sha256": "01ae38d48146c3935a0509086b5a86eafbb2aad78fa4eb236f44041a0fe844fb",
+      "common": false
+    },
+    {
+      "file": "Anon_tachi_sadness.png",
+      "url": "https://cyber2051.top/img/galgame/standing/83e0db57e926b816/Anon_tachi_sadness.png",
+      "bytes": 1829409,
+      "sha256": "83e0db57e926b816611347c46cc7e116d659093eff0d8e6dc1a3d03de0f1f521",
+      "common": false
+    },
+    {
+      "file": "Anon_tachi_shocked.png",
+      "url": "https://cyber2051.top/img/galgame/standing/5b3c0e6d593a0368/Anon_tachi_shocked.png",
+      "bytes": 1828540,
+      "sha256": "5b3c0e6d593a03689e28083bf597e5b6c6f3698aa4753c392993bca591b40f18",
+      "common": false
+    },
+    {
+      "file": "Anon_tachi_constricted pupils.png",
+      "url": "https://cyber2051.top/img/galgame/standing/c7146fe31a9c7b7d/Anon_tachi_constricted%20pupils.png",
+      "bytes": 1830275,
+      "sha256": "c7146fe31a9c7b7df7e007b02877e10951cbcfec48ddddba6f3a2a6c315f1b0f",
+      "common": false
+    },
+    {
+      "file": "Anon_tachi_yandere trance.png",
+      "url": "https://cyber2051.top/img/galgame/standing/f5cb916e9f7b033f/Anon_tachi_yandere%20trance.png",
+      "bytes": 1829452,
+      "sha256": "f5cb916e9f7b033fb3ef3ac60672a5db721597db0a8a957a1226b39baf129e38",
+      "common": false
+    },
+    {
+      "file": "Soyo_tachi_normal.png",
+      "url": "https://cyber2051.top/img/galgame/standing/ad8d6391987a27bd/Soyo_tachi_normal.png",
+      "bytes": 1490566,
+      "sha256": "ad8d6391987a27bd4e909d1cfbc3581090c889bc91a31bba4f347705c1cdd6a8",
+      "common": true
+    },
+    {
+      "file": "Soyo_tachi_smile.png",
+      "url": "https://cyber2051.top/img/galgame/standing/d0d5bcfef639b8d1/Soyo_tachi_smile.png",
+      "bytes": 1475802,
+      "sha256": "d0d5bcfef639b8d1e3a4e591d3b2b235c456048530f6033195d01fb614ffe9df",
+      "common": false
+    },
+    {
+      "file": "Soyo_tachi_blush.png",
+      "url": "https://cyber2051.top/img/galgame/standing/915ec82fde115ad0/Soyo_tachi_blush.png",
+      "bytes": 1477320,
+      "sha256": "915ec82fde115ad0b53554c4abec6233bbe35caaf5e8dfd7c960a7eb614af384",
+      "common": false
+    },
+    {
+      "file": "Soyo_tachi_serious.png",
+      "url": "https://cyber2051.top/img/galgame/standing/344819fd3d9b72ab/Soyo_tachi_serious.png",
+      "bytes": 1475760,
+      "sha256": "344819fd3d9b72ab8d4d999d3e9fded6babb8fb6082c0f60f7838b425fcbb951",
+      "common": false
+    },
+    {
+      "file": "Soyo_tachi_sadness.png",
+      "url": "https://cyber2051.top/img/galgame/standing/1657947fce5ec7de/Soyo_tachi_sadness.png",
+      "bytes": 1477519,
+      "sha256": "1657947fce5ec7debb7b6671d584bf1825c6aaeba5c4ee2dccdd4937ad9fa79a",
+      "common": false
+    },
+    {
+      "file": "Soyo_tachi_shocked.png",
+      "url": "https://cyber2051.top/img/galgame/standing/049b40ed7bc46e13/Soyo_tachi_shocked.png",
+      "bytes": 1475576,
+      "sha256": "049b40ed7bc46e1323ff45ce85a3ed04aaae0a686af508ffba9491ce5ec681b2",
+      "common": false
+    },
+    {
+      "file": "Soyo_tachi_constricted pupils.png",
+      "url": "https://cyber2051.top/img/galgame/standing/99fc43ff1af79ad2/Soyo_tachi_constricted%20pupils.png",
+      "bytes": 1476168,
+      "sha256": "99fc43ff1af79ad251f250bd5beedb1b0af484cf2912da6069576a8d39a54ecf",
+      "common": false
+    },
+    {
+      "file": "Soyo_tachi_yandere trance.png",
+      "url": "https://cyber2051.top/img/galgame/standing/5a04705b8c0c3893/Soyo_tachi_yandere%20trance.png",
+      "bytes": 1477024,
+      "sha256": "5a04705b8c0c3893abe2afac9457fece77ccdd76263a8e8cecba606a6904dd53",
+      "common": false
+    },
+    {
+      "file": "Taki_tachi_normal.png",
+      "url": "https://cyber2051.top/img/galgame/standing/51264ce6a8e8d088/Taki_tachi_normal.png",
+      "bytes": 1590108,
+      "sha256": "51264ce6a8e8d088946d1838420495937d24887ca02f939c5ac4fdaf777fad87",
+      "common": true
+    },
+    {
+      "file": "Taki_tachi_smile.png",
+      "url": "https://cyber2051.top/img/galgame/standing/31cc00b6b1a3e865/Taki_tachi_smile.png",
+      "bytes": 1382878,
+      "sha256": "31cc00b6b1a3e86507e79b53d10c237367654bde359b1e173d807b8d6ab45b32",
+      "common": false
+    },
+    {
+      "file": "Taki_tachi_blush.png",
+      "url": "https://cyber2051.top/img/galgame/standing/f7459ec6fd48e804/Taki_tachi_blush.png",
+      "bytes": 1384014,
+      "sha256": "f7459ec6fd48e804fe6081df1544e25b5ef811328aac91f9427d4a8d1590746d",
+      "common": false
+    },
+    {
+      "file": "Taki_tachi_serious.png",
+      "url": "https://cyber2051.top/img/galgame/standing/21f1183d8deb658d/Taki_tachi_serious.png",
+      "bytes": 1380778,
+      "sha256": "21f1183d8deb658d66cfbcbf06262feda273e720471ec438f3d6edde4e9acf84",
+      "common": false
+    },
+    {
+      "file": "Taki_tachi_sadness.png",
+      "url": "https://cyber2051.top/img/galgame/standing/5dde6c8913e50e17/Taki_tachi_sadness.png",
+      "bytes": 1382475,
+      "sha256": "5dde6c8913e50e1761f3687cf5fa1ca60d76be4c7b4043d4ea0bad97578fab7f",
+      "common": false
+    },
+    {
+      "file": "Taki_tachi_shocked.png",
+      "url": "https://cyber2051.top/img/galgame/standing/b733f08b990fb9a4/Taki_tachi_shocked.png",
+      "bytes": 1381377,
+      "sha256": "b733f08b990fb9a4eda59a1e73fc7c6f28734b1bc95c0b21d4004d2e59420bd3",
+      "common": false
+    },
+    {
+      "file": "Taki_tachi_constricted pupils.png",
+      "url": "https://cyber2051.top/img/galgame/standing/ab58ddca2a27c182/Taki_tachi_constricted%20pupils.png",
+      "bytes": 1380430,
+      "sha256": "ab58ddca2a27c1827981a20a11e5b0dfc3da41db22b9188ebbe3db66a4e94a90",
+      "common": false
+    },
+    {
+      "file": "Taki_tachi_yandere trance.png",
+      "url": "https://cyber2051.top/img/galgame/standing/2599e1bb98044408/Taki_tachi_yandere%20trance.png",
+      "bytes": 1382317,
+      "sha256": "2599e1bb98044408f9196d516bef386c60b77cb2cbb7f37862cac53a0caa593d",
+      "common": false
+    },
+    {
+      "file": "Rana_tachi_normal.png",
+      "url": "https://cyber2051.top/img/galgame/standing/f6d1f48767a723da/Rana_tachi_normal.png",
+      "bytes": 1426381,
+      "sha256": "f6d1f48767a723daf1c3922bdb142209e7ffdcd46aad7eec849dcd0f2d01ec9a",
+      "common": true
+    },
+    {
+      "file": "Rana_tachi_smile.png",
+      "url": "https://cyber2051.top/img/galgame/standing/748ea4c206fa0d00/Rana_tachi_smile.png",
+      "bytes": 2077687,
+      "sha256": "748ea4c206fa0d008901ca10fb31aac8e6d4c759955b2c2c7d9b83d2a7f125dd",
+      "common": false
+    },
+    {
+      "file": "Rana_tachi_blush.png",
+      "url": "https://cyber2051.top/img/galgame/standing/ed4a8b44742e125c/Rana_tachi_blush.png",
+      "bytes": 1421161,
+      "sha256": "ed4a8b44742e125c4119f7d1a43c7e06aba22ae7c2d87032eba3de92cc0790f4",
+      "common": false
+    },
+    {
+      "file": "Rana_tachi_serious.png",
+      "url": "https://cyber2051.top/img/galgame/standing/208d7ba112cce2ab/Rana_tachi_serious.png",
+      "bytes": 1420941,
+      "sha256": "208d7ba112cce2abf6dd9a75b158c19cb85f74ccdc01220d8f70f977b40756f7",
+      "common": false
+    },
+    {
+      "file": "Rana_tachi_sadness.png",
+      "url": "https://cyber2051.top/img/galgame/standing/0ef2e99f3f295f9e/Rana_tachi_sadness.png",
+      "bytes": 1425798,
+      "sha256": "0ef2e99f3f295f9e9dd35adddb983ee59c5a96812a13c2a0b4a9db7fe178db48",
+      "common": false
+    },
+    {
+      "file": "Rana_tachi_shocked.png",
+      "url": "https://cyber2051.top/img/galgame/standing/a3b5acdce11fc02e/Rana_tachi_shocked.png",
+      "bytes": 1423629,
+      "sha256": "a3b5acdce11fc02ef67f8c1817ed69b82ba0bf55888847edf19d82eecbda0c35",
+      "common": false
+    },
+    {
+      "file": "Rana_tachi_constricted pupils.png",
+      "url": "https://cyber2051.top/img/galgame/standing/bdf818ac9499aae3/Rana_tachi_constricted%20pupils.png",
+      "bytes": 1422666,
+      "sha256": "bdf818ac9499aae33dd294586ec7a5ac977b75ae35df5269f869a47cef0f9c04",
+      "common": false
+    },
+    {
+      "file": "Rana_tachi_yandere trance.png",
+      "url": "https://cyber2051.top/img/galgame/standing/9010c6df09811e17/Rana_tachi_yandere%20trance.png",
+      "bytes": 1423195,
+      "sha256": "9010c6df09811e17e799f0edb8e4d72fede757a2af1e3b2ac3a46797cd8fdd1f",
+      "common": false
+    },
+    {
+      "file": "Saki_tachi_normal.png",
+      "url": "https://cyber2051.top/img/galgame/standing/e133517e8c5da2c5/Saki_tachi_normal.png",
+      "bytes": 1526887,
+      "sha256": "e133517e8c5da2c577416b4c9982aa0fbbdc3e25342d6922697e4425e55977c6",
+      "common": true
+    },
+    {
+      "file": "Saki_tachi_smile.png",
+      "url": "https://cyber2051.top/img/galgame/standing/ba4e3878251542d0/Saki_tachi_smile.png",
+      "bytes": 1820687,
+      "sha256": "ba4e3878251542d04a2e6949e382abadda116f5ed391f0944ec7bd0304159f49",
+      "common": false
+    },
+    {
+      "file": "Saki_tachi_blush.png",
+      "url": "https://cyber2051.top/img/galgame/standing/45d62729b3522c78/Saki_tachi_blush.png",
+      "bytes": 1522561,
+      "sha256": "45d62729b3522c786101c07379971d87e97fd83c16695af63a205f16a628b6ca",
+      "common": false
+    },
+    {
+      "file": "Saki_tachi_serious.png",
+      "url": "https://cyber2051.top/img/galgame/standing/975aca4218d2bf75/Saki_tachi_serious.png",
+      "bytes": 1522243,
+      "sha256": "975aca4218d2bf754560daf62c49c28050781d27cef295c6487db20ca2356b21",
+      "common": false
+    },
+    {
+      "file": "Saki_tachi_sadness.png",
+      "url": "https://cyber2051.top/img/galgame/standing/5c3526dc1131494a/Saki_tachi_sadness.png",
+      "bytes": 1521684,
+      "sha256": "5c3526dc1131494a6464ec9246ba1121dcde70f52d41364ac2807f5055b7bfab",
+      "common": false
+    },
+    {
+      "file": "Saki_tachi_shocked.png",
+      "url": "https://cyber2051.top/img/galgame/standing/fce65b14d8308db2/Saki_tachi_shocked.png",
+      "bytes": 1521378,
+      "sha256": "fce65b14d8308db23824647e24a07ef4cf2a8b1e76302e5e7cd7d2a011d6b5dd",
+      "common": false
+    },
+    {
+      "file": "Saki_tachi_constricted pupils.png",
+      "url": "https://cyber2051.top/img/galgame/standing/696e87da6c550115/Saki_tachi_constricted%20pupils.png",
+      "bytes": 1519949,
+      "sha256": "696e87da6c550115032d0b6ca2bdad9030a2c1288902628cac89b13c49919eb7",
+      "common": false
+    },
+    {
+      "file": "Saki_tachi_yandere trance.png",
+      "url": "https://cyber2051.top/img/galgame/standing/26464046a31f23d8/Saki_tachi_yandere%20trance.png",
+      "bytes": 1522393,
+      "sha256": "26464046a31f23d8ab6d71158d191723570be1156c381511b0324a2a8450fd99",
+      "common": false
+    },
+    {
+      "file": "Uika_tachi_normal.png",
+      "url": "https://cyber2051.top/img/galgame/standing/6994a6ae970074b3/Uika_tachi_normal.png",
+      "bytes": 1697613,
+      "sha256": "6994a6ae970074b3eb2c83eb3fecf2de00ff7e44e2ac7baaf4ad75d7103d0022",
+      "common": true
+    },
+    {
+      "file": "Uika_tachi_smile.png",
+      "url": "https://cyber2051.top/img/galgame/standing/b84777007fd2ba3e/Uika_tachi_smile.png",
+      "bytes": 2014988,
+      "sha256": "b84777007fd2ba3e4f4501b079ccbafc26c5de70d89b7af6df2de30f83210027",
+      "common": false
+    },
+    {
+      "file": "Uika_tachi_blush.png",
+      "url": "https://cyber2051.top/img/galgame/standing/7d72e643a5cc8036/Uika_tachi_blush.png",
+      "bytes": 1699654,
+      "sha256": "7d72e643a5cc8036eedd947fc13c228512d777e31dcce945e6056a8261ed7f85",
+      "common": false
+    },
+    {
+      "file": "Uika_tachi_serious.png",
+      "url": "https://cyber2051.top/img/galgame/standing/31cc1538e8fcf6e6/Uika_tachi_serious.png",
+      "bytes": 1698641,
+      "sha256": "31cc1538e8fcf6e680d809617a8069b6f9c5499b4ac6d8e8a578df0fc0579657",
+      "common": false
+    },
+    {
+      "file": "Uika_tachi_sadness.png",
+      "url": "https://cyber2051.top/img/galgame/standing/56506176081e0240/Uika_tachi_sadness.png",
+      "bytes": 1698277,
+      "sha256": "56506176081e0240cb05a83bafe5a99f83e2ae21a9ef7b9df9283b598f1bae5d",
+      "common": false
+    },
+    {
+      "file": "Uika_tachi_shocked.png",
+      "url": "https://cyber2051.top/img/galgame/standing/c4a98258ff91f652/Uika_tachi_shocked.png",
+      "bytes": 1697517,
+      "sha256": "c4a98258ff91f6525eec181f788a5dd3b31d323450d58cd4f79c7c0489b98242",
+      "common": false
+    },
+    {
+      "file": "Uika_tachi_constricted pupils.png",
+      "url": "https://cyber2051.top/img/galgame/standing/d070d71f276d5bcf/Uika_tachi_constricted%20pupils.png",
+      "bytes": 1699424,
+      "sha256": "d070d71f276d5bcfc3aa2de2b39bb4d2709e31ade5bdcacb591548b773b62a24",
+      "common": false
+    },
+    {
+      "file": "Uika_tachi_yandere trance.png",
+      "url": "https://cyber2051.top/img/galgame/standing/0e953abdb915ee44/Uika_tachi_yandere%20trance.png",
+      "bytes": 1700053,
+      "sha256": "0e953abdb915ee4431adc476cdddd0d3b51eabf2d1548e126287970cfb9110fa",
+      "common": false
+    },
+    {
+      "file": "Mutsumi_tachi_normal.png",
+      "url": "https://cyber2051.top/img/galgame/standing/78c7325924dda6a4/Mutsumi_tachi_normal.png",
+      "bytes": 1660999,
+      "sha256": "78c7325924dda6a4b60b27953e559f47854cb3a048b72035b24e2d32078593f0",
+      "common": true
+    },
+    {
+      "file": "Mutsumi_tachi_smile.png",
+      "url": "https://cyber2051.top/img/galgame/standing/f3ccd9e7e797f831/Mutsumi_tachi_smile.png",
+      "bytes": 1656361,
+      "sha256": "f3ccd9e7e797f8310871af0040f3bbbde710a0a9283f998ffb60257aed430921",
+      "common": false
+    },
+    {
+      "file": "Mutsumi_tachi_blush.png",
+      "url": "https://cyber2051.top/img/galgame/standing/7e004b4418506cd1/Mutsumi_tachi_blush.png",
+      "bytes": 1656432,
+      "sha256": "7e004b4418506cd11aba2784c8031ce027c1b2122f306be628de542c562378bd",
+      "common": false
+    },
+    {
+      "file": "Mutsumi_tachi_serious.png",
+      "url": "https://cyber2051.top/img/galgame/standing/2529f66b4735a7e0/Mutsumi_tachi_serious.png",
+      "bytes": 1653918,
+      "sha256": "2529f66b4735a7e034cbb700d2cd44612f1d422cc2b8c3d443f780b8d262a10e",
+      "common": false
+    },
+    {
+      "file": "Mutsumi_tachi_sadness.png",
+      "url": "https://cyber2051.top/img/galgame/standing/f8fd8ad214773e88/Mutsumi_tachi_sadness.png",
+      "bytes": 1653948,
+      "sha256": "f8fd8ad214773e88f6ee4be9f4973111798fbbab9ce519f7737198bde9815960",
+      "common": false
+    },
+    {
+      "file": "Mutsumi_tachi_shocked.png",
+      "url": "https://cyber2051.top/img/galgame/standing/a4dd89eb460c9dd2/Mutsumi_tachi_shocked.png",
+      "bytes": 1655151,
+      "sha256": "a4dd89eb460c9dd212ee9423a17c0f61b04342a8d4f84179d7b3960104942247",
+      "common": false
+    },
+    {
+      "file": "Mutsumi_tachi_constricted pupils.png",
+      "url": "https://cyber2051.top/img/galgame/standing/bda4ff63bcd6145d/Mutsumi_tachi_constricted%20pupils.png",
+      "bytes": 1654870,
+      "sha256": "bda4ff63bcd6145d00f2c17a9829e458406827c10ecbd9cdcf00a3ef53adbe20",
+      "common": false
+    },
+    {
+      "file": "Mutsumi_tachi_yandere trance.png",
+      "url": "https://cyber2051.top/img/galgame/standing/698110f0898fcb1d/Mutsumi_tachi_yandere%20trance.png",
+      "bytes": 1655206,
+      "sha256": "698110f0898fcb1d352e36061cdc585b5e787d0b5ce24d3c37cf4fc362b1ef53",
+      "common": false
+    },
+    {
+      "file": "Umiri_tachi_normal.png",
+      "url": "https://cyber2051.top/img/galgame/standing/23fcee32dcf0e29b/Umiri_tachi_normal.png",
+      "bytes": 2146420,
+      "sha256": "23fcee32dcf0e29be18f070eb317376e29c2eaa00442889ac894246983b9186e",
+      "common": true
+    },
+    {
+      "file": "Umiri_tachi_smile.png",
+      "url": "https://cyber2051.top/img/galgame/standing/bf3f0b16234a259f/Umiri_tachi_smile.png",
+      "bytes": 1774836,
+      "sha256": "bf3f0b16234a259f70c5cb90fbea3f4a017aa84a06db30bc9b9aeb33c09bceb9",
+      "common": false
+    },
+    {
+      "file": "Umiri_tachi_blush.png",
+      "url": "https://cyber2051.top/img/galgame/standing/d1b8fa658d921b92/Umiri_tachi_blush.png",
+      "bytes": 1775261,
+      "sha256": "d1b8fa658d921b929469e90dad36989e91b0eebc8855940e4c584915a470fe32",
+      "common": false
+    },
+    {
+      "file": "Umiri_tachi_serious.png",
+      "url": "https://cyber2051.top/img/galgame/standing/f13ca941e7d2634b/Umiri_tachi_serious.png",
+      "bytes": 1775020,
+      "sha256": "f13ca941e7d2634bd805a1cb0dda893d56bf07eaa7bbb0dae837dfce7f0f3af7",
+      "common": false
+    },
+    {
+      "file": "Umiri_tachi_sadness.png",
+      "url": "https://cyber2051.top/img/galgame/standing/5192fb9896837baf/Umiri_tachi_sadness.png",
+      "bytes": 1774969,
+      "sha256": "5192fb9896837bafcca31b0c3b087830a19e31fc1f0cd585debbec386aaf95e7",
+      "common": false
+    },
+    {
+      "file": "Umiri_tachi_shocked.png",
+      "url": "https://cyber2051.top/img/galgame/standing/31879c3edc62c7a9/Umiri_tachi_shocked.png",
+      "bytes": 1773493,
+      "sha256": "31879c3edc62c7a974bc51390668d51edf707d6676eb0892ef104d779bc852da",
+      "common": false
+    },
+    {
+      "file": "Umiri_tachi_constricted pupils.png",
+      "url": "https://cyber2051.top/img/galgame/standing/7368b2567c6f621a/Umiri_tachi_constricted%20pupils.png",
+      "bytes": 1774800,
+      "sha256": "7368b2567c6f621af806421385a15d4c3fe057405df106dd6c171b8ed06f0594",
+      "common": false
+    },
+    {
+      "file": "Umiri_tachi_yandere trance.png",
+      "url": "https://cyber2051.top/img/galgame/standing/8575a3f21e44c138/Umiri_tachi_yandere%20trance.png",
+      "bytes": 1777588,
+      "sha256": "8575a3f21e44c138d4060c1f45d3102c0ca06b221552e0c1779ec68592d271f4",
+      "common": false
+    },
+    {
+      "file": "Nyamu_tachi_normal.png",
+      "url": "https://cyber2051.top/img/galgame/standing/cf044b0319deb97f/Nyamu_tachi_normal.png",
+      "bytes": 1815075,
+      "sha256": "cf044b0319deb97f0fe69bdc4c667d6fee99d4d285419a61d8192aff46f4eed6",
+      "common": true
+    },
+    {
+      "file": "Nyamu_tachi_smile.png",
+      "url": "https://cyber2051.top/img/galgame/standing/9d4871943687c0ee/Nyamu_tachi_smile.png",
+      "bytes": 1449330,
+      "sha256": "9d4871943687c0eeadce200423f6c65d53bcbaa64823af5397cac7b97343755e",
+      "common": false
+    },
+    {
+      "file": "Nyamu_tachi_blush.png",
+      "url": "https://cyber2051.top/img/galgame/standing/8b531f4dda2d00ee/Nyamu_tachi_blush.png",
+      "bytes": 1451759,
+      "sha256": "8b531f4dda2d00eee3132a5f2ac5f183963d483d38c28b4ddd4bb0f0e718f6ac",
+      "common": false
+    },
+    {
+      "file": "Nyamu_tachi_serious.png",
+      "url": "https://cyber2051.top/img/galgame/standing/f6e8c12ccbafb868/Nyamu_tachi_serious.png",
+      "bytes": 1449486,
+      "sha256": "f6e8c12ccbafb868facdf71c960e5d29ef519c0fc9e15e09bf14f847aadb398e",
+      "common": false
+    },
+    {
+      "file": "Nyamu_tachi_sadness.png",
+      "url": "https://cyber2051.top/img/galgame/standing/121ccadf727d1a91/Nyamu_tachi_sadness.png",
+      "bytes": 1450758,
+      "sha256": "121ccadf727d1a91cc58a62833550015ebebc6957c0d67213194fb0805b53b9d",
+      "common": false
+    },
+    {
+      "file": "Nyamu_tachi_shocked.png",
+      "url": "https://cyber2051.top/img/galgame/standing/759ca492f2672f47/Nyamu_tachi_shocked.png",
+      "bytes": 1451869,
+      "sha256": "759ca492f2672f470e2de0f22d6165b3408b67cf6ef474eef837ad936352699b",
+      "common": false
+    },
+    {
+      "file": "Nyamu_tachi_constricted pupils.png",
+      "url": "https://cyber2051.top/img/galgame/standing/b9244f5b4e6f722a/Nyamu_tachi_constricted%20pupils.png",
+      "bytes": 1450112,
+      "sha256": "b9244f5b4e6f722a6d3376e5f0349b63a6e6deccfe3a1dde4f6a6388f9437f20",
+      "common": false
+    },
+    {
+      "file": "Nyamu_tachi_yandere trance.png",
+      "url": "https://cyber2051.top/img/galgame/standing/0fb7f6200710cf95/Nyamu_tachi_yandere%20trance.png",
+      "bytes": 1450345,
+      "sha256": "0fb7f6200710cf95f64a786b29896520a29e829de58c58a7cd688cf7ac31ff7f",
+      "common": false
+    },
+    {
+      "file": "hub-background-659edc9c548f8f95.webp",
+      "url": "https://cyber2051.top/img/ui/v223-menu/hub-background-659edc9c548f8f95.webp",
+      "bytes": 34524,
+      "sha256": "659edc9c548f8f95a876bc4bda749645f11078d7572dd95aa08043b33d8a7285",
+      "common": true
+    },
+    {
+      "file": "reputation-e5a1a2beb9f2d683.webp",
+      "url": "https://cyber2051.top/img/ui/v223-menu/reputation-e5a1a2beb9f2d683.webp",
+      "bytes": 186054,
+      "sha256": "e5a1a2beb9f2d6837dd45a28202c21e2fc3106b188fa0a796fa14d2a2e826c2e",
+      "common": true
+    },
+    {
+      "file": "bonds-da4a8e4dc7381d4a.webp",
+      "url": "https://cyber2051.top/img/ui/v223-menu/bonds-da4a8e4dc7381d4a.webp",
+      "bytes": 210198,
+      "sha256": "da4a8e4dc7381d4aa604c3da132c2a086a990645e4066c20c5b38b69646f22f9",
+      "common": true
+    },
+    {
+      "file": "story-02db6b3d535fd46e.webp",
+      "url": "https://cyber2051.top/img/ui/v223-menu/story-02db6b3d535fd46e.webp",
+      "bytes": 169622,
+      "sha256": "02db6b3d535fd46ef3d3bc530ceba5f9aa7ced3fa81cef7bcde695c7874a910e",
+      "common": true
+    }
+  ]
+}

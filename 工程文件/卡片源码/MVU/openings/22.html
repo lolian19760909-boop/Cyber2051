@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+    :root {
+        --font-base: 'Noto Serif SC', '宋体', 'SimSun', serif;
+        --font-hand: 'Kaiti SC', 'Kaiti TC', 'STKaiti', 'KaiTi', '楷体', 'BiauKai', serif;
+        --font-marker: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', 'Kristen ITC', cursive, sans-serif;
+    }
+
+    .bb-wrap {
+        position: relative; max-width: 920px; margin: 20px auto;
+        padding: 8px; background: #d0d3d1; 
+        border-radius: 4px; border: 2px solid #b0b4b2;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        font-family: var(--font-base);
+    }
+
+    .bb-board {
+        position: relative; padding: 40px 50px;
+        background: #417554; 
+        background-image: 
+            linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 40%),
+            linear-gradient(to right, #4d8461 0%, #356245 100%);
+        border-radius: 2px; border: 1px solid #2a4c37;
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+        color: #fdfdfd; overflow: hidden;
+        display: flex; gap: 40px; align-items: stretch;
+    }
+
+    .handwriting { font-family: var(--font-hand); }
+    .marker-font { font-family: var(--font-marker); font-size: 16px !important; letter-spacing: 2px; }
+    .chalk-text { text-shadow: 0 0 2px rgba(255,255,255,0.3); }
+
+    .bb-center-name {
+        position: absolute; left: 38%; top: 15%;
+        font-size: 80px;
+        color: rgba(255, 255, 255, 0.15); 
+        text-shadow: 0 0 5px rgba(255,255,255,0.1);
+        line-height: 1.1; letter-spacing: 15px;
+        pointer-events: none; z-index: 0;
+        transform: rotate(-2deg);
+    }
+
+    .bb-left { flex: 6; display: flex; flex-direction: column; position: relative; z-index: 5; }
+    .bb-header {
+        display: flex; justify-content: space-between; align-items: flex-end;
+        padding-bottom: 15px; margin-bottom: 30px;
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
+    }
+    .bb-class { font-size: 34px; font-weight: bold; letter-spacing: 6px; color: #fdfdfd; }
+    .bb-duty { font-size: 22px; font-weight: bold; letter-spacing: 4px; color: #b3d9ff; }
+
+    .bb-text { font-size: 16px; line-height: 2.1; color: #f0f4f2; text-align: justify; margin-bottom: 30px; }
+    .bb-quote { color: #ffb3c6; font-weight: bold; font-size: 18px; }
+
+    .bb-btn-group { display: flex; gap: 15px; flex-wrap: wrap; margin-top: auto; }
+    
+    .bb-btn {
+        flex: 1; min-width: 140px; text-align: center;
+        background: rgba(255, 179, 198, 0.08);
+        border: 2px solid #ffb3c6; color: #ffb3c6;
+        padding: 8px 15px; border-radius: 6px;
+        font-size: 15px; font-weight: bold; letter-spacing: 2px;
+        cursor: pointer; transition: all 0.3s ease; user-select: none;
+        box-shadow: 0 0 8px rgba(255,179,198,0.15);
+    }
+    .bb-btn.alt {
+        background: rgba(179, 217, 255, 0.08);
+        border: 2px solid #b3d9ff; color: #b3d9ff;
+        box-shadow: 0 0 8px rgba(179,217,255,0.15);
+    }
+    .bb-btn:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
+
+    .bb-right { 
+        flex: 4; display: flex; flex-direction: column; position: relative;
+        padding-left: 30px; border-left: 1px solid rgba(255, 255, 255, 0.2); z-index: 5;
+    }
+
+    .bb-notice { margin-bottom: 25px; color: #ffe699; }
+    .bb-notice h3 { font-size: 20px; font-weight: bold; border-bottom: 1px solid rgba(255,230,153,0.4); padding-bottom: 5px; margin: 0 0 10px 0; }
+    .bb-notice ul { margin: 0; padding-left: 20px; font-size: 16px; line-height: 1.8; }
+
+    .bb-magnets { position: absolute; top: -20px; right: -20px; width: 100px; height: 150px; pointer-events: none; }
+    .bb-magnet { 
+        position: absolute; width: 10px; height: 10px; border-radius: 50%; 
+        box-shadow: 
+            1px 2px 2px rgba(0,0,0,0.5), 
+            inset -1px -1px 2px rgba(0,0,0,0.3), 
+            inset 1px 1px 2px rgba(255,255,255,0.6); 
+    }
+    .mag-red { background: #d93d3d; } 
+    .mag-blue { background: #2f73c4; }
+
+    .bb-gallery { display: flex; flex-direction: column; align-items: center; gap: 25px; margin-top: auto; }
+    .bb-clip-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; }
+    .bb-tape {
+        position: absolute; top: -12px; left: 50%; transform: translateX(-50%) rotate(-2deg);
+        width: 60px; height: 20px; background: rgba(240, 240, 240, 0.6);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2); z-index: 10; backdrop-filter: blur(2px);
+    }
+    .bb-gif { width: 130px; height: auto; border: 3px solid #fcfcfc; border-radius: 2px; }
+    
+    .cap-anon { margin-top: 6px; color: #ffb3c6; font-weight: bold; }
+    .cap-tomori { margin-top: 6px; color: #b3d9ff; font-weight: bold; }
+
+    .bb-doodle { position: absolute; bottom: -10px; right: 10px; font-size: 24px; color: #ffb3c6; opacity: 0.5; pointer-events: none; }
+
+    @media (max-width: 768px) {
+        .bb-board { flex-direction: column; padding: 25px; }
+        .bb-center-name { left: auto; right: 10px; font-size: 50px; opacity: 0.1; }
+        .bb-right { border-left: none; border-top: 1px solid rgba(255, 255, 255, 0.2); padding-left: 0; padding-top: 20px; }
+        .bb-magnets { display: none; }
+        .bb-btn-group { flex-direction: column; }
+    }
+</style>
+</head>
+<body>
+<div class="bb-wrap">
+    <div class="bb-board">
+        <div class="bb-center-name handwriting">千<br>早<br>愛<br>音</div>
+        <div class="bb-left">
+            <div class="bb-header">
+                <div class="bb-class chalk-text handwriting">羽丘 1-A</div>
+                <div class="bb-duty chalk-text handwriting">值日：高松 灯</div>
+            </div>
+            <div class="bb-text chalk-text">
+                四月的尾声，空气中已经弥漫着初夏那股躁动不安的气息。
+                <br><br>
+                讲台旁，粉色长发的少女深吸了一口气，调整好面部肌肉，在转身面向全班的那一刻，露出了无懈可击的笑容。
+                <br><br>
+                <span class="bb-quote handwriting">「我叫千早爱音，因为家庭原因在这个奇怪的时间入学，希望大家愿意和我当朋友，请多指教。」</span>
+            </div>
+            <div class="bb-btn-group handwriting">
+                <div class="bb-btn alt" onclick="startBlackboard(this)" data-prompt="【开始】
+【开场白】 # 场景生成指令
+## 核心任务
+请严格遵循下述的【前情提要】，并扩写一段教室内爱音作为转校生打量班级同学的剧情。
+
+## 必须锁死的前情提要
+爱音在掌声中走向靠窗的座位，却发现前桌短发女生的桌面上没有课本，只有几块灰扑扑的石头和树叶。
+“啊……石头……”爱音下意识脱口而出。
+前座的女生像受惊的小动物般抬起头，正是高松灯。
+“啊……啊哈哈……请多指教。”爱音尴尬地用招牌笑容掩饰，逃也似地在灯后方落座。
+就在班主任开始讲校园燕子筑巢的例行班会时，前座的灯微微转过头。
+“千早同学……我是高松灯……请多指教……”灯用极小的声音说完，迅速转了回去。
+“嗯……”爱音看着她的背影，莫名其妙地应了一声。
+
+## 你的续写大纲
+1. 终于熬过了刚才的尴尬，爱音悄悄松了一口气。她表面上保持着乖巧的坐姿，实际上视线开始在教室里隐蔽地扫视，观察着一年A班的同学们。
+2. 她的目光不经意间掠过，最终视线定格在了原本就坐在一年A班教室里的同班同学——{{user}}的身上。
+
+## 【最高优先级指令】
+在描绘完爱音将好奇的目光投向{{user}}之后，【必须立即停止】。严禁代为描写{{user}}的任何外貌、动作或状态。将故事的控制权完全交还给玩家。 【/开场白】">
+                    作为本班学生
+                </div>
+                <div class="bb-btn" onclick="startBlackboard(this)" data-prompt="【开始】
+【开场白】 # 场景生成指令
+## 核心任务
+请严格遵循下述的【前情提要】，并扩写老师宣布第二位转校生的剧情。
+
+## 必须锁死的前情提要
+爱音在掌声中走向靠窗的座位，却发现前桌短发女生的桌面上没有课本，只有几块灰扑扑的石头和树叶。
+“啊……石头……”爱音下意识脱口而出。
+前座的女生像受惊的小动物般抬起头，正是高松灯。
+“啊……啊哈哈……请多指教。”爱音尴尬地用招牌笑容掩饰，逃也似地在灯后方落座。
+就在班主任开始讲校园燕子筑巢的例行班会时，前座的灯微微转过头。
+“千早同学……我是高松灯……请多指教……”灯用极小的声音说完，迅速转了回去。
+“嗯……”爱音看着她的背影，莫名其妙地应了一声。
+
+## 你的续写大纲
+1. 讲台上的班主任清了清嗓子，结束了关于燕子筑巢的日常闲话。
+2. 老师向全班宣布，今天其实还有另一位转校生要介绍给大家。一天之内迎来两位转学生的情况并不多见，教室里顿时响起了好奇的窃窃私语。
+3. 所有的目光在此刻全部聚焦在了教室的前门。黑板上，老师已经在巨大的名字旁边写下了新的名字。
+4. 老师看向门外，微笑着开口说道：“请进来吧，{{user}}同学。”
+
+## 【最高优先级指令】
+在描绘完老师喊出“请进来吧，{{user}}同学”之后，【必须立即停止】。严禁代为描写{{user}}的出场动作。将故事的控制权完全交还给玩家。 【/开场白】">
+                    作为第二位转校生
+                </div>
+            </div>
+        </div>
+        
+        <div class="bb-right">
+            <div class="bb-magnets">
+                <div class="bb-magnet mag-red" style="top: 0px; right: 0px;"></div>
+                <div class="bb-magnet mag-red" style="top: 15px; right: 0px;"></div>
+                <div class="bb-magnet mag-red" style="top: 30px; right: 0px;"></div>
+                <div class="bb-magnet mag-blue" style="top: 10px; right: 20px;"></div>
+                <div class="bb-magnet mag-red" style="top: 45px; right: 35px;"></div>
+                <div class="bb-magnet mag-blue" style="top: 60px; right: 25px;"></div>
+                <div class="bb-magnet mag-blue" style="top: 90px; right: 55px;"></div>
+                <div class="bb-magnet mag-red" style="top: 105px; right: 15px;"></div>
+                <div class="bb-magnet mag-blue" style="top: 130px; right: 30px;"></div>
+            </div>
+            <div class="bb-notice chalk-text handwriting">
+                <h3>[ 班级通知 ]</h3>
+                <ul>
+                    <li>黄金周连休：5月2日~5月6日。</li>
+                    <li>数学练习册请在放假前提交。</li>
+                    <li>请勿在走廊奔跑！</li>
+                </ul>
+            </div>
+            <div class="bb-gallery">
+                <div class="bb-clip-wrapper">
+                    <div class="bb-tape"></div>
+                    <img class="bb-gif tilt-left" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/AnonB.gif" alt="Anon GIF">
+                    <div class="cap-anon chalk-text marker-font">@Chihaya_Anon</div>
+                </div>
+                <div class="bb-clip-wrapper">
+                    <div class="bb-tape" style="transform: translateX(-50%) rotate(3deg);"></div>
+                    <img class="bb-gif tilt-right" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/TomoriC.gif" alt="Tomori GIF">
+                    <div class="cap-tomori chalk-text marker-font">@Takamatsu_Tomori</div>
+                </div>
+            </div>
+            <div class="bb-doodle chalk-text handwriting">❀ ❀</div>
+        </div>
+    </div>
+</div>
+<script>
+function startBlackboard(btn) {
+    var promptText = btn.getAttribute('data-prompt');
+    if (!promptText) return;
+    if (typeof triggerSlash === 'function') {
+        triggerSlash('/send ' + promptText + '|/trigger');
+    } else {
+        var input = parent.document.querySelector('#send_textarea');
+        if (input) {
+            input.value = promptText;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
+    btn.innerHTML = "读取中...";
+    btn.style.opacity = "0.5";
+    btn.style.pointerEvents = "none";
+}
+</script>
+</body>
+</html>

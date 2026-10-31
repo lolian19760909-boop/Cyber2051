@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>东京都2051 · 旧版续玩导出</title>
+<style>
+  :root{
+    --bg:#0b0b0d;--panel:#141417;--line:#2a2a30;--ink:#e9e6df;--muted:#9a9a9a;
+    --yellow:#ffd400;--cyan:#39d0d8;--red:#ff5b5b;
+    --font:ui-sans-serif,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    --mono:ui-monospace,"Cascadia Mono",Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 600px at 20% -10%,#1b1b22,var(--bg));color:var(--ink);font:15px/1.65 var(--font);padding:32px 20px 64px}
+  .wrap{max-width:880px;margin:0 auto}
+  h1{font-size:22px;letter-spacing:.02em;margin:0 0 6px}
+  h1 b{color:var(--yellow)}
+  .lead{color:var(--muted);margin:0 0 22px}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 18px 16px;margin:0 0 16px}
+  section h2{font-size:14px;letter-spacing:.08em;color:var(--cyan);margin:0 0 12px;font-weight:600}
+  p{margin:0 0 10px}
+  .drop{border:1px dashed var(--line);border-radius:10px;padding:20px;text-align:center;color:var(--muted);cursor:pointer;transition:.15s}
+  .drop:hover,.drop[data-over="1"]{border-color:var(--cyan);color:var(--ink)}
+  input[type=file]{display:none}
+  label{display:block;font-size:13px;color:var(--muted);margin:12px 0 6px}
+  input[type=text],select{width:100%;background:#0f0f12;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit}
+  input[type=text]:focus,select:focus{outline:2px solid var(--cyan);outline-offset:1px}
+  button{min-height:44px;padding:0 18px;border-radius:8px;border:1px solid var(--line);background:#1b1b20;color:var(--ink);font:inherit;cursor:pointer}
+  button.primary{background:var(--yellow);border-color:var(--yellow);color:#111;font-weight:600}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+  .row>*{flex:1 1 220px}
+  .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:14px 0 0}
+  .fact{background:#0f0f12;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+  .fact span{display:block;font-size:12px;color:var(--muted)}
+  .fact b{font:600 15px/1.5 var(--mono);color:var(--ink);word-break:break-all}
+  .status{margin:14px 0 0;font-size:14px;min-height:1.5em}
+  .status[data-kind=ok]{color:var(--cyan)}
+  .status[data-kind=warn]{color:var(--yellow)}
+  .status[data-kind=bad]{color:var(--red)}
+  ol,ul{margin:0;padding-left:22px;color:var(--muted)}
+  li{margin:4px 0}
+  code{font:13px var(--mono);background:#0f0f12;border:1px solid var(--line);border-radius:6px;padding:1px 5px}
+  .hint{font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>东京都2051 · <b>旧版续玩导出</b></h1>
+  <p class="lead">给还停在 2.3.13 及更早版本、更新时被「本地备份超过 64 MiB」挡住的朋友：把旧聊天里的进度取出来，做成新卡能直接导入的续玩存档。全程只在本机浏览器里算，不联网、不上传。</p>
+
+  <section>
+    <h2>第一步 · 选文件</h2>
+    <p class="hint">在酒馆里打开那个旧聊天 → 聊天菜单里的「导出聊天」→ 选 <code>JSONL</code> 格式（也就是「导入/导出原始聊天」那份 .jsonl）。把它拖进来。</p>
+    <label class="drop" id="drop" for="file">把 <code>.jsonl</code> 拖到这里，或点一下选择文件
+      <input id="file" type="file" accept=".jsonl,.json,.txt,application/json,text/plain">
+    </label>
+    <div class="facts" id="facts" hidden></div>
+    <p class="status" id="status" role="status"></p>
+  </section>
+
+  <section>
+    <h2>第二步 · 选要恢复的进度</h2>
+    <label for="branch">楼层与分支</label>
+    <select id="branch" disabled><option>先选文件</option></select>
+    <label for="cardName">新卡的角色卡文件名</label>
+    <input id="cardName" type="text" value="东京都2051 V2.3.18" spellcheck="false">
+    <p class="hint">导入时会核对「这份存档属于哪张卡」。填你现在要导入的那张卡在酒馆里显示的名字即可（文件名一般是这个名字加 <code>.png</code>）。导入到 2.3.18 就保持默认。</p>
+    <div class="row" style="margin-top:16px">
+      <button class="primary" id="build" disabled>生成续玩存档</button>
+      <button id="reset">重来</button>
+    </div>
+    <p class="status" id="result" role="status"></p>
+  </section>
+
+  <section>
+    <h2>它到底做了什么</h2>
+    <ol>
+      <li>读出旧聊天第一行的聊天设置，和后面每一层楼的消息。</li>
+      <li>找出带 MVU 变量的楼层分支（<code>stat_data</code>），默认选最后一层，你也可以自己挑。</li>
+      <li>按新卡的存档格式写一份 <code>cyber2051.local-backup</code>（<code>kind: progress</code>）：变量表、楼层、分支、聊天设置，加一个 SHA256 校验值。</li>
+      <li>你在新卡里打开「存档与更新」→「导入续玩存档」，它会写成一份新聊天副本再打开。</li>
+    </ol>
+    <p class="hint">注意：这份文件只带“当前进度变量”，不带旧对话历史；旧聊天本体在酒馆里不会被改动，可以一直留着。</p>
+  </section>
+</div>
+
+<script>
+(function (root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.CxxLegacySave = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+  const TYPE = 'cyber2051.local-backup';
+  const CARD_ID = 'cyber2051';
+
+  function plain(value) {
+    return value !== null && typeof value === 'object' && !Array.isArray(value) &&
+      (Object.getPrototypeOf(value) === Object.prototype || Object.getPrototypeOf(value) === null);
+  }
+  // 与卡内 Core.canonical 同一套规则：对象键排序、数组保持顺序、叶子用 JSON.stringify。
+  function canonical(value) {
+    const seen = new Set();
+    function encode(item) {
+      if (item === null || typeof item === 'boolean' || typeof item === 'string') return JSON.stringify(item);
+      if (typeof item === 'number' && Number.isFinite(item)) return JSON.stringify(item);
+      if (typeof item !== 'object' || item === null || seen.has(item)) throw new Error('变量表里有无法序列化的内容');
+      seen.add(item);
+      let result;
+      if (Array.isArray(item)) {
+        const parts = [];
+        for (let i = 0; i < item.length; i++) {
+          if (!Object.prototype.hasOwnProperty.call(item, i)) throw new Error('变量表里有数组空洞');
+          parts.push(encode(item[i]));
+        }
+        result = '[' + parts.join(',') + ']';
+      } else {
+        result = '{' + Object.keys(item).sort().map(function (key) {
+          if (['__proto__', 'prototype', 'constructor'].indexOf(key) >= 0) throw new Error('变量表里有可疑字段 ' + key);
+          return JSON.stringify(key) + ':' + encode(item[key]);
+        }).join(',') + '}';
+      }
+      seen.delete(item);
+      return result;
+    }
+    return encode(value);
+  }
+
+  async function sha256(value, subtle) {
+    const bytes = new TextEncoder().encode(typeof value === 'string' ? value : canonical(value));
+    const digest = await subtle.digest('SHA-256', bytes);
+    return Array.from(new Uint8Array(digest)).map(function (byte) {
+      return byte.toString(16).padStart(2, '0');
+    }).join('');
+  }
+
+  function clone(value) {
+    return value === undefined ? undefined : JSON.parse(JSON.stringify(value));
+  }
+
+  // 酒馆导出的 JSONL：第一行是聊天设置（header），后面每行一条消息。
+  // 少数版本把某层楼的变量表写成对象而不是数组，这里一并认下。
+  function readExport(text) {
+    const rows = String(text || '').replace(/^\uFEFF/, '').split(/\r?\n/).filter(function (line) {
+      return line.trim() !== '';
+    });
+    if (rows.length < 1) throw new Error('这个文件是空的。');
+    let header = null;
+    let messages = [];
+    try {
+      header = JSON.parse(rows[0]);
+    } catch (error) {
+      throw new Error('第一行不是聊天设置：确认导出的是「JSONL / 原始聊天」，不是导出的背景图或角色卡。');
+    }
+    if (!header || typeof header !== 'object' || Array.isArray(header) || !plain(header.chat_metadata)) {
+      throw new Error('第一行里找不到聊天设置（chat_metadata）。这份文件可能不是酒馆的原始聊天导出。');
+    }
+    for (let index = 1; index < rows.length; index++) {
+      let row;
+      try {
+        row = JSON.parse(rows[index]);
+      } catch (error) {
+        throw new Error('第 ' + (index + 1) + ' 行不是合法 JSON，文件可能被截断了。');
+      }
+      if (row && typeof row === 'object' && !Array.isArray(row)) messages.push(row);
+    }
+    if (!messages.length) throw new Error('只有聊天设置，没有任何楼层。');
+    return { header: header, messages: messages };
+  }
+
+  // 一层楼可能有多条分支（swipe），每条分支各自带一份 MVU 变量表。
+  function branchesOf(message) {
+    const list = [];
+    const branches = message && message.variables;
+    if (Array.isArray(branches)) {
+      for (let index = 0; index < branches.length; index++) {
+        if (plain(branches[index]) && plain(branches[index].stat_data)) list.push({ swipe: index, variables: branches[index] });
+      }
+    } else if (plain(branches) && plain(branches.stat_data)) {
+      list.push({ swipe: 0, variables: branches });
+    } else if (Array.isArray(message && message.swipe_info)) {
+      for (let index = 0; index < message.swipe_info.length; index++) {
+        const entry = message.swipe_info[index] && message.swipe_info[index].variables;
+        if (plain(entry) && plain(entry.stat_data)) list.push({ swipe: index, variables: entry });
+      }
+    }
+    return list;
+  }
+
+  function candidates(parsed) {
+    const found = [];
+    parsed.messages.forEach(function (message, floor) {
+      branchesOf(message).forEach(function (branch) {
+        found.push({
+          floor: floor, swipe: branch.swipe, variables: branch.variables,
+          name: String((message && message.name) || ''),
+          preview: String((message && (Array.isArray(message.mes) ? message.mes[branch.swipe] : message.mes)) || '').slice(0, 60),
+        });
+      });
+    });
+    return found;
+  }
+
+  // 默认选“最后一层里当前正在看的那条分支”，没有就退回最后一条。
+  function defaultBranch(parsed, list) {
+    if (!list.length) return null;
+    const lastFloor = list[list.length - 1].floor;
+    const atFloor = list.filter(function (item) { return item.floor === lastFloor; });
+    const message = parsed.messages[lastFloor] || {};
+    const current = Number.isInteger(message.swipe_id) ? message.swipe_id : null;
+    return atFloor.find(function (item) { return item.swipe === current; }) || atFloor[atFloor.length - 1];
+  }
+
+  function characterKeyOf(cardName) {
+    const name = String(cardName || '').trim();
+    if (!name) throw new Error('请填写新卡的角色卡名字。');
+    return /\.png$/i.test(name) ? name : name + '.png';
+  }
+
+  function placeholderState() {
+    // 进度存档只需要一份“没有已安装内容”的更新状态：导入后由新卡自己安装内容，
+    // 旧卡那份 registry 不属于这次恢复，塞进来反而会让内容校验对不上。
+    return { cardId: CARD_ID, installed: {}, registry: { format: 1, packages: {} }, policy: { basic: false } };
+  }
+
+  async function build(input) {
+    if (!input || typeof input.text !== 'string') throw new Error('缺少聊天导出文件内容。');
+    const subtle = (input.subtle || (root.crypto && root.crypto.subtle));
+    if (!subtle) throw new Error('这个浏览器没有提供 WebCrypto；请用较新的 Edge、Chrome 或 Firefox 打开本页。');
+    const parsed = input.parsed || readExport(input.text);
+    const list = candidates(parsed);
+    const wanted = input.branch || defaultBranch(parsed, list);
+    if (!wanted) throw new Error('这份聊天里没有任何一层带 MVU 变量（stat_data）——可能还没开局，或旧版本没有开启 MVU。');
+    const message = parsed.messages[wanted.floor];
+    if (!message) throw new Error('选中的楼层不存在，请重新选择。');
+    const swipe = Number.isInteger(wanted.swipe) ? wanted.swipe : Number(message.swipe_id) || 0;
+    const variables = clone(wanted.variables);
+    if (!plain(variables.stat_data)) throw new Error('选中的分支没有变量表，请换一层。');
+    const header = clone(parsed.header);
+    if (!plain(header.chat_metadata)) header.chat_metadata = {};
+    const doc = {
+      format: 1,
+      type: TYPE,
+      kind: 'progress',
+      createdAt: new Date(input.now || Date.now()).toISOString(),
+      context: { cardId: CARD_ID, characterKey: characterKeyOf(input.cardName), chatId: String(header.user_name || 'legacy-export') + '@legacy-export' },
+      versions: { source: 'legacy-export' },
+      payload: { header: header, floor: wanted.floor, swipe: swipe, variables: variables, updateState: placeholderState() },
+    };
+    doc.sha256 = await sha256(doc, subtle);
+    return { doc: doc, floor: wanted.floor, swipe: swipe, text: JSON.stringify(doc, null, 2) };
+  }
+
+  function summary(parsed, list) {
+    const header = parsed.header || {};
+    const metadata = header.chat_metadata || {};
+    const last = list[list.length - 1];
+    const stat = last && last.variables.stat_data ? last.variables.stat_data : {};
+    return {
+      character: String(metadata.character_name || header.character_name || '未标注'),
+      floors: parsed.messages.length,
+      branches: list.length,
+      lastFloor: last ? last.floor : null,
+      hasTerminal: !!(stat && stat.terminal),
+      hasSchema: !!(last && last.variables && last.variables.schema),
+      keys: last && last.variables ? Object.keys(last.variables) : [],
+    };
+  }
+
+  return { TYPE: TYPE, CARD_ID: CARD_ID, canonical: canonical, sha256: sha256, readExport: readExport,
+    branchesOf: branchesOf, candidates: candidates, defaultBranch: defaultBranch, build: build, summary: summary, characterKeyOf: characterKeyOf,
+    placeholderState: placeholderState };
+});
+
+/* ---------- 页面交互（只在浏览器里跑） ---------- */
+(function () {
+  if (typeof document === 'undefined' || !document.getElementById) return;
+  const $ = (id) => document.getElementById(id);
+  const status = $('status');
+  const result = $('result');
+  const facts = $('facts');
+  const branch = $('branch');
+  const build = $('build');
+  const fileInput = $('file');
+  const drop = $('drop');
+  const cardName = $('cardName');
+
+  function say(node, text, kind) {
+    node.textContent = text;
+    node.dataset.kind = kind || '';
+  }
+  let state = null;
+
+  function showFacts(info) {
+    facts.hidden = false;
+    facts.replaceChildren();
+    const rows = [
+      ['聊天里的角色', info.character],
+      ['楼层 / 带变量的分支', info.floors + ' 层 / ' + info.branches + ' 条'],
+      ['变量表字段', (info.keys || []).join('、') || '（空）'],
+      ['含 terminal 进度', info.hasTerminal ? '是' : '没有（可能还没开局）'],
+    ];
+    rows.forEach(function (pair) {
+      const box = document.createElement('div');
+      box.className = 'fact';
+      const label = document.createElement('span');
+      label.textContent = pair[0];
+      const value = document.createElement('b');
+      value.textContent = pair[1];
+      box.append(label, value);
+      facts.append(box);
+    });
+  }
+
+  function fillBranches(list) {
+    branch.replaceChildren();
+    list.forEach(function (item, index) {
+      const option = document.createElement('option');
+      option.value = String(index);
+      option.textContent = '第 ' + (item.floor + 1) + ' 层 · 分支 ' + (item.swipe + 1) +
+        (item.preview ? ' · ' + item.preview.replace(/\s+/g, ' ') : '');
+      branch.append(option);
+    });
+    const preferred = CxxLegacySave.defaultBranch(state.parsed, list);
+    branch.value = String(list.indexOf(preferred) < 0 ? list.length - 1 : list.indexOf(preferred));
+    branch.disabled = false;
+  }
+
+  async function load(text) {
+    try {
+      const parsed = CxxLegacySave.readExport(text);
+      const list = CxxLegacySave.candidates(parsed);
+      state = { text: text, parsed: parsed, list: list };
+      showFacts(CxxLegacySave.summary(parsed, list));
+      if (!list.length) {
+        build.disabled = true;
+        branch.disabled = true;
+        branch.replaceChildren(new Option('没有找到变量表', ''));
+        say(status, '这份聊天里没有找到 MVU 变量（stat_data）：可能还没开局，或者当时没开 MVU。这份导出帮不上忙。', 'bad');
+        return;
+      }
+      fillBranches(list);
+      build.disabled = false;
+      say(status, '读到 ' + parsed.messages.length + ' 层楼，其中 ' + list.length + ' 条分支带变量表。选好楼层后点右下「生成续玩存档」。', 'ok');
+      result.textContent = '';
+    } catch (error) {
+      state = null;
+      build.disabled = true;
+      facts.hidden = true;
+      say(status, error.message || String(error), 'bad');
+    }
+  }
+
+  ['dragenter', 'dragover'].forEach(function (name) {
+    drop.addEventListener(name, function (event) {
+      event.preventDefault();
+      drop.dataset.over = '1';
+    });
+  });
+  ['dragleave', 'drop'].forEach(function (name) {
+    drop.addEventListener(name, function (event) {
+      event.preventDefault();
+      delete drop.dataset.over;
+    });
+  });
+  drop.addEventListener('drop', function (event) {
+    const file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
+    if (file) void readFile(file);
+  });
+  fileInput.addEventListener('change', function () {
+    const file = fileInput.files && fileInput.files[0];
+    if (file) void readFile(file);
+  });
+  $('reset').addEventListener('click', function () {
+    state = null;
+    fileInput.value = '';
+    build.disabled = true;
+    branch.disabled = true;
+    branch.replaceChildren(new Option('先选文件', ''));
+    facts.hidden = true;
+    say(status, '', '');
+    result.textContent = '';
+  });
+
+  async function readFile(file) {
+    if (file.size > 512 * 1024 * 1024) {
+      say(status, '文件超过 512 MB，先在酒馆里确认导出的是纯文本 JSONL。', 'bad');
+      return;
+    }
+    say(status, '正在读文件…', '');
+    try {
+      const text = await file.text();
+      await load(text);
+    } catch (error) {
+      say(status, '读文件失败：' + (error.message || error), 'bad');
+    }
+  }
+
+  build.addEventListener('click', async function () {
+    if (!state) return;
+    build.disabled = true;
+    say(result, '正在生成…', '');
+    try {
+      const picked = state.list[Number(branch.value)];
+      const out = await CxxLegacySave.build({
+        text: state.text, parsed: state.parsed, branch: picked, cardName: cardName.value,
+        subtle: window.crypto && window.crypto.subtle,
+      });
+      const blob = new Blob([out.text], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const name = '东京都2051-续玩存档-' + new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-') + '.json';
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = name;
+      document.body.append(link);
+      link.click();
+      link.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
+      say(result, '已生成 ' + name + '（' + out.text.length + ' 字节，取自第 ' + (out.floor + 1) + ' 层·分支 ' + (out.swipe + 1) +
+        '）。到新卡的「存档与更新 → 导入续玩存档」里选它。', 'ok');
+    } catch (error) {
+      say(result, '生成失败：' + (error.message || error), 'bad');
+    } finally {
+      build.disabled = false;
+    }
+  });
+})();
+</script>
+</body>
+</html>

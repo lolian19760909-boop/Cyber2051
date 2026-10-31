@@ -1,0 +1,193 @@
+/* Card-owned provenance persistence. The bridge owns no story data. */
+(function(root,factory){const local=typeof module==='object'&&module.exports;const api=factory(root,local?require('./context-source.js'):root.CxxContextSource,local?require('../共享/data-clone.js'):root.CxxDataClone);if(local)module.exports=api;else root.CxxContextHost=api;})(globalThis,function(root,S,Clone){
+  'use strict';
+  const copy=v=>Clone.clone(v),same=(a,b)=>JSON.stringify(a)===JSON.stringify(b),KEY=S.KEY;
+  function fail(code,message,details){throw Object.assign(Error(message),{code,...(details?{details}:{})});}
+  function readbackDifferences(before,after,path='',out=[]){
+    if(out.length>=32||same(before,after))return out;
+    if(before&&after&&typeof before==='object'&&typeof after==='object'&&Array.isArray(before)===Array.isArray(after)){
+      for(const key of new Set([...Object.keys(before),...Object.keys(after)]))readbackDifferences(before[key],after[key],path+'.'+key,out);
+    }else{const describe=v=>({type:v===undefined?'missing':v===null?'null':Array.isArray(v)?'array':typeof v,length:typeof v==='string'?v.length:v&&typeof v==='object'?Object.keys(v).length:null});out.push({path,before:describe(before),after:describe(after)});}
+    return out;
+  }
+  function metadata(row){return {message:row[KEY]??null,current:row.extra?.[KEY]??null,versions:row.swipe_info?.map(info=>info?.extra?.[KEY]??null)??null};}
+  function content(row){const e=row.extra||{};return [row.mes,row.name??null,row.is_user===true,row.is_system===true,row.swipe_id??0,row.swipes??null,row.role??null,row.tool_call_id??null,row.tool_calls??null,e.reasoning??null,e.media??null,e.files??null];}
+  function stamp(chat){return JSON.stringify(chat.map(content));}
+  function apply(chat,next){
+    // Never replace messages, extras or existing swipe_info objects held by MVU/shujuku.
+    for(let floor=0;floor<next.length;floor++){
+      const a=chat[floor],b=next[floor];if(b[KEY]!==undefined&&!same(a[KEY],b[KEY]))a[KEY]=copy(b[KEY]);
+      if(b.extra?.[KEY]!==undefined&&!same(a.extra?.[KEY],b.extra[KEY])){a.extra??={};a.extra[KEY]=copy(b.extra[KEY]);}
+      for(let swipe=0;swipe<(b.swipe_info?.length||0);swipe++){
+        const value=b.swipe_info[swipe]?.extra?.[KEY];if(value===undefined||same(a.swipe_info?.[swipe]?.extra?.[KEY],value))continue;
+        a.swipe_info??=[];a.swipe_info[swipe]??={};a.swipe_info[swipe].extra??={};a.swipe_info[swipe].extra[KEY]=copy(value);
+      }
+    }
+  }
+  function create({api=root,top=root.parent||root,host,readDisk,policy=null}={}){
+    const ctx=()=>api.SillyTavern.getContext(),owner=ctx().characters?.[ctx().characterId]?.avatar;
+    let stopped=false,detach=null,attached=null,round=null,queue=Promise.resolve(),pending=null,confirmed=null,lastError='',lastMismatch=null,lastIndex=null,lastProof=null,inheritedIndexes=new Map();const listeners=[],receipts=new Map();let rendering=null;
+    function releaseRendering(){const value=rendering;rendering=null;for(const resolve of value?.waiters||[])resolve();}
+    async function waitRendering(){const prior=rendering;if(!prior)return;const expected=location();await new Promise((resolve,reject)=>{const done=()=>{clearTimeout(timer);prior.waiters.delete(done);resolve();},timer=setTimeout(()=>{prior.waiters.delete(done);reject(Object.assign(Error('上一条回复的宿主处理尚未结束，请稍后重试。'),{code:'source-render-pending'}));},30000);prior.waiters.add(done);});assertContext(expected);}
+
+    const location=()=>{const c=ctx();return {characterKey:c.characters?.[c.characterId]?.avatar,chatId:c.getCurrentChatId(),group:c.groupId||null};};
+    const scope=()=>{const p=location();return {character:p.characterKey,chat:p.chatId,group:p.group};};
+    const proof=row=>JSON.stringify([S.semantic(row),row[KEY],row.extra?.[KEY],row.swipe_id||0,Array.isArray(row.swipes)?row.swipe_info?.[row.swipe_id||0]?.extra?.[KEY]:row.extra?.[KEY]]);
+    const scopeKey=s=>JSON.stringify([s?.character,s?.chat,s?.group||null]);
+    function origins(){const memory=ctx().chatMetadata?.variables?.__cxx_long_memory,p=scope();return memory?.schema===1&&same(memory.owner,[p.character,p.chat])?(memory.origins||[]).filter(v=>Array.isArray(v)&&v.length===2&&v.every(x=>typeof x==='string'&&x)).map(v=>({character:v[0],chat:v[1],group:null})):[];}
+    async function inherited(index){const result=new Map();for(const prior of origins()){const key=scopeKey(prior);if(key!==scopeKey(index.scope)&&!result.has(key))result.set(key,await S.rebase(index,prior));}return result;}
+    function remember(index,prior){lastIndex=index;inheritedIndexes=prior;lastProof={chat:ctx().chat,rows:ctx().chat.map(proof)};}
+    function reference(floor){
+      const row=lastIndex?.rows[floor];if(stopped||!row||row.pending||lastProof?.chat!==ctx().chat||!same(lastIndex.scope,scope())||ctx().chat.length<=floor)return null;
+      for(let i=0;i<=floor;i++)if(proof(ctx().chat[i])!==lastProof.rows[i])return null;
+      return {scope:copy(lastIndex.scope),messageId:row.messageId,variantId:row.variantId,digest:row.digest,ancestry:row.ancestry};
+    }
+    function validSource(ref){const key=scopeKey(ref?.scope),index=key===scopeKey(scope())?lastIndex:origins().some(s=>scopeKey(s)===key)?inheritedIndexes.get(key):null,row=index?.rows.find(r=>r.messageId===ref?.messageId);return !!row&&!!reference(row.floor)&&['messageId','variantId','digest','ancestry'].every(k=>row[k]===ref[k]);}
+    function validSources(refs){
+      const c=ctx(),current=scope(),localKey=scopeKey(current);if(stopped||lastProof?.chat!==c.chat||!same(lastIndex?.scope,current))return refs.map(()=>false);
+      const allowed=new Set(origins().map(scopeKey)),indexes=new Map([[localKey,lastIndex],...[...inheritedIndexes].filter(([key])=>allowed.has(key))]),maps=new Map();for(const [key,index]of indexes)maps.set(key,new Map(index.rows.map(r=>[r.messageId,r])));
+      const rows=refs.map(ref=>maps.get(scopeKey(ref?.scope))?.get(ref?.messageId)),max=Math.max(-1,...rows.filter(Boolean).map(r=>r.floor));let end=0;for(;end<=max&&end<c.chat.length;end++)if(proof(c.chat[end])!==lastProof.rows[end])break;
+      return refs.map((ref,i)=>{const row=rows[i];return !!row&&!row.pending&&row.floor<end&&['messageId','variantId','digest','ancestry'].every(k=>row[k]===ref[k]);});
+    }
+    function token(){const tail=ctx().chat.length?reference(ctx().chat.length-1):null;return {scope:scope(),binding:copy(currentBinding()),length:ctx().chat.length,tail,unindexed:ctx().chat.length&&!tail?stamp(ctx().chat):null};}
+    async function refreshIndex(){const expected=location(),messages=ctx().chat,original=JSON.stringify(messages.map(proof));assertContext(expected);await queue;assertContext(expected);if(ctx().chat!==messages||JSON.stringify(messages.map(proof))!==original)fail('source-stale','读取来源期间正文发生变化。');const index=await S.snapshot(messages,scope()),prior=await inherited(index);assertContext(expected);if(ctx().chat!==messages||JSON.stringify(messages.map(proof))!==original)fail('source-stale','读取来源期间正文发生变化。');remember(index,prior);return copy(index);}
+    function assertContext(expected){if(stopped||!expected.characterKey||!expected.chatId||expected.group||expected.characterKey!==owner||!same(location(),expected))fail('context-changed','来源登记期间角色或聊天已切换。');}
+    const profile=()=>ctx().chatMetadata?.__cxx_story_profile;
+    function liveState236(){
+      const s=(typeof globalThis!=='undefined'&&globalThis.Cxx236State)||(typeof window!=='undefined'&&window.parent&&window.parent.Cxx236State);
+      if(!s||typeof s.stat!=='function')return null;
+      try{const v=s.stat();return v&&v.terminal?v:null;}catch(e){return null;}
+    }
+    function currentBinding(){
+      for(let floor=ctx().chat.length-1;floor>=0;floor--){const m=ctx().chat[floor],control=m.variables?.[m.swipe_id||0]?.stat_data?.terminal?.ensemble?.control;if(control)return {...copy(control),evidence:'saved-control'};}
+      const live=liveState236(),liveControl=live?.terminal?.ensemble?.control;
+      if(liveControl)return {...copy(liveControl),evidence:'live-control'};
+      const p=profile(),identity=ctx().chatMetadata?.variables?.__cxx_identity;
+      return p?.schema===1&&p.id&&identity?{actorId:'player',viewpointActorId:'player',revision:0,evidence:'story-profile:'+p.id}:null;
+    }
+    function legacyBinding(){
+      const p=profile(),identity=ctx().chatMetadata?.variables?.__cxx_identity;if(p?.schema!==1||!p.id||!identity)return null;
+      const changed=ctx().chat.some(m=>Object.values(m.variables||{}).some(v=>{const c=v?.stat_data?.terminal?.ensemble?.control;return c&&(c.revision!==0||c.actorId!=='player'||c.viewpointActorId!=='player');}));
+      return changed?null:{actorId:'player',viewpointActorId:'player',revision:0,evidence:'legacy-story-profile:'+p.id};
+    }
+    function generationBinding(type){return copy(round?.type===type&&round.binding||S.generationBinding(ctx().chat,{type,current:currentBinding(),legacy:legacyBinding()}));}
+    const disk=readDisk||async function(expected){
+      assertContext(expected);const c=ctx(),response=await top.fetch('/api/chats/get',{method:'POST',headers:c.getRequestHeaders(),credentials:'same-origin',cache:'no-cache',signal:AbortSignal.timeout(30000),body:JSON.stringify({avatar_url:expected.characterKey,file_name:expected.chatId,ch_name:c.characters[c.characterId]?.name})});assertContext(expected);
+      if(!response.ok)fail('source-readback','消息来源读回失败（HTTP '+response.status+'）。');const rows=await response.json();assertContext(expected);if(!Array.isArray(rows)||!rows[0]?.chat_metadata)fail('source-readback','消息来源存档格式异常。');return rows.slice(1);
+    };
+    async function persist(options={}){
+      const expected=location(),messages=ctx().chat,refs=messages.slice();let original=stamp(messages),phase='queued';assertContext(expected);
+      const bindingAtRequest=currentBinding(),legacy=legacyBinding(),receipt=options.receipt,captured=copy({...options,receipt:undefined});
+      const sameRows=()=>ctx().chat===messages&&messages.length===refs.length&&messages.every((m,i)=>m===refs[i]);
+      // MirrorTranslate's public reading v2 identifies the original independently
+      // of its bilingual/translation-only projection. Only that exact original
+      // on this completed alternative may materialize while its save is queued.
+      const initial=original;let projections=0;
+      const projection=async()=>{
+       const jy=top.__JINGYI__,floor=captured.completedFloor,m=messages[floor];
+       if(!Number.isInteger(floor)||!m||!jy?.features?.includes('reading')||jy.reading?.apiVersion<2||typeof jy.reading?.get!=='function')return null;
+       let timer;try{
+        const value=await Promise.race([jy.reading.get({messageId:floor,swipeId:m.swipe_id??0}),new Promise(resolve=>{timer=setTimeout(()=>resolve(null),5000);})]);
+        if(!value||value.schema!==1||value.state==='conflict'||typeof value.sourceMessage!=='string'||typeof value.sourceRevision!=='string'||!value.sourceRevision||value.owner?.chatId!==expected.chatId||value.owner.messageId!==floor||value.owner.swipeId!==(m.swipe_id??0)||top.__JINGYI__!==jy)return null;
+        return {source:value.sourceMessage,revision:value.sourceRevision};
+       }catch{return null;}finally{clearTimeout(timer);}
+      };
+      const originalProjection=projection().then(value=>sameRows()&&stamp(messages)===initial?value:null);
+      async function acceptProjection(actual){
+       if(projections>=3||!sameRows())return false;
+       const a=JSON.parse(original),b=JSON.parse(actual),floor=captured.completedFloor,slot=a[floor]?.[4];
+       if(!Number.isInteger(floor)||a.length!==b.length||a.some((row,i)=>i!==floor&&!same(row,b[i])))return false;
+       if(a[floor].some((v,k)=>k!==0&&k!==5&&!same(v,b[floor][k])))return false;
+       const x=a[floor][5],y=b[floor][5];
+       if(x===null||y===null){if(x!==y)return false;}else if(!Array.isArray(x)||!Array.isArray(y)||x.length!==y.length||x.some((v,i)=>i!==slot&&!same(v,y[i]))||y[slot]!==b[floor][0])return false;
+       const before=await originalProjection,after=before&&await projection();assertContext(expected);
+       if(!before||!after||!same(before,after)||!sameRows()||stamp(messages)!==actual)return false;
+       projections++;original=actual;return true;
+      }
+      const unchanged=async()=>{assertContext(expected);if(receipt?.cancelled)fail('source-superseded','这次来源登记已由下一次生成接续。');const actual=stamp(messages);if(!sameRows()||actual!==original){if(await acceptProjection(actual))return;const a=JSON.parse(original),b=JSON.parse(actual),names=['text','name','user','system','swipe','swipes','role','tool_call_id','tool_calls','reasoning','media','files'],changes=[];for(let floor=0;floor<Math.max(a.length,b.length);floor++)for(let k=0;k<names.length;k++)if(!same(a[floor]?.[k],b[floor]?.[k])){const before=a[floor]?.[k],after=b[floor]?.[k];changes.push({floor,field:names[k],beforeLength:typeof before==='string'||Array.isArray(before)?before.length:null,afterLength:typeof after==='string'||Array.isArray(after)?after.length:null,appendOnly:typeof before==='string'&&typeof after==='string'&&after.startsWith(before),appendedVariableBlock:typeof before==='string'&&typeof after==='string'&&after.startsWith(before)&&/\bUpdateVariable\b/.test(after.slice(before.length))});}lastMismatch={phase,sameRows:sameRows(),completedFloor:captured.completedFloor??null,roundType:round?.type||null,changes};fail('source-stale','正文或回复分支已变化，请重新登记来源。');}};
+      const operation=async()=>{
+        await unchanged();if(typeof host?.withChatSave!=='function'||typeof host?.assertPlayerWritable!=='function')fail('source-save-service','消息来源保存服务尚未就绪。');
+        return host.withChatSave(expected,async()=>{
+         for(let attempt=0;;attempt++)try{
+          await unchanged();phase='permission';await host.assertPlayerWritable(expected);await unchanged();
+          const plan=S.plan(messages,{completedFloor:captured.completedFloor,newVariants:captured.newVariants||[],resolveBinding:({floor,swipe})=>floor===captured.floor&&(captured.swipe===undefined||captured.swipe===swipe||captured.newVariants?.some(v=>v.messageId===messages[floor][KEY]?.messageId&&v.swipe===swipe))?captured.binding??bindingAtRequest:legacy});
+          const metadataBefore=JSON.stringify(messages.map(metadata));apply(messages,plan.chat);
+          // A retry persists IDs already assigned by this transaction. Only an unmaterialized
+          // native placeholder keeps its explicit new-slot hint for the next attempt.
+          captured.newVariants=(captured.newVariants||[]).filter(v=>{const row=messages.find(m=>m[KEY]?.messageId===v.messageId);return typeof row?.swipes?.[v.swipe]!=='string';});
+          const required=messages.map(metadata),signature=JSON.stringify(required),needsSave=plan.changes.length>0||pending?.chat===messages||confirmed?.chat!==messages||confirmed.signature!==signature||confirmed.content!==original;
+          if(needsSave){pending={chat:messages,expected,signature};phase='save';await top.__cxx_chat_save_guard_v1?.whenIdle?.();await unchanged();await ctx().saveChat();await top.__cxx_chat_save_guard_v1?.whenIdle?.();await unchanged();}
+          phase='readback';const saved=await disk(expected);await unchanged();
+          if(saved.length!==messages.length||saved.some((m,i)=>!same(content(m),content(messages[i]))||!same(metadata(m),required[i]))){
+           pending={chat:messages,expected,signature};
+           lastMismatch={phase:'readback',attempt,extraAnalysis:top.Mvu?.isDuringExtraAnalysis?.()===true,guardError:top.__cxx_chat_save_guard_v1?.status?.().error||null,memoryMetadataChanged:JSON.stringify(messages.map(metadata))!==signature,differences:readbackDifferences(messages.map((m,i)=>({content:content(m),metadata:required[i]})),saved.map(m=>({content:content(m),metadata:metadata(m)})))};
+           // ST saveChatConditional may return without saving while an MVU save
+           // is in flight. Retry this unchanged receipt under the same guard.
+           if((captured.preSend||captured.completedFloor!==null&&captured.completedFloor!==undefined)&&attempt<2)continue;
+           fail('source-readback','消息来源尚未保存一致，编号已保留，可重试保存。',copy(lastMismatch));
+          }
+          if(JSON.stringify(messages.map(metadata))!==signature)fail('source-stale','消息来源在保存期间发生变化。');
+          if(pending?.chat===messages)pending=null;confirmed={chat:messages,signature,content:original};lastError='';lastMismatch=null;phase='index';const index=await S.snapshot(messages,scope()),prior=await inherited(index);await unchanged();if(JSON.stringify(messages.map(metadata))!==signature)fail('source-stale','消息来源在校验期间发生变化。');remember(index,prior);return {index:copy(lastIndex),changed:metadataBefore!==signature,unresolved:copy(plan.unresolved)};
+         }catch(e){if(e.code==='source-superseded')return {superseded:true};if(e.code!=='source-stale'||attempt>=2||!captured.preSend||round?.id!==captured.preSend||!sameRows()||!same(round.scope,scope()))throw e;assertContext(expected);original=stamp(messages);}
+        });
+      };
+      const result=queue.then(operation).catch(e=>{if(e.code==='source-superseded')return {superseded:true};throw e;});queue=result.catch(e=>{lastError=e.message;});return result;
+    }
+    function newSwipeHints(type){
+      if(type!=='swipe')return [];const messages=ctx().chat,row=messages.at(-1),active=row?.swipe_id||0,known=pending?.chat===messages?pending:confirmed?.chat===messages?confirmed:null;
+      if(!known?.signature||!Array.isArray(row?.swipes)||!row?.[KEY]?.messageId)return [];
+      const previous=JSON.parse(known.signature).at(-1),versions=previous?.versions;
+      // Only this writer's previous snapshot can prove that the selected slot is new.
+      // Duplicate IDs in an existing alternative still go through the normal rejection.
+      if(previous?.message?.messageId!==row[KEY].messageId||!Array.isArray(versions)||!versions.length||active<versions.length||!previous.current?.binding||!same(previous.current,row.extra?.[KEY])||versions.some((v,i)=>!same(v,row.swipe_info?.[i]?.extra?.[KEY]??null)))return [];
+      return [{messageId:row[KEY].messageId,swipe:active,binding:copy(previous.current.binding)}];
+    }
+    async function prepare(request){
+      await waitRendering();
+      const newVariants=newSwipeHints(request.type),binding=newVariants.length?copy(newVariants[0].binding):S.generationBinding(ctx().chat,{type:request.type,current:currentBinding(),legacy:legacyBinding()}),token=round={id:request.id,type:request.type,binding,versions:null,scope:copy(request.scope)};
+      if(!token.binding)fail('source-identity','请先完成本故事人物初始化，再登记发送来源。');
+      // Host render/MVU listeners can finish materializing a selected swipe while
+      // this pre-send save awaits disk. Re-capture only before prompt construction;
+      // keep the same round, actor and chat, and never reset the save baseline.
+      for(let attempt=0;;attempt++){try{await persist({preSend:token.id,newVariants:attempt?newSwipeHints(request.type):newVariants,floor:newVariants.length?ctx().chat.length-1:undefined,binding});break;}catch(e){if(e.code!=='source-stale'||attempt>=2||round!==token||!same(token.scope,scope()))throw e;}}
+      if(round!==token)fail('source-stale','来源准备期间生成已停止或故事已切换。');token.versions=ctx().chat.map(m=>({messageId:m[KEY].messageId,count:m.swipes?.length||1}));
+      const last=ctx().chat.at(-1);if(request.type==='swipe'&&newVariants.length&&typeof last?.swipes?.[last.swipe_id]==='string')token.materializedReserve={row:last,swipe:last.swipe_id,length:last.swipes.length};
+    }
+    function streaming(){
+      const reserved=round?.materializedReserve,row=reserved?.row;if(!row||!same(round.scope,scope())||ctx().chat.at(-1)!==row||row.swipe_id!==reserved.swipe)return;
+      const tail=reserved.length;
+      // Native streaming may increment length even when a late prior consumer has
+      // already materialized this new slot. Remove only its extra, still absent hole.
+      // Empty strings, variables and all existing alternative records are preserved.
+      if(row.swipes?.length===tail+1&&!Object.hasOwn(row.swipes,tail)&&!Object.hasOwn(row.swipe_info||[],tail)&&!Object.hasOwn(row.variables||[],tail)){row.swipes.length=tail;round.materializedReserve=null;}
+    }
+    async function message({kind,floor,session}){
+      const m=ctx().chat[floor];if(!m)fail('source-message','新消息已不在当前聊天。');
+      const active=round&&round.id===session?round:null,binding=active?.binding||currentBinding(),newVariants=[];
+      // OpeningForm is the creation screen, before a playable actor exists.
+      if(!binding&&!active&&kind==='assistant'&&floor===0&&ctx().chat.length===1&&ctx().chatMetadata?.__cxx_story_v1?.stage==='creating'&&/^<OpeningForm\/>[ \t]*(?:\r?\n|$)/.test(m.mes||''))return;
+      if(!binding)fail('source-identity','新消息的人物归属尚未建立。');
+      if(kind==='assistant'&&session!==null&&session!==undefined&&ctx().eventTypes?.CHARACTER_MESSAGE_RENDERED){releaseRendering();rendering={floor,row:m,waiters:new Set()};}
+      const previous=active?.versions?.find(v=>v.messageId===m[KEY]?.messageId);
+      if(kind==='assistant'&&previous)for(let swipe=previous.count;swipe<Math.max(m.swipes?.length||0,(m.swipe_id||0)+1);swipe++)newVariants.push({messageId:previous.messageId,swipe});
+      const receipt={cancelled:false};if(session!==null&&session!==undefined)receipts.set(session,receipt);try{await persist({floor,swipe:m.swipe_id||0,binding,completedFloor:kind==='assistant'?floor:null,newVariants,receipt});}finally{if(receipts.get(session)===receipt)receipts.delete(session);}
+    }
+    async function before(request){
+      await queue;if(pending?.chat===ctx().chat)fail('source-readback','上次来源保存未确认，请先重试。');
+      const expected=location(),raw=JSON.stringify(ctx().chat.map(proof)),index=await S.snapshot(ctx().chat,scope()),prior=await inherited(index);assertContext(expected);if(JSON.stringify(ctx().chat.map(proof))!==raw)fail('source-stale','发送来源在检查期间发生变化。');
+      const mapped=S.map(request.rows,index);remember(index,prior);
+      return policy?.before?policy.before({...request,index,mapped,binding:copy(round?.binding)}):{rows:request.rows};
+    }
+    function bind(){
+      releaseRendering();detach?.();detach=null;attached=null;round=null;lastIndex=null;lastProof=null;inheritedIndexes.clear();
+      if(stopped||location().characterKey!==owner||!location().chatId||location().group)return;
+      refreshIndex().catch(()=>{}); // Read existing IDs after reload; never migrate on a read.
+      const bridge=top.CxxContextBridge;if(!bridge)return;
+      attached=bridge;detach=bridge.connect({scope:scope(),memoryModes:['summary','database'],isAuxiliary(){try{return (api.Mvu||top.Mvu)?.isDuringExtraAnalysis?.()===true;}catch{return false;}},prepare,message,before,worldinfo:request=>policy?.worldinfo?.({...request,binding:copy(round?.binding)}),final:request=>policy?.final?.(request),pause:async request=>{if(round?.id===request.id)round.paused=true;await policy?.finish?.(request);},finish:async request=>{if(request.reason==='superseded'){const receipt=receipts.get(request.id);if(receipt)receipt.cancelled=true;}if(round?.id===request.id)round=null;await policy?.finish?.(request);}});
+    }
+    function start(){bind();const c=ctx();for(const name of ['CHAT_CHANGED'])if(c.eventTypes?.[name]){const fn=()=>{try{bind();}catch(e){lastError=e.message;top.toastr?.error(e.message);}};c.eventSource.on(c.eventTypes[name],fn);listeners.push(()=>c.eventSource.removeListener(c.eventTypes[name],fn));}const tokenEvent=c.eventTypes?.STREAM_TOKEN_RECEIVED;if(tokenEvent){c.eventSource.on(tokenEvent,streaming);listeners.push(()=>c.eventSource.removeListener(tokenEvent,streaming));}const rendered=c.eventTypes?.CHARACTER_MESSAGE_RENDERED;if(rendered){const done=floor=>{if(rendering?.floor===floor&&ctx().chat[floor]===rendering.row)releaseRendering();};c.eventSource.on(rendered,done);listeners.push(()=>c.eventSource.removeListener(rendered,done));}return service;}
+    function destroy(){stopped=true;releaseRendering();detach?.();detach=null;attached=null;round=null;listeners.splice(0).forEach(fn=>fn());}
+    const service={start,destroy,capture:persist,retry:()=>persist(),refreshIndex,reference,validSource,validSources,token,generationBinding,use(value){if(round&&!round.paused)fail('context-busy','生成中不能更换上下文策略。');policy=value;return service;},binding:()=>copy(currentBinding()),preview:()=>S.plan(ctx().chat,{resolveBinding:legacyBinding}),index:()=>copy(lastIndex),status:()=>({connected:!!detach,bridge:attached?.status?.(),pending:!!pending,error:lastError,details:copy(lastMismatch)}),location};return service;
+  }
+  return {create,metadata,apply};
+});

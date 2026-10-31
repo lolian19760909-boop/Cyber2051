@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "upstream": "https://github.com/iabil-604/MirrorTranslate",
+  "version": "0.50.1",
+  "author": "iabil",
+  "source": "资料/参考/镜译接口/隔离验证-0.50.1-20261011/upstream",
+  "files": [
+    {
+      "path": "core.js",
+      "bytes": 324781,
+      "sha256": "d721bcf906191b61f9717d7a11bc272e59c811b52f6a471a2dfe784296fb4857"
+    },
+    {
+      "path": "prompts.js",
+      "bytes": 61746,
+      "sha256": "6ae6de604a4f1aa33cdb44aff6b6b186f1ff0560ece5493a69f9c078685f8c3b"
+    },
+    {
+      "path": "jailbreak-default.js",
+      "bytes": 135,
+      "sha256": "148e03eb59423d0e29fb7116d0814869acf990c60ba8d76228a556afb9ad94d0"
+    },
+    {
+      "path": "palette.js",
+      "bytes": 43937,
+      "sha256": "4198895491644c07ec5ed99dca1c76c1e8aa73e2c69df0cd83fc71de4f7faaa4"
+    },
+    {
+      "path": "tts-sanitizer.js",
+      "bytes": 8221,
+      "sha256": "dddfcb5bd6631fd786b445b16a9bff660bf51b730018cbfbff41dfee0a939d7a"
+    },
+    {
+      "path": "tts.js",
+      "bytes": 215605,
+      "sha256": "de9b81fcff53c83a3fbd6b4d621b84290811f5296e6f6f6d30d0c774e26c0423"
+    },
+    {
+      "path": "tts-stream.js",
+      "bytes": 8197,
+      "sha256": "2239a7a10a2ccc2875e7f4113c0f181628e3fa9526478b03845efdfc3f97acf7"
+    },
+    {
+      "path": "tts-cloud.js",
+      "bytes": 14804,
+      "sha256": "20df2b741bb9a78699f649a03b3d46bf585b1d87ccf995c436026de7a883b77e"
+    },
+    {
+      "path": "pcm-player.js",
+      "bytes": 13562,
+      "sha256": "d8c28a76b6c23652bfe5a16aa68646150675cc351cd454f95f3125e80f210400"
+    }
+  ],
+  "scope": "Unmodified pure TTS payload, normalization, stream splitting, response parsing and PCM playback modules. Host index.js is not loaded."
+}

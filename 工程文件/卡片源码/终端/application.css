@@ -1,0 +1,35 @@
+/* Application layout. Artwork and page palettes remain in host.css. */
+.t2051x [hidden]{display:none!important}
+.t2051x .terminal .system-nav{gap:4px}
+.t2051x .terminal .nav-heading b i{font-size:0}
+.t2051x .terminal .nav-heading b i::after{content:'05';font-size:12px}
+.t2051x .workspace{position:relative}
+.t2051x .terminal-library-tabs,.t2051x .terminal-history-back{position:absolute;top:10px;right:22px;z-index:5;display:flex;gap:8px}
+.t2051x[data-route=archive] .page-head{padding-top:64px}
+.t2051x .terminal-player{padding:0!important;overflow:hidden!important;height:100%;min-height:0}
+.t2051x .terminal-player:not([hidden]){display:flex!important;flex-direction:column}
+.t2051x .cxx-module-page.terminal-player>.module-tabs{flex-shrink:0;display:flex!important;gap:6px;flex-wrap:wrap;padding:12px 20px;margin:0;background:#130f18;border-bottom:1px solid color-mix(in srgb, var(--cxx-red) 26.67%, transparent)}
+.t2051x .terminal .nav-item strong{white-space:nowrap}
+.t2051x .terminal-player>.module-tabs button{min-height:44px;padding:8px 14px}
+.t2051x .terminal-player-body{flex:1;min-height:0;overflow:hidden}
+.t2051x .terminal-player-body>div{height:100%;min-height:0}
+.t2051x .terminal-player .module-tabs [aria-pressed=true]{background:#472134;border-color:var(--cxx-red);color:#fff}
+.t2051x .cxx-module-page{overflow:auto}
+.t2051x .cxx-module-page[hidden]{animation:none!important}
+.t2051x .cxx-module-page[hidden] *{animation-play-state:paused!important}
+@media(min-width:1100px){
+ .t2051x .terminal .system-nav{padding-inline:18px}
+ .t2051x .terminal .nav-item{max-width:240px}
+ .t2051x .page:not(.city-page):not(.terminal-player){padding-inline:clamp(24px,4vw,72px)}
+}
+@media(max-width:680px){
+ .t2051x .terminal .system-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px;padding:4px 3px;grid-auto-rows:minmax(48px,auto)}
+ .t2051x .terminal .nav-item{width:auto;min-width:0;margin:0;padding:6px 2px;min-height:48px;justify-content:center}
+ .t2051x .terminal .nav-item strong{font-size:12px;letter-spacing:0}
+ .t2051x .terminal .nav-item small,.t2051x .terminal .nav-serial{display:none}
+ .t2051x .cxx-module-page.terminal-player>.module-tabs{padding:8px;gap:4px;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))}
+ .t2051x .terminal-player>.module-tabs button{font-size:12px;padding:6px 2px;min-width:0}
+ .t2051x .terminal-library-tabs,.t2051x .terminal-history-back{right:12px;top:8px}
+ .t2051x .page-head h1{overflow-wrap:anywhere}
+ .t2051x .module-art{min-height:180px}
+}

@@ -1,0 +1,1301 @@
+{
+  "schema": 1,
+  "modules": {
+    "CxxApiConnection": "运行时/api-connection.js",
+    "CxxGameplay": "运行时/gameplay.js",
+    "CxxTalents": "运行时/talents.js",
+    "CxxTacticalRules": "运行时/tactical-rules.js",
+    "CxxTacticalUI": "运行时/tactical-ui.js",
+    "CxxItemCatalog": "运行时/item-catalog-data.js",
+    "CxxItemModel": "运行时/item-model.js",
+    "CxxUtilityApi": "运行时/utility-api.js",
+    "CxxIdentity": "运行时/identity.js",
+    "CxxNumericHost": "运行时/numeric-host.js",
+    "CxxUpdateHost": "运行时/host.js",
+    "CxxUpdaterHandoff": "运行时/updater-handoff.js",
+    "CxxOperations": "运行时/operations.js",
+    "CxxCharacterState": "运行时/character-state.js",
+    "CxxNumericGrowth": "数值引擎/src/growth.js",
+    "CxxNumericEngine": "数值引擎/src/engine.js",
+    "CxxEnsembleContent": "运行时/ensemble-content.js",
+    "CxxEnsembleState": "运行时/ensemble-state.js",
+    "CxxEnsembleMvu": "运行时/ensemble-mvu.js",
+    "CxxEnsembleView": "运行时/ensemble-view.js",
+    "CxxEnsembleUI": "运行时/ensemble-ui.js",
+    "CxxContextSource": "运行时/context-source.js",
+    "CxxContextHost": "运行时/context-host.js",
+    "CxxContextRequests": "运行时/context-requests.js",
+    "CxxContextStore": "运行时/context-store.js",
+    "CxxContextCompact": "运行时/context-compact.js",
+    "CxxContextController": "运行时/context-controller.js",
+    "CxxNumericMvu": "数值引擎/adapters/mvu.js",
+    "CxxLoadout": "运行时/loadout.js",
+    "CxxTalentUI": "运行时/talent-ui.js",
+    "CxxItemEditor": "运行时/item-editor.js",
+    "CxxPlayerUI": "运行时/player-ui.js",
+    "CxxPlayerOperations": "运行时/player-operations.js",
+    "Cxx236Schema": "MVU/schema.js",
+    "Cxx236VariablePolicy": "MVU/variable-policy.js",
+    "CxxGalLandscape": "Gal/landscape.js",
+    "CxxOpeningFlow": "运行时/opening-flow.js",
+    "CxxOpeningUI": "运行时/opening-ui.js",
+    "CxxPlayerHost": "运行时/player-host.js",
+    "CxxGameplayHost": "运行时/gameplay-host.js",
+    "CxxContent": "运行时/content.js",
+    "Cxx236Openings": "MVU/openings.js",
+    "Cxx236Preferences": "MVU/preferences.js",
+    "CxxMailboxFactory": "运行时/mailbox.js",
+    "Cxx233Components": "共享/render-components.js",
+    "CxxUpdatePanel": "运行时/panel.js",
+    "CxxUpdateController": "运行时/controller.js",
+    "CxxUnifiedUpdate": "运行时/unified-update.js",
+    "CxxUpdaterUpgrade": "运行时/upgrader.js",
+    "CxxUpdateBackup": "运行时/backup.js",
+    "CxxRadioFactory": "共享/radio-service.js",
+    "Cxx233TerminalFactory": "共享/terminal-service.js",
+    "CxxGalController": "Gal/controller.js",
+    "CxxGalUI": "Gal/ui.js",
+    "CxxDisplayGuard235": "正文/display-guard.js",
+    "Cxx238Dialogue": "正文/dialogue.js",
+    "Cxx249HistoryRuntime": "正文/history-runtime.js",
+    "CxxExperienceHost": "运行时/experience-host.js",
+    "CxxTacticalHost": "运行时/tactical-host.js",
+    "CxxBattleHost": "运行时/battle-host.js",
+    "CxxStoryLibrary": "运行时/story-library.js",
+    "Cxx236Variables": "MVU/variables.js",
+    "CxxBattleContext": "运行时/battle-context.js",
+    "CxxBattleSurface": "运行时/battle-surface.js",
+    "CxxBattleUI": "运行时/battle-ui.js",
+    "CxxBattle": "运行时/battle.js",
+    "CxxBusinessContentSync": "运行时/business-content-sync.js",
+    "CxxCombatView": "运行时/combat-view.js",
+    "CxxUpdateCore": "运行时/core.js",
+    "CxxCrypto": "运行时/crypto-compat.js",
+    "CxxUpdateDiscovery": "运行时/discovery.js",
+    "CxxGameplayActions": "运行时/gameplay-actions.js",
+    "CxxGrowthRules": "运行时/growth-rules.js",
+    "CxxItemArt": "运行时/item-art.js",
+    "CxxItemDefinitions": "运行时/item-definitions.js",
+    "CxxLoadoutSetup": "运行时/loadout-setup.js",
+    "CxxCityNews": "运行时/news.js",
+    "CxxNumericContent": "运行时/numeric-content.js",
+    "CxxPlayerArt": "运行时/player-art.js",
+    "CxxPlayerAssets": "运行时/player-assets.js",
+    "CxxReleaseSafety": "运行时/release-safety.js",
+    "CxxRelease": "运行时/release.js",
+    "CxxStorySummaries": "运行时/story-summaries.js",
+    "CxxTacticalAssets": "运行时/tactical-assets.js",
+    "CxxTacticalEngine": "运行时/tactical-engine.js",
+    "CxxTalentData": "运行时/talent-data.js",
+    "CxxGalBackgrounds": "Gal/backgrounds.js",
+    "CxxGalHud": "Gal/hud.js",
+    "CxxGalMode": "Gal/mode.js",
+    "CxxGalOpeningBridge": "Gal/opening-bridge.js",
+    "CxxGalOpeningView": "Gal/opening-view.js",
+    "CxxGalParser": "Gal/parser.js",
+    "CxxGalScene": "Gal/scene.js",
+    "CxxGalSprites": "Gal/sprites.js",
+    "CxxGalStatusBridge": "Gal/status-bridge.js",
+    "CxxNativeTerminal": "Gal/terminal-bridge.js",
+    "CxxGalWorkshop": "Gal/workshop-bridge.js",
+    "CxxNativeHost": "原生/host.js",
+    "CxxNativeProse": "原生/prose.js",
+    "Cxx236Effects": "MVU/effects.js",
+    "CxxAtlasToolFactory": "地图/map-service.js",
+    "CxxAtlasResourcesFactory": "地图/resource-client.js",
+    "CxxAtlasDocumentStyle": "地图/document-style.js",
+    "Cxx249Shadow": "共享/shadow-components.js",
+    "Cxx249Panels": "原生/panels.js",
+    "CxxPluginCheck": "运行时/plugin-check.js",
+    "CxxRoster": "运行时/roster.js",
+    "CxxDataSchema": "数据/schema.js",
+    "CxxDataStore": "数据/store.js",
+    "CxxDataRows": "数据/rows.js",
+    "CxxDataSync": "数据/sync.js",
+    "CxxDataRead": "数据/read.js",
+    "CxxDataWrite": "数据/write.js",
+    "Cxx236Zod": "数据/validator.js",
+    "Cxx236Applier": "数据/applier.js"
+  },
+  "historyWorker": {
+    "modules": [
+      "Cxx238Dialogue",
+      "CxxGalParser",
+      "CxxStorySummaries"
+    ],
+    "entry": "正文/history-worker.js",
+    "generator": "工具/lib/history-worker.cjs",
+    "target": "cxx-business-core-241/CXX249_HISTORY_WORKER_SOURCE"
+  },
+  "features": [
+    {
+      "id": "startup",
+      "title": "启动、更新与配置",
+      "sourcePatterns": [
+        "运行时/(startup|controller|host|release|core|identity|business-content-sync|crypto-compat|install|update)",
+        "运行时/(panel|discovery)",
+        "运行时/component-catalog",
+        "运行时/(unified-update|upgrader|preset-repair)"
+      ],
+      "stateOwner": "更新器及启动服务",
+      "consumers": [
+        "原生入口",
+        "Gal",
+        "终端",
+        "诊断"
+      ],
+      "entry": "bootstrap → controller.start／release",
+      "host": "助手脚本启动、顶层Cxx233Updater、角色变量",
+      "state": "__cxx_update_state；启动／诊断状态",
+      "visualMode": "保留源码",
+      "visualAdaptation": "启动与更新器保持原入口；插件按角色装载场景。",
+      "tests": [
+        "测试/当前/startup-state.test.cjs"
+      ],
+      "verification": "来源已登记；实际通过项以当前批回执为准",
+      "airp": {
+        "format": "airp-feature.v1",
+        "purpose": "让当前角色卡在助手和宿主就绪后安装一次正确版本的服务，能查看依赖、更新和启动失败原因。",
+        "enabled": "启用现有助手脚本；宿主变量、共享服务和相应依赖可用后启动。更新仍由原更新器确认内容与版本。",
+        "inputs": "角色身份、宿主能力、当前内容版本、已安装模块与资源清单。",
+        "outputs": "已注册服务、启动／更新状态、内容选择与可导出的诊断；不生成玩法数值。",
+        "turn": [
+          "controller.create().start与startup-state判断就绪",
+          "按原模块顺序注册共享服务与领域宿主",
+          "原生／Gal／终端消费服务，启动错误进入诊断",
+          "切聊／卸载按原所有者清理，更新协调沿原whenIdle等接口"
+        ],
+        "authority": "启动器／更新器持有安装与内容状态；各领域业务状态仍归其原服务，界面不补写。",
+        "prompts": "本域不独立编写角色叙事；只决定后续世界书、规则与内容模块能否按现有版本加载。",
+        "recovery": "依赖未就绪先显示具体能力缺口；从设置／运行诊断与帮助查看模块和阶段，再按原入口重试。不得以重新初始化覆盖已有玩家变量。",
+        "reproduction": [
+          "测试/当前/startup-state.test.cjs；沿用E2归档入口",
+          "独立聊天启用／重载，核对共享实例与原设置诊断"
+        ],
+        "sourceTrace": [
+          "运行时/controller.js:create/start",
+          "运行时/startup-state.js:启动状态判定",
+          "共享/shared-runtime.js:服务登记与destroy",
+          "运行时/diagnostics.js:report/resolve"
+        ]
+      }
+    },
+    {
+      "id": "story-save",
+      "title": "故事、存档与角色状态",
+      "sourcePatterns": [
+        "运行时/(player-host|story-|backup|character-state|operations|entry-experience|experience-host|character-cache)",
+        "运行时/player-operations",
+        "运行时/player-(reader|save|refresh)",
+        "运行时/character-comparison",
+        "运行时/chat-save-guard"
+      ],
+      "stateOwner": "player-host／story-library及宿主聊天保存",
+      "consumers": [
+        "故事书架",
+        "人物界面",
+        "续玩工具"
+      ],
+      "entry": "player-host.commit；story-library.newStory／point／restore／switchStory",
+      "host": "ST上下文、聊天API、保存与磁盘读回",
+      "state": "stat_data；chat_metadata.__cxx_story_v1；创建草稿",
+      "visualMode": "只读展示 + 原业务入口",
+      "visualAdaptation": "档案文字可用只读组件；保存、读档和恢复仍由原服务处理。",
+      "tests": [
+        "测试/当前/story-library.test.cjs"
+      ],
+      "verification": "来源已登记；实际通过项以当前批回执为准",
+      "airp": {
+        "format": "airp-feature.v1",
+        "purpose": "让玩家新建、继续、切换故事，创建存档点并从存档开启新路线，保留原消息、分支及未知扩展。",
+        "enabled": "当前角色／聊天身份有效，宿主聊天读取、保存与打开接口可用；创建中的档位先进入原恢复流程。",
+        "inputs": "当前消息与swipe快照、chat_metadata、人物资料、创建草稿、导入／存档文档及完整性指纹。",
+        "outputs": "已读回确认的聊天／故事元数据、不可变存档点或新路线、操作状态与恢复提示。",
+        "turn": [
+          "故事书架或人物入口发起原有创建／存档／切换操作",
+          "player-reader及story-library按当前角色与聊天捕获原始文档",
+          "player-save或story-library适配器排队保存并实际读回核对",
+          "成功后打开目标故事，恢复人物资料并由player-refresh通知旧视图",
+          "下一轮生成从选中故事／回复读取状态，未确认保存不冒充成功"
+        ],
+        "authority": "stat_data只由MVU／player-host提交链写；__cxx_story_v1、档位与存档点归story-library；人物资料、草稿按原保存服务持有，视图只提交请求。",
+        "prompts": "切换故事改变下一轮上下文与阶段／身份读取来源；本域不把存档摘要变成额外世界真相。世界书仍由原装配与当前剧情注入。",
+        "recovery": "超时为结果未确认，保留草稿与请求，不在原请求运行时重复写。副本冲突或指纹不符保留原路线；从原救援／导出、inspectPending与recoverPending恢复。",
+        "reproduction": [
+          "测试/当前/story-library.test.cjs与E2归档",
+          "测试/运行时/backup.test.cjs、测试/当前/save229.test.cjs",
+          "独立副本创建存档→读取为新路线→切回，比较完整消息／swipe／元数据"
+        ],
+        "sourceTrace": [
+          "运行时/story-library.js:createStore/writeNew/point/restore/switchStory/inspectPending/recoverPending",
+          "运行时/player-reader.js:local/磁盘读取",
+          "运行时/player-save.js:保存事务",
+          "运行时/player-refresh.js:确认后刷新"
+        ]
+      }
+    },
+    {
+      "id": "variables",
+      "title": "MVU与字段协议",
+      "sourcePatterns": [
+        "MVU/(schema|variable|effects|preferences)",
+        "运行时/(growth-repair|reroll)"
+      ],
+      "stateOwner": "MVU与程序更新守卫",
+      "consumers": [
+        "领域规则",
+        "所有状态界面"
+      ],
+      "entry": "variables.create → MVU事件 → schema.prepare／check",
+      "host": "MVU、Zod、助手变量与事件",
+      "state": "stat_data及已有变量模式偏好",
+      "visualMode": "已有编辑器",
+      "visualAdaptation": "状态与规则工作区编辑声明；原MVU为唯一状态所有者。",
+      "tests": [
+        "测试/当前/variable-mode.test.cjs"
+      ],
+      "verification": "来源已登记；实际通过项以当前批回执为准",
+      "airp": {
+        "format": "airp-feature.v1",
+        "purpose": "使模型对已发生事实的变量提议通过原规则和schema验证，再成为当前分支的有效状态。",
+        "enabled": "MVU公开事件与Zod／当前schema就绪，沿当前主分析／额外分析模式运行；缺依赖时记录未结算原因。",
+        "inputs": "当前分支stat_data、JSONPatch或既有变量命令、当前变量模式、正文证据与领域适配。",
+        "outputs": "通过校验的状态补丁／最终变量、原命令与更新结束事件、拒绝原因和诊断。",
+        "turn": [
+          "世界书输出协议与当前模式要求模型提交已发生事实",
+          "variables监听原MVU命令／更新事件，读取旧快照",
+          "variable-policy/schema调用任务、剧情、数值等原prepare/check",
+          "合法结果进入原MVU并刷新消费者；拒绝时恢复受影响状态并报告"
+        ],
+        "authority": "MVU与原变量守卫拥有stat_data；领域规则拥有各自prepare/check，展示层与记忆索引均不得另建权威变量副本。",
+        "prompts": "使用MVU/prompts、稳定UID79正文输出协议与既有初值/schema；章节和数值动态协议按当前模式注入，不重复启用已退役规则。",
+        "recovery": "未就绪显示MVU或校验库缺口；规则拒绝保留原快照并从诊断定位路径／阶段。旧档审计不等于自动重置。",
+        "reproduction": [
+          "测试/当前/variable-mode.test.cjs、测试/MVU/variables.test.cjs",
+          "制作器固定回复判定运行合法补丁与已知拒绝用例"
+        ],
+        "sourceTrace": [
+          "MVU/variables.js:create/ready/原事件监听",
+          "MVU/variable-policy.js:领域更新权限",
+          "MVU/schema.js:prepare/check",
+          "MVU/variable-mode.js:ready/read"
+        ]
+      }
+    },
+    {
+      "id": "numeric",
+      "title": "数值、成长、战斗与装备",
+      "sourcePatterns": [
+        "数值引擎/",
+        "装备/",
+        "运行时/(numeric|gameplay|tactical|talent|loadout|item-|appearance|creator-|ensemble-)",
+        "运行时/(battle|combat-view|growth-rules)",
+        "运行时/roster.js"
+      ],
+      "stateOwner": "数值引擎＋原MVU提交链",
+      "consumers": [
+        "开场",
+        "人物",
+        "战斗",
+        "终端"
+      ],
+      "entry": "player-operations.plan；numeric engine；battle-host",
+      "host": "变量守卫、现有数值内容、player-host提交",
+      "state": "terminal.gameplay／wallet／装备；数值事件收据",
+      "visualMode": "只读展示 + 原业务入口",
+      "visualAdaptation": "人物数值、钱包可配置；成长、配装与战斗提交保留原界面。",
+      "tests": [
+        "测试/当前/equipment-battle.test.cjs",
+        "测试/当前/roster.test.cjs"
+      ],
+      "verification": "来源已登记；实际通过项以当前批回执为准",
+      "airp": {
+        "format": "airp-feature.v1",
+        "purpose": "让已完成成果产生确定性成长，让配点／装备由玩家确认，并使战斗的程序结果与正文叙事保持同一记录。",
+        "enabled": "当前分支已有合法terminal.gameplay；成长／装配使用原初始化与确认界面。战斗须由玩家面板确认开启，当前现场、名单、输入和来源需仍有效。",
+        "inputs": "gameplay.growth/numeric/inventory/equipment/loadout、稳定事件ID与成果来源、正文已发生事实、玩家配点／装备请求、交锋票据与当前分支。",
+        "outputs": "由数值引擎生成的成长／资源／装配变化、去重收据、短战况提示、保存后可读的数值和战斗界面。",
+        "turn": [
+          "experience-host.before读取当前或重写前分支状态，注入成长／装备协议和必要战况",
+          "模型叙述实际成果，并按协议向numericInput提交事实事件；不能直接计算经验或花点",
+          "numeric-host.prepare→数值MVU适配→engine结算，原schema验证候选结果",
+          "玩家配点／装配走player-operations.plan；战斗preflight/prepare形成当前来源票据",
+          "正文完成且变量空闲后battle-host.finish核对原回复，再由player-host.commit保存battle-resolve或重试原保存",
+          "人物／成长／战斗视图刷新；同来源与同事件收据阻止重复奖励"
+        ],
+        "authority": "数值引擎拥有成长与战斗计算；MVU／player-host提交链拥有持久化。numericInput是临时事件入口，模型和视图均不能直接写经验总数、胜率、点数或重复扣除已结算资源。",
+        "prompts": "experience-host注入cxx-character-growth-v1；adapters/mvu.protocol区分achievement/reward/resource与玩家配点。世界书UID56维护保存／定义协议；数值与装备正文协议按当前模式追加。战斗上下文走battle-context/utility请求，结果由battle.prepare与operation决定。",
+        "recovery": "来源、名单或输入变化则重新识别，不沿旧票据写入。正文完成但变量／保存未确认时保留pending；重复请求沿收据／retrySave，不能再扣血或发经验。配点非法从原界面修正；成长历史补算使用原repair范围与收据。",
+        "reproduction": [
+          "测试/当前/equipment-battle.test.cjs、测试/当前/battle-host.test.cjs、测试/运行时/growth-mvu.test.cjs",
+          "制作器E3 growth-reward/growth-direct代表用例；完整引擎检查入口见数值引擎/README.md",
+          "独立故事确认配点／交锋后比较同一分支UI与收据，不调用视觉插件结算"
+        ],
+        "sourceTrace": [
+          "运行时/experience-host.js:before/cxx-character-growth-v1",
+          "运行时/numeric-host.js:prepare/check",
+          "数值引擎/adapters/mvu.js:prepare/checkPrepared/verifyAction/protocol",
+          "数值引擎/src/engine.js:settle/evaluateCombat",
+          "运行时/player-operations.js:plan",
+          "运行时/battle-host.js:preflight/prepare/received/finishOnce",
+          "运行时/battle.js:prepare/operation"
+        ]
+      }
+    },
+    {
+      "id": "quests",
+      "title": "委托与当前任务",
+      "sourcePatterns": [
+        "运行时/quest",
+        "终端/quests-ui",
+        "终端/quest-controller"
+      ],
+      "stateOwner": "quests计划与player-host提交",
+      "reads": [
+        "terminal.quests",
+        "terminal.questJournal"
+      ],
+      "consumers": [
+        "委托日志",
+        "地图",
+        "RPN当前任务"
+      ],
+      "entry": "终端operations页 → quests.plan；MVU叙事更新 → quests.prepare",
+      "host": "CxxContent、Cxx236VariableGuard、player-host",
+      "state": "terminal.quests；terminal.questJournal",
+      "visualMode": "可视化展示",
+      "visualAdaptation": "同源任务投影与只读列表；原终端接取、追踪、结算。",
+      "tests": [
+        "测试/当前/quest-actions.test.cjs"
+      ],
+      "verification": "来源已登记；实际通过项以当前批回执为准",
+      "airp": {
+        "format": "airp-feature.v1",
+        "purpose": "使玩家接单、追踪、交付与剧情中确认的任务事实进入同一任务记录，并能追到当前目标的来源。",
+        "enabled": "已初始化当前故事，任务内容由原内容守卫授权；修改请求携带当前来源与预期修订。",
+        "inputs": "terminal.quests／questJournal、授权任务定义、原动作请求ID、当轮正文证据与变量提议。",
+        "outputs": "任务候选变化、追踪关系、去重收据、同源QuestView以及确认／刷新诊断。",
+        "turn": [
+          "任务定义与世界书约定限定可知目标和更新方式",
+          "原终端动作或正文MVU提议进入quests.plan/prepare",
+          "quest-host核对来源，player-save保存，player-reader实际读回",
+          "player-refresh通知原终端与RPN，各视图报告已显示修订"
+        ],
+        "authority": "quests拥有任务规则；player-host/MVU拥有保存；QuestView只读。请求超时沿原ID重试，视觉层不直接发奖励。",
+        "prompts": "世界书UID54任务约定；盗芯章节由chapter.context与94—101维护内容共同提供当前阶段资料。",
+        "recovery": "区分source-expired、rule-rejected、commit-unconfirmed与view-not-refreshed；按原诊断与任务请求合同处理，见运行时/组件边界.md。",
+        "reproduction": [
+          "测试/当前/quest-actions.test.cjs与测试/当前/quest-view.test.cjs",
+          "E3 quest-cycle/quest-payment/quest-repeat；原终端与插件读同一任务修订"
+        ],
+        "sourceTrace": [
+          "运行时/quests.js:plan/prepare",
+          "运行时/quest-host.js:来源与任务定义授权",
+          "运行时/quest-view.js:project/display",
+          "终端/quest-controller.js:请求与重试",
+          "运行时/组件边界.md"
+        ]
+      }
+    },
+    {
+      "id": "plot",
+      "title": "剧情与经历",
+      "sourcePatterns": [
+        "剧情/",
+        "运行时/(chapter|experience|entry-experience)"
+      ],
+      "stateOwner": "chapter／line-engine计算，quests与原MVU保存；experience-host负责注入",
+      "consumers": [
+        "当前阶段提示",
+        "任务",
+        "人物经历"
+      ],
+      "entry": "plot → chapter／line-engine；quests.prepare → MVU；experience-host生成前后事件",
+      "host": "有效正文、当前聊天／楼层／swipe、MVU",
+      "state": "terminal.quests中的chapter／line／目标／事实／终点／插图；questJournal保存同批来源收据",
+      "visualMode": "已有判定视图",
+      "visualAdaptation": "阶段、目标可读；剧情判定与注入继续使用维护源。",
+      "tests": [
+        "测试/当前/chapter.test.cjs",
+        "测试/剧情/lines.test.cjs",
+        "测试/剧情/build.test.cjs",
+        "测试/剧情/browser.cjs"
+      ],
+      "verification": "来源已登记；实际通过项以当前批回执为准",
+      "airp": {
+        "format": "airp-feature.v1",
+        "purpose": "让当前正文中已发生、可引用的阶段事实推进剧情，保留计划、回顾、玩家已知事实与作者后续内容的边界。",
+        "enabled": "当前任务／章节记录有效；可选剧情检测按本故事开关启用，章节资料由当前状态选择。",
+        "inputs": "当前章节／节点、当轮正文原句、首次门槛／持续条件、作者结果与正式终点、来源楼层／swipe和既有任务定义。",
+        "outputs": "经验证的阶段／目标／事实／结局／插图记录，每轮最多四项有效条目和紧凑进度摘要。",
+        "turn": [
+          "experience-host.before或可选plot适配生成当前阶段上下文",
+          "模型只对当轮已发生事实提出阶段事件",
+          "chapter.advance或line-engine核对条件、结果、终点与正文引文；首次开启与当前MVU同批保存",
+          "原MVU/提交链保存，下一轮context和任务界面读取确认后的阶段"
+        ],
+        "authority": "chapter/line-engine计算，quests统一事务与纠正，MVU/player-host保存；UI只消费记录。通用节点文字补建不重算或覆盖楼层进度。",
+        "prompts": "盗芯JSON与世界书94—101保持；新节点正文唯一维护在默认关闭的世界书，由剧情/线/index.json绑定引用。plot统一选择最多四项，不启用未审核供稿。",
+        "recovery": "缺证据、越级、旧版本或冲突则整批拒绝；持续条件不满足只等待。任一正式终点完成该线，暂停／放弃与完结分开；纠正撤回关联事实、付款和插图。",
+        "reproduction": [
+          "测试/当前/chapter.test.cjs、测试/剧情/lines.test.cjs、测试/剧情/build.test.cjs、测试/剧情/browser.cjs",
+          "E3 chapter-eight/chapter-note/chapter-evidence/chapter-order；查看当轮世界书、提示与提取结果"
+        ],
+        "sourceTrace": [
+          "运行时/chapter.js:advance/context/current",
+          "剧情/盗芯之夜.json",
+          "运行时/experience-host.js:before",
+          "长期记忆/plot.js:统一检测与候选选择",
+          "剧情/line-model.js；line-engine.js；build.cjs；线/README.md",
+          "运行时/quests.js:prepare；长期记忆/startup.js:illustrationsAt"
+        ]
+      }
+    },
+    {
+      "id": "news",
+      "title": "新闻与摘要",
+      "sourcePatterns": [
+        "运行时/(news|story-summaries)",
+        "正文/summary"
+      ],
+      "stateOwner": "新闻／摘要服务及故事记录",
+      "consumers": [
+        "终端",
+        "记忆"
+      ],
+      "entry": "experience-host.summarize／refresh → story-summaries／news",
+      "host": "辅助请求、有效摘要、聊天保存",
+      "state": "聊天摘要／新闻记录；未确认请求草稿",
+      "visualMode": "只读列表",
+      "visualAdaptation": "通过作者指定的数组或表读取新闻；生成摘要保留原入口。",
+      "tests": [
+        "测试/当前/summary-source.test.cjs"
+      ],
+      "verification": "来源已登记；实际通过项以当前批回执为准",
+      "airp": {
+        "format": "airp-feature.v1",
+        "purpose": "从选中故事的可靠经历总结生成可追溯的城市新闻与论坛背景，供玩家阅读和后续叙事使用。",
+        "enabled": "辅助请求入口可用；自动总结按现有设置／间隔运行，也可从原界面选范围补建。同步叙事由syncStory等已有设置控制。",
+        "inputs": "可靠原文、已确认的总结记录、选中summaryIds、当前故事／楼层／swipe与原新闻配置。",
+        "outputs": "带来源的总结／新闻缓存、终端列表、下一轮可用的公众标题背景。",
+        "turn": [
+          "experience-host捕获可靠原文与当前范围并建立总结任务",
+          "story-summaries解析／保存总结，news.normalize校验新闻及summaryIds",
+          "原服务保存并刷新终端；syncStory开启时before注入选中公众标题",
+          "原文、分支或来源改变后失效旧缓存，下一轮重新核对"
+        ],
+        "authority": "经历／摘要服务保存自身记录；新闻不写任务、钱包或秘密真相。超时草稿与已保存结果由原服务区分。",
+        "prompts": "cxx-city-public-context-v1明确新闻／论坛只是背景和传闻；总结请求使用原规则，不另把相同总结作为第二套长期记忆重复注入。",
+        "recovery": "请求失败保留待处理草稿；总结已保存但新闻失败分别报告并只重试对应步骤；来源无效不拼凑旧分支材料。",
+        "reproduction": [
+          "测试/当前/summary-source.test.cjs",
+          "原终端选范围总结→刷新新闻→切换回复，核对来源与失效提示"
+        ],
+        "sourceTrace": [
+          "运行时/experience-host.js:summarizeRange/summarizeNow/refresh/before",
+          "运行时/story-summaries.js",
+          "运行时/news.js:summary/context/normalize",
+          "通讯/source-service.js:可靠原文"
+        ]
+      }
+    },
+    {
+      "id": "reading",
+      "title": "正文解析与原生／Gal阅读",
+      "sourcePatterns": [
+        "正文/",
+        "原生/",
+        "Gal/",
+        "正则/"
+      ],
+      "stateOwner": "宿主原文；界面只管理阅读位置",
+      "consumers": [
+        "原生正文",
+        "Gal",
+        "历史解析"
+      ],
+      "entry": "原生host.refresh／prose.mount；Gal controller → parser",
+      "host": "ST原文与已渲染DOM、共享历史服务",
+      "state": "消息原文只读；页面阅读位置与视图状态",
+      "visualMode": "保留源码",
+      "visualAdaptation": "正文、Gal、镜译继续走共用解析器；不把简单字符串展示宣称为Gal编辑器。",
+      "tests": [
+        "测试/当前/history-source.test.cjs"
+      ],
+      "verification": "来源已登记；实际通过项以当前批回执为准",
+      "airp": {
+        "format": "airp-feature.v1",
+        "purpose": "让玩家在原生阅读、Gal及历史楼层看到同一份正文语义，区分对白、旁白、心声和辅助块。",
+        "enabled": "当前角色／聊天与目标回复存在；阅读依赖原文服务、同源解析及对应视图，E8只读投影按当前楼层读取。",
+        "inputs": "宿主原文及来源身份、正文标签／cxx-say、场景信息、当前阅读段落；译文是可选投影。",
+        "outputs": "段落／人物／心声投影、显示位置、可播放阅读段落及历史解析结果；原始mes保持。",
+        "turn": [
+          "原文服务取得当前楼层／swipe可靠正文",
+          "dialogue/Gal parser同源解析，history Worker使用生成的同一实现",
+          "原生／Gal／E8按投影渲染，上一段／下一段仅改变本地位置",
+          "编辑、切聊、切回复使旧结果失效，卸载释放订阅与媒体"
+        ],
+        "authority": "宿主消息拥有原文；解析器不改原文或变量；阅读器只持有阅读位置，翻译与声音通过通讯服务消费同一来源。",
+        "prompts": "世界书UID58及共享/output-contract.txt维护显示协议；辅助规划和变量块不进入阅读正文。",
+        "recovery": "来源冲突或不支持的镜译API由原文服务显示原因；解析错误定位同源模块。素材缺失不借用错误人物身份；原生阅读可继续使用原入口。",
+        "reproduction": [
+          "测试/当前/history-source.test.cjs、测试/Gal/parser.test.cjs",
+          "E8同源阅读定向用例与长正文／切回复／旁白／心声检查"
+        ],
+        "sourceTrace": [
+          "正文/dialogue.js",
+          "Gal/parser.js:parseMessage",
+          "正文/history-runtime.js",
+          "工具/lib/history-worker.cjs",
+          "独立制卡器/src/cyber2051-dialogue-view.mjs:allFrames/projectDialogue"
+        ]
+      }
+    },
+    {
+      "id": "terminal",
+      "title": "终端、首页与面板",
+      "sourcePatterns": [
+        "终端/",
+        "主题/",
+        "运行时/(hub-|game-menu|settings-ui|player-ui|player-profile|menu-assets|title-preview)"
+      ],
+      "stateOwner": "领域服务；视图管理局部状态",
+      "consumers": [
+        "原终端",
+        "菜单",
+        "人物面板"
+      ],
+      "entry": "terminal-service.openPage → terminal.js模块路由",
+      "host": "顶层共享终端服务、领域服务、iframe",
+      "state": "界面页签／滚动／局部偏好；业务状态只读",
+      "visualMode": "可视化导航",
+      "visualAdaptation": "按工程页面生成场景页签；返回酒馆继续操作原终端。",
+      "tests": [
+        "测试/当前/quest-view.test.cjs"
+      ],
+      "verification": "来源已登记；实际通过项以当前批回执为准",
+      "airp": {
+        "format": "airp-feature.v1",
+        "purpose": "为任务、地图、人物、设置等功能提供可预测的入口和返回位置，显示已确认领域状态。",
+        "enabled": "共享终端服务与当前聊天就绪；每页所需领域服务由原入口检查，插件页面则按当前角色加载视觉包。",
+        "inputs": "页面请求、领域投影、当前页签／滚动／选择与显示偏好。",
+        "outputs": "原终端页面、局部刷新与返回状态；插件生成的页面页签和只读显示。",
+        "turn": [
+          "terminal-service接收openPage并挂载原终端",
+          "页面向对应领域服务读取投影或提交原动作",
+          "业务确认后刷新当前页，保留选择／滚动与返回位置",
+          "关闭／切聊时由原服务释放页面订阅"
+        ],
+        "authority": "领域服务拥有业务数据；终端仅保存局部导航和偏好。插件导航不能成为第二套任务／存档写入者。",
+        "prompts": "终端本身不注入剧情或改世界书；可从功能目录追到对应任务、新闻、人物和世界书维护源。",
+        "recovery": "服务未就绪显示具体页面缺口，保留原返回入口；保存与显示故障按原操作日志区分。",
+        "reproduction": [
+          "测试/当前/quest-view.test.cjs；E2实际终端回执",
+          "E67插件加载／页签／返回／更新回退；按本轮变更另核对新包格式"
+        ],
+        "sourceTrace": [
+          "共享/terminal-service.js:openPage/共享实例",
+          "终端/terminal.js:页面路由",
+          "终端/quests-ui.js",
+          "运行时/player-refresh.js"
+        ]
+      }
+    },
+    {
+      "id": "opening",
+      "title": "开场与人物创建",
+      "sourcePatterns": [
+        "开场/",
+        "MVU/opening",
+        "运行时/(opening|creator-|appearance|loadout-setup)"
+      ],
+      "stateOwner": "共享开场流程与player-host",
+      "consumers": [
+        "原生开场",
+        "Gal开场"
+      ],
+      "entry": "opening-startup → opening-flow → prepare／submit／verify／send",
+      "host": "共享创建服务、人物规则、宿主故事接口",
+      "state": "独立创建草稿；最终状态归player-host／故事服务",
+      "visualMode": "只读展示 + 原业务入口",
+      "visualAdaptation": "人物创建结果可读；六步创建与一次提交保留原流程。",
+      "tests": [
+        "测试/当前/opening-flow.test.cjs"
+      ],
+      "verification": "来源已登记；实际通过项以当前批回执为准",
+      "airp": {
+        "format": "airp-feature.v1",
+        "purpose": "让玩家选择出身、资料、成长、装备与剧情，以一次可确认的创建提交建立故事，随后继续首轮AIRP。",
+        "enabled": "原开场服务已安装，当前角色身份有效；六步草稿属于当前实例／聊天／creationId。已保存人物锁定后只续选剧情或恢复流程。",
+        "inputs": "开场catalog／分组／页面、street/corpo/student/custom出身、资料／配点／装配／剧情选择、创建草稿与偏好。",
+        "outputs": "已验证的初始人物与故事、创建状态、首轮发送请求；未完成草稿可继续或由玩家放弃。",
+        "turn": [
+          "opening-startup.ensure安装共享开场宿主，原生／Gal消费同一服务",
+          "opening-flow按origin→profile→growth→loadout→scenario→review验证并保存草稿",
+          "确认后submit由player-host／故事服务执行原初始化，verify读回结果",
+          "保存成功后至多派发一次原send命令，进入所选开场与正常生成",
+          "保存或发送未确认时显示独立状态，从原恢复入口继续"
+        ],
+        "authority": "opening-flow拥有临时草稿和派发标记；player-host/story-library拥有最终人物、存档与故事。视图不直接初始化MVU，模型不能擅自改已确认出身资产。",
+        "prompts": "开场/catalog.json、MVU/openings与对应世界书／身份上下文承载作者开场；初始化与成长配点经identity/player-operations校验，再由后续生成读取确认状态。",
+        "recovery": "字段校验回到对应步骤；切聊停止原草稿操作。保存重试不自动重发已经开始派发的命令；使用inspect/recover/openRecovery/rescue核对创建记录与导出。",
+        "reproduction": [
+          "测试/当前/opening-flow.test.cjs、测试/当前/creator-recovery.test.cjs",
+          "E3 opening-initialize/opening-invalid/opening-custom；独立新故事验证六步→确认→保存读回→首轮发送"
+        ],
+        "sourceTrace": [
+          "MVU/opening-startup.js:install/ensure",
+          "运行时/opening-flow.js:create/commit/retry/recover",
+          "MVU/openings.js:共享宿主适配",
+          "运行时/player-operations.js:initialize",
+          "开场/catalog.json"
+        ]
+      }
+    },
+    {
+      "id": "communication",
+      "title": "通讯、镜译与语音",
+      "sourcePatterns": [
+        "通讯/",
+        "运行时/mailbox"
+      ],
+      "stateOwner": "原文服务、手机记录与语音实例",
+      "consumers": [
+        "原生／Gal阅读",
+        "手机",
+        "邮件"
+      ],
+      "entry": "phone entry／host／reading-service／voice-player",
+      "host": "镜译公开API、助手消息、音频／媒体实例",
+      "state": "通讯记录、未读与草稿；阅读投影只读",
+      "visualMode": "只读列表 + 原业务入口",
+      "visualAdaptation": "通讯记录可以配置成列表；发送、翻译、朗读保留原服务。",
+      "tests": [
+        "测试/当前/features-2124.test.cjs",
+        "测试/通讯/phone.test.cjs",
+        "测试/通讯/reading.test.cjs",
+        "测试/通讯/mirror-integration.test.cjs",
+        "测试/通讯/setup.test.cjs"
+      ],
+      "verification": "来源已登记；实际通过项以当前批回执为准",
+      "airp": {
+        "format": "airp-feature.v1",
+        "purpose": "让玩家查看联系人与通讯记录、进行受人物知情范围约束的私聊／通话，并在原生／Gal选择原文、译文与朗读。",
+        "enabled": "联系人有当前分支证据或玩家明确补录；私聊需公开llm.stream，通话需tts.stream，朗读需tts.speak，语音输入另需stt。未装镜译仍可读普通原文与既有记录。",
+        "inputs": "当前聊天／楼层／swipe原文、联系人公开证据与自己的台词、双方已保存通讯、玩家输入与语言／朗读设置。",
+        "outputs": "__cxx_phone_v1聊天通讯元数据、已保存交流、下一轮已完成通讯提示、原译投影及可停止的音频实例。",
+        "turn": [
+          "phone-host从当前故事读取联系人证据并核对原文来源",
+          "保存pending交流后通过jingyi-bridge公开接口请求当前联系人纯台词",
+          "成功／拒接／中断等结果由phone-host保存并磁盘读回，音频可单独失败",
+          "下一轮beforeStory仅将有效分支已完成交流注入cxx-phone-completed-v1",
+          "reading-service用同源原文投影提供原译切换与逐段声音；切聊／swipe停止旧请求和播放"
+        ],
+        "authority": "phone-host拥有通讯元数据提交与读回，镜译拥有自身服务设置与输出；source-service只读原文，阅读器不改mes/stat_data。私聊承诺不等于已经转账、领奖或推进主剧情时间。",
+        "prompts": "phone-host为当前联系人构造公开台词与双方通讯上下文，排除他人私聊／心声／秘密；正文输出合同与可选preset-increment保留通讯约束，只有完成记录进入后续正文。",
+        "recovery": "缺能力分别提示LLM/TTS/STT／朗读配置；来源冲突阻断依赖该来源的请求。保存脏状态先重试原保存，切换／中断取消模型与声音，保留已记录交流；不改镜译私有配置。",
+        "reproduction": [
+          "测试/通讯/phone.test.cjs、测试/通讯/reading.test.cjs、测试/通讯/mirror-integration.test.cjs、测试/通讯/setup.test.cjs已在E2历史回执",
+          "真实镜译音源／自动朗读／麦克风与实体设备另按通讯/README.md验收"
+        ],
+        "sourceTrace": [
+          "通讯/phone-host.js:session/commit/inject/beforeStory/start",
+          "通讯/phone-core.js:timeline/context/prompt",
+          "通讯/jingyi-bridge.js:refresh/llm/stream/speak/mic",
+          "通讯/source-service.js",
+          "通讯/reading-service.js:play/stop/setMode"
+        ]
+      }
+    },
+    {
+      "id": "memory",
+      "title": "长期记忆与恢复",
+      "sourcePatterns": [
+        "长期记忆/",
+        "运行时/context-"
+      ],
+      "stateOwner": "既有可选记忆适配；领域数值仍归MVU",
+      "consumers": [
+        "召回提示",
+        "记忆面板",
+        "历史补建"
+      ],
+      "entry": "长期记忆build → adapter.start → 生成事件；history／plot",
+      "host": "现有记忆适配、AutoCardUpdaterAPI可选数据库、原MVU",
+      "state": "纪要／人物经历／承诺表与来源；钱包任务归原规则",
+      "visualMode": "保留源码",
+      "visualAdaptation": "纪要、经历的可用记录可只读；召回、索引和恢复使用原记忆管理器。",
+      "tests": [
+        "测试/长期记忆/p2.test.cjs"
+      ],
+      "verification": "来源已登记；实际通过项以当前批回执为准",
+      "airp": {
+        "format": "airp-feature.v1",
+        "purpose": "让长期故事回忆有来源的既往经历、人物关系与未结事项，并让玩家修订手记、控制召回和补建旧历史。",
+        "enabled": "可选数据库记忆需原插件公开AutoCardUpdaterAPI、助手及提示词模板，并按本故事配置三表／预设；剧情检测开关与数据库记忆独立，不配置记忆也能继续原剧情。",
+        "inputs": "有效故事／楼层／swipe的原文与引文、纪要／人物经历／承诺三表、玩家手记和召回模式、当前进度及历史补建范围。",
+        "outputs": "带来源的记忆材料与索引、召回／推进准备文本、__cxx_long_memory手记／控制／补建状态；选中校准经原业务保存。",
+        "turn": [
+          "原自动填表只从有效助手正文写入记忆三表，适配核对故事／swipe／引文",
+          "召回任务合并原生候选、玩家优先记录与手记，按来源和预算选择编号",
+          "推进准备仅描述尚未发生的局面；最终正文请求装入已选有效内容",
+          "生成停止／切聊／编辑／swipe撤销旧准备与注入",
+          "历史补建逐楼暂存并恢复原表，完成后展示差异；仅玩家选中校准项才走quest-calibrate提交"
+        ],
+        "authority": "原数据库拥有三表与索引；外部适配拥有__cxx_long_memory手记／控制与可携带材料；任务／钱包／成长仍归原MVU和player-host。剧情校准不是记忆写入的隐含副作用。",
+        "prompts": "长期记忆/recall.md、advance.md与原模板构成召回／推进；常驻记忆使用cxx-long-memory-resident，正文提取保留人物／心声知情范围。剧情仍由同源plot/chapter及当前世界书控制，不重复注入已有公众新闻。",
+        "recovery": "缺原接口或故事配置则提示并保持原剧情；来源无效材料排除。预算超限由玩家调整，补建失败保留next与错误，切分支重新预览；不自动改旧剧情与奖励，使用原P3恢复／便携材料。",
+        "reproduction": [
+          "测试/长期记忆/p2.test.cjs及长期记忆/README.md、P2.md、P3.md所列专项入口",
+          "E3 memory-body/memory-invalid/memory-summary/memory-stale只覆盖提取与旧分支失效代表用例，不是全数据库验收",
+          "历史P1受控宿主回执：工程文件/.cache/memory-p1/verification.json"
+        ],
+        "sourceTrace": [
+          "长期记忆/adapter.js:fillContext/context/started/finalData/install",
+          "长期记忆/history.js:preview/begin/run/differences/calibrate/capture",
+          "长期记忆/material.js:来源核对与材料合并",
+          "长期记忆/plot.js",
+          "长期记忆/README.md",
+          "长期记忆/P3.md"
+        ]
+      }
+    },
+    {
+      "id": "map-media",
+      "title": "地图、媒体与资源",
+      "sourcePatterns": [
+        "地图/",
+        "Live2D/",
+        "运行时/(resources|media-pack)",
+        "^\\.\\./资源/",
+        "共享/(radio|terminal)",
+        "运行时/player-(art|assets)",
+        "运行时/(city|police|civic)"
+      ],
+      "stateOwner": "地图数据、资源服务及渲染实例",
+      "consumers": [
+        "终端地图",
+        "Gal",
+        "媒体控件"
+      ],
+      "entry": "地图服务／map-shell；resources.install；Live2D.install",
+      "host": "图形上下文、公共资源包／缓存、共享媒体服务",
+      "state": "公共资源缓存与实例；地图浏览状态",
+      "visualMode": "已有素材组件 + 原地图",
+      "visualAdaptation": "图片、画廊、图像转场和Rive可编辑；地图交互与Live2D仍用原宿主。",
+      "tests": [
+        "测试/Gal/backgrounds.test.cjs",
+        "独立制卡器/tests/media.test.mjs",
+        "测试/Gal/media-queue.test.cjs",
+        "测试/Gal/scene.test.cjs"
+      ],
+      "verification": "来源已登记；实际通过项以当前批回执为准",
+      "airp": {
+        "format": "airp-feature.v1",
+        "purpose": "让玩家按当前任务与地点查地图和关联资料，并在阅读场景中使用可加载、可取消、可释放的图片／Live2D媒体。",
+        "enabled": "当前聊天与地图共享服务可用；媒体按实际资源清单／缓存与对应图形能力加载，作品组件按作者交付配置。",
+        "inputs": "地图地点／连线、领域任务投影、内容订阅／pin、资源清单与URL、阅读场景、局部浏览偏好。",
+        "outputs": "地图选择／视图、关联任务入口、背景／立绘／模型实例、加载失败与重试状态。",
+        "turn": [
+          "map-service.readStat/data把领域记录投影为当前地图内容",
+          "玩家浏览节点，原地图只保存本聊天浏览位置；打开任务时返回原终端",
+          "Gal场景解析选择资源，resources与媒体队列按请求身份取得／解码",
+          "迟到资源取消归还引用，切聊天释放地图与图形实例"
+        ],
+        "authority": "地图不写gameplay、地点或消息状态；资源服务拥有缓存引用，Gal／Live2D拥有自身实例，真实剧情地点仍由原领域状态和正文协议决定。",
+        "prompts": "本域不因为浏览地图或播放美术就提交剧情／MVU更新；场景消费原ztl／正文与当前领域地点，任务规则／世界书仍按原链维护。",
+        "recovery": "缺资源显示加载失败并按原层级重试；不能把旧图异步结果贴回新场景。切聊释放订阅和模型，原任务入口服务未就绪则提示保留返回。",
+        "reproduction": [
+          "测试/Gal/media-queue.test.cjs、测试/Gal/scene.test.cjs在E2历史回执，覆盖Gal媒体队列／场景选择",
+          "测试/Gal/backgrounds.test.cjs与独立制卡器/tests/media.test.mjs为额外登记入口；原地图／Live2D完整宿主仍需其专项记录"
+        ],
+        "sourceTrace": [
+          "地图/map-service.js:readStat/data/open/openQuest/release",
+          "运行时/resources.js:acquire/install",
+          "Gal/ui.js:queueImage/renderBackground",
+          "Gal/scene.js:resolve",
+          "Live2D/runtime.js:install"
+        ]
+      }
+    },
+    {
+      "id": "shared",
+      "title": "共享运行时与诊断",
+      "sourcePatterns": [
+        "共享/",
+        "运行时/(diagnostics|network-diagnostics|api-connection|utility-api|content)",
+        "运行时/(boot-loader|visual-projects)",
+        "视觉作品/",
+        "运行时/(plugin-check|startup-help)"
+      ],
+      "stateOwner": "既有顶层共享服务",
+      "consumers": [
+        "各iframe",
+        "运行诊断"
+      ],
+      "entry": "共享runtime／内容view／诊断安装及领域调用",
+      "host": "顶层注册、助手事件、资源与宿主上下文",
+      "state": "范围身份／订阅／诊断记录；不新增业务状态",
+      "visualMode": "保留源码",
+      "visualAdaptation": "复用现有共享服务、诊断与范围；不新增玩法事件总线。",
+      "tests": [
+        "测试/当前/creation-diagnostics.test.cjs"
+      ],
+      "verification": "来源已登记；实际通过项以当前批回执为准",
+      "airp": {
+        "format": "airp-feature.v1",
+        "purpose": "让各阅读iframe、终端、媒体与诊断共用当前聊天服务，并在切换／卸载时清理自己的监听和资源。",
+        "enabled": "宿主上下文与共享runtime已安装；消费者注册到当前顶层所有者和范围。",
+        "inputs": "角色／聊天身份、消息DOM与原事件、模块注册、领域错误和资源引用。",
+        "outputs": "范围key、消息快照／订阅、共享实例、可复制／导出的诊断时间线。",
+        "turn": [
+          "runtime按当前角色／聊天构造范围身份与共享实例",
+          "各消费者register并订阅消息／领域通知",
+          "消息变化统一失效与调度，不让每个iframe重复安装服务",
+          "切聊／pagehide销毁范围，诊断沿原操作ID串联阶段"
+        ],
+        "authority": "共享runtime拥有生命周期，领域服务拥有业务数据；诊断记录观察结果，不成为业务状态。",
+        "prompts": "共享基础不独立生成角色提示；可靠原文／当前范围由调用者接入既有AIRP链。",
+        "recovery": "从原设置诊断定位模块／阶段；区分规则拒绝、提交未确认、显示未刷新。关闭后取消自己的监听／资源，不全局清空玩家数据。",
+        "reproduction": [
+          "测试/当前/creation-diagnostics.test.cjs与E2宿主事务回执",
+          "重复打开／关闭面板、切聊后核对订阅和当前范围"
+        ],
+        "sourceTrace": [
+          "共享/shared-runtime.js:watchMessages/register/destroy",
+          "共享/ui-layers.js",
+          "运行时/operations.js",
+          "运行时/diagnostics.js"
+        ]
+      }
+    },
+    {
+      "id": "lore-prompts",
+      "title": "世界书、提示与显示协议",
+      "sourcePatterns": [
+        "世界书/",
+        "MVU/(prompts|templates)",
+        "共享/output-contract",
+        "运行时/.*rules\\.txt"
+      ],
+      "stateOwner": "作者定稿、条目配置与当前阶段注入",
+      "consumers": [
+        "模型上下文",
+        "正则／正文显示"
+      ],
+      "entry": "entries.json稳定UID覆盖 → MVU／生成前注入",
+      "host": "ST世界书与提示生成、当前章节",
+      "state": "作者正文与条目配置；玩家事实在MVU／历史",
+      "visualMode": "已有编辑器",
+      "visualAdaptation": "按UID编辑世界书、开场与逻辑测试；未装入草稿有明确提示。",
+      "tests": [
+        "测试/当前/prefill.test.cjs"
+      ],
+      "verification": "来源已登记；实际通过项以当前批回执为准",
+      "airp": {
+        "format": "airp-feature.v1",
+        "purpose": "让作者维护人物、世界、阶段与输出规则，并能从界面值追到实际进入生成上下文的条目及协议。",
+        "enabled": "按当前导入卡的稳定UID、enabled、关键词、常驻／位置和预算装载；未装入草稿不等于已发布内容。",
+        "inputs": "TXT正文、entries.json覆盖、原壳继承字段、构建生成内容、当前阶段和角色／场景知识范围。",
+        "outputs": "成卡世界书／提示协议、当前请求实际激活内容、来源及影响查询；作者正文保持单一维护源。",
+        "turn": [
+          "作者在原维护源或制作器编辑稳定UID条目与装载配置",
+          "构建保留未知字段并登记维护／原壳／生成来源",
+          "生成前按当前阶段和世界书规则装载，模型依据人物可知范围叙述",
+          "正文事实经领域规则校验并显示；固定回复试测展示激活、提取、判定与状态"
+        ],
+        "authority": "作者维护源拥有设定与协议；玩家事实归实际变量／历史，模型的角色断言或记忆索引不自动升级为世界定稿。",
+        "prompts": "世界书实际条目与来源见功能索引；本批新增／补全人物资料按姓名／明确别名触发，扫描深度2，双向递归关闭。UID54任务、56玩法保存、58显示、79变量输出及94—101阶段内容按既有选择装载，已停用条目保持停用。",
+        "recovery": "修改先看引用和受影响字段，按原装配比较／回读；错误激活、未来阶段或协议冲突用固定用例定位，不为通过测试恢复已退役规则。",
+        "reproduction": [
+          "测试/当前/prefill.test.cjs及E3世界书／固定回复代表用例",
+          "E7 UID54单字段修改→影响比较→装配→回读→撤销"
+        ],
+        "sourceTrace": [
+          "世界书/entries.json",
+          "MVU/prompts/0.txt",
+          "共享/output-contract.txt",
+          "运行时/quest-rules.txt",
+          "工具/构建/当前/build.cjs:稳定UID装配",
+          "独立制卡器/src/cyber2051-judgment.mjs:judgeTurn"
+        ]
+      }
+    }
+  ],
+  "components": [
+    {
+      "id": "cyber2051.reading-parse",
+      "version": 1,
+      "title": "正文与历史共享解析",
+      "feature": "reading",
+      "sources": [
+        "正文/dialogue.js",
+        "Gal/parser.js",
+        "运行时/story-summaries.js"
+      ],
+      "dependencies": [],
+      "adapters": [
+        "正文/history-worker.js",
+        "正文/history-runtime.js",
+        "正文/display-guard.js",
+        "原生/prose.js",
+        "Gal/controller.js",
+        "运行时/experience-host.js"
+      ],
+      "reads": [
+        "message.mes",
+        "message.is_user",
+        "message.is_system",
+        "message.swipe_id",
+        "floor"
+      ],
+      "writes": [],
+      "stateOwner": "宿主保留原消息；解析器返回副本，history-runtime只持有临时队列和缓存",
+      "inputs": {
+        "parse": "{raw}",
+        "summary": "{message,floor}"
+      },
+      "projection": [
+        "raw",
+        "paragraphs",
+        "dialogueRanking",
+        "scene",
+        "choices",
+        "auxiliary",
+        "validation",
+        "diagnostics",
+        "warnings"
+      ],
+      "protocol": {
+        "request": "{id,kind,payload}",
+        "success": "{id,value}",
+        "error": "{id,error:{message,code}}"
+      },
+      "outputs": [
+        "script:cxx-business-core-241",
+        "worker:history"
+      ],
+      "generator": "工具/lib/history-worker.cjs",
+      "lifecycle": "按聊天scope、消息对象、修订和swipe失效；clearScope释放对应任务，destroy释放Worker、Blob URL及缓存",
+      "tests": [
+        "测试/Gal/parser.test.cjs",
+        "测试/当前/history-source.test.cjs",
+        "测试/当前/history-runtime.test.cjs",
+        "测试/当前/history-worker-browser.cjs",
+        "测试/当前/thought-2127.test.cjs",
+        "测试/当前/prefill.test.cjs",
+        "测试/当前/tag-overflow.test.cjs"
+      ]
+    },
+    {
+      "id": "cyber2051.quest-display",
+      "version": 1,
+      "title": "当前任务展示",
+      "feature": "quests",
+      "sources": [
+        "运行时/quest-view.js",
+        "终端/quests-ui.js"
+      ],
+      "dependencies": [
+        "运行时/quests.js",
+        "MVU/variables.js"
+      ],
+      "reads": [
+        "terminal.quests",
+        "terminal.questJournal.tracked",
+        "terminal.questJournal.revision"
+      ],
+      "writes": [],
+      "stateOwner": "quests／player-host／MVU；展示模块只读",
+      "outputs": [
+        "script:cxx-native-ui-231",
+        "studio:rc-quest-value"
+      ],
+      "lifecycle": "原终端随页面刷新；制作器产物随消息范围订阅与释放",
+      "tests": [
+        "测试/当前/quest-view.test.cjs",
+        "独立制卡器/tests/cyber2051-quests.test.mjs"
+      ],
+      "adapters": [
+        "终端/quest-controller.js",
+        "终端/terminal.js"
+      ],
+      "events": [
+        "cxx-player-changed",
+        "view-refreshed"
+      ]
+    },
+    {
+      "id": "cyber2051.quest-actions",
+      "version": 1,
+      "title": "任务宿主与提交事务",
+      "feature": "quests",
+      "sources": [
+        "运行时/quest-host.js",
+        "运行时/player-reader.js",
+        "运行时/player-save.js",
+        "运行时/player-refresh.js",
+        "运行时/player-host.js",
+        "运行时/quests.js",
+        "运行时/operations.js"
+      ],
+      "dependencies": [
+        "MVU/variables.js",
+        "MVU/schema.js",
+        "运行时/host.js"
+      ],
+      "adapters": [
+        "终端/quest-controller.js",
+        "终端/quests-ui.js",
+        "终端/terminal.js",
+        "运行时/diagnostics.js"
+      ],
+      "reads": [
+        "message.variables[swipe].stat_data",
+        "terminal.quests",
+        "terminal.questJournal",
+        "terminal.wallet"
+      ],
+      "writes": [
+        "terminal.quests",
+        "terminal.questJournal",
+        "terminal.wallet"
+      ],
+      "stateOwner": "quests计划；MVU校验；player-save持有保存请求；界面只持有选择与未确认请求",
+      "inputs": {
+        "commit": "原player.commit(request)兼容；player.quests.commit(request)为同一入口",
+        "request": "{action,id,questId,expectedRevision,floor,swipe,questContext,receiptId?}",
+        "read": "player.quests.read()只读本地快照；source()提供操作来源"
+      },
+      "events": [
+        "cxx-player-changed",
+        "reading",
+        "validating",
+        "planned",
+        "applying",
+        "applied",
+        "persisting",
+        "confirming",
+        "unconfirmed",
+        "confirmed",
+        "view-refreshed"
+      ],
+      "errors": [
+        "source-expired",
+        "rule-rejected",
+        "commit-unconfirmed",
+        "view-not-refreshed"
+      ],
+      "outputs": [
+        "script:cxx-business-core-241",
+        "script:cxx-native-ui-231",
+        "script:cxx-runtime-bootstrap"
+      ],
+      "worldbook": [
+        54
+      ],
+      "flow": [
+        "初值与定义：更新种子initialContent.quests；MVU/schema.js提供记录结构",
+        "协议：世界书54 / quest-rules.txt与输出格式0、79",
+        "计划：quests.plan / prepare；chapter.js只推进已证实阶段",
+        "校验与提交：quest-host → player-host → MVU校验 → player-save → saveChat → player-reader读回",
+        "显示：cxx-player-changed → 终端刷新 → quest-view投影 → controller.observed",
+        "诊断：operations操作编号串联输入、计划字段、读回修订和刷新回执"
+      ],
+      "lifecycle": "每个角色/聊天保存队列独立；请求原编号重试；聊天切换拒绝旧回调；面板卸载释放观察器",
+      "tests": [
+        "测试/当前/quest-actions.test.cjs",
+        "测试/当前/quests.test.cjs",
+        "测试/当前/opening-flow.test.cjs",
+        "测试/当前/quest-component-browser.cjs"
+      ]
+    },
+    {
+      "id": "cyber2051.chapter-flow",
+      "version": 1,
+      "title": "主线阶段与世界书装配",
+      "feature": "plot",
+      "sources": [
+        "运行时/chapter.js",
+        "运行时/experience-host.js",
+        "剧情/盗芯之夜.json",
+        "MVU/schema.js",
+        "运行时/quest-rules.txt"
+      ],
+      "reads": [
+        "terminal.quests.q_chip_night",
+        "message.mes"
+      ],
+      "writes": [
+        "terminal.quests.q_chip_night",
+        "terminal.questJournal"
+      ],
+      "stateOwner": "当前剧情证据决定推进；任务事务保存；章节定义只读",
+      "worldbook": [
+        54,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100,
+        101
+      ],
+      "events": [
+        "MVU更新",
+        "cxx-player-changed"
+      ],
+      "outputs": [
+        "script:cxx-business-core-241",
+        "worldbook:94..101"
+      ],
+      "flow": [
+        "初值：内容包cyber2051.chip-night / q_chip_night",
+        "阶段定义：剧情/盗芯之夜.json的B01—B08；条目94—101按阶段启用",
+        "协议与规则：quest-rules.txt → chapter.js读取当前阶段正文证据",
+        "提交：MVU/schema.js和quests.js校验，同一消息分支保留收据",
+        "展示：quest-view读取objective / knownFacts；刷新与业务事务共用"
+      ],
+      "tests": [
+        "测试/当前/chapter.test.cjs",
+        "测试/当前/chapter-browser.cjs",
+        "测试/当前/quests.test.cjs"
+      ]
+    }
+  ],
+  "worldbookSources": {
+    "0": "MVU/prompts/0.txt",
+    "1": "MVU/prompts/1.txt",
+    "41": "MVU/prompts/39.txt",
+    "54": "运行时/quest-rules.txt",
+    "56": "运行时/gameplay-rules.txt",
+    "58": "共享/output-contract.txt"
+  },
+  "assembly": {
+    "format": "cyber2051.assembly.v1",
+    "version": "2.3.1",
+    "manifest": "卡片源码/装配/manifest.json",
+    "role": "field groups and inherited script shells; named module bodies owned by modules",
+    "fieldSnapshot": "卡片源码/字段快照/manifest.json"
+  },
+  "embeddedDocuments": {
+    "maps": {
+      "catalog": "地图/documents.json",
+      "resources": "地图/resources.json",
+      "installer": "地图/install.js",
+      "runtime": "地图/map-shell.js",
+      "prelude": [
+        "地图/vendor/ascii-magic.js",
+        "地图/ascii-backdrop.js"
+      ],
+      "styles": [
+        "地图/atlas.css",
+        "地图/detail.css",
+        "地图/map-labels.css"
+      ],
+      "shellStyle": "地图/map-shell.css",
+      "readingStyle": "终端/reading.css",
+      "target": "cxx-native-ui-231/verified immutable document preparation"
+    },
+    "terminal": {
+      "template": "终端/host.html",
+      "loader": "终端/loader.js",
+      "styles": [
+        "终端/host.css",
+        "终端/quests-ui.css",
+        "终端/embedded.css",
+        "终端/city-entry.css",
+        "终端/comms.css"
+      ],
+      "data": "终端/data.js",
+      "modules": [
+        "地图/联动/terminal-host-state.js",
+        "地图/联动/news-state.js",
+        "运行时/gameplay.js",
+        "@crypto-compat",
+        "运行时/content.js",
+        "运行时/quests.js",
+        "运行时/quest-view.js",
+        "终端/quest-controller.js",
+        "终端/quests-ui.js",
+        "正文/summary-ui.js",
+        "终端/terminal.js"
+      ],
+      "entry": "终端/city-entry.js",
+      "runtime": "isolated-terminal-iframe",
+      "target": "cxx-native-ui-231/Cxx233TerminalFactory.html"
+    }
+  },
+  "dataSources": {
+    "CxxTalentAssets": {
+      "script": "cxx-business-core-241",
+      "file": "运行时/talent-assets.json",
+      "kind": "json",
+      "owner": "public-resource-cache",
+      "target": "globalThis.CxxTalentAssets"
+    }
+  },
+  "regexSources": {
+    "registry": "正则/rules.json",
+    "patterns": "正则/patterns.json",
+    "builder": "正则/build.cjs",
+    "order": "registry array order; emitted fields preserve host contract"
+  },
+  "scriptContracts": {
+    "cxx-runtime-bootstrap": {
+      "owner": "资源、诊断、启动状态与可选Live2D",
+      "dependencies": "宿主document、浏览器缓存；Live2D包按需",
+      "disposal": "各service.destroy按实例清理；pagehide释放自有观察器、监听和URL",
+      "verification": "资源/Live2D阶段3浏览器回归；阶段6继续整卡前台测量"
+    },
+    "07d0d1a7-897e-4a2d-adb4-e95d360e6ba2": {
+      "owner": "上游MVU运行库入口",
+      "dependencies": "现有固定commit远程模块；原助手装载协议",
+      "disposal": "上游与酒馆助手拥有运行库生命周期，本轮不复制或改写",
+      "verification": "现行MVU/变量检查与隔离ST；不把卡侧审查冒充上游全审"
+    },
+    "cf33c692-7a41-444d-b8b7-6a70163e0104": {
+      "owner": "更新、备份、菜单、人物及保存入口",
+      "dependencies": "原宿主、世界书和资源服务",
+      "disposal": "同实例controller.stop；重装前停止旧实例，pagehide移除当前引用",
+      "verification": "更新/备份/续玩/保存专项；阶段0/1真实ST"
+    },
+    "cxx-business-core-241": {
+      "owner": "共享业务运行时、MVU、数值、剧情与历史Worker",
+      "dependencies": "Cxx233Shared注册表与原模型/保存协议",
+      "disposal": "runtime.register按依赖销毁；Worker仅一份同源实现、队列按scope过期",
+      "verification": "主回归；history-source；reading-lifecycle-browser 20次"
+    },
+    "9a9d6e73-5111-4c64-89c7-98717bbbdf3b": {
+      "owner": "官网创意工坊入口及旧投稿草稿导出",
+      "dependencies": "现有网站链接；本地旧草稿只读",
+      "disposal": "替换前destroy；关闭对话框和pagehide清理入口监听",
+      "verification": "静态入口与原草稿导出合同；网站改版不在本轮"
+    },
+    "cxx-native-ui-231": {
+      "owner": "原生正文、现用状态、选项、终端、地图、电台",
+      "dependencies": "共享运行时及各域控制器；实例由组件管理器拥有",
+      "disposal": "own/publish清理；原生与Gal借用同实例；Shadow和面板独立维护",
+      "verification": "组件退休/原生与终端浏览器；MVU渲染和生命周期"
+    },
+    "cxx-galgame-g1-local": {
+      "owner": "Gal阅读与原生功能入口",
+      "dependencies": "共享解析器、原菜单/状态/开场实例",
+      "disposal": "controller.destroy调用订阅释放；状态借用归还，清理按钮/观察器",
+      "verification": "Gal/场景/桥回归及阶段0/1真实ST"
+    },
+    "cxx-phone-v1": {
+      "owner": "通讯、镜译阅读和语音实例",
+      "dependencies": "Cxx233Runtime、Cxx233Shared及原镜译公开接口",
+      "disposal": "旧服务仅销毁自己持有的voice；卸载移除按钮和启动监听",
+      "verification": "通讯22项；startup同一runtime替换20次"
+    },
+    "cxx-long-memory-p1": {
+      "owner": "长期记忆、剧情检测和面板",
+      "dependencies": "共享解析器；原数据库和模型配置",
+      "disposal": "独立startup负责依赖等待取消、按钮监听与实例清理，adapter继续拥有数据",
+      "verification": "长期记忆31项；startup替换20次和等待中卸载"
+    }
+  }
+}

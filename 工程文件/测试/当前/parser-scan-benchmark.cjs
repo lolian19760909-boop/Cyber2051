@@ -1,0 +1,17 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict'),{performance}=require('node:perf_hooks');
+const eng=path.resolve(__dirname,'../..'),file=path.join(eng,'卡片源码/Gal/parser.js'),beforeFile=process.env.CXX_PARSER_BEFORE;
+assert(beforeFile,'Set CXX_PARSER_BEFORE to the captured pre-change source');
+const source=fs.readFileSync(file,'utf8'),beforeSource=fs.readFileSync(beforeFile,'utf8');
+function load(code){const c=vm.createContext({module:{exports:{}},require:()=>require('../../卡片源码/正文/dialogue.js'),scans:{inspect:0,protection:0}});vm.runInContext(code.replace('function inspect(raw) {','function inspect(raw) { globalThis.scans.inspect++;').replace('function protectedText(text) {','function protectedText(text) { globalThis.scans.protection++;'),c);return {p:c.module.exports,c};}
+const a=load(beforeSource),b=load(source),normalize=x=>JSON.parse(JSON.stringify(x));
+const protocol='<ztl>{"location":"车站","characters":[]}</ztl>\n<xuan>1. 等待\n2. 回家</xuan>\n<UpdateVariable><Analysis>说明</Analysis><JSONPatch>[]</JSONPatch></UpdateVariable>';
+const existing=JSON.parse(fs.readFileSync(path.join(eng,'测试/Gal/fixtures/messages.json'))).map(x=>[x.id,x.raw]);
+const cases=Object.fromEntries([...existing,['ordinary','雨后的街道慢慢安静下来。'],['story','<cxx-story>雨后的街道慢慢安静下来。</cxx-story>\n'+protocol],['auxiliary','<think>先分析人物。</think>\n<cxx-story>街灯亮了。</cxx-story>\n'+protocol],['invalid','<cxx-story>破损<xuan>选项</cxx-story>\n'+protocol],['long','大家沿着河岸散步。\n'.repeat(20000)],['long-story','<cxx-story>'+'大家沿着河岸散步。\n'.repeat(20000)+'</cxx-story>\n'+protocol]]);
+let comparisons=0;for(const text of Object.values(cases))for(const wrap of [s=>s,s=>'```\n'+s+'\n```',s=>'<pre>'+s+'</pre>',s=>'“'+s+'”']){const raw=wrap(text);assert.deepEqual(normalize(b.p.parseMessage(raw,{cache:false})),normalize(a.p.parseMessage(raw,{cache:false})));comparisons++;}
+// Streaming, edits and branch replacements must never reuse offsets from a
+// different text, including a return to an earlier branch.
+for(const text of [cases.story,cases.auxiliary,cases.invalid])for(let i=0;i<=text.length;i++){const raw=text.slice(0,i);assert.deepEqual(normalize(b.p.parseMessage(raw,{cache:false})),normalize(a.p.parseMessage(raw,{cache:false})));comparisons++;}
+for(const raw of [cases.story,cases.invalid,cases.story])assert.deepEqual(normalize(b.p.parseMessage(raw,{key:'same-floor'})),normalize(a.p.parseMessage(raw,{key:'same-floor'})));
+const measurements=[];for(const name of ['ordinary','story','auxiliary','long','long-story'])for(const [version,e]of [['before',a],['after',b]]){const raw=cases[name];e.c.scans.inspect=0;e.c.scans.protection=0;e.p.parseMessage(raw,{cache:false});const scans={...e.c.scans};for(let i=0;i<3;i++)e.p.parseMessage(raw,{cache:false});const times=[];for(let i=0;i<30;i++){const t=performance.now();e.p.parseMessage(raw,{cache:false});times.push(performance.now()-t);}times.sort((x,y)=>x-y);measurements.push({name,version,chars:raw.length,...scans,p50:times[14],p95:times[28],max:times[29]});}
+const report={pass:true,scope:'Same parser implementation in isolated Node VM; uncached parses, fixed inputs; no runtime cache or player writes added',comparisons,measurements};const out=process.env.CXX_EVIDENCE||path.join(eng,'.cache/regex230');fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'parser-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report));

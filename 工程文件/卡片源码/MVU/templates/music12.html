@@ -1,0 +1,20 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>html {
+  margin: 0;
+  background: transparent;
+}
+
+body {
+  margin: 0;
+  background: transparent;
+
+  color: var(--cxx-text);
+  font: 16px/1.6 var(--cxx-font-ui);
+}
+
+main {
+  max-width: 900px;
+  margin: 10px auto;
+}
+</style></head><body><main id="radio"></main><script>
+(()=>{'use strict';const service=window.parent.CxxRadio,root=document.getElementById('radio');if(service)service.mount({document,parent:root,compact:true});else root.textContent='电台尚未就绪，请稍后重新打开。';})();
+</script></body></html>

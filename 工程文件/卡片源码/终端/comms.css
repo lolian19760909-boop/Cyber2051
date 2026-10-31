@@ -1,0 +1,93 @@
+#cxx-terminal-comms {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+#cxx-terminal-comms button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 13px;
+  border: 1px solid var(--cxx-line);
+  border-radius: 2px;
+  background: var(--cxx-panel);
+  color: var(--cxx-text);
+  font: 16px/1.3 var(--cxx-font-ui);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+#cxx-terminal-comms button:hover {
+  background: var(--cxx-raised);
+  border-color: var(--cxx-structure);
+  color: var(--cxx-heading);
+}
+
+#cxx-terminal-comms button:focus-visible {
+  outline: 2px solid var(--cxx-interactive);
+  outline-offset: 2px;
+}
+
+#cxx-terminal-comms svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+#cxx-terminal-comms button:last-child {
+  border-color: transparent;
+  color: var(--cxx-muted);
+  background: transparent;
+}
+
+@media (max-width:700px) {
+  #cxx-terminal-comms {
+    gap: 4px;
+  }
+
+  #cxx-terminal-comms button {
+    padding: 8px;
+    font-size: 16px;
+  }
+
+  #cxx-terminal-comms~* {
+    flex-shrink: 0;
+  }
+
+  #t2051x-terminal .masthead {
+    gap: 6px;
+  }
+
+  #t2051x-terminal .brand {
+    font-size: 14px;
+    gap: 6px;
+  }
+
+  #t2051x-terminal .brand small {
+    display: none;
+  }
+
+  #cxx-terminal-phone span,
+  #cxx-terminal-mail span {
+    display: none;
+  }
+
+  #cxx-terminal-comms #cxx-terminal-phone,
+  #cxx-terminal-comms #cxx-terminal-mail {
+    width: 44px;
+    min-width: 44px;
+  }
+}
+
+#cxx-terminal-orientation {
+  min-height:44px; min-width:44px; padding:6px 12px; border:1px solid var(--cxx-interactive);
+  background:var(--cxx-raised); color:var(--cxx-interactive); font:16px/1.3 var(--cxx-font-ui); cursor:pointer;
+}

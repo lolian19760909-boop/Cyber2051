@@ -1,0 +1,16 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict'),Host=require('../../卡片源码/运行时/experience-host.js'),S=require('../../卡片源码/运行时/story-summaries.js'),N=require('../../卡片源码/运行时/news.js'),P=require('../../卡片源码/Gal/parser.js'),I=require('../../卡片源码/运行时/identity.js');
+test('summary ranges, selection, rebuild history and four-media news retain existing settings with utility tasks',async()=>{
+ const config={apiBase:'https://fixture.test/v1',apiKey:'fixture-key',model:'fixture-model',countMode:'assistant',summaryEvery:30,manualSummaryCount:20,autoEnabled:false,manualNews:true,syncStory:false,storySummaryConsent:{scope:'story-summary-news-v2',endpoint:'https://fixture.test/v1/chat/completions',model:'fixture-model'}},original=structuredClone(config),events={},requests=[];let meta={[S.KEY]:S.create(0)},stored=JSON.stringify(config),utilityBusy=true;
+ const c={characters:[{avatar:'card'}],characterId:0,getCurrentChatId:()=> 'chat',chat:[{mes:'开场'},{mes:'我们来到街口。',is_user:true},{mes:'对方停下来交谈。'},{mes:'双方谈妥后离开。'}],saveMetadata:async()=>{},eventTypes:{GENERATION_ENDED:'ended'},getRequestHeaders:()=>({})};
+ const api={SillyTavern:{getContext:()=>c},getVariables:()=>meta,updateVariablesWith:async f=>{meta=f(structuredClone(meta));},eventOn:(e,f)=>events[e]=f,eventRemoveListener:e=>delete events[e]};
+ const cache=new Map(),configKey='tokyo2051-standalone-preview-v1-net-v1';
+ const top={document:{body:{hasAttribute:()=>false}},localStorage:{getItem:k=>k===configKey?stored:cache.get(k),setItem:(k,v)=>k===configKey?stored=v:cache.set(k,v),removeItem:k=>cache.delete(k)},__cxx_utility__:{busy:()=>utilityBusy,destroy(){}},fetch:async()=>({ok:true,text:async()=>JSON.stringify([{chat_metadata:{variables:meta}}])})};
+ let revision=0;const fetcher=async(url,o)=>{const q=JSON.parse(o.body),input=JSON.parse(q.messages[1].content);requests.push(input);const value=input.messages?{summary:'确认的剧情总结 '+(++revision)}:{news:N.MEDIA.map(m=>({outletId:m.id,outlet:m.name,summaryIds:input.summaries.map(s=>s.id),column:'街区',title:'街口见闻',lead:'公开消息',body:'双方交谈后离开。'})),threads:[0,1].map(i=>({board:'杂谈',title:'街口 '+i,author:'路人',summaryIds:input.summaries.map(s=>s.id),posts:[{author:'甲',text:'已经离开。'},{author:'乙',text:'收到。'}]}))};return {ok:true,json:async()=>({choices:[{message:{content:JSON.stringify(value)}}]})};};
+ const h=Host.create({api,top,fetcher,news:N,summaries:S,parser:P,identities:I}).start();try{
+  await h.tick();assert.equal(requests.length,0);assert.deepEqual(h.config(),original);utilityBusy=false;
+  assert.equal(await h.summarizeRange(1,2),true,h.state().status);assert.deepEqual(requests[0].messages.map(m=>m.floor),[1,2]);assert.equal(await h.summarizeRange(3,3),true);
+  await h.setSelection('selected',['S0001']);assert.equal(await h.refresh(),true);assert.deepEqual(requests.at(-1).summaries.map(s=>s.id),['S0001']);assert.equal(meta.__cxx_city_news.dynamic.news.length,4);
+  assert.equal(await h.rebuild('S0001'),true);assert.equal(meta[S.KEY].entries[0].history.length,1);assert.equal(await h.refresh(),true);assert.equal(meta.__cxx_city_news.history.length,1);assert.deepEqual(h.config(),original);assert.equal(stored,JSON.stringify(original));assert.deepEqual(meta[S.KEY].selectedIds,['S0001']);
+ }finally{h.destroy();}
+});

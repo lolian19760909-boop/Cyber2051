@@ -1,0 +1,14 @@
+{
+  "name": "tokyo2051-numeric-engine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Independent lightweight growth, perk and narrative combat-advice engine. No role-card embedding.",
+  "main": "index.cjs",
+  "scripts": {
+    "test": "node --test ../../测试/数值引擎/*.test.cjs",
+    "example": "node ../../工具/数值引擎/example.cjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

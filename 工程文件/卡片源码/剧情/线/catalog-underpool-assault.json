@@ -1,0 +1,98 @@
+{
+ "schema": 1,
+ "id": "catalog-underpool-assault",
+ "title": "走廊里的第二把锁",
+ "track": "commission",
+ "summary": "一段共用走廊被装上新锁，收电费的人与住户发生冲突。亮着的急救灯下面，有人还在解释自己只想回家。",
+ "mapId": "tokyo-central",
+ "placeId": "catalog-underpool-assault",
+ "pay": 0,
+ "nodes": [
+  {
+   "id": "P1",
+   "title": "了解现场与协助意愿",
+   "lore": 168,
+   "locations": [
+    {
+     "mapId": "tokyo-central",
+     "placeId": "catalog-underpool-assault"
+    }
+   ],
+   "conditions": {
+    "assisted": "当事人接受当前人物协助，双方实际说明走廊上锁与伤者情况"
+   },
+   "outcomes": {
+    "wait": {
+     "label": "当事人或当前人物明确暂缓处理",
+     "effect": "pause"
+    },
+    "decline": {
+     "label": "当前人物实际拒绝介入或终止本次委托",
+     "effect": "jump",
+     "target": "P3"
+    }
+   }
+  },
+  {
+   "id": "P2",
+   "title": "核对线索与实际处置",
+   "lore": 169,
+   "requires": [
+    "P1"
+   ],
+   "conditions": {
+    "safety": "伤者和共同出口已得到实际处理或明确仍未处理的原因",
+    "records": "实际核对原始收款名单、门锁收据或线缆报修记录，并分别记录可取得的证词"
+   },
+   "outcomes": {
+    "wait": {
+     "label": "实际暂缓调查或等待当事人补充依据",
+     "effect": "pause"
+    },
+    "stop": {
+     "label": "当事人实际终止调查或目标已无法继续",
+     "effect": "jump",
+     "target": "P3"
+    }
+   }
+  },
+  {
+   "id": "P3",
+   "title": "结果与交接",
+   "lore": 170,
+   "requires": [
+    "P2"
+   ],
+   "conditions": {
+    "reported": "当前人物已向相关当事人说明实际结果、物品或通路状态及未解决事项"
+   },
+   "choices": {
+    "resolution": {
+     "mediated": "双方实际谈成维修分担与通行安排",
+     "referred": "证据与双方诉求实际交给有权受理的调停或警方窗口",
+     "unresolved": "调停未成或当事人拒绝继续，已说明尚未解决的问题",
+     "withdrawn": "尚未完成调查即明确退出，并向当事人说明没有完成的工作"
+    }
+   },
+   "endingChoice": "resolution",
+   "endings": {
+    "mediated": {
+     "id": "mediated",
+     "title": "通行与账目达成安排"
+    },
+    "referred": {
+     "id": "referred",
+     "title": "纠纷交接受理"
+    },
+    "unresolved": {
+     "id": "unresolved",
+     "title": "纠纷仍未解决"
+    },
+    "withdrawn": {
+     "id": "withdrawn",
+     "title": "本次协助已退出"
+    }
+   }
+  }
+ ]
+}

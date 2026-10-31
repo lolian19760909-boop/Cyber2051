@@ -1,0 +1,24 @@
+/* 2051 / decision prompt */
+body { font-family:'Bahnschrift','Arial Narrow','Noto Sans SC',sans-serif; }
+.options-card { background:linear-gradient(145deg,rgba(28,11,15,.97),rgba(11,9,11,.98));border:1px solid #59262a;border-radius:2px;box-shadow:0 12px 28px rgba(0,0,0,.36);backdrop-filter:none; }
+.deco-circle { display:none; }
+.card-header { border-bottom:1px solid rgba(220,92,89,.28); }
+.header-avatar-img { border:2px solid #6ecbd0;border-radius:3px;box-shadow:none;filter:saturate(.8); }
+.header-avatar-ring { border:1px dashed #6ecbd0;border-radius:3px;animation:none;opacity:.5; }
+.header-title { color:#dc5c59; }.header-sub { color:#a4a8aa; }
+.header-dot { background:#6ecbd0;box-shadow:0 0 6px rgba(110,203,208,.36);animation:none; }
+.header-arrow { background:#241116;color:#6ecbd0;border:1px solid #5a292d;border-radius:2px;box-shadow:none; }
+.option-btn { background:#180c10;border:1px solid #5a292d;border-radius:2px;color:#d2d5d4;transition:background .2s,border-color .2s,transform .2s; }
+.option-btn::before { border-radius:2px;background:linear-gradient(90deg,rgba(220,92,89,.07),transparent); }
+.option-btn:hover { background:#2b1519;border-color:#6ecbd0;box-shadow:inset 2px 0 #6ecbd0;transform:translateY(-1px); }
+.option-btn.active { background:#173238;border-color:#6ecbd0;color:#b7eef0;box-shadow:inset 2px 0 #6ecbd0; }
+.smug-img { mix-blend-mode:normal;filter:saturate(.7); }
+.option-btn:focus-visible,.card-header:focus-visible { outline:2px solid #6ecbd0;outline-offset:2px; }
+@keyframes cp-choice-flow { from { background-position:100% 0; } to { background-position:-100% 0; } }
+.options-card::after {
+  content:'';position:absolute;z-index:1;pointer-events:none;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent 15%,rgba(220,92,89,.08) 34%,rgba(220,92,89,.75) 50%,rgba(110,203,208,.55) 53%,transparent 68%);
+  background-size:220% 100%;animation:cp-choice-flow 14s linear infinite;
+}
+@media (prefers-reduced-motion:reduce) { .options-card::after, .options-card *, .options-card *::before, .options-card *::after { animation-duration:.01ms !important;transition-duration:.01ms !important; } }
+@media (prefers-reduced-motion:reduce) { .options-card::after { animation:none !important; } }

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>东京都2051</title><style>* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--cxx-ink);
+  color: var(--cxx-text);
+  font: 15px/1.8 var(--cxx-font-ui);
+}
+
+.di-wrap {
+  max-width: 1100px;
+  margin: auto;
+}
+
+.di-hero {
+  min-height: 440px;
+  padding: clamp(28px,6vw,68px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-top: 3px solid var(--cxx-red);
+  background: linear-gradient(90deg,color-mix(in srgb, var(--cxx-ink) 86.27%, transparent),color-mix(in srgb, var(--cxx-ink) 18.82%, transparent)),linear-gradient(0deg,var(--cxx-ink),transparent 70%),url('https://cyber2051.top/img/galgame/backgrounds/59e4a3573477fada/2051CG_neonring_midnight.png') center/cover;
+}
+
+.di-kicker {
+  color: var(--cxx-yellow);
+  font: 12px var(--cxx-font-mono);
+  letter-spacing: .25em;
+}
+
+h1 {
+  margin: 20px 0 8px;
+  font-size: clamp(40px,8vw,76px);
+  line-height: 1.1;
+  letter-spacing: .04em;
+}
+
+.di-sub {
+  color: var(--cxx-text);
+  font-size: 14px;
+  letter-spacing: .1em;
+}
+
+.di-line {
+  border-left: 2px solid var(--cxx-red);
+  padding-left: 15px;
+  margin: 22px 0;
+  color: var(--cxx-text);
+}
+
+.di-start-btn {
+  align-self: flex-start;
+  min-height: 48px;
+  padding: 12px 28px;
+  background: var(--cxx-red);
+  border: 1px solid var(--cxx-red);
+  color: var(--cxx-ink);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.di-start-btn:focus-visible {
+  outline: 2px solid var(--cxx-yellow);
+  outline-offset: 4px;
+}
+
+.di-start-btn:disabled {
+  opacity: .6;
+}
+
+.di-info {
+  padding: 20px clamp(28px,6vw,68px) 32px;
+  border-top: 1px solid color-mix(in srgb, var(--cxx-line) 18.82%, transparent);
+  font-size: 13px;
+  color: var(--cxx-muted);
+}
+
+summary {
+  cursor: pointer;
+  min-height: 44px;
+  display: list-item;
+  padding: 10px 0;
+  color: var(--cxx-text);
+}
+
+a {
+  color: var(--cxx-text);
+  text-underline-offset: 4px;
+}
+
+.di-links {
+  display: flex;
+  gap: 12px 24px;
+  flex-wrap: wrap;
+}
+
+.di-status {
+  min-height: 24px;
+  color: var(--cxx-yellow);
+  font-size: 13px;
+}
+
+@media (max-width:600px) {
+  .di-hero {
+    min-height: 360px;
+    background-position: 60% center;
+  }
+
+  h1 {
+    font-size: 44px;
+  }
+}
+</style></head><body><main class="di-wrap"><section class="di-hero"><p class="di-kicker">TOKYO / 2051 · V2.3.0</p><h1>东京都 2051</h1><p class="di-sub">MyGO!!!!! × Ave Mujica</p><p class="di-line">选择你的出身，走进她们的故事。</p><button class="di-start-btn" onclick="startMgo()">开始旅程 →</button><p class="di-status" role="status"></p></section><details class="di-info"><summary>游玩说明 · 署名与链接</summary><p>《BanG Dream! It's MyGO!!!!!》同人角色扮演，二创改编自 Sgw 的同人卡。人物状态栏立绘由作者使用 AI 绘制，GIF 表情包出自 B 站 UP 主「春也Haruya」。</p><p>启用本卡附带的助手脚本和显示正则。先选择阅读方式，再选择出身与开场；之后可在终端调整特效和阅读方式。</p><nav class="di-links"><a href="https://discord.com/channels/1380075940285124724/1482005341083533312/1482005341083533312" target="_blank">原卡发布帖</a><a href="https://discord.com/channels/1134557553011998840/1408847602870653070" target="_blank">原卡聊天帖</a><a href="https://discord.com/channels/1380075940285124724/1553678462789623838" target="_blank">本卡发布帖</a></nav></details></main><script>
+async function startMgo(){
+ const button=document.querySelector('.di-start-btn'),status=document.querySelector('.di-status');
+ try{const preferences=parent.Cxx236Preferences;if(!preferences)throw Error('开场脚本尚未就绪，请稍候再试。');if(!preferences.read().complete){preferences.open();return;}button.disabled=true;await setChatMessages([{message_id:0,swipe_id:24}]);}catch(e){status.textContent=e.message;button.disabled=false;}
+}
+</script></body></html>

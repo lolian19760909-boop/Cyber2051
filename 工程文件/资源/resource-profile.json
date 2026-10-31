@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "version": "2.3.4",
+  "enhanced": "资源/义体高清/manifest.json",
+  "baseVersion": "2.3.0",
+  "standing": "卡片源码/Gal/standing-inventory.json",
+  "master": "资源/P4基础资源包.zip",
+  "player": "资源/P4玩家资源包-2.3.0.zip",
+  "provenance": "资源/P4玩家资源包-2.3.0.json",
+  "generator": "工具/构建/当前/derive-resources.py"
+}

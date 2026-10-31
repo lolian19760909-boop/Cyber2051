@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小此在思考</title>
+    <style>
+        /* --- CSS变量：2051 红黑档案终端配色（变量名沿用原结构，值已对齐 theme/status.css） --- */
+        :root {
+            --panel-bg: #120a0d; /* 墨黑面板 */
+            --header-bg: #291116; /* 红黑渐变标题块基色 */
+            --accent-pink-main: #dc5c59; /* 主红 */
+            --accent-pink-light: #f08278; /* 亮红 */
+            --text-dark-purple: #d2d5d4; /* 主文字 */
+            --text-title-purple: #ffffff; /* 标题白字 */
+            --border-color: #59262a; /* 暗红边线 */
+            --panel-shadow: 0 10px 26px rgba(0, 0, 0, .4); /* 深色投影 */
+            --font-family: 'Bahnschrift', 'Arial Narrow', 'Noto Sans SC', sans-serif;
+            --border-radius: 2px;
+        }
+
+        body {
+            background-color: transparent;
+            margin: 0;
+            font-family: var(--font-family);
+        }
+
+        .accordion-container {
+            position: relative;
+            background-color: var(--panel-bg);
+            background-image: linear-gradient(rgba(220, 92, 89, .04) 1px, transparent 1px), linear-gradient(90deg, rgba(220, 92, 89, .04) 1px, transparent 1px);
+            background-size: 28px 28px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            max-width: 95%;
+            width: fit-content;
+            min-width: 300px;
+            margin: 10px auto;
+            box-shadow: inset 2px 0 rgba(220, 92, 89, .42), var(--panel-shadow);
+            color: var(--text-dark-purple);
+            border: 1px solid var(--border-color);
+            transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+        }
+        .accordion-container:hover {
+            transform: translateY(-1px);
+            border-color: #6ecbd0;
+        }
+        .accordion-container.expanded {
+            box-shadow: inset 2px 0 rgba(220, 92, 89, .42), 0 14px 34px rgba(0, 0, 0, .5);
+        }
+
+        .particles-wrapper {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none; overflow: hidden; opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .accordion-container.expanded .particles-wrapper { opacity: 1; }
+        
+        .bubble {
+            position: absolute; bottom: -150px; border-radius: 50%;
+            opacity: 0; will-change: transform, opacity;
+            animation: rise linear infinite; filter: blur(1px);
+        }
+        @keyframes rise {
+            0% { transform: translate3d(0, 0, 0) scale(0.7); opacity: 0; }
+            10% { opacity: 0.7; }
+            50% { transform: translate3d(var(--sway-x, 20px), -50vh, 0) scale(1.1); opacity: 0.9; }
+            90% { opacity: 0.4; }
+            100% { transform: translate3d(var(--sway-x-end, -20px), -110vh, 0) scale(0.6); opacity: 0; }
+        }
+
+        .accordion-header {
+            position: relative; z-index: 2;
+            background: linear-gradient(90deg, #291116, #170b0f);
+            overflow: hidden;
+            padding: 14px 22px;
+            cursor: pointer; user-select: none; font-weight: bold;
+            font-size: 1.05em; display: flex; justify-content: space-between;
+            align-items: center; 
+            color: var(--text-title-purple);
+            letter-spacing: 2px;
+            transition: background-color 0.3s ease;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .accordion-header:hover { 
+            background: linear-gradient(90deg, #321318, #1c0d12);
+        }
+        .accordion-header:focus-visible { 
+            outline: 2px solid #6ecbd0; 
+            outline-offset: -2px; 
+        }
+
+        /* 标题栏红色扫描光 */
+        .accordion-header::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; width: 35%; height: 100%;
+            pointer-events: none; opacity: 0.2;
+            background: linear-gradient(90deg, transparent, rgba(220, 92, 89, .32), transparent);
+            animation: konata-cp-scan 15s linear infinite;
+        }
+        @keyframes konata-cp-scan {
+            from { transform: translateX(-150%); }
+            to { transform: translateX(400%); }
+        }
+
+        .accordion-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .heart-icon {
+            display: inline-block;
+            font-size: 1.05em;
+            animation: heartbeat 1.5s ease-in-out infinite;
+            color: var(--accent-pink-main);
+            text-shadow: 0 0 8px rgba(220, 92, 89, .5);
+        }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            10% { transform: scale(1.2); }
+            20% { transform: scale(1); }
+            30% { transform: scale(1.15); }
+            40% { transform: scale(1); }
+        }
+
+        .accordion-header::after {
+            content: '⌄';
+            font-size: 1.8em; 
+            font-weight: 300;
+            color: #6ecbd0;
+            transition: transform 0.3s ease, color 0.3s ease;
+            line-height: 1;
+        }
+        .accordion-header:hover::after { 
+            color: #8fd9dd; 
+        }
+        .accordion-container.expanded .accordion-header::after {
+            transform: rotate(180deg);
+            color: #8fd9dd;
+        }
+
+        .accordion-content {
+            position: relative; z-index: 2;
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.3s ease;
+            overflow: hidden;
+        }
+        .accordion-container.expanded .accordion-content {
+            grid-template-rows: 1fr;
+        }
+        
+        .content-scroll-wrapper {
+            min-height: 0;
+            max-height: 400px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        .content-inner {
+            padding: 8px 20px 12px 20px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.6;
+        }
+
+        .content-scroll-wrapper::-webkit-scrollbar { width: 6px; }
+        .content-scroll-wrapper::-webkit-scrollbar-track { 
+            background: rgba(89, 38, 42, 0.35); 
+            border-radius: 0; 
+        }
+        .content-scroll-wrapper::-webkit-scrollbar-thumb { 
+            background: linear-gradient(180deg, #ae4545, #dc5c59);
+            border-radius: 0;
+        }
+        .content-scroll-wrapper::-webkit-scrollbar-thumb:hover { 
+            background: #f08278;
+        }
+        .content-scroll-wrapper { 
+            scrollbar-width: thin; 
+            scrollbar-color: #dc5c59 rgba(89, 38, 42, 0.35); 
+        }
+
+        @media (max-width: 480px) {
+            .accordion-container { min-width: 280px; max-width: 98%; }
+            .accordion-header { padding: 13px 18px; font-size: 1em; }
+            .content-scroll-wrapper { max-height: 300px; }
+            .content-inner { padding: 6px 15px 10px 15px; font-size: 0.95em; }
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+            .bubble, .heart-icon { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="accordion-container">
+        <div class="particles-wrapper"></div>
+        <div class="accordion-header" role="button" tabindex="0" aria-expanded="false" aria-controls="accordion-content">
+            <span class="accordion-title">
+                <span class="heart-icon">◆</span>
+                <span>小此在思考✨</span>
+            </span>
+        </div>
+        <div class="accordion-content" id="accordion-content" aria-hidden="true">
+            <div class="content-scroll-wrapper">
+                <div class="content-inner">
+$1
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            bubbleInterval: 400,
+            bubbleSizeMin: 20, 
+            bubbleSizeMax: 90,
+            bubbleDurationMin: 10, 
+            bubbleDurationMax: 18,
+            // 终端配色气泡：主红 / 青 / 琥珀
+            bubbleColors: [
+                'rgba(220, 92, 89, 0.55)',
+                'rgba(110, 203, 208, 0.4)',
+                'rgba(216, 167, 72, 0.35)'
+            ]
+        };
+
+        const container = document.querySelector('.accordion-container');
+        const header = document.querySelector('.accordion-header');
+        const content = document.querySelector('.accordion-content');
+        const particlesWrapper = document.querySelector('.particles-wrapper');
+        let bubbleIntervalId = null;
+
+        function toggleAccordion() {
+            const isExpanded = container.classList.toggle('expanded');
+            header.setAttribute('aria-expanded', isExpanded);
+            content.setAttribute('aria-hidden', !isExpanded);
+            if (isExpanded) { startBubbles(); } else { stopBubbles(); }
+        }
+
+        header.addEventListener('click', toggleAccordion);
+        header.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { 
+                e.preventDefault(); 
+                toggleAccordion(); 
+            }
+        });
+
+        function createBubble() {
+            if (!particlesWrapper) return;
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            const size = Math.random() * (CONFIG.bubbleSizeMax - CONFIG.bubbleSizeMin) + CONFIG.bubbleSizeMin;
+            const duration = Math.random() * (CONFIG.bubbleDurationMax - CONFIG.bubbleDurationMin) + CONFIG.bubbleDurationMin;
+            const color = CONFIG.bubbleColors[Math.floor(Math.random() * CONFIG.bubbleColors.length)];
+            const swayX = (Math.random() - 0.5) * 120;
+            const swayXEnd = (Math.random() - 0.5) * 120;
+            bubble.style.width = `${size}px`; bubble.style.height = `${size}px`;
+            bubble.style.left = `${Math.random() * 100}%`;
+            bubble.style.background = `radial-gradient(circle at 35% 35%, ${color}, transparent 65%)`;
+            bubble.style.animationDuration = `${duration}s`;
+            bubble.style.animationDelay = `${Math.random() * 2}s`;
+            bubble.style.setProperty('--sway-x', `${swayX}px`);
+            bubble.style.setProperty('--sway-x-end', `${swayXEnd}px`);
+            particlesWrapper.appendChild(bubble);
+            setTimeout(() => bubble.remove(), (duration + 3) * 1000);
+        }
+
+        function startBubbles() {
+            if (bubbleIntervalId) return;
+            bubbleIntervalId = setInterval(createBubble, CONFIG.bubbleInterval);
+        }
+        
+        function stopBubbles() {
+            if (bubbleIntervalId) {
+                clearInterval(bubbleIntervalId);
+                bubbleIntervalId = null;
+            }
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) { stopBubbles(); }
+            else if (container.classList.contains('expanded')) { startBubbles(); }
+        });
+    </script>
+</body>
+</html>

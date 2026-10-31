@@ -1,0 +1,48 @@
+'use strict';
+const fs=require('fs'),path=require('path'),assert=require('assert/strict'),{chromium}=require('C:/Users/lolian/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const B=require('./build.cjs'),{extract}=require('../../lib/script-modules.cjs');
+const cache=path.join(B.root,'.cache/reset225/browser');
+async function main(){
+ const {card,receipt}=await B.build({write:true});fs.mkdirSync(cache,{recursive:true});
+ const updater=card.data.extensions.tavern_helper.scripts.find(s=>s.id==='cf33c692-7a41-444d-b8b7-6a70163e0104').content,business=card.data.extensions.tavern_helper.scripts.find(s=>s.id==='cxx-business-core-241').content;
+ const wanted=['CxxCrypto','CxxSha256','CxxItemDefinitions','CxxItemModel','CxxItemCatalog','CxxLoadout','CxxIdentity','CxxPlayerAssets','CxxPlayerArt','CxxItemArt','CxxLoadoutSetup','CxxOpeningFlow','CxxOpeningUI','Cxx236Openings'];
+ const modules='globalThis.CxxMenuArt='+B.source('运行时/menu-assets.json')+';globalThis.CxxOpeningGroups='+B.source('开场/groups.json')+';'+B.source('运行时/story-profile.js')+';'+extract(business,wanted).map(m=>m.source).join('\n;\n');
+ const report={boundary:'Browser checks of packaged menu and six-step opening with controlled chat storage; imported offline assets.',sha256:receipt.output.sha256,checks:[],errors:[]};
+ const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});let page;
+ try{
+  async function screenshots(name){for(const width of [390,768,1280]){await page.setViewportSize({width,height:900});await page.screenshot({path:path.join(cache,name+'-'+width+'.png')});assert(await page.locator('.cxx-opening-flow').evaluate(e=>e.scrollWidth<=e.clientWidth));}}
+  page=await browser.newPage({viewport:{width:1280,height:900},hasTouch:true});page.on('pageerror',e=>report.errors.push(e.message));await page.route('**/*',r=>r.fulfill({contentType:'text/html',body:'<!doctype html><meta charset="utf-8"><style>body{margin:0;background:#11131a;color:#ddd}#chat{height:90vh}</style><div id="chat"><div class="mes" mesid="0"><div data-cxx-opening></div></div></div>'}));await page.goto('http://localhost/launcher');
+  await page.addScriptTag({content:card.data.extensions.tavern_helper.scripts.find(s=>s.id==='cxx-runtime-bootstrap').content});await page.evaluate(()=>CxxResources.open());await page.locator('input[type=file]').setInputFiles(receipt.resources.file);await page.waitForFunction(()=>!CxxResources.read().importing&&CxxResources.read().completed>0,{},{timeout:120000});await page.getByText('返回',{exact:true}).click();
+  await page.addScriptTag({content:updater.slice(0,updater.lastIndexOf(';(async()=>{'))});await page.addScriptTag({content:modules});
+  const catalog=JSON.parse(B.source('开场/catalog.json')),pages=Object.fromEntries(catalog.map(c=>[c.id,B.source('MVU/openings/'+c.file)]));
+  await page.evaluate(({catalog,pages,css})=>{
+   const cp=structuredClone;window.chosen='entry';window.created=0;window.saved=0;window.sent=0;window.failNewTag=false;window.listFails=false;window.failOpening=false;window.switched=0;window.preference={level:'medium',device:'desktop',gal:false};
+   const K=CxxStoryLibrary.KEY,route=(name,id,slot,when,location)=>[{chat_metadata:{[K]:{schema:1,kind:'route',storyId:id,routeId:id,name,slot,createdAt:'2026-10-01T00:00:00Z',lastPlayedAt:when},variables:{}}},{mes:'<cxx-story>雨落在街角。你和同伴停下脚步，约好明天再见。</cxx-story><ztl>'+JSON.stringify({location,characters:[{name:'高松灯'}]})+'</ztl>',swipe_id:0}];
+   window.db={entry:[{chat_metadata:{variables:{}}},{mes:'<OpeningForm/>',swipe_id:0}],A:route('霓虹尽头的约定','routeA',1,'2026-10-11T10:00:00Z','山手霓环 · 街口'),B:route('另一场雨','routeB',2,'2026-10-10T10:00:00Z','荒川下城')};
+   window.current=()=>({characterKey:'fixture.png',chatId:chosen});window.callbacks=new Set();const c=()=>({chat:db[chosen].slice(1),name1:'测试玩家',substituteParams:t=>t.replaceAll('{{user}}','测试玩家')});
+   window.CxxOpeningCatalog=catalog;window.CxxStoryProfile.currentAvatar=async()=>CxxMenuArt.entries.Anon.fallback;window.SillyTavern={getContext:c};window.api={getVariables:()=>cp(db[chosen][0].chat_metadata.variables||{}),SillyTavern:{getContext:c},triggerSlash:async()=>{sent++;}};
+   window.runtime={key:()=>chosen,watchMessages:fn=>{callbacks.add(fn);return()=>callbacks.delete(fn);},scheduleMessages(){}};
+   window.Cxx236Preferences={read:()=>({...preference}),device:()=>preference.device,resolveDevice:v=>v==='auto'?'desktop':v,preview(){},clearPreview(){},open(){}};
+   window.__cxx_player__={prepareOpening:async()=>{},completeOpening:async o=>{if(failOpening)throw Error('受控人物保存失败');saved++;db[chosen][0].chat_metadata.variables.__cxx_identity={...o.value,setupToken:'initialized',openingScenario:o.swipe};window.lastOpening=o;},waitForSaved:async()=>{}};
+   window.adapter={current:async()=>({chatId:chosen,rows:cp(db[chosen])}),tagCurrent:async m=>{if(failNewTag)throw Error('受控登记失败');db[chosen][0].chat_metadata[K]=cp(m);},list:async()=>{if(listFails)throw Error('列表暂不可用');return Object.entries(db).map(([chatId,rows])=>({chatId,playable:CxxStoryLibrary.playable(rows),meta:cp(rows[0].chat_metadata[K]||null),preview:CxxStoryLibrary.describe(rows)}));},read:async id=>cp(db[id]),flush:async()=>{},open:async id=>{chosen=id;switched++;},newChat:async()=>{created++;chosen='new'+created;db[chosen]=[{chat_metadata:{variables:{}}},{mes:'<OpeningForm/>',swipe_id:0}];},capture:async()=>({payload:{header:cp(db[chosen][0]),messages:cp(db[chosen].slice(1))}})};
+   window.store=CxxStoryLibrary.createStore({adapter,hash:CxxUpdateCore.sha256,uuid:()=>crypto.randomUUID()});window.CxxOpeningStyle=css;
+   window.openings=Cxx236Openings.create({win:window,api,runtime,pages,catalog});
+   window.menu=CxxGameMenu.create({win:window,store,context:current,covers:CxxStoryAssets,begin:slot=>store.newStory('故事 '+slot,null,slot),openArchive:opts=>{window.archiveOpts=opts;},leave(){}});window.__cxx_launcher__=menu;menu.open();
+  },{catalog,pages,css:B.source('运行时/opening-ui.css')});
+
+  await page.evaluate(()=>document.querySelector('.cxx-announcement button')?.click());await page.waitForFunction(()=>document.querySelector('.game-status')?.textContent==='');
+  await page.getByRole('button',{name:'新游戏',exact:true}).click();await page.getByRole('button',{name:'档位 3 · 空',exact:true}).click();await page.getByRole('button',{name:'在档位 03 创建人物'}).click();
+  assert.equal(await page.locator('.opening-steps button').nth(1).isDisabled(),true);
+  const before=await page.locator('.cxx-opening-flow').evaluate(e=>({style:e.getAttribute('style'),y:e.getBoundingClientRect().y}));
+  await page.locator('.opening-next').click();await page.waitForTimeout(60);
+  const after=await page.locator('.cxx-opening-flow').evaluate(e=>({style:e.getAttribute('style'),y:e.getBoundingClientRect().y}));assert.deepEqual(after,before);report.checks.push('Clicking save-and-continue preserves root placement and height');
+  await page.getByRole('textbox',{name:'姓名',exact:true}).fill('雨宫 · 悠');assert.equal(await page.locator('input[type=file]').count(),0);
+  await page.evaluate(()=>document.activeElement.blur());for(const [width,height]of [[1280,900],[844,390],[390,844],[390,650]]){await page.setViewportSize({width,height});await page.evaluate(()=>{localStorage.setItem(CxxEntryExperience.orientationKey,innerWidth<600?'portrait':'landscape');dispatchEvent(new Event('cxx-orientation-changed'));document.querySelector('.opening-body').scrollTop=0;});await page.waitForTimeout(80);await page.screenshot({path:path.join(cache,'profile-top-'+width+'x'+height+'.png')});const boxes=await page.locator('.cxx-opening-flow').evaluate(e=>{const r=e.getBoundingClientRect(),b=e.querySelector('.opening-next').getBoundingClientRect(),body=e.querySelector('.opening-body');body.scrollTop=body.scrollHeight;return{root:{x:r.x,y:r.y,w:r.width,h:r.height},button:{x:b.x,y:b.y,w:b.width,h:b.height},scroll:body.scrollTop,rotated:e.dataset.rotated||null,outerRotated:e.closest('.cxx-game-menu').dataset.rotated||null};});report.checks.push({width,height,boxes});await page.screenshot({path:path.join(cache,'profile-'+width+'x'+height+'.png')});assert(boxes.scroll>0);assert(boxes.button.x>=-1&&boxes.button.y>=-1&&boxes.button.x+boxes.button.w<=width+1&&boxes.button.y+boxes.button.h<=height+1,'Next button outside viewport');assert.equal(boxes.rotated,null);}
+  await page.setViewportSize({width:1280,height:900});await page.waitForTimeout(80);
+  await page.locator('.opening-next').click();await page.locator('.opening-next').click();await page.locator('.opening-next').click();
+  await page.getByRole('button',{name:/MyGO!!!!!/}).click();await page.getByRole('button',{name:/高松灯/}).click();await page.getByRole('button',{name:/SCENE 06/}).click();
+  await page.evaluate(()=>Cxx236OpeningHost.submitPreview(document.querySelector('[data-cxx-opening-preview="6"]').contentWindow,null));await page.getByRole('heading',{name:'准备好，走进这座城市。'}).waitFor();await page.locator('.opening-next').click();await page.waitForFunction(()=>saved===1&&!menu.active());assert.equal(await page.evaluate(()=>created),1);assert.deepEqual(report.errors,[]);report.checks.push('Six-step completion creates and saves one story');
+ }catch(e){report.failure=e.stack;if(page)await page.screenshot({path:path.join(cache,'failure.png')});throw e;}finally{await browser.close();fs.writeFileSync(path.join(cache,'checks.json'),JSON.stringify(report,null,2));}
+ console.log(JSON.stringify(report,null,2));
+}
+main().catch(e=>{console.error(e);process.exitCode=1;});

@@ -1,0 +1,838 @@
+{
+  "schema": 1,
+  "regions": [
+    {
+      "id": "underpool",
+      "name": "暗池",
+      "uid": 166
+    },
+    {
+      "id": "lowtown",
+      "name": "荒川下城",
+      "uid": 167
+    },
+    {
+      "id": "minato",
+      "name": "联合工业区",
+      "uid": 44
+    }
+  ],
+  "places": [
+    {
+      "id": "ring-community",
+      "name": "RiNG社区",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "街区",
+      "entryId": 166,
+      "kind": "street",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "look",
+          "label": "逛一逛",
+          "draft": "沿公共通道走一段，看看当前营业的店铺与周围动静。"
+        }
+      ]
+    },
+    {
+      "id": "ring-live",
+      "name": "RING-Live!",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "场馆",
+      "entryId": 166,
+      "kind": "music",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "book",
+          "label": "询问场地",
+          "draft": "问问今天的演出、排练或录音安排，再确认可预约时段与费用。"
+        }
+      ]
+    },
+    {
+      "id": "space-site",
+      "name": "SPACE 旧址",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "旧址／停车场",
+      "entryId": 166,
+      "kind": "street",
+      "defaultStatus": "closed",
+      "actions": [
+        {
+          "id": "look",
+          "label": "逛一逛",
+          "draft": "沿公共通道走一段，看看当前营业的店铺与周围动静。"
+        }
+      ]
+    },
+    {
+      "id": "circle",
+      "name": "CiRCLE",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "场馆",
+      "entryId": 166,
+      "kind": "music",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "book",
+          "label": "询问场地",
+          "draft": "问问今天的演出、排练或录音安排，再确认可预约时段与费用。"
+        }
+      ]
+    },
+    {
+      "id": "beni-street",
+      "name": "红花街",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "街区",
+      "entryId": 166,
+      "kind": "street",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "look",
+          "label": "逛一逛",
+          "draft": "沿公共通道走一段，看看当前营业的店铺与周围动静。"
+        }
+      ]
+    },
+    {
+      "id": "a-yang-clinic",
+      "name": "宇田川巴的老街诊所",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "店铺",
+      "entryId": 166,
+      "kind": "medical",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "consult",
+          "label": "询问诊疗",
+          "draft": "说明我现在的伤势和义体情况，询问检查、治疗方案与费用。"
+        },
+        {
+          "id": "treat",
+          "label": "接受治疗",
+          "draft": "确认我同意的治疗项目与报价后，再开始处理伤势。"
+        }
+      ]
+    },
+    {
+      "id": "haneoka",
+      "name": "羽丘女子学园",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "学校",
+      "entryId": 166,
+      "kind": "school",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "visit",
+          "label": "询问入校",
+          "draft": "在校门处说明来意，询问访客登记和可进入的范围。"
+        }
+      ]
+    },
+    {
+      "id": "rana-shifune-home",
+      "name": "乐奈与诗船的公寓",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "私人住所",
+      "entryId": 166,
+      "kind": "private",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "visit",
+          "label": "联系住户",
+          "draft": "联系住户，询问现在是否方便拜访，等对方答复。"
+        }
+      ]
+    },
+    {
+      "id": "ring-instruments",
+      "name": "RING-Live! · 乐器店",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "乐器店",
+      "entryId": 166,
+      "kind": "trade",
+      "defaultStatus": "open",
+      "floor": "地下二层",
+      "actions": [
+        {
+          "id": "browse",
+          "label": "查看商品",
+          "draft": "看看在售物品，询问具体型号、品质和报价。"
+        },
+        {
+          "id": "sell",
+          "label": "商量出售",
+          "draft": "列出我准备出售的物品，与店主核对数量、报价和是否收购。"
+        }
+      ]
+    },
+    {
+      "id": "ring-records",
+      "name": "RING-Live! · 旧唱片店",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "旧唱片店",
+      "entryId": 166,
+      "kind": "trade",
+      "defaultStatus": "open",
+      "floor": "地下二层",
+      "actions": [
+        {
+          "id": "browse",
+          "label": "查看商品",
+          "draft": "看看在售物品，询问具体型号、品质和报价。"
+        },
+        {
+          "id": "sell",
+          "label": "商量出售",
+          "draft": "列出我准备出售的物品，与店主核对数量、报价和是否收购。"
+        }
+      ]
+    },
+    {
+      "id": "ring-cafe",
+      "name": "RING-Live! · 咖啡馆",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "咖啡馆",
+      "entryId": 166,
+      "kind": "food",
+      "defaultStatus": "open",
+      "floor": "地上1—3层配套区",
+      "actions": [
+        {
+          "id": "order",
+          "label": "看菜单",
+          "draft": "看看今天供应的食物和饮料，核对价格后再点单。"
+        }
+      ]
+    },
+    {
+      "id": "ring-studio",
+      "name": "RING-Live! · 录音与租赁",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "录音室／乐器租赁",
+      "entryId": 166,
+      "kind": "music",
+      "defaultStatus": "open",
+      "floor": "地上1—3层配套区",
+      "actions": [
+        {
+          "id": "book",
+          "label": "询问场地",
+          "draft": "问问今天的演出、排练或录音安排，再确认可预约时段与费用。"
+        }
+      ]
+    },
+    {
+      "id": "ring-basement-bar",
+      "name": "Lust？Love？Live！",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "酒吧",
+      "entryId": 166,
+      "kind": "food",
+      "defaultStatus": "open",
+      "floor": "地下三层",
+      "actions": [
+        {
+          "id": "order",
+          "label": "看菜单",
+          "draft": "看看今天供应的食物和饮料，核对价格后再点单。"
+        }
+      ]
+    },
+    {
+      "id": "service-underpool-weapon",
+      "name": "暗池 · 武器店",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "武器店",
+      "entryId": 166,
+      "kind": "trade",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "browse",
+          "label": "查看商品",
+          "draft": "看看在售物品，询问具体型号、品质和报价。"
+        },
+        {
+          "id": "sell",
+          "label": "商量出售",
+          "draft": "列出我准备出售的物品，与店主核对数量、报价和是否收购。"
+        }
+      ]
+    },
+    {
+      "id": "service-underpool-implant",
+      "name": "暗池 · 义体医生",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "义体医生",
+      "entryId": 166,
+      "kind": "medical",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "consult",
+          "label": "询问诊疗",
+          "draft": "说明我现在的伤势和义体情况，询问检查、治疗方案与费用。"
+        },
+        {
+          "id": "treat",
+          "label": "接受治疗",
+          "draft": "确认我同意的治疗项目与报价后，再开始处理伤势。"
+        }
+      ]
+    },
+    {
+      "id": "service-underpool-hospital",
+      "name": "暗池 · 医疗点",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "医疗点",
+      "entryId": 166,
+      "kind": "medical",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "consult",
+          "label": "询问诊疗",
+          "draft": "说明我现在的伤势和义体情况，询问检查、治疗方案与费用。"
+        },
+        {
+          "id": "treat",
+          "label": "接受治疗",
+          "draft": "确认我同意的治疗项目与报价后，再开始处理伤势。"
+        }
+      ]
+    },
+    {
+      "id": "service-underpool-market",
+      "name": "暗池 · 垃圾商店",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "垃圾商店",
+      "entryId": 166,
+      "kind": "trade",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "browse",
+          "label": "查看商品",
+          "draft": "看看在售物品，询问具体型号、品质和报价。"
+        },
+        {
+          "id": "sell",
+          "label": "商量出售",
+          "draft": "列出我准备出售的物品，与店主核对数量、报价和是否收购。"
+        }
+      ]
+    },
+    {
+      "id": "service-underpool-transit",
+      "name": "暗池 · 交通设施",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "交通设施",
+      "entryId": 166,
+      "kind": "transit",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "travel",
+          "label": "查询路线",
+          "draft": "询问前往目的地的路线、班次与票价。"
+        }
+      ]
+    },
+    {
+      "id": "sunken-market",
+      "name": "暗池层叠市场",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "城市地标",
+      "entryId": 166,
+      "kind": "street",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "look",
+          "label": "逛一逛",
+          "draft": "沿公共通道走一段，看看当前营业的店铺与周围动静。"
+        }
+      ]
+    },
+    {
+      "id": "catalog-underpool-netrunner",
+      "name": "回声线缆台",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "网络黑客",
+      "entryId": 166,
+      "kind": "repair",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "repair",
+          "label": "请人检修",
+          "draft": "说明设备的问题，询问检测费、维修范围和完成时间。"
+        }
+      ]
+    },
+    {
+      "id": "catalog-underpool-melee",
+      "name": "暗池 · 近战武器商贩",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "近战武器商贩",
+      "entryId": 166,
+      "kind": "trade",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "browse",
+          "label": "查看商品",
+          "draft": "看看在售物品，询问具体型号、品质和报价。"
+        },
+        {
+          "id": "sell",
+          "label": "商量出售",
+          "draft": "列出我准备出售的物品，与店主核对数量、报价和是否收购。"
+        }
+      ]
+    },
+    {
+      "id": "catalog-underpool-bar",
+      "name": "暗池 · 酒吧",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "酒吧",
+      "entryId": 166,
+      "kind": "food",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "order",
+          "label": "看菜单",
+          "draft": "看看今天供应的食物和饮料，核对价格后再点单。"
+        }
+      ]
+    },
+    {
+      "id": "catalog-underpool-fixer",
+      "name": "暗池转单台",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "中间人",
+      "entryId": 166,
+      "kind": "fixer",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "job",
+          "label": "询问委托",
+          "draft": "询问当前能接的委托，先核对目标、报酬、交付条件和风险。"
+        }
+      ]
+    },
+    {
+      "id": "catalog-underpool-assault",
+      "name": "走廊里的第二把锁",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "发生袭击案件",
+      "entryId": 166,
+      "kind": "quest",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "investigate",
+          "label": "了解现场情况",
+          "draft": "听取当事人的说法，先核对这件事已经发生的经过与可介入的部分，再决定是否接下。"
+        }
+      ],
+      "questId": "catalog-underpool-assault"
+    },
+    {
+      "id": "catalog-underpool-theft",
+      "name": "借条背面",
+      "group": "underpool",
+      "district": "暗池",
+      "cat": "偷盗",
+      "entryId": 166,
+      "kind": "quest",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "investigate",
+          "label": "了解现场情况",
+          "draft": "听取当事人的说法，先核对这件事已经发生的经过与可介入的部分，再决定是否接下。"
+        }
+      ],
+      "questId": "catalog-underpool-theft"
+    },
+    {
+      "id": "akabane",
+      "name": "赤羽街区",
+      "group": "lowtown",
+      "district": "荒川下城",
+      "cat": "街区",
+      "entryId": 167,
+      "kind": "street",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "look",
+          "label": "逛一逛",
+          "draft": "沿公共通道走一段，看看当前营业的店铺与周围动静。"
+        }
+      ]
+    },
+    {
+      "id": "sakiko-rental",
+      "name": "祥子的赤羽出租屋",
+      "group": "lowtown",
+      "district": "荒川下城",
+      "cat": "私人住所",
+      "entryId": 167,
+      "kind": "private",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "visit",
+          "label": "联系住户",
+          "draft": "联系住户，询问现在是否方便拜访，等对方答复。"
+        }
+      ]
+    },
+    {
+      "id": "akabane-clinic",
+      "name": "赤羽黑诊所",
+      "group": "lowtown",
+      "district": "荒川下城",
+      "cat": "义体诊所",
+      "entryId": 167,
+      "kind": "medical",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "consult",
+          "label": "询问诊疗",
+          "draft": "说明我现在的伤势和义体情况，询问检查、治疗方案与费用。"
+        },
+        {
+          "id": "treat",
+          "label": "接受治疗",
+          "draft": "确认我同意的治疗项目与报价后，再开始处理伤势。"
+        }
+      ]
+    },
+    {
+      "id": "service-lowtown-weapon",
+      "name": "荒川下城 · 武器店",
+      "group": "lowtown",
+      "district": "荒川下城",
+      "cat": "武器店",
+      "entryId": 167,
+      "kind": "trade",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "browse",
+          "label": "查看商品",
+          "draft": "看看在售物品，询问具体型号、品质和报价。"
+        },
+        {
+          "id": "sell",
+          "label": "商量出售",
+          "draft": "列出我准备出售的物品，与店主核对数量、报价和是否收购。"
+        }
+      ]
+    },
+    {
+      "id": "service-lowtown-implant",
+      "name": "荒川下城 · 义体医生",
+      "group": "lowtown",
+      "district": "荒川下城",
+      "cat": "义体医生",
+      "entryId": 167,
+      "kind": "medical",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "consult",
+          "label": "询问诊疗",
+          "draft": "说明我现在的伤势和义体情况，询问检查、治疗方案与费用。"
+        },
+        {
+          "id": "treat",
+          "label": "接受治疗",
+          "draft": "确认我同意的治疗项目与报价后，再开始处理伤势。"
+        }
+      ]
+    },
+    {
+      "id": "service-lowtown-hospital",
+      "name": "荒川下城 · 医疗点",
+      "group": "lowtown",
+      "district": "荒川下城",
+      "cat": "医疗点",
+      "entryId": 167,
+      "kind": "medical",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "consult",
+          "label": "询问诊疗",
+          "draft": "说明我现在的伤势和义体情况，询问检查、治疗方案与费用。"
+        },
+        {
+          "id": "treat",
+          "label": "接受治疗",
+          "draft": "确认我同意的治疗项目与报价后，再开始处理伤势。"
+        }
+      ]
+    },
+    {
+      "id": "service-lowtown-market",
+      "name": "荒川下城 · 垃圾商店",
+      "group": "lowtown",
+      "district": "荒川下城",
+      "cat": "垃圾商店",
+      "entryId": 167,
+      "kind": "trade",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "browse",
+          "label": "查看商品",
+          "draft": "看看在售物品，询问具体型号、品质和报价。"
+        },
+        {
+          "id": "sell",
+          "label": "商量出售",
+          "draft": "列出我准备出售的物品，与店主核对数量、报价和是否收购。"
+        }
+      ]
+    },
+    {
+      "id": "service-lowtown-transit",
+      "name": "荒川下城 · 交通设施",
+      "group": "lowtown",
+      "district": "荒川下城",
+      "cat": "交通设施",
+      "entryId": 167,
+      "kind": "transit",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "travel",
+          "label": "查询路线",
+          "draft": "询问前往目的地的路线、班次与票价。"
+        }
+      ]
+    },
+    {
+      "id": "arakawa-hospital",
+      "name": "荒川综合医院",
+      "group": "lowtown",
+      "district": "荒川下城",
+      "cat": "医疗点",
+      "entryId": 167,
+      "kind": "medical",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "consult",
+          "label": "询问诊疗",
+          "draft": "说明我现在的伤势和义体情况，询问检查、治疗方案与费用。"
+        },
+        {
+          "id": "treat",
+          "label": "接受治疗",
+          "draft": "确认我同意的治疗项目与报价后，再开始处理伤势。"
+        }
+      ]
+    },
+    {
+      "id": "catalog-lowtown-melee",
+      "name": "荒川下城 · 近战武器商贩",
+      "group": "lowtown",
+      "district": "荒川下城",
+      "cat": "近战武器商贩",
+      "entryId": 167,
+      "kind": "trade",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "browse",
+          "label": "查看商品",
+          "draft": "看看在售物品，询问具体型号、品质和报价。"
+        },
+        {
+          "id": "sell",
+          "label": "商量出售",
+          "draft": "列出我准备出售的物品，与店主核对数量、报价和是否收购。"
+        }
+      ]
+    },
+    {
+      "id": "catalog-lowtown-food",
+      "name": "河闸食堂",
+      "group": "lowtown",
+      "district": "荒川下城",
+      "cat": "饮食",
+      "entryId": 167,
+      "kind": "food",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "order",
+          "label": "看菜单",
+          "draft": "看看今天供应的食物和饮料，核对价格后再点单。"
+        }
+      ]
+    },
+    {
+      "id": "catalog-lowtown-police",
+      "name": "退水线上的白漆",
+      "group": "lowtown",
+      "district": "荒川下城",
+      "cat": "警用频道案件",
+      "entryId": 167,
+      "kind": "quest",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "investigate",
+          "label": "了解现场情况",
+          "draft": "听取当事人的说法，先核对这件事已经发生的经过与可介入的部分，再决定是否接下。"
+        }
+      ],
+      "questId": "catalog-lowtown-police"
+    },
+    {
+      "id": "catalog-lowtown-recovery",
+      "name": "一只饭盒的重量",
+      "group": "lowtown",
+      "district": "荒川下城",
+      "cat": "物归原主",
+      "entryId": 167,
+      "kind": "quest",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "investigate",
+          "label": "了解现场情况",
+          "draft": "听取当事人的说法，先核对这件事已经发生的经过与可介入的部分，再决定是否接下。"
+        }
+      ],
+      "questId": "catalog-lowtown-recovery"
+    },
+    {
+      "id": "tokyo-skytree",
+      "name": "东京天空塔",
+      "group": "lowtown",
+      "district": "荒川下城",
+      "cat": "城市地标",
+      "entryId": 167,
+      "kind": "street",
+      "defaultStatus": "open",
+      "actions": [
+        {
+          "id": "look",
+          "label": "逛一逛",
+          "draft": "沿公共通道走一段，看看当前营业的店铺与周围动静。"
+        }
+      ]
+    },
+    {
+      "id": "toyokawa-industrial-gate",
+      "name": "丰川重工园",
+      "group": "minato",
+      "district": "联合工业区",
+      "cat": "企业园区",
+      "entryId": 44,
+      "kind": "private",
+      "defaultStatus": "open",
+      "owner": "丰川重工",
+      "mapAt": [
+        1934,
+        1400
+      ],
+      "industrialDistrict": "toyokawa-industrial",
+      "actions": [
+        {
+          "id": "reception",
+          "label": "联系园区接待",
+          "draft": "我来到丰川重工园的对外接待处，询问来访手续与可办理的业务，等候接待人员答复。"
+        }
+      ]
+    },
+    {
+      "id": "pacific-refit-gate",
+      "name": "太平洋整备园",
+      "group": "minato",
+      "district": "联合工业区",
+      "cat": "企业园区",
+      "entryId": 44,
+      "kind": "private",
+      "defaultStatus": "open",
+      "owner": "太平洋防务",
+      "mapAt": [
+        1898,
+        1527
+      ],
+      "industrialDistrict": "pacific-refit",
+      "actions": [
+        {
+          "id": "reception",
+          "label": "联系园区接待",
+          "draft": "我来到太平洋整备园的对外接待处，询问来访手续与可办理的业务，等候接待人员答复。"
+        }
+      ]
+    },
+    {
+      "id": "zetatech-electromechanical-gate",
+      "name": "泽塔机电园",
+      "group": "minato",
+      "district": "联合工业区",
+      "cat": "企业园区",
+      "entryId": 44,
+      "kind": "private",
+      "defaultStatus": "open",
+      "owner": "泽塔科技",
+      "mapAt": [
+        2001,
+        1531
+      ],
+      "industrialDistrict": "zetatech-electromechanical",
+      "actions": [
+        {
+          "id": "reception",
+          "label": "联系园区接待",
+          "draft": "我来到泽塔机电园的对外接待处，询问来访手续与可办理的业务，等候接待人员答复。"
+        }
+      ]
+    }
+  ]
+}

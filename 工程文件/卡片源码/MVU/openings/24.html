@@ -1,0 +1,47 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>html,body{margin:0;background:#080c11}#lpGo,#lpSkip,#lpCustom{display:none}</style></head><body><main class="lp-wrap"><span id="lpGo"></span><span id="lpSkip"></span><span id="lpCustom"></span></main><script>
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.CxxIdentity=api;})(globalThis,function(){
+  'use strict';
+  const KEY='__cxx_identity';
+  const entries=Object.freeze([
+    {id:'street',name:'街头小子',en:'STREET KID',cover:'548653075070d756/2051CG_RING_midnight.png',intro:'人们都说，要想了解街头的疾苦，就得在那儿过日子。黑帮、中间人、性爱机偶、不入流的毒贩子……你是吃百家饭长大的。在这里，弱肉强食，丛林法则说了算，你深谙此道。它是东京都唯一一条还没有被你打破的法则。',background:'你在 RiNG 社区吃百家饭长大，靠街头活计维持生活，熟悉帮派规矩、街头交涉与基础格斗，也了解本地音乐文化。'},
+    {id:'corpo',name:'公司员工',en:'CORPORATE',cover:'49304315c92bb762/2051CG_core_morning.png',intro:'没有多少人可以活着离开公司世界，能够完整保住良心的就更少了。至少在东京都是如此。你经历过，你灵活变通，你用别人的秘密获利，情报就是你手里的武器。根本就没有所谓的公平竞争，只有成王败寇。',background:'你是在弦卷集团工作的公司职员，生活较为富裕，工作压力不小。你熟悉公司竞争与交涉，善于观察、交换和利用情报，但并非无所不知；具体掌握的秘密须由已发生剧情确认。'},
+    {id:'student',name:'青年学生',en:'YOUNG STUDENT',cover:'d167b5dcb3dd4b73/2051CG_lowtown_morning.png',intro:'像大多数人玩玩乐队，和狐朋狗友闲逛，对于一个年轻人来讲再正常不过了……但起码你还有能支撑你学业的家庭。接受教育也有好处。在成长中你萌生了对诚实、正直、公平与自由这些过时的价值观的思考。在东京都，拥有这些特质的人不多，而且它们花再多的钱也买不来。',background:'你是在平民区居住、处于高中阶段的年轻学生，家庭条件能够支撑学业，偶尔也有娱乐的余裕。你了解基础网路与理化知识，喜欢音乐和朋友相聚，并在成长中思考诚实、正直、公平与自由的价值。'}
+  ].map(Object.freeze));
+  function snapshot(id,custom=''){
+    const entry=entries.find(e=>e.id===id);
+    if(id==='custom'){
+      if(typeof custom!=='string'||!custom.trim()||custom.length>4000||/<\s*\/?(?:script|iframe)|<[%]/i.test(custom))throw Error('请填写不超过4000字的纯文字身份。');
+      return {schema:1,id,name:'自定义身份',background:custom.trim()};
+    }
+    if(!entry)throw Error('身份编号无效。');
+    return {schema:1,id,name:entry.name,background:entry.background};
+  }
+  function valid(value){return value?.schema===1&&['street','corpo','student','custom'].includes(value.id)&&typeof value.background==='string'&&value.background.length<=4000;}
+  const css=`.cxx-identity{--accent:#e45072;color:#e5e7ea;background:radial-gradient(ellipse at 50% 0,#e4507212,transparent 65%),#0c0f12;padding:clamp(18px,4vw,48px);font:16px/1.7 Bahnschrift,"Noto Sans SC",sans-serif;min-height:100%;box-sizing:border-box}.cxx-identity *{box-sizing:border-box}.cxx-identity h2{color:#e5e7ea;text-align:center;margin:0;font-size:clamp(22px,3vw,34px);letter-spacing:.12em}.cxx-identity .identity-note{text-align:center;color:#aeb8c4;margin:8px 0 26px}.identity-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(16px,3vw,40px);max-width:1080px;margin:auto}.identity-card{position:relative;align-self:start;font:inherit;background:transparent;border:0;padding:0;text-align:left;color:inherit;cursor:pointer;min-width:0}.identity-card h3{margin:0 0 8px;color:var(--accent);font-size:21px}.identity-card small{display:block;color:#bfa7ad;letter-spacing:.15em;font-size:11px}.identity-art{display:block;width:100%;aspect-ratio:2/3;max-height:48vh;object-fit:cover;border:1px solid #9d535966;clip-path:polygon(0 0,100% 0,100% 94%,92% 100%,0 100%);opacity:.66;transition:opacity .2s,filter .2s}.identity-card[aria-checked=true] .identity-art{opacity:1;filter:drop-shadow(0 0 7px #ef555a80);border:2px solid var(--accent)}.identity-copy{display:block;font-size:14px;color:#d0d5dc;margin-top:14px;line-height:1.8}.identity-card[aria-checked=false] .identity-copy{visibility:hidden}.identity-card:focus-visible,.cxx-identity button:focus-visible,.cxx-identity textarea:focus-visible{outline:2px solid #efca89;outline-offset:5px}.identity-footer{max-width:1080px;margin:22px auto 0;border-top:1px solid #e5e7ea30;padding-top:18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}.cxx-identity button.identity-secondary,.cxx-identity button.identity-confirm{min-height:44px;padding:10px 20px;border:1px solid #e5e7ea30;background:#19151e;color:#eadce0;cursor:pointer}.cxx-identity button.identity-confirm{margin-left:auto;border-color:var(--accent);color:#e5e7ea;background:#e4507220}.cxx-identity button:disabled{opacity:.5;cursor:default}.identity-custom{max-width:1080px;margin:18px auto}.identity-custom textarea{width:100%;min-height:120px;color:#eee;background:#11151c;border:1px solid #82606a;padding:14px;font:inherit}.identity-status{width:100%;color:#c9b5be;font-size:14px}.identity-tabs{display:none}.identity-custom[hidden]{display:none}@media(max-width:650px){.identity-tabs{display:flex;gap:8px;margin:18px 0}.identity-tabs button{flex:1;min-height:44px;color:#dbbdc5;background:#1c151e;border:1px solid #633d49}.identity-tabs button[aria-pressed=true]{border-color:var(--accent);color:#ff939a}.identity-cards{display:block}.identity-card{width:100%}.identity-card[aria-checked=false]{display:none}.identity-art{aspect-ratio:3/2;max-height:34vh}.identity-copy{font-size:15px}.identity-footer{gap:10px}.cxx-identity button.identity-confirm{margin-left:0;flex:1}.cxx-identity .identity-note{font-size:13px;margin-bottom:12px}}@media(prefers-reduced-motion:reduce){.identity-art{transition:none}}`;
+  function mount({document:doc,parent,confirm,continueOpening,read=()=>null,mediaBase='https://cyber2051.top/img/galgame/backgrounds/',studentCover=''}){
+    let selected='street',custom='',busy=false,destroyed=false;
+    const el=(tag,cls,text)=>{const n=doc.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
+    const root=el('section','cxx-identity'),style=el('style','');style.textContent=css;root.append(style,el('h2','','你的人物出身'),el('p','identity-note','选择你在东京都的身份，然后进入现有开场。'));
+    const tabs=el('div','identity-tabs'),cards=el('div','identity-cards');cards.setAttribute('role','radiogroup');cards.setAttribute('aria-label','玩家身份');
+    function select(id){if(busy)return;selected=id;paint();}
+    for(const e of entries){const tab=el('button','',e.name);tab.type='button';tab.dataset.identity=e.id;tab.onclick=()=>select(e.id);tabs.append(tab);const b=el('button','identity-card');b.type='button';b.dataset.identity=e.id;b.setAttribute('role','radio');b.append(el('small','',e.en),el('h3','',e.name));const img=el('img','identity-art');img.alt=e.name+' · 东京都';img.src=mediaBase+(e.cover||studentCover);img.loading='lazy';img.onerror=()=>{img.removeAttribute('src');img.alt=e.name+' · 场景暂不可用';};b.append(img,el('span','identity-copy',e.intro));b.onclick=()=>select(e.id);b.onkeydown=ev=>{if(['ArrowLeft','ArrowRight'].includes(ev.key)){ev.preventDefault();const i=entries.findIndex(x=>x.id===selected),next=entries[(i+(ev.key==='ArrowRight'?1:2))%3];select(next.id);cards.querySelector('[data-identity='+next.id+']').focus();}};cards.append(b);}
+    const customBox=el('label','identity-custom','自定义身份'),input=el('textarea','');input.maxLength=4000;input.setAttribute('aria-label','自定义身份');input.oninput=()=>{custom=input.value;};customBox.append(input);
+    const footer=el('footer','identity-footer'),customButton=el('button','identity-secondary','自定义身份'),skip=el('button','identity-secondary','返回开场'),go=el('button','identity-confirm','确认身份 →'),status=el('p','identity-status','身份影响背景叙述，不额外发放金钱、技能或奖励。');status.setAttribute('role','status');
+    customButton.onclick=()=>select('custom');skip.onclick=()=>!busy&&continueOpening();go.onclick=async()=>{if(busy)return;busy=true;paint();status.textContent='正在保存身份…';try{const value=snapshot(selected,custom);await confirm(value);if(destroyed)return;status.textContent='身份已保存，正在进入开场。';await continueOpening();}catch(e){if(!destroyed)status.textContent=e.message||'身份未保存，请重试。';}finally{busy=false;if(!destroyed)paint();}};
+    footer.append(customButton,skip,go,status);root.append(tabs,cards,customBox,footer);parent.append(root);
+    function paint(){cards.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-checked',String(b.dataset.identity===selected));b.tabIndex=b.dataset.identity===selected?0:-1;b.disabled=busy;});tabs.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.identity===selected));b.disabled=busy;});customBox.hidden=selected!=='custom';customButton.setAttribute('aria-pressed',String(selected==='custom'));for(const b of [customButton,skip,go])b.disabled=busy;root.setAttribute('aria-busy',String(busy));}
+    const saved=read();if(valid(saved)){selected=saved.id;custom=saved.id==='custom'?saved.background:'';input.value=custom;}paint();
+    return {root,destroy(){destroyed=true;root.remove();}};
+  }
+  return Object.freeze({KEY,entries,snapshot,valid,mount,css});
+});
+
+(()=>{
+ const service=()=>window.parent.__cxx_experience__;
+ const expected=()=>{const c=SillyTavern.getContext();return JSON.stringify([c.characters[c.characterId]?.avatar,c.getCurrentChatId()]);};
+ let scope;try{scope=expected();}catch{}
+ CxxIdentity.mount({document,parent:document.querySelector('.lp-wrap'),read:()=>service()?.readIdentity(),
+ confirm:async value=>{if(!scope||expected()!==scope)throw Error('聊天已切换，请重新打开当前聊天的身份页面。');if(!service())throw Error('核心与卡更新脚本尚未就绪；请查看助手脚本错误后重新加载。');await service().chooseIdentity(value);},
+ continueOpening:async()=>{if(typeof setChatMessages!=='function'||!scope||expected()!==scope)throw Error('当前仅为预览，未改变开场。');await setChatMessages([{message_id:0,swipe_id:1}]);}});
+})();
+</script></body></html>

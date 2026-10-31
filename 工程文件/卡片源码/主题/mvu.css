@@ -1,0 +1,10 @@
+/* 2051 / compact update log */
+.mvu-wrapper { --theme-blue:#6ecbd0;--theme-dark:#8ad8dc;--bg-dot:#3e1a20;--glass-white:#150b0f;font-family:Consolas,'Noto Sans SC',monospace; }
+.mvu-card { background:#150b0f;border:1px solid #5a292d;border-radius:2px;box-shadow:0 8px 20px rgba(0,0,0,.3);background-image:linear-gradient(rgba(220,92,89,.035) 1px,transparent 1px);background-size:100% 24px; }
+.mvu-card:hover { box-shadow:0 10px 24px rgba(0,0,0,.3); }.mvu-header { background:#241116;backdrop-filter:none; }
+.mvu-tag { color:#08080b;background:#6ecbd0;border-radius:2px;box-shadow:none; }.mvu-deco-line { background:repeating-linear-gradient(90deg,#5a292d 0 4px,transparent 4px 8px); }
+.mvu-body { border-color:#5a292d; }.mvu-content { color:#d2d5d4; }.mvu-footer { color:#a4a8aa; }.mvu-bg-icon { color:#6ecbd0; }
+@keyframes cp-mvu-drift { from { background-position:0 0; } to { background-position:8px 0; } }
+.mvu-card[open] .mvu-deco-line { animation:cp-mvu-drift 2s linear infinite; }
+@media (prefers-reduced-motion:reduce) { .mvu-wrapper *, .mvu-wrapper *::before, .mvu-wrapper *::after { animation-duration:.01ms !important;transition-duration:.01ms !important; } }
+@media (prefers-reduced-motion:reduce) { .mvu-deco-line { animation:none !important; } }

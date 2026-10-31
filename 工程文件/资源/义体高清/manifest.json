@@ -1,0 +1,420 @@
+{
+  "schema": 1,
+  "provenance": "Restored from the existing game inventory icons; these are derived images, not original high-resolution game assets.",
+  "assets": [
+    {
+      "key": "optics",
+      "sourceId": "f40352fb56862ae6e6c5580be41fa51243867be568df73d5d486a8619b75ed81",
+      "sourceBytes": 8142,
+      "method": "AI-assisted restoration",
+      "branding": null,
+      "originalSize": [
+        200,
+        200
+      ],
+      "size": [
+        1254,
+        1254
+      ],
+      "png": {
+        "file": "source/optics.png",
+        "bytes": 923095,
+        "sha256": "af2a6c0a0841e6eac2b93671295ac067503b5462f7837861bd5bc29466c163ea"
+      },
+      "file": "webp/optics.webp",
+      "mime": "image/webp",
+      "bytes": 201724,
+      "id": "3d9741dd6b7b684ca4da56350b296da4424f399df55ed8d1990844ce7d450156"
+    },
+    {
+      "key": "optical_camo",
+      "sourceId": "ecf5a6a5d213e7144fcdf1a352ad488084d7300d479f898b6171f0c09752ea8d",
+      "sourceBytes": 11828,
+      "method": "AI-assisted restoration",
+      "branding": "Pacific Defense wordmark",
+      "originalSize": [
+        200,
+        200
+      ],
+      "size": [
+        1254,
+        1254
+      ],
+      "png": {
+        "file": "source/optical_camo.png",
+        "bytes": 1438934,
+        "sha256": "ad0bed259b45c0dd5107d154479063b4a62b6d0322cb6a648667255524d45a66"
+      },
+      "file": "webp/optical_camo.webp",
+      "mime": "image/webp",
+      "bytes": 315380,
+      "id": "18f502264153aadfe3d88bb4a93419c7214743f48186a348f04d5f44c3a8c02f"
+    },
+    {
+      "key": "sandevistan",
+      "sourceId": "450a4d5153a5896d6c58685687a8b91dbcf2855cd7bedebdce7a2910973c092a",
+      "sourceBytes": 9878,
+      "method": "AI-assisted restoration",
+      "branding": null,
+      "originalSize": [
+        200,
+        200
+      ],
+      "size": [
+        1254,
+        1254
+      ],
+      "png": {
+        "file": "source/sandevistan.png",
+        "bytes": 1205361,
+        "sha256": "64a0b35da51517c0426d690bb79feffbd246e7637f7b8b38b634beb7cb0da7d9"
+      },
+      "file": "webp/sandevistan.webp",
+      "mime": "image/webp",
+      "bytes": 280354,
+      "id": "4a77f22a37a37a2ea878d8da38622c8487d2abd703f3f054154e9b2f1c77f1be"
+    },
+    {
+      "key": "subdermal_armor",
+      "sourceId": "c3acc2f502810d75578db1220ca00f0fee56fa6302323336cd4c5632f1b52d59",
+      "sourceBytes": 6714,
+      "method": "AI-assisted restoration",
+      "branding": null,
+      "originalSize": [
+        200,
+        200
+      ],
+      "size": [
+        1254,
+        1254
+      ],
+      "png": {
+        "file": "source/subdermal_armor.png",
+        "bytes": 1155967,
+        "sha256": "5d099c8fc2f557dc61f3f906614da60354ce2fd35a70d63c20014a364025163b"
+      },
+      "file": "webp/subdermal_armor.webp",
+      "mime": "image/webp",
+      "bytes": 208888,
+      "id": "ef491d2fbc14de79852e41fe4bcda99a83c596f29674049dea08b8c9ba041d60"
+    },
+    {
+      "key": "ballistic",
+      "sourceId": "f966dce3e5c7b5ed7f90b91e485fad6ec97f36f96acdede70b781bcb24f6fc30",
+      "sourceBytes": 9750,
+      "method": "AI-assisted restoration",
+      "branding": null,
+      "originalSize": [
+        200,
+        200
+      ],
+      "size": [
+        1254,
+        1254
+      ],
+      "png": {
+        "file": "source/ballistic.png",
+        "bytes": 1484402,
+        "sha256": "62ba4ad570ea571a7d0aea04aaeff538a9f00a2f74fed43a6020afd9941722f1"
+      },
+      "file": "webp/ballistic.webp",
+      "mime": "image/webp",
+      "bytes": 295680,
+      "id": "d82e0e39a16c9e11eee76c6977bc1c3193a1702bbe01f63684566976e4841fa2"
+    },
+    {
+      "key": "cyberdeck",
+      "sourceId": "0b19e16bf0ed2a5edfb3711383c8ad046a0d98194219d7a0b406bd27861dda57",
+      "sourceBytes": 8712,
+      "method": "AI-assisted restoration",
+      "branding": null,
+      "originalSize": [
+        200,
+        200
+      ],
+      "size": [
+        1254,
+        1254
+      ],
+      "png": {
+        "file": "source/cyberdeck.png",
+        "bytes": 1297022,
+        "sha256": "ea20e71f40cc05701d6a6bb131dea6e5508539002164e68f8c08b6b09aa78ccb"
+      },
+      "file": "webp/cyberdeck.webp",
+      "mime": "image/webp",
+      "bytes": 230186,
+      "id": "60cf6f8dd9926e71ca982d4fdcd649b01f2e33c0a185634dde7856db10d8c3c8"
+    },
+    {
+      "key": "memory_boost",
+      "sourceId": "1238ebaf53713798159f0bec777361db1c96eb442029398b2cccc0af8caf0689",
+      "sourceBytes": 16436,
+      "method": "AI-assisted restoration",
+      "branding": null,
+      "originalSize": [
+        200,
+        200
+      ],
+      "size": [
+        1254,
+        1254
+      ],
+      "png": {
+        "file": "source/memory_boost.png",
+        "bytes": 1738413,
+        "sha256": "cabcd957bead0d11d7660e3101ecedf0bf62f706ba1cae49497c70a20b0c8f8a"
+      },
+      "file": "webp/memory_boost.webp",
+      "mime": "image/webp",
+      "bytes": 495250,
+      "id": "0db35d4e7b19c16661459a9662e277647b506fa9b2465ad0045147f70266ed8d"
+    },
+    {
+      "key": "ex_disk",
+      "sourceId": "4f68c1a4fca05aceb159a108efc7037e30daee26a858bad13486eda279971b3b",
+      "sourceBytes": 10128,
+      "method": "AI-assisted restoration",
+      "branding": null,
+      "originalSize": [
+        200,
+        200
+      ],
+      "size": [
+        1254,
+        1254
+      ],
+      "png": {
+        "file": "source/ex_disk.png",
+        "bytes": 1007110,
+        "sha256": "d0a70b75d267e737d9287316d52ef2d17f8d1a33ca8c75c9ba6d30e45736730d"
+      },
+      "file": "webp/ex_disk.webp",
+      "mime": "image/webp",
+      "bytes": 289020,
+      "id": "06b679cb404460589be8d3ec9cd8e270a3428aeb26c56e6c26f7dfb0e8079a78"
+    },
+    {
+      "key": "berserk",
+      "sourceId": "c976e2b1c69765cead17b77e6b7c3bce675e254c5988714f0fd0829236a03f2c",
+      "sourceBytes": 9098,
+      "method": "AI-assisted restoration",
+      "branding": "Pacific Defense author eagle logo and wordmark",
+      "originalSize": [
+        200,
+        200
+      ],
+      "size": [
+        1254,
+        1254
+      ],
+      "png": {
+        "file": "source/berserk.png",
+        "bytes": 1115091,
+        "sha256": "4e29038ff60c33c0c4ec9d2557ee128de5b050f136eafdc4c4e27373dc8dda6e"
+      },
+      "file": "webp/berserk.webp",
+      "mime": "image/webp",
+      "bytes": 268504,
+      "id": "3b5358c05536f8b34fea7247708f4b556c405c7361f5e2412a6a4525aac422c4"
+    },
+    {
+      "key": "micro_rotors",
+      "sourceId": "ae1d4fa0fdfca0389bbae5967c8d802f90415ab4d340f49d9c8e8c013ffa0a8d",
+      "sourceBytes": 12620,
+      "method": "AI-assisted restoration",
+      "branding": "Pacific Defense wordmark",
+      "originalSize": [
+        200,
+        200
+      ],
+      "size": [
+        1254,
+        1254
+      ],
+      "png": {
+        "file": "source/micro_rotors.png",
+        "bytes": 1863241,
+        "sha256": "40b679939dc62f41837f84a1c0a42f8ebec1a55e4c6aae245255ef43bae40c93"
+      },
+      "file": "webp/micro_rotors.webp",
+      "mime": "image/webp",
+      "bytes": 419138,
+      "id": "1d3d621a76e4ad943a77f5dba33af7d80bc952b42821de7c2a871fc9fd10eb5a"
+    },
+    {
+      "key": "kerenzikov",
+      "sourceId": "4fe91812b171c23f3ed858773437fe4c08de59ed117e77e556a62c09b0160863",
+      "sourceBytes": 13498,
+      "method": "AI-assisted restoration",
+      "branding": "Pacific Defense wordmark",
+      "originalSize": [
+        200,
+        200
+      ],
+      "size": [
+        1254,
+        1254
+      ],
+      "png": {
+        "file": "source/kerenzikov.png",
+        "bytes": 1437670,
+        "sha256": "faddb849f5aa685bf92bfc95571360ae7a20ff277b7468cef42eb195308e7fde"
+      },
+      "file": "webp/kerenzikov.webp",
+      "mime": "image/webp",
+      "bytes": 363570,
+      "id": "93b0016ad15fb27885aa00a70998deb2d220192be7a2b4fb3d801218aecf7901"
+    },
+    {
+      "key": "biomonitor",
+      "sourceId": "f018bbe9c2900e15e136b4b796f3290e471a827b31c3d1da203b5df90118c780",
+      "sourceBytes": 11810,
+      "method": "AI-assisted restoration",
+      "branding": "Pacific Defense wordmark",
+      "originalSize": [
+        200,
+        200
+      ],
+      "size": [
+        1254,
+        1254
+      ],
+      "png": {
+        "file": "source/biomonitor.png",
+        "bytes": 1691596,
+        "sha256": "473b3c4492760009f8df9c10a96e8b392b612add11064f8019694182b2c9dc31"
+      },
+      "file": "webp/biomonitor.webp",
+      "mime": "image/webp",
+      "bytes": 433970,
+      "id": "417da3769f69ef1cf71b098156608db9753f950dd21d2794b611b23fdaa153b8"
+    },
+    {
+      "key": "blood_pump",
+      "sourceId": "fc0f20434ca7e16c4c652536f18b8dcb1b908f829c5067f164136e852a5dc2ae",
+      "sourceBytes": 9510,
+      "method": "AI-assisted restoration",
+      "branding": "Pacific Defense wordmark",
+      "originalSize": [
+        200,
+        200
+      ],
+      "size": [
+        1254,
+        1254
+      ],
+      "png": {
+        "file": "source/blood_pump.png",
+        "bytes": 1378528,
+        "sha256": "f15abdab39df990f655ef321b94c1cf9ff196e758b7fdbf39f4dfc0750b95b5b"
+      },
+      "file": "webp/blood_pump.webp",
+      "mime": "image/webp",
+      "bytes": 298764,
+      "id": "2b80ed73e267e1a28da7978eee350f57313045a5d0226795a9ca3318421ca2f1"
+    },
+    {
+      "key": "tendons",
+      "sourceId": "7a2c0cef386a4c5fb102c323660b466da8cf6195623a487abbb930705a1de532",
+      "sourceBytes": 8584,
+      "method": "AI-assisted restoration",
+      "branding": "Pacific Defense wordmark",
+      "originalSize": [
+        200,
+        200
+      ],
+      "size": [
+        1254,
+        1254
+      ],
+      "png": {
+        "file": "source/tendons.png",
+        "bytes": 1159200,
+        "sha256": "ec4986fd6f565470236d7d4842454ff63558da68078aa41e3950138870c5a997"
+      },
+      "file": "webp/tendons.webp",
+      "mime": "image/webp",
+      "bytes": 253204,
+      "id": "7ca553a433b58d8762c3d9f68c6ce66836b964f89a763405eea77a22e91432c6"
+    },
+    {
+      "key": "mantis",
+      "sourceId": "2ed5a1f0cb5d0d5ca6149db1f599b7bb2b93e02ea95f08b1e01052e77b579c1a",
+      "sourceBytes": 5706,
+      "method": "AI-assisted restoration",
+      "branding": "Pacific Defense wordmark",
+      "originalSize": [
+        200,
+        200
+      ],
+      "size": [
+        1254,
+        1254
+      ],
+      "png": {
+        "file": "source/mantis.png",
+        "bytes": 695718,
+        "sha256": "ea9061af0f3aec4bd71d3a5ec0d07cfa79ab07fcb40c474f8322be27b64dbeb0"
+      },
+      "file": "webp/mantis.webp",
+      "mime": "image/webp",
+      "bytes": 177774,
+      "id": "a818d36605dfe457ed0078ec87c6dbc9a2448ddbef05f4822c17c805dbb64ed1"
+    },
+    {
+      "key": "gorilla",
+      "sourceId": "3626d14dc9352f6a2595a56a39db9c65b769b55a11c9bf1821cf17bdaff190d7",
+      "sourceBytes": 5888,
+      "method": "AI-assisted restoration",
+      "branding": "Pacific Defense wordmark",
+      "originalSize": [
+        200,
+        200
+      ],
+      "size": [
+        1254,
+        1254
+      ],
+      "png": {
+        "file": "source/gorilla.png",
+        "bytes": 825653,
+        "sha256": "c29f03d287b27b9aecedbf9fa38e8b952a406fd10706cd7ecc0dda40ca3dc50f"
+      },
+      "file": "webp/gorilla.webp",
+      "mime": "image/webp",
+      "bytes": 184454,
+      "id": "9c8d801efa680c9aa36e62afad71191528ef39567a760e4cad63cf85c5eae326"
+    },
+    {
+      "key": "launcher",
+      "sourceId": "b98425307cdb7f5ccda110b02c8ff00eb1847a6761ed4b38a2808bfcd06eaecf",
+      "sourceBytes": 6032,
+      "method": "AI-assisted restoration",
+      "branding": "Pacific Defense wordmark",
+      "originalSize": [
+        200,
+        200
+      ],
+      "size": [
+        1254,
+        1254
+      ],
+      "png": {
+        "file": "source/launcher.png",
+        "bytes": 759522,
+        "sha256": "44e8ae020d5815cded1b6c761546973b0c752f7ecf0a085d38858604928c9026"
+      },
+      "file": "webp/launcher.webp",
+      "mime": "image/webp",
+      "bytes": 175130,
+      "id": "5bf43a0c73b4698f441098e2dff5e6b01c44e73ab4a00249e981e09e0a250c10"
+    }
+  ],
+  "retainedOriginals": [
+    "smart_link",
+    "bionic_joints",
+    "monowire",
+    "ankles"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "upstream": "Darkatse/TauriTavern",
+  "commit": "a1855be4a4f8b6ee7cd0374a84dbb3709c3e5375",
+  "source": {
+    "file": "src/scripts/extensions.js",
+    "url": "https://raw.githubusercontent.com/Darkatse/TauriTavern/v2.3.0/src/scripts/extensions.js",
+    "bytes": 96656,
+    "sha256": "893d4bc4c678f455f2a3a8fc88f7f829c54ba76ae23eb53e3ac5e968810e7507",
+    "immutableUrl": "https://raw.githubusercontent.com/Darkatse/TauriTavern/a1855be4a4f8b6ee7cd0374a84dbb3709c3e5375/src/scripts/extensions.js"
+  },
+  "scope": "Exact function only; not a running Tauri host.",
+  "code": "export async function runGenerationInterceptors(chat, contextSize, type) {\n    let aborted = false;\n    let exitImmediately = false;\n\n    const abort = (/** @type {boolean} */ immediately) => {\n        aborted = true;\n        exitImmediately = immediately;\n    };\n\n    for (const manifest of Object.values(manifests).filter(x => x.generate_interceptor).sort((a, b) => sortManifestsByOrder(a, b))) {\n        const interceptorKey = manifest.generate_interceptor;\n        if (typeof globalThis[interceptorKey] === 'function') {\n            try {\n                await globalThis[interceptorKey](chat, contextSize, abort, type);\n            } catch (e) {\n                console.error(`Failed running interceptor for ${manifest.display_name}`, e);\n            }\n        }\n\n        if (exitImmediately) {\n            break;\n        }\n    }\n\n    return aborted;\n}"
+}

@@ -1,0 +1,11 @@
+{
+  "display_name": "CXX Context S0 isolated probe",
+  "author": "Cyber2051 engineering",
+  "version": "0.0.1",
+  "minimum_client_version": "1.19.0",
+  "loading_order": 999,
+  "js": "index.js",
+  "auto_update": false,
+  "generate_interceptor": "CxxContextS0_intercept",
+  "hooks": { "clean": "clean" }
+}

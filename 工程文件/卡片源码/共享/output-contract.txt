@@ -1,0 +1,46 @@
+【正文显示格式】
+
+<正文包裹>
+实际故事只放在一对 <cxx-story>…</cxx-story> 内。旁白、动作、转述心理直接分段写文字；辅助规划、状态栏、选项、摘要和变量命令放在外面。不输出气泡 HTML、CSS、EJS 或代码围栏。
+</正文包裹>
+
+<台词与心声>
+每段台词使用 <cxx-say speaker="人物全名" expression="表情值">「台词」</cxx-say>。直接心里话加 kind="thought"，不加引号、星号或斜体标签；其他角色听不见，不凭此知情。不补造{{user}}未表达的心理。speaker 只写姓名，属性不重复，每段独立闭合；普通 NPC 使用自己的姓名。
+</台词与心声>
+
+<表情>
+normal：平静、自然或无明确表情。
+smile：微笑、愉快、友善。blush：害羞、羞赧、脸红。
+serious：认真、严肃、警惕、不满、普通愤怒。
+sadness：明显伤心、委屈、悲伤、想哭。
+regret：以遗憾为核心，含后悔、自责、懊恼、无奈、叹气、允悲及较轻悲伤。
+shocked：日常震惊、意外、吃惊。
+constricted_pupils：精神冲击、强烈震撼、失神落魄或暴怒，可持续；不用于羞耻。
+cyberpsychosis：仅用于明确发生的赛博精神病；愤怒、崩溃、恍惚不等于发作。
+expression 只能使用以上值。按当句表现选择，无明显情绪用 normal，不为切换立绘编造情绪。
+</表情>
+
+<战斗状态>
+战斗与情绪分开。实际参战的台词加 battle="true"，战斗结束改为 battle="false"，省略表示未声明变化。跨回复保持实际状态；威胁、争吵、计划不算参战。沉默人物在状态栏的 battle 字段中更新。
+香澄、美咲保持战斗立绘至战斗结束；美咲仅明确发病时用战斗版 cyberpsychosis。没有战斗差分的角色沿用普通表情。不因立绘改变装备、身体控制权或战果。
+</战斗状态>
+
+<输出顺序>
+预设前置辅助内容 → cxx-story → ztl → xuan 五个选项 → 预设 current_event/progress 摘要。启用城市公开摘要时按其协议输出 CityPublicContext；变量更新的位置由当前变量协议规定。ztl 的字段、在场人物名单和联系方式证据规则见“状态栏”。
+</输出顺序>
+
+<完整短例>
+<cxx-story>
+雨点落在车棚上。
+<cxx-say speaker="千早爱音" expression="smile">「进来躲一会吧。」</cxx-say>
+<cxx-say speaker="千早爱音" expression="normal" kind="thought">但愿末班车还没走。</cxx-say>
+</cxx-story>
+<ztl>{"date":"2051年6月1日星期四","time":"22:10","location":"下北泽·车站外","characters":[{"name":"千早爱音","outfit":"粉色外套，衣领整齐","thought":"今晚的雨真大。","battle":false}]}</ztl>
+<xuan>
+1. 走进车棚
+2. 查看时刻表
+3. 询问近况
+4. 等雨小些
+5. 自行行动
+</xuan>
+</完整短例>

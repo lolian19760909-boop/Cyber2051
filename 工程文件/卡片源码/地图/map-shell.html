@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>区域地图 · 东京都 2051</title><style>/*MAP_SHELL_STYLES*/</style></head>
+<body class="atlas-shell-page"><main id="map-shell-root"></main>
+<script>window.TOKYO_ATLAS_DOCUMENTS=/*ATLAS_DOCUMENTS*/;</script>
+<script>/*MAP_SHELL_SCRIPT*/</script>
+<script>
+const atlasShell=window.TOKYO_ATLAS_SHELL.mount(document.querySelector('#map-shell-root'),window.TOKYO_ATLAS_DOCUMENTS);
+function atlasPageHide(event){
+ if(event.persisted){atlasShell.setVisible(false);return;}
+ atlasShell.destroy();window.removeEventListener('pagehide',atlasPageHide);window.removeEventListener('pageshow',atlasPageShow);
+}
+function atlasPageShow(event){if(event.persisted)atlasShell.setVisible(true);}
+window.addEventListener('pagehide',atlasPageHide);window.addEventListener('pageshow',atlasPageShow);
+</script>
+</body></html>

@@ -1,0 +1,41 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {createRequire} from 'node:module';
+import {createHash} from 'node:crypto';
+import assert from 'node:assert/strict';
+import {buildSectors} from "../../卡片源码/地图/central-sectors.mjs";
+import {syncDistrictFacts} from "../../卡片源码/地图/district-refinement.mjs";
+const here=path.dirname(fileURLToPath(import.meta.url)),root=path.resolve(here,'../../.cache/map'),parent=path.resolve(here,'../../卡片源码/地图'),night=parent;fs.mkdirSync(root,{recursive:true});
+const canvas=createRequire(import.meta.url)('C:/Users/lolian/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/@napi-rs/canvas');
+const {inlineSource}=createRequire(import.meta.url)('../lib/inline-source.cjs');
+canvas.GlobalFonts.registerFromPath('C:/Windows/Fonts/msyh.ttc','Map Chinese');
+const read=p=>fs.readFileSync(p,'utf8'),write=(p,s)=>fs.writeFileSync(path.join(root,p),s),json=x=>JSON.stringify(x).replace(/</g,'\\u003c');
+const baseline=JSON.parse(read(path.join(night,'输入/central-data.json'))),worldbook=syncDistrictFacts(baseline),result=buildSectors(baseline,canvas);
+result.receipt.worldbook=worldbook;
+const {base,packets,definitions,receipt}=result;base.sectorDefinitions=definitions;
+let html=read(path.join(night,'输入/central.html'));
+const before=read(path.join(night,'输入/atlas.js')),source=read(path.join(parent,'atlas.js')),runtime=read(path.join(parent,'central-sector-runtime.js'));
+const runtimeBase=structuredClone(base);
+runtimeBase.sectorDefinitions=definitions.map(({selectionPath,...s})=>s);
+runtimeBase.sectorRouting=receipt.oldSector;
+runtimeBase.sectorNightEdges={core:JSON.stringify(packets['central-core'].centralNight),outer:JSON.stringify(packets.overview.centralNight)};
+for(const r of runtimeBase.regions){if(r.kind==='alias'){r.polygons=[];r.selectionPath='';}else if(definitions.some(s=>s.id===r.id))r.polygons=[];}
+const packetStrings=Object.fromEntries(Object.entries(packets).map(([id,full])=>{
+ const p=structuredClone(full);p.sectorView={id:full.sectorId};delete p.centralNight;
+ for(const key of ['cityDetail','districtExpansion','terrainContext'])for(const k of Object.keys(p[key]))if(JSON.stringify(p[key][k])===JSON.stringify(base[key][k]))delete p[key][k];
+ return [id,JSON.stringify(p)];
+}));
+html=html.replace(/window\.TOKYO_ATLAS=\{[\s\S]*?;(?=<\/script>)/,()=>`window.TOKYO_ATLAS=${json(runtimeBase)};window.TOKYO_ATLAS_PACKETS=${json(packetStrings)};`);
+const theme=read(path.resolve(parent,'../主题/tokens.css'));
+const api=read(path.join(parent,'map-api.js')),detailStyle='<style>'+theme+'\n'+read(path.join(parent,'detail.css'))+'</style>';
+assert.ok(html.includes('TOKYO_ATLAS_PACKETS='));assert.ok(html.includes(before));html=html.replace(before,()=>source+'\n'+runtime+'\n'+api).replace('</head>',detailStyle+'</head>');
+write('central-preview.html',html);write('sector-data.json',JSON.stringify({base,packets}));write('build.json',JSON.stringify({...receipt,previewSHA256:createHash('sha256').update(html).digest('hex'),previewBytes:Buffer.byteLength(html)},null,2));
+let western=read(path.join(night,'输入/western.html'));const westernScript=[...western.matchAll(/<script\b[^>]*>[\s\S]*?<\/script>/gi)].at(-1)[0];western=western.replace(westernScript,()=>'<script>'+read(path.join(parent,'western-view.js'))+'\n'+api+'</script>').replace('</head>',detailStyle+'</head>');write('western-preview.html',western);
+const shellCss=theme+'\n'+read(path.join(parent,'map-shell.css')),shellJs=inlineSource(read(path.join(parent,'map-shell.js')));
+const docs=[{id:'tokyo-central',name:'东京都 · 中心大区',html},{id:'west-expansion',name:'西部大区 · 山梨与富士',html:western}];
+write('preview.html','<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>中心五分区 · 预览</title><style>html,body,#preview{margin:0;width:100%;height:100%;background:#070b0f}'+shellCss+'</style><main id="preview"></main><script>'+shellJs+'</script><script>window.previewMaps='+json(docs)+';window.previewShell=window.TOKYO_ATLAS_SHELL.mount(document.querySelector("#preview"),previewMaps);</script></html>');
+const image=canvas.createCanvas(1500,1370),ctx=image.getContext('2d');ctx.fillStyle='#080e14';ctx.fillRect(0,0,1500,1370);ctx.translate(200,460);ctx.scale(.22,.22);
+for(const s of definitions){ctx.fillStyle=s.color+'38';ctx.fill(result.paths.get(s.id),'evenodd');ctx.strokeStyle=s.color;ctx.lineWidth=4;ctx.stroke(result.paths.get(s.id));}
+ctx.font='70px "Map Chinese"';ctx.textAlign='center';for(const s of definitions){ctx.fillStyle='#ffffff';ctx.fillText(s.name,...s.at);}write('geometry.png',image.toBuffer('image/png'));
+console.log(JSON.stringify(receipt,null,2));

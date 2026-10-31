@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>body {
+  font-family: var(--cxx-font-ui);
+}
+
+@keyframes tomo-float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes tomo-fadein {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    transform: scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+}
+
+.tomo-wrap {
+  position: relative;
+  max-width: 760px;
+  margin: 30px auto;
+  animation: tomo-fadein 1.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --cp-ink: var(--cxx-ink);
+  --cp-panel: var(--cxx-panel);
+  --cp-panel-hi: var(--cxx-raised);
+  --cp-line: var(--cxx-line);
+  --cp-cyan: var(--cxx-cyan);
+  --cp-red: var(--cxx-red);
+  --cp-amber: var(--cxx-yellow);
+  --cp-text: var(--cxx-text);
+  --cp-muted: var(--cxx-muted);
+  font-family: var(--cxx-font-ui);
+  color: var(--cp-text);
+}
+
+.tomo-notebook {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% -18%,color-mix(in srgb, var(--cxx-narrative-panel) 50%, transparent),transparent 62%),repeating-linear-gradient(0deg,transparent 0 31px,color-mix(in srgb, var(--cxx-red) 2.20%, transparent) 31px 32px),var(--cp-ink);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  box-shadow: 0 18px 46px color-mix(in srgb, var(--cxx-shadow) 42%, transparent);
+}
+
+.tomo-spine {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  transform: translateX(-50%);
+  z-index: 10;
+  background: linear-gradient(180deg,transparent,var(--cp-line),transparent);
+  box-shadow: none;
+}
+
+.tomo-stitch {
+  position: absolute;
+  left: 50%;
+  top: 10%;
+  bottom: 10%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.tomo-stitch-line {
+  width: 14px;
+  height: 3px;
+  border-radius: 3px;
+  margin-left: -7px;
+  transform: rotate(-5deg);
+  background: var(--cp-red);
+  box-shadow: none;
+}
+
+.tomo-page-left {
+  flex: 1;
+  padding: 40px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+}
+
+.tomo-polaroid {
+  padding: 12px 12px 40px 12px;
+  transform: rotate(2deg);
+  position: relative;
+  transition: transform 0.4s ease;
+  margin-top: 15px;
+  background: var(--cp-panel-hi);
+  border: 1px solid var(--cp-line);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--cxx-shadow) 35%, transparent);
+  border-radius: 2px;
+}
+
+.tomo-polaroid:hover {
+  transform: rotate(-1deg) scale(1.03);
+  z-index: 5;
+}
+
+.tomo-polaroid img {
+  display: block;
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  object-position: top;
+  filter: saturate(.78) contrast(1.05);
+  border-radius: 1px;
+}
+
+.tomo-pol-tape {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-4deg);
+  backdrop-filter: blur(2px);
+  background: var(--cp-red);
+  height: 2px;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  width: 50px;
+}
+
+.tomo-pol-text {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.8;
+  letter-spacing: 2px;
+  color: var(--cp-cyan);
+  font-family: var(--cxx-font-mono);
+}
+
+.tomo-deco {
+  position: absolute;
+  font-size: 20px;
+  opacity: 0.6;
+  animation: tomo-float 4s ease-in-out infinite;
+}
+
+.tomo-deco-1 {
+  top: 30px;
+  left: 30px;
+  animation-delay: 0s;
+  color: var(--cp-cyan);
+}
+
+.tomo-deco-2 {
+  bottom: 40px;
+  right: 40px;
+  animation-delay: 1.5s;
+  font-size: 24px;
+  transform: rotate(15deg);
+  color: var(--cp-red);
+}
+
+.tomo-page-right {
+  flex: 1.2;
+  padding: 45px 50px 45px 40px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+}
+
+.tomo-gif-box {
+  align-self: flex-start;
+  margin-bottom: 25px;
+  position: relative;
+  padding: 4px;
+  transform: rotate(-1.5deg);
+  border: 1px dashed var(--cp-cyan);
+  background: var(--cp-panel-hi);
+  border-radius: 2px;
+}
+
+.tomo-gif {
+  height: 85px;
+  width: auto;
+  display: block;
+  filter: saturate(.78) contrast(1.05);
+  border-radius: 1px;
+}
+
+.tomo-date {
+  font-size: 14px;
+  margin-bottom: 20px;
+  opacity: 0.7;
+  letter-spacing: 1px;
+  color: var(--cp-amber);
+  font-family: var(--cxx-font-mono);
+}
+
+.tomo-text {
+  font-size: 14px;
+  line-height: 2.2;
+  text-align: justify;
+  margin-bottom: 35px;
+  color: var(--cp-text);
+}
+
+.tomo-text p {
+  margin: 0 0 12px 0;
+}
+
+.tomo-btn-wrap {
+  margin-top: auto;
+  text-align: right;
+}
+
+.tomo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: var(--cp-ink);
+  background: var(--cp-cyan);
+  border: 1px solid var(--cp-cyan);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cxx-cyan) 22.00%, transparent);
+  text-shadow: none;
+}
+
+.tomo-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  background: var(--cxx-cyan);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--cxx-cyan) 12.00%, transparent),0 6px 20px color-mix(in srgb, var(--cxx-cyan) 15.00%, transparent);
+  color: var(--cp-ink);
+}
+
+.tomo-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+  background: color-mix(in srgb, var(--cxx-ink) 93%, transparent);
+  backdrop-filter: blur(3px);
+}
+
+.tomo-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.tomo-over-txt {
+  font-size: 20px;
+  letter-spacing: 5px;
+  font-weight: bold;
+  margin-top: 15px;
+  transform: translateY(10px);
+  transition: transform 0.8s ease;
+  color: var(--cp-cyan);
+  text-shadow: none;
+}
+
+.tomo-overlay.active .tomo-over-txt {
+  transform: translateY(0);
+}
+
+.tomo-star-load {
+  font-size: 30px;
+  animation: tomo-spin 3s linear infinite;
+  color: var(--cp-red);
+}
+
+@keyframes tomo-spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 650px) {
+  .tomo-notebook {
+    flex-direction: column;
+  }
+
+  .tomo-spine {
+    left: 0;
+    top: 50%;
+    bottom: auto;
+    right: 0;
+    width: 100%;
+    height: 2px;
+    transform: translateY(-50%);
+    background: linear-gradient(90deg, transparent, var(--cxx-cyan-soft), transparent);
+  }
+
+  .tomo-stitch {
+    flex-direction: row;
+    top: 50%;
+    left: 10%;
+    right: 10%;
+    bottom: auto;
+    transform: translateY(-50%);
+    width: 80%;
+  }
+
+  .tomo-stitch-line {
+    margin-top: -1.5px;
+    margin-left: 0;
+    transform: rotate(85deg);
+  }
+
+  .tomo-page-left {
+    padding: 30px 20px 25px 20px;
+  }
+
+  .tomo-page-right {
+    padding: 25px 20px 30px 20px;
+  }
+}
+
+.tomo-card::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.tomo-paper::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.tomo-book::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.tomo-board::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.tomo-notebook::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.tomo-container::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.tomo-journal::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+@keyframes cp-alt-flow {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .tomo-wrap * {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .tomo-wrap *::before {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .tomo-wrap *::after {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+}
+
+.tomo-text strong {
+  color: var(--cp-amber);
+}
+
+button.tomo-btn {
+  font-family: inherit;
+  line-height: inherit;
+  appearance: none;
+  min-height: 44px;
+}
+
+.tomo-btn:focus-visible {
+  outline: 2px solid var(--cp-cyan,var(--cxx-line));
+  outline-offset: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="tomo-wrap">
+    <div class="tomo-notebook">
+        <!-- 中缝 -->
+        <div class="tomo-spine"></div>
+        <div class="tomo-stitch">
+            <div class="tomo-stitch-line"></div><div class="tomo-stitch-line"></div>
+            <div class="tomo-stitch-line"></div><div class="tomo-stitch-line"></div>
+            <div class="tomo-stitch-line"></div><div class="tomo-stitch-line"></div>
+        </div>
+
+        <!-- 左页：视觉收集 -->
+        <div class="tomo-page-left">
+            <div class="tomo-deco tomo-deco-1">✦</div>
+            <div class="tomo-deco tomo-deco-2">❆</div>
+
+            <div class="tomo-polaroid">
+                <div class="tomo-pol-tape"></div>
+                <img src="https://cyber2051.top/img/%E9%AB%98%E6%9D%BE%E7%81%AF%2FTomorin_RING%E8%A1%97%E9%81%931.png" alt="高松灯">
+                <div class="tomo-pol-text">TOMORI</div>
+            </div>
+        </div>
+
+        <!-- 右页：内容与交互 -->
+        <div class="tomo-page-right">
+            <div class="tomo-date">2051.03.25 / 09:30 AM</div>
+
+            <div class="tomo-gif-box">
+                <img class="tomo-gif" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E7%81%AF%E6%91%B8%E5%A4%B4.gif" alt="灯摸头">
+            </div>
+
+            <div class="tomo-text">
+                <p>今天也是一个人。</p>
+                <p>在这座小小的，东京都为数不多的绿化公园里，低着头，视线在地上的落叶与碎石间徘徊。那些不会说话、不会改变的死物，总是能给人带来莫名的安心感。</p>
+                <p>在绿化带的边缘，好像发现了什么有趣的东西。她小心翼翼地蹲下身子，宽大的雨披将她本就娇小的身躯裹成了一团，像是一只正试图将自己藏起来的小动物。</p>
+            </div>
+
+            <div class="tomo-btn-wrap">
+                <button type="button" class="tomo-btn" onclick="tomoStart()"
+                     data-prompt="【开始】【开场白】
+# 场景生成指令
+
+## 核心任务
+- 请作为【场景描绘者】，写一段关于高松灯的开局场景。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+
+## 场景要素
+- **时间：** 2051年3月25日，早上9点半。
+- **地点：** 东京都，灯家附近的市民公园的角落。
+- **核心人物：** 高松灯。
+
+## 剧情大纲与必须包含的要素：
+1. **时间的倒流感：** 经历了乐队解散的创伤后，灯似乎又回到了遇见丰川祥子之前的状态。她缩回了自己的壳里，继续收集能让自己感到安心的小物件。
+2. **专注于“寻宝”：** 她正蹲在公园里那堆鹅卵石旁，那里是她的秘密宝库。她低着头，翻找着，试图找到被自己遗漏的“宝贝”。最近她还在收集一套企鹅印花的创可贴，虽然已经记不清还差几张才能集齐。
+3. **温柔的怪人：** 尽管她那副缩成一团、在石头堆里翻找的模样在常人眼里有些奇怪，甚至她自己也认为自己作为机偶，是无法与人正常交流的存在，但周围路过的行人早已习惯了这位机偶少女。毕竟她不是非法的机偶，所以自然没有人排斥她，相反，偶尔路过的人都会向她投去善意和温柔的目光。
+
+## 最高优先级指令
+在描绘完灯在鹅卵石堆里找到了什么东西，并将其捧在手心里之后，【立即停止输出】。严禁强行推进后续对话或代替玩家行动，将故事的控制权交给玩家。
+【/开场白】">
+                    ✦ 开始
+                </button>
+            </div>
+        </div>
+
+        <!-- 交互遮罩 -->
+        <div class="tomo-overlay" id="tomoOverlay">
+            <div class="tomo-star-load">✦</div>
+            <div class="tomo-over-txt">寻 找 不 变 之 物</div>
+        </div>
+    </div>
+</div>
+
+<script>
+function tomoStart() {
+    var btn = document.querySelector('.tomo-btn');
+    var promptText = btn.getAttribute('data-prompt');
+
+    return parent.Cxx236OpeningHost.submitPreview(window, '/send ' + promptText + '|/trigger');
+}
+</script>
+
+</body>
+</html>

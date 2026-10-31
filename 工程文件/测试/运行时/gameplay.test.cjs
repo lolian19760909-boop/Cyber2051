@@ -1,0 +1,90 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const G=require("../../卡片源码/运行时/gameplay.js"),Actions=require("../../卡片源码/运行时/gameplay-actions.js");
+const clone=v=>JSON.parse(JSON.stringify(v));
+const maps={'tokyo-central':['ring']},loc={mapId:'tokyo-central',placeId:'ring'};
+const row=(id,rest={})=>({id,name:id,description:'隔离工程样例，不进入正式内容库',...rest});
+const defs={schema:1,slots:[row('hand')],resources:[row('health',{min:0,max:100})],
+  items:[row('metal'),row('tool',{slots:['hand'],effects:{description:'用于修理的工具'}}),row('medicine',{use:{effects:{resources:{health:20}}}})],
+  blueprints:[row('tool_design',{recipes:['make_tool'],learnCost:2})],recipes:[row('make_tool',{blueprintId:'tool_design',materials:{metal:2},outputs:{tool:1},cost:5})],
+  skills:[row('repair_skill',{learnCost:3,cost:2,effects:{resources:{health:5},description:'隔离技能效果'}})],
+  shops:[row('shop',{location:loc,offers:[{id:'metal_offer',kind:'items',targetId:'metal',price:4},{id:'design_offer',kind:'blueprints',targetId:'tool_design',price:6},{id:'skill_offer',kind:'skills',targetId:'repair_skill',price:7}]})],
+  services:[row('clinic',{location:loc,service:'heal',cost:8,effects:{resources:{health:40}}}),row('repair',{location:loc,service:'repair',cost:2,effects:{resources:{health:5}}}),row('counter',{location:loc,service:'purchase',offer:{id:'metal',kind:'items',targetId:'metal',price:3}}),row('bench',{location:loc,service:'craft',recipeId:'make_tool'})],
+  encounters:[row('sighting',{outcomes:[{id:'help',name:'尝试帮助',items:{metal:1}}]})]};
+const ref=(kind,id,version='1.0.0')=>({packageId:'sample',version,kind,id});
+function fixture(){const registry={packages:{sample:{version:'1.0.0',content:{gameplay:clone(defs)},history:{}}}};const catalog=G.catalogue(registry,{mapIndex:maps});
+  const stat={untouched:{hello:'world'},terminal:{wallet:{yen:100,spent:2,earned:102,unknown:'keep'},quests:{q01:{state:'进行中'}},gameplay:{schema:1,location:loc,inventory:{metal:{quantity:10,definitionRef:ref('items','metal')},medicine:{quantity:2,definitionRef:ref('items','medicine')},tool:{quantity:1,definitionRef:ref('items','tool')}},blueprints:{tool_design:{owned:true,learned:true,definitionRef:ref('blueprints','tool_design')}},skills:{repair_skill:{owned:true,learned:true,active:true,definitionRef:ref('skills','repair_skill')}},equipment:{},resources:{health:50},events:{},results:{},unknown:{keep:true}}}};
+  return {registry,catalog,stat};}
+function apply(stat,plan){stat=clone(stat);for(const c of plan.changes){let p=stat;for(const k of c.path.slice(0,-1))p=p[k] || (p[k]={});p[c.path.at(-1)]=clone(c.after);}return stat;}
+function ticket(plan){return {id:'act_test',requestHash:'abc',plan};}
+function savedResult(t,stat,status='success'){stat=clone(stat);stat.terminal.gameplay.results[t.id]={requestHash:t.requestHash,status,reason:'隔离结果'};return stat;}
+test('static definitions reject code, unknown mechanics, invalid locations and duplicate ids',()=>{
+  assert.equal(G.validate(defs,{mapIndex:maps}),defs);
+  for(const change of [d=>d.items[0].description='<script>run()</script>',d=>d.items[0].code='evil',d=>d.shops[0].location.placeId='missing',d=>d.items.push(d.items[0]),d=>d.schema=2]){const d=clone(defs);change(d);assert.throws(()=>G.validate(d,{mapIndex:maps}));}
+});
+for(const [name,request]of Object.entries({buy:{action:'buy',id:'shop',offerId:'metal_offer',quantity:2},use:{action:'use',id:'medicine'},craft:{action:'craft',id:'make_tool',quantity:2},equip:{action:'equip',id:'tool',slot:'hand'},skill:{action:'use-skill',id:'repair_skill'},clinic:{action:'service',id:'clinic'},repair:{action:'service',id:'repair'},counter:{action:'service',id:'counter'},bench:{action:'service',id:'bench'},encounter:{action:'encounter',id:'sighting',outcomeId:'help'}})){
+  test(name+' plans without mutation and accepts only matching MVU receipt + exact saved assets',()=>{const f=fixture(),before=clone(f.stat),p=G.plan(f.stat,f.catalog,request),t=ticket(p);assert.deepEqual(f.stat,before);
+    const after=apply(f.stat,p);assert.equal(G.verify(t,after).status,'unconfirmed');assert.equal(G.verify(t,savedResult(t,after)).status,'success');
+    assert.equal(G.verify(t,savedResult(t,f.stat,'refused')).status,'refused');const bad=savedResult(t,after);bad.terminal.wallet.yen+=1;assert.equal(G.verify(t,bad).status,'unconfirmed');assert.deepEqual(after.untouched,before.untouched);});
+}
+test('enable is explicit, old values/unknown fields remain, and future schema is blocked',()=>{const f=fixture();delete f.stat.terminal.gameplay;assert.throws(()=>G.plan(f.stat,f.catalog,{action:'buy',id:'shop',offerId:'metal_offer'}),{code:'gameplay-disabled'});const p=G.plan(f.stat,f.catalog,{action:'enable'}),t=ticket(p),after=apply(f.stat,p);assert.deepEqual(after.terminal.wallet,f.stat.terminal.wallet);assert.equal(G.verify(t,savedResult(t,after)).status,'success');after.terminal.gameplay.schema=2;assert.throws(()=>G.read(after),{code:'gameplay-version'});});
+test('explicit old-chat initialization adds only empty data and its schema, and is idempotent',()=>{
+  const f=fixture();delete f.stat.terminal.gameplay;const vars={stat_data:f.stat,schema:{properties:{terminal:{properties:{wallet:{keep:1},quests:{extensible:true}},unknown:'keep'}}},initialized_lorebooks:{old:[1]},display_data:{old:'keep'},other:{x:1}},before=clone(vars);
+  const next=G.initializeVariables(vars);assert.deepEqual(vars,before);const restored=clone(next);delete restored.stat_data.terminal.gameplay;delete restored.schema.properties.terminal.properties.gameplay;assert.deepEqual(restored,before);assert.deepEqual(G.initializeVariables(next),next);assert.equal(Object.keys(next.stat_data.terminal.gameplay.inventory).length,0);
+});
+test('declared resource costs cannot succeed by clamping insufficient resources',()=>{const f=fixture();f.registry.packages.sample.content.gameplay.skills[0].effects.resources.health=-80;f.catalog=G.catalogue(f.registry,{mapIndex:maps});assert.throws(()=>G.plan(f.stat,f.catalog,{action:'use-skill',id:'repair_skill'}),{code:'gameplay-resource'});});
+test('publisher and card accept the same data-only contract and protect old clients and historical ownership',()=>{
+  const P=require("../../工具/发布/packages.cjs"),Core=require("../../卡片源码/运行时/core.js"),Controller=require("../../卡片源码/运行时/controller.js");
+  const definition={id:'sample',version:'1.0.0',optional:true,activation:'opt_in',requires:{engine:'1.2.0',packages:[]},content:{quests:[],gallery:[],worldbook:[],gameplay:clone(defs)}};
+  const pack=P.signDocument(P.createContentPackage(definition,{mapIndex:maps}),crypto.generateKeyPairSync('ed25519').privateKey,'isolated');assert.equal(Core.validatePackage(pack,{mapIndex:maps}),pack);assert.throws(()=>Core.validatePackage(pack,{mapIndex:maps,engineVersion:'1.1.0'}),{code:'engine-too-old'});
+  const bad=clone(definition);bad.requires.engine='1.0.0';assert.throws(()=>P.createContentPackage(bad,{mapIndex:maps}));
+  const other={...clone(pack),id:'other'};assert.throws(()=>Controller.ownership({packages:{sample:{content:{quests:[],gallery:[],worldbook:[]},history:{'1.0.0':pack.content}}}},other),{code:'content-id-collision'});
+  assert.throws(()=>P.validateOwnership([pack,other]),/冲突/);
+});
+test('blueprints and skills must be acquired then learned; installation does neither',()=>{const f=fixture();delete f.stat.terminal.gameplay.blueprints.tool_design;const p=G.plan(f.stat,f.catalog,{action:'buy',id:'shop',offerId:'design_offer'});const acquired=apply(f.stat,p);assert.equal(acquired.terminal.gameplay.blueprints.tool_design.learned,false);assert.throws(()=>G.plan(acquired,f.catalog,{action:'craft',id:'make_tool'}),{code:'gameplay-blueprint'});const learned=apply(acquired,G.plan(acquired,f.catalog,{action:'learn-blueprint',id:'tool_design'}));assert.ok(G.plan(learned,f.catalog,{action:'craft',id:'make_tool'}));
+  delete f.stat.terminal.gameplay.skills.repair_skill;const skill=apply(f.stat,G.plan(f.stat,f.catalog,{action:'buy',id:'shop',offerId:'skill_offer'}));assert.throws(()=>G.plan(skill,f.catalog,{action:'activate-skill',id:'repair_skill'}));const skillLearned=apply(skill,G.plan(skill,f.catalog,{action:'learn-skill',id:'repair_skill'}));const active=apply(skillLearned,G.plan(skillLearned,f.catalog,{action:'activate-skill',id:'repair_skill'}));assert.ok(G.plan(active,f.catalog,{action:'use-skill',id:'repair_skill'}));});
+test('funds, missing materials, location, equipped materials and repeated encounters are refused',()=>{
+  for(const [edit,request,code]of [[s=>s.terminal.wallet.yen=0,{action:'buy',id:'shop',offerId:'metal_offer'},'gameplay-funds'],[s=>s.terminal.gameplay.inventory.metal.quantity=1,{action:'craft',id:'make_tool'},'gameplay-materials'],[s=>delete s.terminal.gameplay.location,{action:'service',id:'clinic'},'gameplay-location'],[s=>s.terminal.gameplay.events.sighting={status:'completed'},{action:'encounter',id:'sighting',outcomeId:'help'},'gameplay-event']]){const f=fixture();edit(f.stat);assert.throws(()=>G.plan(f.stat,f.catalog,request),{code});}
+  const f=fixture(),equipped=apply(f.stat,G.plan(f.stat,f.catalog,{action:'equip',id:'tool',slot:'hand'}));const removed=apply(equipped,G.plan(equipped,f.catalog,{action:'unequip',slot:'hand'}));assert.equal(removed.terminal.gameplay.equipment.hand,null);
+});
+test('old owned definitions survive new content and withdrawal; mixed item versions are rejected',()=>{const f=fixture();f.registry.packages.sample.history['1.0.0']=clone(f.registry.packages.sample.content);f.registry.packages.sample.version='2.0.0';f.registry.packages.sample.content.gameplay.items.find(x=>x.id==='medicine').use.effects.resources.health=99;f.catalog=G.catalogue(f.registry,{mapIndex:maps});assert.equal(G.plan(f.stat,f.catalog,{action:'use',id:'medicine'}).changes.find(c=>c.path.at(-1)==='health').after,70);assert.throws(()=>G.plan(f.stat,f.catalog,{action:'buy',id:'shop',offerId:'metal_offer'}),{code:'gameplay-definition-conflict'});f.registry.packages.sample.optional=true;f.catalog=G.catalogue(f.registry,{mapIndex:maps});assert.equal(f.catalog.lists.shops.size,0);assert.ok(G.plan(f.stat,f.catalog,{action:'use',id:'medicine'}));});
+test('model entries retain owned old definitions after optional content is hidden, without granting assets',()=>{
+  const f=fixture(),before=clone(f.stat);f.registry.packages.sample.optional=true;
+  const entries=G.promptEntries(f.registry,{mapIndex:maps},f.stat.terminal.gameplay);
+  assert.ok(entries.some(e=>e.id==='gameplay.items.medicine.1.0.0'));
+  assert.ok(!entries.some(e=>e.id.includes('.shops.')));
+  assert.ok(entries.every(e=>e.entry.strategy.type==='selective' && JSON.parse(e.entry.content.split('\n')[1]).definitionRef.version==='1.0.0'));
+  assert.deepEqual(f.stat,before);
+});
+function actionFixture(){const f=fixture();Object.assign(f,{messages:[{is_user:false,mes:'现有剧情',swipe_id:0,variables:[{stat_data:clone(f.stat)}]}],records:{},context:{characterKey:'fixture.png',chatId:'chat'},sent:0,locked:false,busy:false});
+  const host={read:async()=>({...f,stat:clone(f.stat)}),lock:async fn=>{if(f.locked)throw Error('locked');f.locked=true;try{return await fn();}finally{f.locked=false;}},getRecord:async id=>f.records[id]&&clone(f.records[id]),putRecord:async r=>{f.records[r.id]=clone(r);if(f.lostAck)throw Error('lost ack');},send:async text=>{f.sent++;if(f.sendError)throw Error('send interrupted');f.messages.push({is_user:true,mes:text});}};
+  const options={gameplay:G,host,hash:async x=>crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex'),uuid:crypto.randomUUID};f.client=Actions.create(options);f.restart=()=>f.client=Actions.create(options);return f;}
+test('cancel has no writes; confirmed action records before send; duplicate/reload never resend',async()=>{const f=actionFixture(),t=await f.client.prepare({action:'buy',id:'shop',offerId:'metal_offer'});assert.equal((await f.client.confirm(t,'cancel')).status,'cancelled');assert.equal(f.sent,0);assert.deepEqual(f.records,{});await f.client.confirm(t,'confirm');assert.equal(f.sent,1);f.restart();assert.equal((await f.client.confirm(t,'confirm')).status,'unconfirmed');assert.equal(f.sent,1);await assert.rejects(f.client.prepare({action:'buy',id:'shop',offerId:'metal_offer'}),{code:'action-unconfirmed'});});
+test('disconnected native send stops before writing intent or replacing the draft',async()=>{const f=actionFixture(),t=await f.client.prepare({action:'buy',id:'shop',offerId:'metal_offer'});f.sendReady=false;await assert.rejects(f.client.confirm(t,'confirm'),{code:'action-send-unavailable'});assert.deepEqual(f.records,{});assert.equal(f.sent,0);f.sendReady=true;await f.client.confirm(t,'confirm');assert.equal(f.sent,1);});
+test('saved AI results confirm, branch changes and missing MVU do not',async()=>{const f=actionFixture(),t=await f.client.prepare({action:'buy',id:'shop',offerId:'metal_offer'});await f.client.confirm(t,'confirm');f.messages.push({is_user:false,mes:'成功',variables:[]});assert.equal((await f.client.inspect(t.id)).status,'unconfirmed');f.messages[2].variables=[{stat_data:savedResult(t,apply(f.stat,t.plan))}];assert.equal((await f.client.inspect(t.id)).status,'success');f.messages[0].swipe_id=1;assert.equal((await f.client.inspect(t.id)).status,'unconfirmed');});
+test('durable confirmation survives MVU historical pruning, but not edited replies or an inconsistent surviving table',async()=>{
+ const f=actionFixture(),t=await f.client.prepare({action:'buy',id:'shop',offerId:'metal_offer'});await f.client.confirm(t,'confirm');
+ const after=savedResult(t,apply(f.stat,t.plan));f.messages.push({is_user:false,mes:'已保存的隔离回复',variables:[{stat_data:clone(after)}]});f.stat=clone(after);
+ assert.equal((await f.client.inspect(t.id)).status,'success');assert.ok(f.records[t.id].confirmed?.stateHash);
+ f.messages[2].variables=[{}];f.restart();assert.equal((await f.client.inspect(t.id)).archived,true);
+ assert.ok(await f.client.prepare({action:'use',id:'medicine'}));assert.equal(f.sent,1);
+ f.messages[2].mes='手动改过的回复';assert.equal((await f.client.inspect(t.id)).status,'unconfirmed');
+ f.messages[2].mes='已保存的隔离回复';const bad=clone(after);bad.terminal.wallet.yen+=1;f.messages[2].variables=[{stat_data:bad}];assert.equal((await f.client.inspect(t.id)).status,'unconfirmed');
+ delete f.records[t.id].confirmed;f.messages[2].variables=[{}];assert.equal((await f.client.inspect(t.id)).status,'unconfirmed');
+});
+test('lost intent acknowledgement and send error never cause automatic retry',async()=>{for(const which of ['lostAck','sendError']){const f=actionFixture(),t=await f.client.prepare({action:'service',id:'clinic'});f[which]=true;try{await f.client.confirm(t,'confirm');}catch(e){assert.match(e.message,/lost ack/);}const count=f.sent;f[which]=false;f.restart();assert.equal((await f.client.confirm(t,'confirm')).status,'unconfirmed');assert.equal(f.sent,count);}});
+test('preview is bound to definitions, chat and branch; acknowledging does not resend',async()=>{const f=actionFixture(),t=await f.client.prepare({action:'use',id:'medicine'});f.context={...f.context,chatId:'other'};await assert.rejects(f.client.confirm(t,'confirm'),{code:'action-context'});f.context=t.context;f.messages[0].swipe_id=1;await assert.rejects(f.client.confirm(t,'confirm'),{code:'action-context'});f.messages[0].swipe_id=0;f.sendError=true;await f.client.confirm(t,'confirm');await f.client.acknowledge(t.id,'acknowledge-unconfirmed');assert.equal(f.sent,1);assert.equal(f.records[t.id].status,'acknowledged');});
+const openingManifest={version:'isolated-start-1',identities:[{id:'student',label:'隔离学生身份',body:'这是一篇仅供工程验证的通用开场。'}],timelines:[{id:'2051-04',label:'隔离四月背景',initialState:{story:{date:'2051-04',phase:0}},timelineEvents:[{taskId:'q01',state:'occurred',outcome:'仅是过去背景，不是玩家完成'}]}]};
+function startFixture(){const f=actionFixture();f.stat.terminal.wallet={id:'wallet',yen:0,earned:0,spent:0,unknown:'keep'};f.stat.terminal.quests={};f.stat.terminal.gameplay={schema:1,...Object.fromEntries(G.TABLES.map(t=>[t,{}]))};f.catalog.openingManifest=clone(openingManifest);f.messages[0].variables[0].stat_data=clone(f.stat);f.openingEligible=true;return f;}
+test('new-chat origin uses one authored opening and separate background, without completing tasks or granting assets',async()=>{
+ const f=startFixture(),before=clone(f.stat),t=await f.client.prepare({action:'start',id:'student',eraId:'2051-04'});assert.deepEqual(f.stat,before);
+ assert.deepEqual(t.plan.changes.map(c=>c.path),[['terminal','gameplay','origin']]);const after=savedResult(t,apply(f.stat,t.plan));assert.equal(G.verify(t,after).status,'success');assert.equal(after.terminal.gameplay.origin.initialState.story.phase,0);assert.deepEqual(after.terminal.wallet,before.terminal.wallet);assert.deepEqual(after.terminal.quests,{});
+ assert.equal((await f.client.confirm(t,'cancel')).status,'cancelled');assert.equal(f.sent,0);await f.client.confirm(t,'confirm');assert.equal(f.sent,1);f.stat=after;await assert.rejects(f.client.prepare({action:'start',id:'student',eraId:'2051-04'}));
+});
+test('old chat, missing authored content, unsupported era and background completion claims cannot start',async()=>{
+ const f=startFixture();f.openingEligible=false;await assert.rejects(f.client.prepare({action:'start',id:'student',eraId:'2051-04'}),{code:'opening-old-chat'});f.openingEligible=true;
+ assert.throws(()=>G.plan(f.stat,f.catalog,{action:'start',id:'corpo',eraId:'2051-04'}),{code:'opening-missing'});
+ assert.throws(()=>G.plan(f.stat,f.catalog,{action:'start',id:'student',eraId:'2050-12'}),{code:'opening-missing'});
+ for(const change of [m=>m.timelines[0].timelineEvents[0].state='completed',m=>m.timelines[0].initialState.story.date='2051-04-31']){const m=clone(openingManifest);change(m);assert.throws(()=>G.validateOpeningManifest(m));}
+ f.stat.terminal.gameplay.inventory.tool={quantity:1};assert.throws(()=>G.plan(f.stat,f.catalog,{action:'start',id:'student',eraId:'2051-04'}),{code:'opening-old-chat'});
+});

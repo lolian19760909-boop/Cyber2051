@@ -1,0 +1,170 @@
+{
+  "upstream": "https://github.com/SillyTavern/SillyTavern",
+  "version": "1.19.0",
+  "license": "AGPL-3.0",
+  "adaptation": "Engine and macro definitions retain upstream function bodies. Imports bind to the application host; variables have an explicit store owner. Dependency UMD files have ESM wrappers. Regenerate with tools/native-prompt-build.mjs.",
+  "files": [
+    {
+      "source": "public/scripts/macros/engine/MacroEngine.js",
+      "target": "engine/MacroEngine.mjs",
+      "sourceSha256": "5726eb506a647862dcdd5036b146e699cc6e0ecfb746a358dce647c2ea52a5ec",
+      "sha256": "91fefc276389b129ae86e7f56a6f3c3ae6089d9a3e14dde87593bcc2e0214f13"
+    },
+    {
+      "source": "public/scripts/macros/engine/MacroRegistry.js",
+      "target": "engine/MacroRegistry.mjs",
+      "sourceSha256": "9908cde876e6e07e35848aac73f9dfb08bed100f71b58e579acfe2af4120d6b2",
+      "sha256": "d0bc073014db96efede6ae192bfa341467fa676f9e7eb93242f9cef40c8650b9"
+    },
+    {
+      "source": "public/scripts/macros/engine/MacroLexer.js",
+      "target": "engine/MacroLexer.mjs",
+      "sourceSha256": "b08e3a045de7ad36f731ae656e5a094c4c6dbbc2880f398faeba2eef685535da",
+      "sha256": "511677411038bced02599fa4db97ca6320f2944e7923d6d75baf57aac252fe72"
+    },
+    {
+      "source": "public/scripts/macros/engine/MacroParser.js",
+      "target": "engine/MacroParser.mjs",
+      "sourceSha256": "0845c7fb2534e4edac0ad079f4007c52d145188ee448329bd0f86b28b02fab23",
+      "sha256": "be93abffa40fe3fd3c15fe1424e524ac4d6ab420855bd412676b8c8f2ec64b60"
+    },
+    {
+      "source": "public/scripts/macros/engine/MacroCstWalker.js",
+      "target": "engine/MacroCstWalker.mjs",
+      "sourceSha256": "6ce0aa7e4d1d04e3dd19066c718b8431169c7c679e73067118febfdcb8a9593a",
+      "sha256": "dc42be827d5b0edf6834799a331502cc90054ee16a0981791dce81e49c0959c8"
+    },
+    {
+      "source": "public/scripts/macros/engine/MacroFlags.js",
+      "target": "engine/MacroFlags.mjs",
+      "sourceSha256": "4b4d4f079f44e8b69d1fc35f82f7465708d29abed1ecf6c2cb39b495c8062db8",
+      "sha256": "5c6c218f8f3300a2c5459bb1b00533c4c7286df826c3d2dd5a80edaed9bd9bf4"
+    },
+    {
+      "source": "public/scripts/macros/definitions/core-macros.js",
+      "target": "definitions/core-macros.mjs",
+      "sourceSha256": "358376d34639bb315f092ad25c1ef704d48e62f421a72223d495d3102b1d5051",
+      "sha256": "5bcc291e6bcc410153538e70f310f37936c79b80d83f99e562d9a4923f071c51"
+    },
+    {
+      "source": "public/scripts/macros/definitions/env-macros.js",
+      "target": "definitions/env-macros.mjs",
+      "sourceSha256": "5b27d96d9cc5fcf9224148c552214015ffc40f5e934d1b164ecaf0ea28316726",
+      "sha256": "2c8414071b87203d20200dc7ac607adac416b83524408f4bb5f8d5b52edf7af9"
+    },
+    {
+      "source": "public/scripts/macros/definitions/chat-macros.js",
+      "target": "definitions/chat-macros.mjs",
+      "sourceSha256": "06d5d08be062fd2cd852026c1c62e95e89c32c67edb86a29d79f3b44cbf5cfaa",
+      "sha256": "73ad2d26809227cd21dcbfe757f559d27cfd0986f30c43ed7c2001db3d72c876"
+    },
+    {
+      "source": "public/scripts/macros/definitions/time-macros.js",
+      "target": "definitions/time-macros.mjs",
+      "sourceSha256": "52fac117f6fea8221ba624cb02c8bd7cad197927da703635d28b2a291d736d48",
+      "sha256": "6abfa1645b68ebd0f2b1a0ce64ef616d7725e3cc77dda623b3aeea1b38c3264c"
+    },
+    {
+      "source": "public/scripts/macros/definitions/variable-macros.js",
+      "target": "definitions/variable-macros.mjs",
+      "sourceSha256": "752f4504dd8f292a42dc4627b04bb1b88418a4ea5f4dc46a76eed9a45b49e9d4",
+      "sha256": "831e47e33f3594c7314fe108e8a2515c7a59a020a85c3368730ea54af2f722c7"
+    },
+    {
+      "source": "public/scripts/macros/definitions/instruct-macros.js",
+      "target": "definitions/instruct-macros.mjs",
+      "sourceSha256": "f752dca2873dab324d03c1fc7ff541be26a71e03897470d10b0ff1e9b191aba1",
+      "sha256": "820e86df5c00eb6d3660cf2972ba890cce03457d117c4c713808507657f3f9e7"
+    },
+    {
+      "source": "public/scripts/macros/engine/MacroDiagnostics.js",
+      "target": "engine/MacroDiagnostics.mjs",
+      "sourceSha256": "ea3df4426085a0c79c6e798478a905118a26e2a89322fc6aadf5c46aea4c3520",
+      "sha256": "e95588e41730cda3786a5bbaea2acb9b1618943e61c39f90b5d743670f4bc0b6"
+    },
+    {
+      "source": "public/scripts/utils.js",
+      "target": "utils.mjs",
+      "sourceSha256": "65c16064e7b0ecb37cf66417a0e22e0a92ff596df104c6c057b6b79d797b4784",
+      "sha256": "e7647a79cc38774755e39ad63b2ccac1d291e830f11ad8c37b6f92602d2091c0"
+    },
+    {
+      "source": "public/scripts/variables.js",
+      "target": "variables.mjs",
+      "sourceSha256": "e78e2ebb652ec6a4f46a7af9d082eb4418c3145113c1a75878243eed660b70b8",
+      "sha256": "1f8968135186af7936a0c241a77b1b7ffaa7a94bbbf89edc7902630321954bbd"
+    },
+    {
+      "source": "public/scripts/openai.js",
+      "target": "preset-defaults.mjs",
+      "sourceSha256": "fa8111da944fac2d3f9f65ff017996f0b890f2a4663b67c3c2de44fa547668d8",
+      "sha256": "d0025da1d9ec98278cd5c35966171afec9503113919c42c0c8119290186331c9"
+    },
+    {
+      "source": "public/script.js",
+      "target": "examples.mjs",
+      "sourceSha256": "d1e248efbae8a1df0a248410225cea76901f33533919fc32a28a172c1514600f",
+      "sha256": "742e11e424490e9f1af4254432f173c358d58b2008f85c1f11ef3156bc57cd1a"
+    },
+    {
+      "source": "public/scripts/extensions/regex/engine.js",
+      "target": "regex.mjs",
+      "sourceSha256": "2b66b54b2c3a3864e0af8643eed0c8a1afe9f78f2f9d6b8dcde10c2085ff3c21",
+      "sha256": "8b8db8dff902206abb6a4f77fce032285ca1d7dbaccac61aaea5fa9b6d08c604"
+    },
+    {
+      "source": "node_modules/chevrotain/lib/chevrotain.min.mjs",
+      "target": "dependencies/chevrotain.mjs",
+      "sourceSha256": "9642379a73ee82095037ae9fa0b47fc66a8a42a6a58a7ea050a1534fb9c039d3",
+      "sha256": "9642379a73ee82095037ae9fa0b47fc66a8a42a6a58a7ea050a1534fb9c039d3"
+    },
+    {
+      "source": "node_modules/chevrotain/LICENSE.txt",
+      "target": "dependencies/chevrotain.LICENSE",
+      "sourceSha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "source": "node_modules/seedrandom/seedrandom.js",
+      "target": "dependencies/seedrandom.mjs",
+      "sourceSha256": "df5431fa9ba4b311f182a046e60cdd36ae37a1a80f515d6e9b1f568528735047",
+      "sha256": "afb1e04e2bace4d2d6eb987f2bfbc7ae636f1efc477907838a016623ba2339a8"
+    },
+    {
+      "source": "node_modules/seedrandom/seedrandom.js",
+      "target": "dependencies/seedrandom.LICENSE",
+      "sourceSha256": "df5431fa9ba4b311f182a046e60cdd36ae37a1a80f515d6e9b1f568528735047",
+      "sha256": "35239de2e7f05b0ae7dd0f521f21cfb4045898973091b9331e1a044a3cf01e3b"
+    },
+    {
+      "source": "node_modules/droll/droll.js",
+      "target": "dependencies/droll.mjs",
+      "sourceSha256": "c4961c626cda59a9868bdb6a338d8ca2283f769892ff6006a30cc0b772381498",
+      "sha256": "d2160319a255846e0c8781618357a551812cbf416c413d1ceb9b5e8ed92f1caf"
+    },
+    {
+      "source": "node_modules/droll/LICENSE",
+      "target": "dependencies/droll.LICENSE",
+      "sourceSha256": "34df632bc8fde5d060c7786f2f29d056e509f1fce8247777bca4d98260340e2b",
+      "sha256": "34df632bc8fde5d060c7786f2f29d056e509f1fce8247777bca4d98260340e2b"
+    },
+    {
+      "source": "node_modules/moment/min/moment.min.js",
+      "target": "dependencies/moment.mjs",
+      "sourceSha256": "845c524969edd5b3af9aa6d8718d29fe92e8dbe25b955214a8e064a05a9a5027",
+      "sha256": "650688c9c2db43767bf57d5346c323909763f4d674ec364efc0296eeee36d561"
+    },
+    {
+      "source": "node_modules/moment/LICENSE",
+      "target": "dependencies/moment.LICENSE",
+      "sourceSha256": "8f38f320bbf5eb84c08e08676f7ee1d2204ebe5797f6a090d077329cf212fca3",
+      "sha256": "8f38f320bbf5eb84c08e08676f7ee1d2204ebe5797f6a090d077329cf212fca3"
+    },
+    {
+      "source": "SillyTavern/LICENSE",
+      "target": "LICENSE",
+      "sourceSha256": "6f1e622c82a380075843bb084a7ec3b1f1d12a4a02526d75e78b0924a860aa75",
+      "sha256": "6f1e622c82a380075843bb084a7ec3b1f1d12a4a02526d75e78b0924a860aa75"
+    }
+  ]
+}

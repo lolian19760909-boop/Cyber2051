@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-CN" data-motion="full">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <title>东京都2051 · 档案终端预览</title>
+  <link rel="stylesheet" href="terminal.css">
+  <link rel="stylesheet" href="operations-assets.css">
+  <link rel="stylesheet" href="operations.css">
+  <link rel="stylesheet" href="experience.css">
+  <script defer src="data.js"></script>
+  <script defer src="../正文/summary-ui.js"></script>
+  <script defer src="terminal.js"></script>
+</head>
+<body>
+  <aside class="preview-bar" aria-label="预览说明"><span>独立预览</span><span>地图与内容预览 · 未连接游戏存档</span></aside>
+  <section class="landing" id="landing" hidden>
+    <p class="eyebrow">TOKYO METROPOLITAN ARCHIVE</p>
+    <h1>东京都<span>2051</span></h1>
+    <p>城市、人物与记忆的交汇处。</p>
+    <button class="primary" id="launch">打开城市地图 <span aria-hidden="true">↗</span></button>
+  </section>
+  <div class="terminal" id="terminal">
+    <div class="terminal-scene" aria-hidden="true"><div class="scene-grid"></div><div class="scene-orbit"></div><span class="scene-word" id="scene-word">ATLAS</span></div>
+    <header class="masthead">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">◇</span><div>東京都 <strong>2051</strong><small>METROPOLITAN ARCHIVE</small></div></div>
+      <div class="connection"><span aria-hidden="true">◆</span> LOCAL ARCHIVE <b>READ ONLY</b></div>
+      <button class="quiet" id="close-terminal" aria-label="收起终端"><span aria-hidden="true">↙</span> 收起</button>
+    </header>
+    <nav class="system-nav" aria-label="终端系统" id="system-nav"><div class="nav-heading" aria-hidden="true"><span>SYSTEM / DIRECTORY</span><b>系统目录<i>07</i></b></div></nav>
+    <main class="workspace" id="workspace">
+      <div class="page-scan" id="page-scan" aria-hidden="true"></div>
+      <section class="page city-page" id="page-city" aria-labelledby="city-title">
+        <header class="page-head">
+          <div><p class="eyebrow">01 / CITY ATLAS</p><h1 id="city-title">城市地图 <span>東 京 都</span></h1></div>
+          <div class="page-count"><b>07</b><span>地区</span><i>/</i><b>12</b><span>地点</span></div>
+        </header>
+        <div class="atlas">
+          <aside class="catalog" id="catalog" aria-label="地区与地点索引">
+            <div class="catalog-head"><h2>城市索引</h2><button class="quiet catalog-close" id="close-catalog" aria-label="关闭索引">✕</button></div>
+            <label class="search-label" for="place-search">查找地点</label>
+            <div class="search-box"><span aria-hidden="true">⌕</span><input id="place-search" type="search" placeholder="名称、地区…" autocomplete="off"><button id="clear-search" aria-label="清空搜索">✕</button></div>
+            <details class="filter-options"><summary id="filter-summary">筛选地区与类型</summary>
+              <div class="filter-row"><label for="region-filter">地区</label><select id="region-filter"><option value="">全部地区</option></select></div>
+              <div class="category-filters" id="category-filters" role="group" aria-label="地点类型"></div>
+            </details>
+            <div class="catalog-meta"><span id="result-count" role="status"></span><button class="text-button" id="clear-filters">重置筛选</button></div>
+            <div class="catalog-list" id="catalog-list"></div>
+            <div class="catalog-foot">CITY RECORDS / TOKYO 2051</div>
+          </aside>
+          <div class="map-column">
+            <div class="map-toolbar"><button class="quiet" id="open-catalog" aria-controls="catalog" aria-expanded="false">☷ 索引与搜索</button><span id="map-context">东京都 / 全域</span><span class="mono" id="zoom-level">1.0×</span></div>
+            <div class="map-stage" id="map-stage" aria-label="城市地图，可用索引或方向按钮操作">
+              <div class="map-base" id="map-base"></div>
+              <div class="map-markers" id="map-markers"></div>
+              <div class="map-orientation" aria-hidden="true"><b>↑</b>N</div>
+              <div class="map-controls" role="group" aria-label="地图视图控制">
+                <button data-map="in" aria-label="放大地图">+</button>
+                <button data-map="out" aria-label="缩小地图">−</button>
+                <button data-map="reset" aria-label="回到全图">⌖</button>
+                <button id="toggle-pan" aria-label="展开方向平移" aria-controls="pan-pad" aria-expanded="false">↔</button>
+                <span class="control-divider"></span>
+                <button data-map="up" aria-label="向北平移">↑</button>
+                <button data-map="left" aria-label="向西平移">←</button>
+                <button data-map="right" aria-label="向东平移">→</button>
+                <button data-map="down" aria-label="向南平移">↓</button>
+              </div>
+              <div class="pan-pad" id="pan-pad" hidden role="group" aria-label="方向平移">
+                <button data-map="up" aria-label="向北平移">↑</button>
+                <button id="close-pan" aria-label="收起方向控制">✕</button>
+                <button data-map="left" aria-label="向西平移">←</button>
+                <button data-map="down" aria-label="向南平移">↓</button>
+                <button data-map="right" aria-label="向东平移">→</button>
+              </div>
+              <div class="map-caption" aria-hidden="true"><span>都内地理档案</span><small>METROMAP / 2051</small></div>
+            </div>
+            <aside class="place-card" id="place-card" hidden aria-labelledby="place-title"></aside>
+            <div class="map-legend" aria-label="地图图例"><span><i class="legend-diamond"></i>地点</span><span><i class="legend-cluster">3</i>邻近地点</span><span><i class="legend-selected"></i>选中</span><small>缩放后显示更多标签</small></div>
+          </div>
+          <aside class="dossier" id="dossier" aria-label="地区或地点详情"></aside>
+        </div>
+      </section>
+      <section class="page other-page" id="page-other" hidden aria-labelledby="other-title"></section>
+      <section class="page archive-page" id="page-archive" hidden aria-labelledby="archive-title">
+        <header class="page-head"><div><p class="eyebrow">06 / ARCHIVE</p><h1 id="archive-title">资料库 <span id="archive-kind-title">城市档案</span></h1></div><div class="page-count"><b id="archive-count">19</b><span>条目</span></div></header>
+        <div class="archive-body">
+          <aside class="archive-intro">
+            <div class="archive-tabs" role="group" aria-label="资料分类"><button data-archive="city" aria-pressed="true">城市档案</button><button data-archive="setting" aria-pressed="false">世界设定</button><button data-archive="library" aria-pressed="false">文库</button></div>
+            <p class="eyebrow">ARCHIVE RECORDS</p><h2 id="archive-heading">理解这座城市</h2><p id="archive-description">地区概况与地点档案，保留在同一处。</p><div id="archive-search-box"><label class="search-label" for="archive-search">检索资料</label><input type="search" id="archive-search" placeholder="检索地区或地点…" autocomplete="off"></div>
+          </aside>
+          <div class="archive-shelf">
+            <div class="archive-grid" id="archive-grid" role="group" aria-label="城市档案卡片流"></div>
+            <div class="deck-controls" id="deck-controls"><button class="quiet" id="archive-prev" aria-label="上一份档案">←</button><span id="archive-position" role="status">01 / 19</span><button class="quiet" id="archive-next" aria-label="下一份档案">→</button></div>
+            <div class="archive-selection" id="archive-selection"><div><p class="eyebrow" id="archive-selected-kind">SECTOR RECORD</p><h2 id="archive-selected-title"></h2><p id="archive-selected-description"></p></div><button class="primary" id="archive-read">阅读当前档案 ↗</button></div>
+          </div>
+        </div>
+      </section>
+      <section class="page settings-page" id="page-settings" hidden aria-labelledby="settings-title">
+        <header class="page-head"><div><p class="eyebrow">07 / PREFERENCES</p><h1 id="settings-title">设置 <span>显示与阅读</span></h1></div></header>
+        <div class="settings-body">
+          <div class="settings-intro"><div class="calibration-art" aria-hidden="true"><i></i><b>07</b></div><h2>让终端适合你</h2><p>调整阅读与动态效果。显示偏好只保存在这份预览中。</p></div>
+          <div class="settings-form">
+            <fieldset><legend>动态效果</legend><p>完整保留分层转场、扫描与定位过渡；简化与关闭取消这些动态效果。系统要求减少动态效果时始终优先遵守。</p><div class="segmented" id="motion-options"><button data-motion="full" aria-pressed="true">完整</button><button data-motion="reduced" aria-pressed="false">简化</button><button data-motion="off" aria-pressed="false">关闭</button></div><span id="motion-status" class="setting-note"></span></fieldset>
+            <div class="setting-row"><label for="font-size">阅读字号 <output id="font-value" for="font-size">16 px</output></label><input id="font-size" type="range" min="14" max="22" step="1" value="16"></div>
+            <div class="setting-row"><label for="texture">背景网格 <output id="texture-value" for="texture">35%</output></label><input id="texture" type="range" min="0" max="70" step="5" value="35"></div>
+            <label class="checkbox-row"><input id="restore-view" type="checkbox" checked><span>重新打开时恢复地图视图<small>保留筛选、缩放与选中地点。</small></span></label>
+            <fieldset><legend>网路连接</legend><p>配置兼容接口后，网路页可以请求实时推演的都市动态。密钥只保存在这台设备上，请求直接消耗你自己的额度。</p>
+            <div class="setting-row"><label for="net-api">接口地址</label><input id="net-api" type="url" placeholder="https://example.com/v1" autocomplete="off"></div>
+            <div class="setting-row"><label for="net-key">接口密钥</label><input id="net-key" type="password" placeholder="sk-…" autocomplete="off"></div>
+            <div class="setting-row"><label for="net-model">模型名</label><input id="net-model" type="text" placeholder="模型名称" autocomplete="off"></div>
+            <label class="checkbox-row"><input id="net-sync" type="checkbox"><span>把动态标题同步进剧情记忆<small>在游戏内生效：让故事里的角色得知最近的都市动态。</small></span></label>
+            <span id="net-status" class="setting-note"></span>
+            </fieldset>
+            <div class="reading-sample"><p class="eyebrow">READING SAMPLE</p><p>城市的轮廓由街道组成，也由在这里生活的人组成。</p></div>
+            <button class="quiet" id="reset-settings">恢复显示默认值</button>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="terminal-foot"><span><i aria-hidden="true">◇</i> <b id="footer-name">CITY ATLAS</b></span><span class="footer-help"><kbd>Enter</kbd> 查看 <kbd>Esc</kbd> 返回</span><span>2051 / TOKYO</span></footer>
+  </div>
+  <dialog class="reader" id="reader" aria-labelledby="reader-title">
+    <div class="reader-top"><span class="eyebrow" id="reader-kind">CITY RECORD</span><button class="quiet" id="close-reader" autofocus aria-label="关闭阅读器">✕ 关闭</button></div>
+    <div class="reader-body" id="reader-body"></div>
+    <div class="reader-foot"><span>METROPOLITAN ARCHIVE</span><button class="text-button" id="reader-map">在地图中查看 ↗</button></div>
+  </dialog>
+  <dialog class="cluster-dialog" id="cluster-dialog" aria-labelledby="cluster-title"><div class="reader-top"><h2 id="cluster-title">附近地点</h2><button class="quiet" id="close-cluster" aria-label="关闭附近地点">✕</button></div><div id="cluster-list"></div></dialog>
+  <dialog class="gallery-viewer" id="gallery-viewer" aria-labelledby="viewer-name">
+    <div class="reader-top"><span class="eyebrow" id="viewer-label">ILLUSTRATION</span><button class="quiet" id="close-viewer" autofocus aria-label="关闭查看器">✕ 关闭</button></div>
+    <div class="viewer-stage">
+      <button class="quiet viewer-arrow" id="viewer-prev" aria-label="上一张">←</button>
+      <figure class="viewer-figure"><img class="viewer-pic" id="viewer-pic" alt=""></figure>
+      <button class="quiet viewer-arrow" id="viewer-next" aria-label="下一张">→</button>
+    </div>
+    <div class="viewer-foot"><b id="viewer-name"></b><span id="viewer-position" role="status"></span></div>
+  </dialog>
+  <div class="live-message" id="live-message" role="status" aria-live="polite"></div>
+  <noscript><p class="fatal">需要启用 JavaScript 才能操作地图；本页面不连接游戏存档。</p></noscript>
+</body>
+</html>

@@ -1,0 +1,321 @@
+/* Origin choice and attribute editor inside the creation panel (DESIGN.md 10.10).
+   Rows sit on the panel, so text uses --cxx-text / --cxx-muted. */
+.cxx-identity {
+  container-type: inline-size;
+  container-name: identity;
+  color: var(--cxx-text);
+}
+
+.cxx-identity * {
+  box-sizing: border-box;
+}
+
+.cxx-identity [hidden] {
+  display: none!important;
+}
+
+.cxx-identity h2 {
+  margin: 0;
+  color: var(--cxx-heading);
+  font-size: 22px;
+  line-height: 1.3;
+  font-weight: var(--cxx-weight-heading);
+}
+
+.cxx-identity .identity-note {
+  margin: 0;
+  color: var(--cxx-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.cxx-identity button:focus-visible,
+.cxx-identity input:focus-visible,
+.cxx-identity textarea:focus-visible {
+  outline: 2px solid var(--cxx-interactive);
+  outline-offset: 2px;
+}
+
+/* ---------- Origin rows: name left, English label right; the art is shown on the stage ---------- */
+.identity-cards {
+  display: grid;
+  gap: 8px;
+}
+
+.identity-card {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  align-items: center;
+  gap: 4px 12px;
+  width: 100%;
+  min-height: 52px;
+  padding: 4px 16px;
+  border: 1px solid var(--cxx-line);
+  background: color-mix(in srgb, var(--cxx-raised) 60%, transparent);
+  color: var(--cxx-text);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  transition: background-color .16s,border-color .16s,color .16s;
+}
+
+.identity-card h3 {
+  grid-column: 1;
+  grid-row: 1;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.identity-card small {
+  grid-column: 2;
+  grid-row: 1;
+  color: var(--cxx-muted);
+  font: var(--cxx-weight-latin) 12px/1 var(--cxx-font-latin);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.identity-card .identity-art,
+.identity-card .identity-copy {
+  display: none;
+}
+
+@media (hover:hover) and (pointer:fine) {
+  .identity-card:hover {
+    border-color: var(--cxx-interactive);
+  }
+}
+
+.identity-card[aria-checked=true] {
+  border-color: var(--cxx-selected);
+  background: var(--cxx-selected);
+  color: var(--cxx-on-selected);
+}
+
+.identity-card[aria-checked=true] small {
+  color: inherit;
+  opacity: .75;
+}
+
+/* Yellow: selected rows on a panel use the interactive fill (DESIGN.md 10.1 rule 2). */
+[data-cxx-theme="yellow"] .identity-card[aria-checked=true] {
+  border-color: var(--cxx-interactive);
+  background: var(--cxx-interactive);
+  color: var(--cxx-on-interactive);
+}
+
+/* The custom origin's line art, used on the stage. */
+.identity-art-custom {
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg,var(--cxx-panel),var(--cxx-canvas) 65%);
+  color: var(--cxx-structure);
+}
+
+.identity-art-custom svg {
+  width: min(60%,320px);
+  height: auto;
+  opacity: .85;
+}
+
+.identity-art-custom b {
+  position: absolute;
+  bottom: 12%;
+  color: var(--cxx-on-canvas-muted);
+  font: var(--cxx-weight-latin) 13px/1 var(--cxx-font-latin);
+  letter-spacing: .3em;
+}
+
+/* ---------- Attribute editor ---------- */
+.identity-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Allocation first; the origin notes follow it. */
+.identity-editor>.identity-panel:first-child {
+  order: 2;
+}
+
+.identity-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.identity-panel>* {
+  flex: none;
+}
+
+.identity-panel h3 {
+  margin: 0;
+  color: var(--cxx-text);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.identity-panel p {
+  margin: 0;
+  color: var(--cxx-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.identity-panel .identity-eyebrow {
+  color: var(--cxx-muted);
+  font: var(--cxx-weight-latin) 12px/1.3 var(--cxx-font-latin);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.identity-panel button {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--cxx-line);
+  background: var(--cxx-panel);
+  color: var(--cxx-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+@media (hover:hover) and (pointer:fine) {
+  .identity-panel button:hover:enabled {
+    border-color: var(--cxx-interactive);
+  }
+}
+
+.identity-panel input,
+.identity-panel textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--cxx-line);
+  border-radius: 0;
+  background: var(--cxx-canvas);
+  color: var(--cxx-text);
+  font: inherit;
+}
+
+.identity-metrics {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 8px 12px;
+}
+
+.identity-metric {
+  display: grid;
+  gap: 4px;
+  color: var(--cxx-muted);
+  font-size: 14px;
+}
+
+.identity-metric input {
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+
+.identity-attribute {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 4px 4px 4px 16px;
+  border: 1px solid var(--cxx-line);
+  background: color-mix(in srgb, var(--cxx-raised) 60%, transparent);
+}
+
+.identity-attribute strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.identity-attribute small {
+  display: block;
+  color: var(--cxx-muted);
+  font-size: 13px;
+}
+
+.identity-counter {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.identity-counter button {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+  color: var(--cxx-interactive);
+  font: 20px/1 var(--cxx-font-ui);
+  cursor: pointer;
+}
+
+@media (hover:hover) and (pointer:fine) {
+  .identity-counter button:hover:enabled {
+    background: color-mix(in srgb, var(--cxx-interactive) 12%, transparent);
+  }
+}
+
+.identity-counter button:disabled {
+  color: var(--cxx-muted);
+  opacity: .45;
+  cursor: default;
+}
+
+.identity-counter output {
+  display: block;
+  min-width: 44px;
+  text-align: center;
+  color: var(--cxx-text);
+  font: var(--cxx-weight-latin) 24px/1 var(--cxx-font-latin);
+  font-variant-numeric: tabular-nums;
+}
+
+.identity-counter input {
+  width: 108px;
+  text-align: right;
+  font-size: 20px;
+}
+
+/* Free points: something for the player to act on, so the attention colour. */
+.identity-point-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 40px;
+  padding: 0 14px;
+  background: var(--cxx-attention);
+  color: var(--cxx-on-attention);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.identity-point-total strong {
+  font: var(--cxx-weight-latin) 22px/1 var(--cxx-font-latin);
+  font-variant-numeric: tabular-nums;
+}
+
+.identity-anchor-note {
+  padding: 10px 14px;
+  border-left: 2px solid var(--cxx-structure);
+  background: color-mix(in srgb, var(--cxx-structure) 6%, transparent);
+}
+
+@supports (corner-shape: bevel) {
+  :is(.identity-card,.identity-attribute,.identity-panel button,.identity-point-total) {
+    border-radius: var(--cxx-cut-s) 0;
+    corner-shape: bevel;
+  }
+}

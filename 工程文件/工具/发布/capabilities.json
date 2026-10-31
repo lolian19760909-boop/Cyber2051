@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "note": "发布闸门的唯一能力清单：gate-and-publish.cjs 与 verify-public.cjs 都读这里，避免两份脚本各自维护标记而在升级时滞后。新增能力时只改本文件。 isDuringExtraAnalysis 保留为“宿主可选的额外解析接口”探测，不算退役依赖残留。",
+  "required": [
+    "redactRescue",
+    "function scrubUrl(",
+    "secrets.has(text)",
+    "cookie|setcookie",
+    "whenIdle",
+    "chat-save-loading",
+    "journalForeign",
+    "journalOrphan",
+    "staleCopies",
+    "function collectGenerators(",
+    "diskHeaderDigest",
+    "CxxVariableEngine",
+    "Cxx236Applier",
+    "Cxx236Zod",
+    "card-local",
+    "Cxx236State",
+    "CxxDataStore",
+    "CxxDataRead",
+    "CxxDataWrite",
+    "pushAll",
+    "snapshot",
+    "cxx_quest",
+    "cxx_quest_meta",
+    "chat-save-lock-local",
+    "本窗口排队执行",
+    "return {normalizeResponse,settle,localState",
+    "motion.swap",
+    "FATAL_IDS"
+  ],
+  "forbidden": [
+    "jsdelivr.net",
+    "MagicalAstrogy",
+    "MagVarUpdate",
+    "共享模块 CxxUpdateCore 缺失"
+  ],
+  "suite": "0.4.0"
+}

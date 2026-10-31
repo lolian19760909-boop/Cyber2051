@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&display=swap');
+
+@keyframes haru-fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes haru-slideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes haru-heartBeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+}
+@keyframes haru-shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+@keyframes haru-rainDrop {
+    0% { transform: translateY(-8px); opacity: 0; }
+    30% { opacity: 0.5; }
+    100% { transform: translateY(30px); opacity: 0; }
+}
+@keyframes haru-rainbow {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+}
+@keyframes haru-sparkle {
+    0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); }
+    50% { opacity: 0.8; transform: scale(1) rotate(180deg); }
+}
+@keyframes haru-glowPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 130, 170, 0), 0 2px 8px rgba(255, 130, 170, 0.06); }
+    50% { box-shadow: 0 0 14px 3px rgba(255, 130, 170, 0.2), 0 2px 8px rgba(255, 130, 170, 0.1); }
+}
+@keyframes haru-checkPop {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.4); }
+    100% { transform: scale(1); }
+}
+@keyframes haru-avatarRingSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+@keyframes haru-pulse {
+    0%, 100% { opacity: 0.15; transform: scale(1); }
+    50% { opacity: 0.25; transform: scale(1.05); }
+}
+@keyframes haru-heartBreath {
+    0%, 100% { transform: scale(1); opacity: 0.35; }
+    50% { transform: scale(1.15); opacity: 0.55; }
+}
+@keyframes haru-pillShine {
+    0% { left: -60%; }
+    100% { left: 120%; }
+}
+@keyframes haru-borderGradient {
+    0% { border-color: rgba(255, 130, 170, 0.5); }
+    33% { border-color: rgba(255, 160, 200, 0.6); }
+    66% { border-color: rgba(255, 100, 150, 0.5); }
+    100% { border-color: rgba(255, 130, 170, 0.5); }
+}
+@keyframes haru-sakura-fall {
+    0% { transform: translateY(0) translateX(0) scale(var(--s)) rotate(0deg) rotateX(0deg) rotateY(0deg); opacity: 0; }
+    15% { opacity: 0.85; }
+    85% { opacity: 0.85; }
+    100% { transform: translateY(280px) translateX(var(--tx)) scale(var(--s)) rotate(var(--r)) rotateX(180deg) rotateY(180deg); opacity: 0; }
+}
+
+.haru-wrap {
+    max-width: 520px;
+    margin: 30px auto;
+    font-family: 'Noto Sans SC', sans-serif;
+    animation: haru-fadeIn 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+    position: relative;
+}
+
+.haru-card {
+    position: relative;
+    background: linear-gradient(180deg, #FFF5F8 0%, #FFF0F4 40%, #FFFBFC 100%);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow:
+        0 16px 40px rgba(255, 130, 170, 0.12),
+        0 4px 12px rgba(0, 0, 0, 0.03),
+        0 0 0 1px rgba(255, 180, 200, 0.2);
+}
+
+.haru-bg-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 150, 185, 0.05);
+    animation: haru-pulse 6s ease-in-out infinite;
+    pointer-events: none; z-index: 0;
+}
+.haru-bg-ring:nth-child(1) { width: 400px; height: 400px; top: -150px; right: -100px; }
+.haru-bg-ring:nth-child(2) { width: 300px; height: 300px; bottom: -80px; left: -60px; animation-delay: 2s; }
+
+.haru-scene {
+    position: relative;
+    height: 260px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #E8F4FD 0%, #F0E8F8 25%, #FFF0F4 60%, #FFF5F8 100%);
+}
+
+.haru-cloud {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 50px;
+    z-index: 2;
+}
+.haru-cloud::before, .haru-cloud::after {
+    content: ''; position: absolute;
+    background: rgba(255, 255, 255, 0.7); border-radius: 50%;
+}
+.haru-cloud:nth-child(1) { width: 100px; height: 30px; top: 30px; left: 10%; }
+.haru-cloud:nth-child(1)::before { width: 40px; height: 40px; top: -20px; left: 20px; }
+.haru-cloud:nth-child(1)::after { width: 50px; height: 45px; top: -25px; left: 45px; }
+.haru-cloud:nth-child(2) { width: 80px; height: 24px; top: 50px; right: 15%; opacity: 0.6; }
+.haru-cloud:nth-child(2)::before { width: 35px; height: 35px; top: -18px; left: 15px; }
+.haru-cloud:nth-child(2)::after { width: 40px; height: 38px; top: -20px; left: 35px; }
+.haru-cloud:nth-child(3) { width: 70px; height: 20px; top: 65px; left: 45%; opacity: 0.4; }
+.haru-cloud:nth-child(3)::before { width: 30px; height: 30px; top: -15px; left: 10px; }
+.haru-cloud:nth-child(3)::after { width: 35px; height: 32px; top: -17px; left: 30px; }
+
+.haru-rainbow {
+    position: absolute;
+    width: 360px; height: 180px;
+    top: 20px; left: 50%; transform: translateX(-50%);
+    border-radius: 180px 180px 0 0;
+    z-index: 1;
+    animation: haru-rainbow 5s ease-in-out infinite;
+    pointer-events: none;
+}
+.haru-rainbow::before {
+    content: '';
+    position: absolute; inset: -20px -20px 0 -20px;
+    border-radius: 200px 200px 0 0;
+    background: linear-gradient(180deg,
+        rgba(255,100,100,0.08) 0%, rgba(255,180,100,0.08) 16%,
+        rgba(255,255,100,0.08) 32%, rgba(100,220,100,0.08) 48%,
+        rgba(100,180,255,0.08) 64%, rgba(130,100,255,0.08) 80%,
+        rgba(200,100,255,0.06) 100%);
+    mask: radial-gradient(ellipse at center bottom, transparent 55%, black 56%, black 70%, transparent 71%);
+    -webkit-mask: radial-gradient(ellipse at center bottom, transparent 55%, black 56%, black 70%, transparent 71%);
+}
+
+.haru-rain {
+    position: absolute;
+    width: 1.5px;
+    background: linear-gradient(180deg, rgba(160,200,240,0.4), rgba(160,200,240,0));
+    z-index: 3; animation: haru-rainDrop 2s linear infinite; pointer-events: none;
+}
+.haru-rain:nth-child(4) { height: 18px; left: 8%; top: 15px; animation-duration: 1.8s; }
+.haru-rain:nth-child(5) { height: 14px; left: 22%; top: 5px; animation-delay: 0.6s; animation-duration: 2.2s; }
+.haru-rain:nth-child(6) { height: 20px; left: 75%; top: 10px; animation-delay: 1.1s; animation-duration: 1.6s; }
+.haru-rain:nth-child(7) { height: 12px; left: 90%; top: 20px; animation-delay: 0.3s; animation-duration: 2.5s; }
+.haru-rain:nth-child(8) { height: 16px; left: 55%; top: 8px; animation-delay: 1.5s; animation-duration: 2s; }
+
+.haru-sakura {
+    position: absolute;
+    top: -30px;
+    left: var(--left);
+    width: 12px;
+    height: 16px;
+    background: linear-gradient(135deg, #FFF 0%, #FFB7C5 100%);
+    border-radius: 2px 50% 2px 50%;
+    z-index: 4;
+    pointer-events: none;
+    animation: haru-sakura-fall var(--duration) linear var(--delay) infinite;
+    box-shadow: 0 2px 4px rgba(255, 183, 197, 0.4);
+}
+
+.haru-sparkle {
+    position: absolute; z-index: 4; pointer-events: none;
+    color: rgba(255,200,100,0.6); font-size: 10px;
+    animation: haru-sparkle 3s ease-in-out infinite;
+}
+.haru-sparkle:nth-child(19) { top: 45px; right: 12%; animation-delay: 0.5s; }
+.haru-sparkle:nth-child(20) { top: 90px; left: 18%; animation-delay: 1.5s; font-size: 8px; }
+.haru-sparkle:nth-child(21) { top: 70px; right: 30%; animation-delay: 2.5s; }
+
+.haru-sun {
+    position: absolute; top: 25px; right: 50px;
+    width: 50px; height: 50px;
+    background: radial-gradient(circle, rgba(255,230,150,0.5) 0%, rgba(255,200,100,0.15) 50%, transparent 70%);
+    border-radius: 50%; z-index: 2;
+    animation: haru-heartBeat 4s ease-in-out infinite;
+}
+
+.haru-title-area {
+    position: absolute; bottom: 30px; left: 0; right: 0;
+    text-align: center; z-index: 5;
+    animation: haru-slideUp 1s cubic-bezier(0.2,0.8,0.2,1) 0.3s both;
+}
+.haru-title-heart {
+    font-size: 20px; color: rgba(255,130,170,0.6);
+    animation: haru-heartBeat 2s ease-in-out infinite;
+    display: inline-block; margin-bottom: 6px;
+}
+.haru-main-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px; font-weight: 300; color: #C4547A;
+    letter-spacing: 4px; line-height: 1.3; margin: 0 0 6px 0;
+}
+.haru-main-title em { font-style: italic; font-weight: 600; color: #E8739A; }
+.haru-subtitle {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px; font-weight: 400; letter-spacing: 4px;
+    text-transform: uppercase; color: rgba(196,84,122,0.4);
+}
+
+.haru-body {
+    position: relative; z-index: 1;
+    padding: 24px 28px 8px 28px;
+}
+
+.haru-text {
+    font-size: 14px; line-height: 2;
+    color: rgba(140,80,100,0.55); font-weight: 400;
+    text-align: center; letter-spacing: 0.5px;
+    margin-bottom: 20px;
+    animation: haru-slideUp 1s cubic-bezier(0.2,0.8,0.2,1) 0.5s both;
+}
+.haru-text p { margin: 0 0 8px 0; }
+.haru-text p:last-child { margin: 0; }
+
+.haru-divider {
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px; margin: 0 0 22px 0;
+    animation: haru-slideUp 1s cubic-bezier(0.2,0.8,0.2,1) 0.6s both;
+}
+.haru-divider-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,130,170,0.25), transparent);
+}
+.haru-divider-heart {
+    color: rgba(255,130,170,0.4); font-size: 12px;
+    animation: haru-heartBeat 2.5s ease-in-out infinite;
+}
+
+.haru-select-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px; font-weight: 500; letter-spacing: 4px;
+    text-transform: uppercase; color: rgba(196,84,122,0.3);
+    text-align: center; margin-bottom: 14px;
+    animation: haru-slideUp 1s cubic-bezier(0.2,0.8,0.2,1) 0.65s both;
+}
+
+.haru-char-list {
+    display: flex; flex-direction: column; gap: 7px;
+    padding: 0 6px; margin-bottom: 20px;
+    animation: haru-slideUp 1s cubic-bezier(0.2,0.8,0.2,1) 0.7s both;
+}
+
+.haru-char-row { position: relative; }
+
+.haru-char-pill {
+    display: flex; align-items: center;
+    height: 52px; border-radius: 26px;
+    background: #FFF;
+    border: 2px solid rgba(255, 185, 210, 0.22);
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: pointer;
+    overflow: hidden;
+    position: relative; z-index: 2;
+    box-shadow: 0 2px 8px rgba(255, 130, 170, 0.04);
+}
+
+.haru-char-pill::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--char-color, rgba(255,130,170,0.3));
+    border-radius: 26px 0 0 26px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.haru-char-pill::after {
+    content: '';
+    position: absolute; top: 0; bottom: 0;
+    width: 40px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    left: -60%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.haru-char-pill:hover {
+    border-color: rgba(255, 160, 195, 0.4);
+    background: #FFFBFC;
+    transform: translateX(3px);
+    box-shadow: 0 4px 14px rgba(255, 130, 170, 0.08);
+}
+.haru-char-pill:hover::before { opacity: 1; }
+.haru-char-pill:hover::after {
+    opacity: 1;
+    animation: haru-pillShine 0.6s ease-out;
+}
+.haru-char-pill:active .haru-check-heart { transform: scale(0.85); }
+
+.haru-char-pill.checked {
+    border-color: rgba(255, 130, 170, 0.5);
+    background: linear-gradient(135deg, #FFF8FA 0%, #FFF0F5 100%);
+    animation: haru-glowPulse 2.5s ease-in-out infinite, haru-borderGradient 3s ease-in-out infinite;
+    box-shadow: 0 2px 8px rgba(255, 130, 170, 0.06);
+    transform: translateX(3px);
+}
+.haru-char-pill.checked::before { opacity: 1; }
+
+.haru-char-avatar-area {
+    width: 52px; height: 52px;
+    flex-shrink: 0;
+    position: relative;
+    cursor: pointer;
+    z-index: 3;
+}
+.haru-char-avatar-area:hover .haru-char-avatar-img {
+    transform: scale(1.06);
+}
+.haru-char-avatar-area:active .haru-char-avatar-img {
+    transform: scale(0.95);
+}
+
+.haru-avatar-ring {
+    position: absolute; inset: 1px;
+    border-radius: 50%; padding: 2px;
+    background: linear-gradient(135deg,
+        rgba(255,150,180,0.15) 0%,
+        rgba(255,200,220,0.1) 50%,
+        rgba(255,150,180,0.15) 100%);
+    transition: all 0.3s ease;
+}
+.haru-char-pill.checked .haru-avatar-ring {
+    background: linear-gradient(135deg,
+        rgba(255,130,170,0.4) 0%,
+        rgba(255,180,210,0.25) 50%,
+        rgba(255,100,150,0.4) 100%);
+}
+.haru-char-avatar-area:hover .haru-avatar-ring {
+    background: linear-gradient(135deg,
+        rgba(255,130,170,0.3) 0%,
+        rgba(255,180,210,0.2) 50%,
+        rgba(255,130,170,0.3) 100%);
+}
+
+.haru-avatar-ring-spin {
+    position: absolute; inset: -2px;
+    border-radius: 50%;
+    border: 1.5px dashed rgba(255, 130, 170, 0);
+    transition: all 0.4s ease;
+    pointer-events: none;
+}
+.haru-char-pill.checked .haru-avatar-ring-spin {
+    border-color: rgba(255, 130, 170, 0.2);
+    animation: haru-avatarRingSpin 8s linear infinite;
+}
+
+.haru-char-avatar-img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    border-radius: 50%;
+    transition: transform 0.25s ease;
+    position: relative; z-index: 1;
+    background: #FFF;
+}
+
+.haru-char-name-area {
+    flex: 1; padding: 0 10px 0 10px;
+    display: flex; align-items: center; gap: 8px;
+    min-width: 0; user-select: none;
+}
+.haru-char-color-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%; flex-shrink: 0; opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+.haru-char-pill.checked .haru-char-color-dot { opacity: 1; }
+
+.haru-char-name {
+    font-size: 14px; font-weight: 500;
+    color: #8A5070; letter-spacing: 1.5px;
+    transition: color 0.3s ease;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.haru-char-pill.checked .haru-char-name { color: #C4547A; font-weight: 700; }
+
+.haru-char-check-area {
+    width: 52px; height: 52px;
+    flex-shrink: 0; display: flex;
+    align-items: center; justify-content: center;
+    position: relative;
+}
+
+.haru-check-heart {
+    font-size: 22px; line-height: 1;
+    color: rgba(255, 170, 200, 0.35);
+    transition: all 0.3s ease;
+    animation: haru-heartBreath 3s ease-in-out infinite;
+    position: relative;
+}
+.haru-char-pill.checked .haru-check-heart {
+    color: #FF82AA;
+    animation: haru-checkPop 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+    filter: drop-shadow(0 0 6px rgba(255, 130, 170, 0.3));
+}
+
+.haru-check-spark {
+    position: absolute; top: 10px; right: 8px;
+    font-size: 8px; color: rgba(255, 200, 100, 0.6);
+    opacity: 0; transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+.haru-char-pill.checked .haru-check-spark {
+    opacity: 1; animation: haru-sparkle 2s ease-in-out infinite;
+}
+
+.haru-char-expand {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease;
+    opacity: 0; border-radius: 0 0 20px 20px;
+    margin: -4px 6px 0 6px; position: relative; z-index: 1;
+}
+.haru-char-expand.open {
+    max-height: 1600px;
+    opacity: 1;
+}
+
+.haru-char-expand-inner {
+    background: rgba(255, 245, 248, 0.4);
+    border: 1.5px solid rgba(255, 180, 200, 0.18);
+    border-top: none; border-radius: 0 0 20px 20px;
+    padding: 12px 10px 14px 10px;
+    display: flex; flex-direction: column; align-items: center;
+}
+
+.haru-portrait-wrap {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 14px;
+    position: relative;
+    background: rgba(255, 240, 245, 0.3);
+    pointer-events: none;
+    user-select: none;
+}
+.haru-portrait-img {
+    width: 100%; height: auto;
+    display: block;
+    filter: blur(12px) saturate(1.15) brightness(1.05);
+    transform: scale(1.06);
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.haru-confirm-area {
+    text-align: center;
+    padding: 6px 28px 28px 28px;
+    animation: haru-slideUp 1s cubic-bezier(0.2,0.8,0.2,1) 0.8s both;
+}
+.haru-confirm-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 13px 44px;
+    background: linear-gradient(135deg, #FF82AA 0%, #FF6B95 100%);
+    color: #FFF;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px; font-weight: 600; letter-spacing: 4px;
+    text-transform: uppercase; border: none; border-radius: 28px;
+    cursor: pointer; position: relative; overflow: hidden;
+    transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 6px 20px rgba(255, 107, 149, 0.3);
+}
+.haru-confirm-btn::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    background-size: 200% 100%;
+    animation: haru-shimmer 3s ease-in-out infinite; pointer-events: none;
+}
+.haru-confirm-btn:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 10px 28px rgba(255, 107, 149, 0.35);
+}
+.haru-confirm-btn:active {
+    transform: translateY(1px) scale(0.98);
+    box-shadow: 0 3px 10px rgba(255, 107, 149, 0.2);
+}
+.haru-confirm-btn.error {
+    background: linear-gradient(135deg, #FF6B6B, #FF5252);
+}
+.haru-confirm-btn-icon { font-size: 15px; position: relative; z-index: 1; }
+.haru-confirm-btn-text { position: relative; z-index: 1; }
+
+.haru-bottom-hearts {
+    display: flex; justify-content: center; gap: 6px; padding: 0 0 16px 0;
+}
+.haru-bottom-heart { font-size: 8px; color: rgba(255,130,170,0.25); }
+.haru-bottom-heart:nth-child(2) { font-size: 10px; color: rgba(255,130,170,0.35); }
+.haru-bottom-heart:nth-child(3) { font-size: 12px; color: rgba(255,130,170,0.4); }
+.haru-bottom-heart:nth-child(4) { font-size: 10px; color: rgba(255,130,170,0.35); }
+.haru-bottom-heart:nth-child(5) { font-size: 8px; color: rgba(255,130,170,0.25); }
+
+.haru-overlay {
+    position: absolute; inset: 0; z-index: 50;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 16px;
+    opacity: 0; pointer-events: none;
+    background: rgba(255, 245, 248, 0.92);
+    backdrop-filter: blur(0px); border-radius: 24px;
+    transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.haru-overlay.active {
+    opacity: 1; pointer-events: auto; backdrop-filter: blur(10px);
+}
+.haru-overlay-heart {
+    font-size: 28px; color: #FF82AA;
+    animation: haru-heartBeat 1.2s ease-in-out infinite;
+}
+.haru-overlay-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 16px;
+    color: rgba(196, 84, 122, 0.5); letter-spacing: 4px;
+}
+
+.haru-card.fading-out {
+    animation: haru-cardFade 0.5s ease-in-out forwards;
+}
+@keyframes haru-cardFade {
+    to { opacity: 0; transform: scale(0.96); }
+}
+
+@media (max-width: 580px) {
+    .haru-wrap { margin: 15px 10px; }
+    .haru-scene { height: 200px; }
+    .haru-main-title { font-size: 24px; }
+    .haru-body { padding: 20px 16px 8px 16px; }
+    .haru-char-list { padding: 0 2px; }
+    .haru-confirm-area { padding: 6px 16px 24px 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="haru-wrap">
+    <div class="haru-card" id="haruCard">
+
+        <div class="haru-bg-ring"></div>
+        <div class="haru-bg-ring"></div>
+
+        <div class="haru-scene">
+            <div class="haru-cloud"></div>
+            <div class="haru-cloud"></div>
+            <div class="haru-cloud"></div>
+            <div class="haru-rain"></div><div class="haru-rain"></div>
+            <div class="haru-rain"></div><div class="haru-rain"></div><div class="haru-rain"></div>
+            <div class="haru-rainbow"></div>
+            <div class="haru-sun"></div>
+            <div class="haru-sparkle">✦</div><div class="haru-sparkle">✧</div><div class="haru-sparkle">✦</div>
+
+            <div class="haru-sakura" style="--left: 5%; --duration: 5.2s; --delay: 0.2s; --tx: 30px; --r: 180deg; --s: 0.9;"></div>
+            <div class="haru-sakura" style="--left: 15%; --duration: 4.5s; --delay: 1.5s; --tx: -20px; --r: 270deg; --s: 1.1;"></div>
+            <div class="haru-sakura" style="--left: 28%; --duration: 4.8s; --delay: 0s; --tx: 40px; --r: 360deg; --s: 0.8;"></div>
+            <div class="haru-sakura" style="--left: 45%; --duration: 5.8s; --delay: 1.2s; --tx: -25px; --r: 180deg; --s: 1.2;"></div>
+            <div class="haru-sakura" style="--left: 60%; --duration: 4.2s; --delay: 0.8s; --tx: 35px; --r: 270deg; --s: 1;"></div>
+            <div class="haru-sakura" style="--left: 75%; --duration: 5s; --delay: 2.5s; --tx: -35px; --r: 180deg; --s: 0.85;"></div>
+            <div class="haru-sakura" style="--left: 88%; --duration: 4.6s; --delay: 0.5s; --tx: 20px; --r: 360deg; --s: 1.1;"></div>
+            <div class="haru-sakura" style="--left: 95%; --duration: 5.5s; --delay: 1.8s; --tx: -15px; --r: 90deg; --s: 0.95;"></div>
+
+            <div class="haru-title-area">
+                <div class="haru-title-heart">♥</div>
+                <h1 class="haru-main-title">After the <em>Rain</em></h1>
+                <div class="haru-subtitle">a family of hearts</div>
+            </div>
+        </div>
+
+        <div class="haru-body">
+            <div class="haru-text">
+                <p>雨终于停了。经历了那么多风雨之后，天空比任何时候都要晴朗。</p>
+                <p>你和她们一起走过了漫长的路，从陌生到相识，从误解到理解，从孤独到相依。十份不同的温柔，汇聚成了一个温暖的家。</p>
+                <p>今晚，你想和谁一起看这片雨后的天空？</p>
+            </div>
+
+            <div class="haru-divider">
+                <div class="haru-divider-line"></div>
+                <div class="haru-divider-heart">♥</div>
+                <div class="haru-divider-line"></div>
+            </div>
+
+            <div class="haru-select-label">Choose who to be with</div>
+
+            <div class="haru-char-list" id="haruCharList">
+
+                <div class="haru-char-row" data-name="高松灯">
+                    <div class="haru-char-pill" style="--char-color:#E87B7B;" onclick="haruToggleCheck(this)">
+                        <div class="haru-char-avatar-area" onclick="haruTogglePortrait(this)">
+                            <div class="haru-avatar-ring-spin"></div>
+                            <div class="haru-avatar-ring">
+                                <img class="haru-char-avatar-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/Tomori.png" alt="">
+                            </div>
+                        </div>
+                        <div class="haru-char-name-area">
+                            <span class="haru-char-color-dot" style="background:#E87B7B;"></span>
+                            <span class="haru-char-name">高松 灯</span>
+                        </div>
+                        <div class="haru-char-check-area">
+                            <span class="haru-check-heart">♡</span>
+                            <span class="haru-check-spark">✦</span>
+                        </div>
+                    </div>
+                    <div class="haru-char-expand">
+                        <div class="haru-char-expand-inner">
+                            <div class="haru-portrait-wrap">
+                                <img class="haru-portrait-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/TomoriB6%20(3).png" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="haru-char-row" data-name="千早爱音">
+                    <div class="haru-char-pill" style="--char-color:#FF8899;" onclick="haruToggleCheck(this)">
+                        <div class="haru-char-avatar-area" onclick="haruTogglePortrait(this)">
+                            <div class="haru-avatar-ring-spin"></div>
+                            <div class="haru-avatar-ring">
+                                <img class="haru-char-avatar-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/Anon.png" alt="">
+                            </div>
+                        </div>
+                        <div class="haru-char-name-area">
+                            <span class="haru-char-color-dot" style="background:#FF8899;"></span>
+                            <span class="haru-char-name">千早 爱音</span>
+                        </div>
+                        <div class="haru-char-check-area">
+                            <span class="haru-check-heart">♡</span>
+                            <span class="haru-check-spark">✦</span>
+                        </div>
+                    </div>
+                    <div class="haru-char-expand">
+                        <div class="haru-char-expand-inner">
+                            <div class="haru-portrait-wrap">
+                                <img class="haru-portrait-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/AnonB4%20(2).png" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="haru-char-row" data-name="要乐奈">
+                    <div class="haru-char-pill" style="--char-color:#77DD77;" onclick="haruToggleCheck(this)">
+                        <div class="haru-char-avatar-area" onclick="haruTogglePortrait(this)">
+                            <div class="haru-avatar-ring-spin"></div>
+                            <div class="haru-avatar-ring">
+                                <img class="haru-char-avatar-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/Rana.png" alt="">
+                            </div>
+                        </div>
+                        <div class="haru-char-name-area">
+                            <span class="haru-char-color-dot" style="background:#77DD77;"></span>
+                            <span class="haru-char-name">要 乐奈</span>
+                        </div>
+                        <div class="haru-char-check-area">
+                            <span class="haru-check-heart">♡</span>
+                            <span class="haru-check-spark">✦</span>
+                        </div>
+                    </div>
+                    <div class="haru-char-expand">
+                        <div class="haru-char-expand-inner">
+                            <div class="haru-portrait-wrap">
+                                <img class="haru-portrait-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/RanaB5%20(2).png" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="haru-char-row" data-name="长崎素世">
+                    <div class="haru-char-pill" style="--char-color:#FFCC44;" onclick="haruToggleCheck(this)">
+                        <div class="haru-char-avatar-area" onclick="haruTogglePortrait(this)">
+                            <div class="haru-avatar-ring-spin"></div>
+                            <div class="haru-avatar-ring">
+                                <img class="haru-char-avatar-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/Soyo.png" alt="">
+                            </div>
+                        </div>
+                        <div class="haru-char-name-area">
+                            <span class="haru-char-color-dot" style="background:#FFCC44;"></span>
+                            <span class="haru-char-name">长崎 素世</span>
+                        </div>
+                        <div class="haru-char-check-area">
+                            <span class="haru-check-heart">♡</span>
+                            <span class="haru-check-spark">✦</span>
+                        </div>
+                    </div>
+                    <div class="haru-char-expand">
+                        <div class="haru-char-expand-inner">
+                            <div class="haru-portrait-wrap">
+                                <img class="haru-portrait-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/SoyoB5%20(3).png" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="haru-char-row" data-name="椎名立希">
+                    <div class="haru-char-pill" style="--char-color:#7777CC;" onclick="haruToggleCheck(this)">
+                        <div class="haru-char-avatar-area" onclick="haruTogglePortrait(this)">
+                            <div class="haru-avatar-ring-spin"></div>
+                            <div class="haru-avatar-ring">
+                                <img class="haru-char-avatar-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/Taki.png" alt="">
+                            </div>
+                        </div>
+                        <div class="haru-char-name-area">
+                            <span class="haru-char-color-dot" style="background:#7777CC;"></span>
+                            <span class="haru-char-name">椎名 立希</span>
+                        </div>
+                        <div class="haru-char-check-area">
+                            <span class="haru-check-heart">♡</span>
+                            <span class="haru-check-spark">✦</span>
+                        </div>
+                    </div>
+                    <div class="haru-char-expand">
+                        <div class="haru-char-expand-inner">
+                            <div class="haru-portrait-wrap">
+                                <img class="haru-portrait-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/TakiB5%20(3).png" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="haru-char-row" data-name="丰川祥子">
+                    <div class="haru-char-pill" style="--char-color:#7799CC;" onclick="haruToggleCheck(this)">
+                        <div class="haru-char-avatar-area" onclick="haruTogglePortrait(this)">
+                            <div class="haru-avatar-ring-spin"></div>
+                            <div class="haru-avatar-ring">
+                                <img class="haru-char-avatar-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/Saki.png" alt="">
+                            </div>
+                        </div>
+                        <div class="haru-char-name-area">
+                            <span class="haru-char-color-dot" style="background:#7799CC;"></span>
+                            <span class="haru-char-name">丰川 祥子</span>
+                        </div>
+                        <div class="haru-char-check-area">
+                            <span class="haru-check-heart">♡</span>
+                            <span class="haru-check-spark">✦</span>
+                        </div>
+                    </div>
+                    <div class="haru-char-expand">
+                        <div class="haru-char-expand-inner">
+                            <div class="haru-portrait-wrap">
+                                <img class="haru-portrait-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/SakiB6%20(2).png" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="haru-char-row" data-name="若叶睦">
+                    <div class="haru-char-pill" style="--char-color:#779977;" onclick="haruToggleCheck(this)">
+                        <div class="haru-char-avatar-area" onclick="haruTogglePortrait(this)">
+                            <div class="haru-avatar-ring-spin"></div>
+                            <div class="haru-avatar-ring">
+                                <img class="haru-char-avatar-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/Mutsumitx.png" alt="">
+                            </div>
+                        </div>
+                        <div class="haru-char-name-area">
+                            <span class="haru-char-color-dot" style="background:#779977;"></span>
+                            <span class="haru-char-name">若叶 睦</span>
+                        </div>
+                        <div class="haru-char-check-area">
+                            <span class="haru-check-heart">♡</span>
+                            <span class="haru-check-spark">✦</span>
+                        </div>
+                    </div>
+                    <div class="haru-char-expand">
+                        <div class="haru-char-expand-inner">
+                            <div class="haru-portrait-wrap">
+                                <img class="haru-portrait-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/MutsumiB7%20(7).png" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="haru-char-row" data-name="三角初华">
+                    <div class="haru-char-pill" style="--char-color:#CC77AA;" onclick="haruToggleCheck(this)">
+                        <div class="haru-char-avatar-area" onclick="haruTogglePortrait(this)">
+                            <div class="haru-avatar-ring-spin"></div>
+                            <div class="haru-avatar-ring">
+                                <img class="haru-char-avatar-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/Uika.png" alt="">
+                            </div>
+                        </div>
+                        <div class="haru-char-name-area">
+                            <span class="haru-char-color-dot" style="background:#CC77AA;"></span>
+                            <span class="haru-char-name">三角 初华</span>
+                        </div>
+                        <div class="haru-char-check-area">
+                            <span class="haru-check-heart">♡</span>
+                            <span class="haru-check-spark">✦</span>
+                        </div>
+                    </div>
+                    <div class="haru-char-expand">
+                        <div class="haru-char-expand-inner">
+                            <div class="haru-portrait-wrap">
+                                <img class="haru-portrait-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/UikaB1%20(3).png" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="haru-char-row" data-name="祐天寺若麦">
+                    <div class="haru-char-pill" style="--char-color:#DD8855;" onclick="haruToggleCheck(this)">
+                        <div class="haru-char-avatar-area" onclick="haruTogglePortrait(this)">
+                            <div class="haru-avatar-ring-spin"></div>
+                            <div class="haru-avatar-ring">
+                                <img class="haru-char-avatar-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/Nyamu.png" alt="">
+                            </div>
+                        </div>
+                        <div class="haru-char-name-area">
+                            <span class="haru-char-color-dot" style="background:#DD8855;"></span>
+                            <span class="haru-char-name">祐天寺 若麦</span>
+                        </div>
+                        <div class="haru-char-check-area">
+                            <span class="haru-check-heart">♡</span>
+                            <span class="haru-check-spark">✦</span>
+                        </div>
+                    </div>
+                    <div class="haru-char-expand">
+                        <div class="haru-char-expand-inner">
+                            <div class="haru-portrait-wrap">
+                                <img class="haru-portrait-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/NyamuB5%20(1).png" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="haru-char-row" data-name="八幡海铃">
+                    <div class="haru-char-pill" style="--char-color:#55AACC;" onclick="haruToggleCheck(this)">
+                        <div class="haru-char-avatar-area" onclick="haruTogglePortrait(this)">
+                            <div class="haru-avatar-ring-spin"></div>
+                            <div class="haru-avatar-ring">
+                                <img class="haru-char-avatar-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/Umiri.png" alt="">
+                            </div>
+                        </div>
+                        <div class="haru-char-name-area">
+                            <span class="haru-char-color-dot" style="background:#55AACC;"></span>
+                            <span class="haru-char-name">八幡 海铃</span>
+                        </div>
+                        <div class="haru-char-check-area">
+                            <span class="haru-check-heart">♡</span>
+                            <span class="haru-check-spark">✦</span>
+                        </div>
+                    </div>
+                    <div class="haru-char-expand">
+                        <div class="haru-char-expand-inner">
+                            <div class="haru-portrait-wrap">
+                                <img class="haru-portrait-img" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/UmiriB5%20(1).png" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="haru-confirm-area">
+            <div class="haru-confirm-btn" id="haruConfirmBtn" onclick="haruConfirm()">
+                <span class="haru-confirm-btn-icon">♥</span>
+                <span class="haru-confirm-btn-text" id="haruConfirmText">Confirm</span>
+            </div>
+        </div>
+
+        <div class="haru-bottom-hearts">
+            <span class="haru-bottom-heart">♥</span>
+            <span class="haru-bottom-heart">♥</span>
+            <span class="haru-bottom-heart">♥</span>
+            <span class="haru-bottom-heart">♥</span>
+            <span class="haru-bottom-heart">♥</span>
+        </div>
+
+        <div class="haru-overlay" id="haruOverlay">
+            <div class="haru-overlay-heart">♥</div>
+            <div class="haru-overlay-text">with love...</div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function haruToggleCheck(el) {
+    if (event) event.stopPropagation();
+    var pill = el;
+    var heart = pill.querySelector('.haru-check-heart');
+    pill.classList.toggle('checked');
+    heart.textContent = pill.classList.contains('checked') ? '♥' : '♡';
+}
+
+function haruTogglePortrait(el) {
+    if (event) event.stopPropagation();
+    var row = el.closest('.haru-char-row');
+    var expand = row.querySelector('.haru-char-expand');
+    var isOpen = expand.classList.contains('open');
+
+    document.querySelectorAll('.haru-char-expand.open').forEach(function(e) {
+        if (e !== expand) e.classList.remove('open');
+    });
+
+    if (isOpen) {
+        expand.classList.remove('open');
+    } else {
+        expand.classList.add('open');
+    }
+}
+
+function haruConfirm() {
+    var selected = [];
+    document.querySelectorAll('.haru-char-pill.checked').forEach(function(pill) {
+        var row = pill.closest('.haru-char-row');
+        selected.push(row.getAttribute('data-name'));
+    });
+
+    var confirmBtn = document.getElementById('haruConfirmBtn');
+    var confirmText = document.getElementById('haruConfirmText');
+
+    if (selected.length === 0) {
+        confirmText.textContent = '请至少选择一人';
+        confirmBtn.classList.add('error');
+        setTimeout(function() {
+            confirmText.textContent = 'Confirm';
+            confirmBtn.classList.remove('error');
+        }, 1500);
+        return;
+    }
+
+    var namesStr = selected.join('、');
+
+    var message = '【开始】【开场白】'
+        + '请你作为【场景描绘者】进行本次正文创作，而非推动剧情走向。'
+        + '\n'
+        + '\n创作要求：'
+        + '\n- 必须在自然的文字叙述中，将下述的【前情提要】巧妙地融合进去。'
+        + '\n- 必须以下方【当前场景】所描述的时间、地点、事件作为正文的核心画面进行展开。'
+        + '\n- 在【前情提要】的叙述中，不要明确提及任何一位少女的具体名字。请将MyGO!!!!!和Ave Mujica两支乐队的十位少女视为一个温暖的整体来回忆和描写——用"她们""那些女孩""身边的人"等集体性称谓，营造出一种"一路走来，身边渐渐热闹起来"的群像感与归属感。'
+        + '\n- 唯有在进入【当前场景】的实时描写后，才可以出现被选中角色的具体名字、独特的说话方式和个人化的动作细节。'
+        + '\n- 正文的结尾应当是一个自然的、开放的瞬间，将叙事的接力棒交还给用户，而非给出任何形式的收束或总结。'
+        + '\n'
+        + '\n前情提要：'
+        + '\n2020年5月至12月，在这大半年的时光里，{{user}}与来自两支乐队——MyGO!!!!!和Ave Mujica——的十位少女，分别相遇并逐渐相识。那些日子并不总是晴朗的：有争吵，有误解，有无法坦诚的沉默，也有深夜里不知该如何说出口的心意。但{{user}}始终没有放弃，一个一个地走近她们，耐心地为每一位少女解开心中的结，陪她们穿过各自的困境，引导她们走向了更明亮的方向。而在这个过程中，那些原本陌生的距离，也一点一点地变成了无法割舍的羁绊——从相识，到相知，再到相爱。如今，这十份截然不同的温柔，已经汇聚成了一个虽然有些吵闹、但无比温暖的家。'
+        + '\n'
+        + '\n## 当前场景'
+        + '\n时间：2020年12月24日，平安夜，午后。'
+        + '\n地点：{{user}}的家中。'
+        + '\n在场角色：' + namesStr + '。'
+        + '\n情境：今天是平安夜。{{user}}临时有事出门此刻并不在家中。而' + namesStr + '正在{{user}}的家里，为{{user}}秘密筹备着一场平安夜的惊喜。正文应当描绘的一个温馨而忙碌的午后片段，以' + namesStr + '的视角展开，捕捉这份"想要让那个人开心"的心意。正文的结尾，应当停在{{user}}即将归来的那一刻，留下一个充满期待的悬念。'
+        + '\n【/开场白】';
+
+    if (typeof triggerSlash === 'function') {
+        triggerSlash('/send ' + message + '|/trigger');
+    } else {
+        var input = parent.document.querySelector('#send_textarea');
+        if (input) {
+            input.value = message;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
+
+    document.getElementById('haruOverlay').classList.add('active');
+    setTimeout(function() {
+        var card = document.getElementById('haruCard');
+        card.classList.add('fading-out');
+        setTimeout(function() { card.style.display = 'none'; }, 500);
+    }, 1200);
+}
+</script>
+
+</body>
+</html>

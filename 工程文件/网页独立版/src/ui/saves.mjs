@@ -1,0 +1,14 @@
+import {createBackupEncoder} from '../store/backup-encoder.mjs';
+export function mountSaveControls({parent,session,statePort,mode,accountId,onSwitch,onError=()=>{}}){
+  const codec=createBackupEncoder();
+  const node=(tag,text)=>{const el=document.createElement(tag);if(text)el.textContent=text;parent.append(el);return el;},status=node('p'),input=node('input');input.type='file';input.accept='.cxxsave,.json,.gz';input.hidden=true;let candidate=null,busy=false,disposed=false;
+  const action=(label,fn)=>{const button=node('button',label);button.type='button';button.onclick=async()=>{if(busy)return;busy=true;button.disabled=true;try{await fn();}catch(error){status.textContent=error.message;onError(error);}finally{busy=false;button.disabled=false;}};return button;};
+  function download(blob,name){const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+  async function exportStory(){const snapshot=await statePort.exportRun(session.identity.runId),blob=await codec.encode(snapshot);if(disposed)return;download(blob,'东京都2051-'+(session.profile.name||'故事')+'.cxxsave');status.textContent='已导出正文、路线、状态、数据库纪要和玩家图片。';}
+  action('导出完整故事',exportStory).disabled=!session.narrativeNode;
+  action('导入故事备份',()=>input.click());const inspection=node('pre'),repairLabel=node('label');repairLabel.hidden=true;const repair=document.createElement('input');repair.type='checkbox';repairLabel.append(repair,document.createTextNode('从原档已保存状态另建恢复路线（保留损坏历史）'));
+  const commit=action('作为新故事导入',async()=>{if(!candidate)throw Error('请先选择并检查备份');if(!candidate.inspection.readable&&!repair.checked)throw Error('请先阅读检查结果，并勾选从已保存状态恢复');const run=await statePort.importRun(candidate.snapshot,{accountId,mode,parser:globalThis.CxxGalParser,repair:repair.checked});candidate=null;commit.hidden=true;repairLabel.hidden=true;status.textContent='备份已导入为新的故事。';await onSwitch(run.runId);});commit.hidden=true;
+  input.onchange=async()=>{if(!input.files[0])return;try{candidate=await codec.decode(input.files[0]);if(disposed)return;inspection.textContent=JSON.stringify(candidate.inspection,null,2);repairLabel.hidden=candidate.inspection.readable;repair.checked=false;commit.hidden=false;status.textContent=mode==='tavern'?'请在空白酒馆聊天中导入；现有聊天会保留。':'确认后另建新故事，当前故事保留。';}catch(error){candidate=null;inspection.textContent=error.message;commit.hidden=true;repairLabel.hidden=true;onError(error);}finally{input.value='';}};
+  action('导出检查报告',async()=>{let report={mode,runId:session.identity.runId,at:new Date().toISOString(),import:candidate?.inspection||null};if(statePort.auditRun)report.current=await statePort.auditRun(session.identity.runId);download(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}),'东京都2051-存档检查报告.json');});
+  return {exportStory,destroy(){disposed=true;candidate=null;codec.destroy();parent.replaceChildren();}};
+}

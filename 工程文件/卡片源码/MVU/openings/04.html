@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>body {
+  font-family: var(--cxx-font-ui);
+}
+
+@keyframes uika-fade {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.uika-wrap {
+  position: relative;
+  max-width: 760px;
+  margin: 20px auto;
+  animation: uika-fade 1s ease-out;
+  --cp-ink: var(--cxx-ink);
+  --cp-panel: var(--cxx-panel);
+  --cp-panel-hi: var(--cxx-raised);
+  --cp-line: var(--cxx-line);
+  --cp-cyan: var(--cxx-cyan);
+  --cp-red: var(--cxx-red);
+  --cp-amber: var(--cxx-yellow);
+  --cp-text: var(--cxx-text);
+  --cp-muted: var(--cxx-muted);
+  font-family: var(--cxx-font-ui);
+  color: var(--cp-text);
+}
+
+.uika-book {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% -18%,color-mix(in srgb, var(--cxx-narrative-panel) 50%, transparent),transparent 62%),repeating-linear-gradient(0deg,transparent 0 31px,color-mix(in srgb, var(--cxx-red) 2.20%, transparent) 31px 32px),var(--cp-ink);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  box-shadow: 0 18px 46px color-mix(in srgb, var(--cxx-shadow) 42%, transparent),inset 0 1px color-mix(in srgb, var(--cxx-red) 18.00%, transparent);
+}
+
+.uika-spine {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  transform: translateX(-50%);
+  z-index: 10;
+  pointer-events: none;
+  background: linear-gradient(90deg,transparent,color-mix(in srgb, var(--cxx-red) 35.00%, transparent),transparent);
+  box-shadow: none;
+}
+
+.uika-holes {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 20px 0;
+}
+
+.uika-hole {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--cp-ink);
+  box-shadow: inset 2px 2px 4px color-mix(in srgb, var(--cxx-shadow) 80%, transparent),0 0 0 1px var(--cp-line);
+}
+
+.uika-page-left {
+  flex: 1;
+  padding: 40px;
+  position: relative;
+  background: transparent;
+}
+
+.uika-photo-frame {
+  padding: 12px 12px 45px 12px;
+  transform: rotate(-2deg);
+  transition: transform 0.3s ease;
+  margin-top: 10px;
+  background: var(--cp-panel-hi);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--cxx-shadow) 35%, transparent);
+  padding-bottom: 38px;
+}
+
+.uika-photo-frame:hover {
+  transform: rotate(0deg) scale(1.02);
+  box-shadow: 4px 8px 20px color-mix(in srgb, var(--cxx-shadow) 12%, transparent), 0 0 0 1px var(--cxx-shadow);
+}
+
+.uika-img {
+  display: block;
+  border: 1px solid var(--cxx-line);
+  height: 340px;
+  width: 100%;
+  object-fit: cover;
+  object-position: top;
+  filter: saturate(.78) contrast(1.05);
+  border-radius: 1px;
+}
+
+.uika-photo-text {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-style: italic;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--cp-cyan);
+  bottom: 10px;
+  font-family: var(--cxx-font-mono);
+}
+
+.uika-star {
+  position: absolute;
+  top: 20px;
+  left: 30px;
+  font-size: 24px;
+  opacity: 0.6;
+  color: var(--cp-amber);
+}
+
+.uika-page-right {
+  flex: 1;
+  padding: 40px 40px 40px 50px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+}
+
+.uika-date {
+  font-size: 18px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  letter-spacing: 1px;
+  color: var(--cp-amber);
+  border-bottom: 1px dashed var(--cp-line);
+  font-family: var(--cxx-font-mono);
+  font-style: normal;
+}
+
+.uika-gif-box {
+  align-self: flex-start;
+  margin-bottom: 24px;
+  overflow: hidden;
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  background: var(--cp-panel-hi);
+  box-shadow: none;
+}
+
+.uika-gif {
+  height: 90px;
+  width: auto;
+  display: block;
+  filter: saturate(.78) contrast(1.05);
+  border-radius: 1px;
+}
+
+.uika-text {
+  font-size: 14px;
+  line-height: 2;
+  margin-bottom: 30px;
+  text-align: justify;
+  color: var(--cp-text);
+}
+
+.uika-text p {
+  margin: 0 0 12px 0;
+}
+
+.uika-btn-wrap {
+  margin-top: auto;
+  text-align: center;
+}
+
+.uika-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 36px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25,0.8,0.25,1);
+  user-select: none;
+  text-decoration: none;
+  color: var(--cp-ink);
+  background: var(--cp-cyan);
+  border: 1px solid var(--cp-cyan);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cxx-cyan) 22.00%, transparent);
+  text-shadow: none;
+}
+
+.uika-btn:hover {
+  transform: translateY(-3px);
+  background: var(--cxx-cyan);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--cxx-cyan) 12.00%, transparent),0 6px 20px color-mix(in srgb, var(--cxx-cyan) 15.00%, transparent);
+  color: var(--cp-ink);
+}
+
+.uika-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--cxx-yellow) 20.00%, transparent);
+}
+
+.uika-btn-icon {
+  font-size: 18px;
+}
+
+.uika-ending {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+  background: color-mix(in srgb, var(--cxx-ink) 93%, transparent);
+  backdrop-filter: blur(3px);
+}
+
+.uika-ending.act {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.uika-end-text {
+  font-size: 22px;
+  letter-spacing: 6px;
+  font-weight: bold;
+  transform: translateY(10px);
+  transition: transform 0.8s ease;
+  color: var(--cp-cyan);
+  text-shadow: none;
+}
+
+.uika-ending.act .uika-end-text {
+  transform: translateY(0);
+}
+
+@media (max-width:650px) {
+  .uika-book {
+    flex-direction: column;
+  }
+
+  .uika-spine {
+    left: 0;
+    top: 50%;
+    bottom: auto;
+    right: 0;
+    height: 30px;
+    width: 100%;
+    transform: translateY(-50%);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--cxx-yellow-soft) 10.00%, transparent), color-mix(in srgb, var(--cxx-yellow) 40.00%, transparent), color-mix(in srgb, var(--cxx-yellow-soft) 10.00%, transparent));
+  }
+
+  .uika-holes {
+    flex-direction: row;
+    width: 100%;
+    height: auto;
+    padding: 0 20px;
+  }
+
+  .uika-page-left {
+    padding: 30px 25px 25px 25px;
+  }
+
+  .uika-page-right {
+    padding: 25px 25px 30px 25px;
+  }
+}
+
+.uika-card::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.uika-paper::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.uika-book::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.uika-board::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.uika-notebook::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.uika-container::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.uika-journal::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+@keyframes cp-alt-flow {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .uika-wrap * {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .uika-wrap *::before {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .uika-wrap *::after {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+}
+
+button.uika-btn {
+  font-family: inherit;
+  line-height: inherit;
+  appearance: none;
+  min-height: 44px;
+}
+
+.uika-btn:focus-visible {
+  outline: 2px solid var(--cp-cyan,var(--cxx-line));
+  outline-offset: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="uika-wrap" id="uikaWrap">
+    <div class="uika-book">
+
+        <!-- 中缝 -->
+        <div class="uika-spine">
+            <div class="uika-holes">
+                <div class="uika-hole"></div><div class="uika-hole"></div><div class="uika-hole"></div>
+                <div class="uika-hole"></div><div class="uika-hole"></div><div class="uika-hole"></div>
+            </div>
+        </div>
+
+        <!-- 左页 -->
+        <div class="uika-page-left">
+            <div class="uika-star">✦</div>
+            <div class="uika-photo-frame">
+                <!-- 直接调用白底原图，利用拍立得相框的纯白背景消化掉它的白底 -->
+                <img class="uika-img" src="https://cyber2051.top/img/%E4%B8%89%E8%A7%92%E5%88%9D%E5%8D%8E%2FUika_%E7%89%B9%E5%86%99%E7%AB%99%E5%A7%BF%E8%87%AA%E4%BF%A1.png" alt="三角初华">
+                <div class="uika-photo-text">Misumi Uika</div>
+            </div>
+        </div>
+
+        <!-- 右页 -->
+        <div class="uika-page-right">
+            <div class="uika-date">2050.12.25 / 21:30</div>
+
+            <div class="uika-gif-box">
+                <img class="uika-gif" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E5%88%9D%E5%8D%8E%E5%96%9D%E8%8C%B6.gif" alt="初华喝茶">
+            </div>
+
+            <div class="uika-text">
+                <p>今天实在太忙了，直到这个点才能坐下来好好吃顿晚饭。</p>
+                <p>听着真奈兴奋地分享着白天粉丝见面会上的趣事，思绪却不由自主地飘回了从前。曾经那个只会在小岛上独自弹吉他的乡下女孩，如今竟真的站上了东京都的舞台。</p>
+                <p>在这闪烁，永不停歇的霓虹灯光里，又想起了那个夏天，如同流星般照亮自己人生的耀眼女孩。不知道现在的她……还好吗？</p>
+            </div>
+
+            <div class="uika-btn-wrap">
+                <!-- 按钮点击事件，内部挂载了发送给AI的Prompt -->
+                <button type="button" class="uika-btn" onclick="uikaStart()"
+                     data-prompt="【开始】【开场白】
+# 场景生成指令
+
+## 核心任务
+- 请作为【场景描绘者】，写一段关于三角初华的开局场景。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+
+## 场景要素
+- **时间：** 2050年12月25日，晚上九点半。
+- **地点：** 东京都某条不那么繁华的街道旁，一家普通的日料小店。
+- **核心人物：** 三角初华
+
+## 剧情大纲与必须包含的要素：
+1. **下班后的放松：** 刚结束今天偶像事务所繁重的工作，两人在这个时间点才吃上晚饭。真奈正在兴致勃勃地谈论着今天粉丝见面会上的趣事。虽然sumimi刚刚起步，但真奈还是很兴奋。
+2. **初华的表与里：** 初华坐在对面温柔地微笑附和，思绪却有些走神。
+3. **回忆与牵挂：** 她想起了不久前自己还是那个只会在小豆岛上自己写写画画弹吉他的乡下少女，如今却真的成了东京的偶像。紧接着，她不可避免地想起了那年夏天如流星般改变她人生的女孩——丰川祥子。
+4. **无力的沉重感：** 初华打开了随身携带的终端，看着信息列表里祥子的名字。由于她早已暗中得知祥子家的变故，但又不敢去刺伤对方的自尊，此时她微微蹙起眉头，在心里默默担忧着祥子是否还能独自撑住。
+
+## 最高优先级指令
+在描绘完场景与初华的心理活动后，【立即停止输出】。严禁强行推进后续对话或代替玩家行动，将故事的控制权交给玩家。
+【/开场白】">
+                    <span class="uika-btn-icon">🎸</span> 开始
+                </button>
+            </div>
+        </div>
+
+        <!-- 结束覆盖层 -->
+        <div class="uika-ending" id="uikaEnding">
+            <div class="uika-end-text">星 光 坠 落 的 夜 晚</div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function uikaStart() {
+    var btn = document.querySelector('.uika-btn');
+    var promptText = btn.getAttribute('data-prompt');
+
+    // 调用酒馆的发送和触发命令
+    return parent.Cxx236OpeningHost.submitPreview(window, '/send ' + promptText + '|/trigger');
+}
+</script>
+
+</body>
+</html>

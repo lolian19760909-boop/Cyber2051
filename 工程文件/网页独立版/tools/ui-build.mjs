@@ -1,0 +1,27 @@
+/** Extract only trusted build-owned constants and map factories; never run a mock host. */
+import fs from 'node:fs';import path from 'node:path';import {createRequire} from 'node:module';import {ROOT,WEB} from './workspace-paths.mjs';
+const require=createRequire(import.meta.url),B=require('../../工具/lib/card-ast.cjs');
+const NAMES=['CxxThemeCSS','CxxPlayerStyle','CxxPlayerProfileStyle','CxxEnsembleStyle','CxxTalentStyle','CxxTalentFullscreenStyle','CxxIdentityStyle','CxxTacticalStyle','CxxBattleSurfaceStyle','CxxFeedbackStyle','CxxCombatViewStyle','CxxTalentAssets','CxxMenuArt','CxxHubArt','CxxTacticalAssets','CxxAtlasToolStyle','CxxCivicStyle'];
+function constant(node){if(node.type==='Literal')return node.value;if(node.type==='ArrayExpression')return node.elements.map(constant);if(node.type==='ObjectExpression')return Object.fromEntries(node.properties.map(p=>{if(p.type!=='Property'||p.computed||p.kind!=='init')throw new Error('UI常量不是静态属性');return [p.key.name||p.key.value,constant(p.value)];}));if(node.type==='UnaryExpression'&&node.operator==='-')return -constant(node.argument);if(node.type==='TemplateLiteral'&&!node.expressions.length)return node.quasis[0].value.cooked;throw new Error('UI常量包含运行表达式：'+node.type);}
+export function memoryPlot(nativeCard){
+ const script=nativeCard.data.extensions.tavern_helper.scripts.find(s=>s.content?.includes('CxxLongMemoryStartup.install'));if(!script)throw Error('实际成卡缺少剧情装配');
+ let options;const visit=node=>{if(!node||typeof node!=='object')return;if(node.type==='CallExpression'&&node.callee?.type==='MemberExpression'&&node.callee.object.name==='CxxLongMemoryStartup'&&node.callee.property.name==='install')options=node.arguments[0];for(const value of Object.values(node))if(Array.isArray(value))value.forEach(visit);else if(value&&typeof value==='object')visit(value);};visit(B.acorn.parse(script.content,{ecmaVersion:'latest'}));
+ if(options?.type!=='ObjectExpression')throw Error('正式剧情装配形状已变化');return Object.fromEntries(['chapter','chapters','quests','detection','lines'].map(key=>{const prop=options.properties.find(p=>(p.key.name||p.key.value)===key);if(!prop)throw Error('正式剧情字段缺失：'+key);return [key,constant(prop.value)];}));
+}
+export function writeUI(nativeCard,{out=path.join(WEB,'generated')}={}){
+ const config=require('../../工具/lib/terminal-preview.cjs').configuration(nativeCard),all=nativeCard.data.extensions.tavern_helper.scripts.map(s=>s.content||'').join('\n;\n'),globals={},missing=[];
+ const present=NAMES.filter(name=>{if(new RegExp('globalThis\\.'+name+'\\s*=').test(all))return true;missing.push(name);return false;});
+ const source=require('../../工具/lib/card-global.cjs')(all,present);for(const statement of B.acorn.parse(source,{ecmaVersion:'latest'}).body){if(statement.type==='EmptyStatement')continue;const expression=statement.expression;globals[expression.left.property.name]=constant(expression.right);}
+ const resources=JSON.parse(fs.readFileSync(path.join(ROOT,'卡片源码/地图/resources.json'),'utf8')),documents=B.extract(nativeCard).documents;
+ const mapRuntime='/* Derived from the current maintained card map factories. */\n(()=>{const CXX_WEB_ATLAS_BASE=new URL("../assets/atlas/",document.currentScript.src).href;\n'+config.mapCode.split(JSON.stringify(resources.baseURL)).join('CXX_WEB_ATLAS_BASE')+'\nglobalThis.CxxWebMaps={documents,install,mount,prepare};})();\n';
+ fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'map-runtime.js'),mapRuntime);
+ const read=file=>fs.readFileSync(path.join(ROOT,'卡片源码',file),'utf8').replace(/\r\n/g,'\n'),recipe=require('../../工具/构建/当前/module-sources.json').embeddedDocuments.terminal;
+ const body=read(recipe.template).match(/<body[^>]*>([\s\S]*?)<\/body>/i)?.[1]?.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace('/*TERMINAL_RUNTIME*/','');if(!body)throw new Error('原终端主体缺失');
+ const css=require('../../工具/lib/ui-theme.cjs').sheet(read,recipe.styles[0])+'\n'+recipe.styles.slice(1).map(read).join('');
+ const native={css:read('预设/气泡/theme.css')+'\n'+read('原生/prose.css'),source:['预设/气泡/theme.css','原生/prose.css'],groups:JSON.parse(read('预设/气泡/role-groups.json')),crops:JSON.parse(read('预设/气泡/portrait-crops.json')),names:JSON.parse(read('正文/CXX_BDA_NAMES.json'))};
+ const sprites=require('../../卡片源码/Gal/sprites.js'),standing=JSON.parse(read('Gal/standing-media.json'));
+ native.meta=JSON.parse(read('正文/BDA_META.json'));native.controlsCSS=read('预设/气泡/controls.css');native.media=Object.fromEntries(sprites.characters.map(p=>[native.names[p.name],{faces:Object.fromEntries(sprites.expressions.map(face=>[face,sprites.sprite(p.id,'https://cyber2051.top',face,standing)]))}]));
+ const live2d={manifest:JSON.parse(read('Live2D/manifest.json')),html:require('../../工具/lib/live2d-build.cjs').player(read),css:require('../../工具/lib/ui-theme.cjs').sheet(read,'Live2D/panel.css')};
+ const fonts=JSON.parse(fs.readFileSync(path.join(WEB,'vendor/fonts/sources.json'),'utf8')),fontCSS=fonts.files.map(face=>'@font-face{font-family:"Noto Sans CJK SC";src:url("assets/'+face.sha256.slice(0,16)+'/'+face.file+'") format("opentype");font-weight:'+face.weight+';font-style:normal;font-display:swap}').join('\n');
+ const ui={schema:1,globals,missing,native,live2d,fonts,fontCSS,terminal:{body,css},maps:{documents,resourceConfig:{...resources,baseURL:'assets/atlas/'},runtime:'data/map-runtime.js'}};fs.writeFileSync(path.join(out,'ui.json'),JSON.stringify(ui)+'\n');return ui;
+}

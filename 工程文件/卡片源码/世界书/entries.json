@@ -1,0 +1,2576 @@
+{
+  "entries": [
+    {
+      "id": 3,
+      "file": "世界书/003-东京都2051.txt"
+    },
+    {
+      "id": 11,
+      "file": "世界书/011-若叶睦.txt"
+    },
+    {
+      "id": 37,
+      "file": "世界书/037-RING-Live.txt"
+    },
+    {
+      "id": 42,
+      "file": "世界书/042-编年史.txt",
+      "keys": [
+        "历史",
+        "编年史",
+        "大停电",
+        "新日本",
+        "人偶革命",
+        "第四次企业战争",
+        "东京旧塔"
+      ]
+    },
+    {
+      "id": 43,
+      "file": "世界书/043-义体与医疗.txt",
+      "comment": "义体与医疗（子条目）"
+    },
+    {
+      "id": 44,
+      "file": "世界书/044-地区与治安.txt"
+    },
+    {
+      "id": 45,
+      "file": "世界书/045-名词解释.txt"
+    },
+    {
+      "id": 46,
+      "file": "世界书/046-机偶体系.txt"
+    },
+    {
+      "id": 81,
+      "file": "世界书/081-弦卷集团.txt",
+      "comment": "企业：弦卷集团",
+      "keys": [
+        "弦卷集团",
+        "弦卷公司",
+        "Tsurumaki Corp",
+        "七宇海经贸",
+        "弦卷城建"
+      ],
+      "templateId": 43
+    },
+    {
+      "id": 82,
+      "file": "世界书/082-丰川财阀与丰川重工.txt",
+      "comment": "企业：丰川财阀／丰川重工",
+      "keys": [
+        "丰川财阀",
+        "丰川重工"
+      ],
+      "templateId": 43
+    },
+    {
+      "id": 83,
+      "file": "世界书/083-太平洋防务.txt",
+      "comment": "企业：太平洋防务",
+      "keys": [
+        "太平洋防务",
+        "太平洋防务公司"
+      ],
+      "templateId": 43
+    },
+    {
+      "id": 84,
+      "file": "世界书/084-联邦科技.txt",
+      "comment": "企业：联邦科技",
+      "keys": [
+        "联邦科技"
+      ],
+      "templateId": 43
+    },
+    {
+      "id": 85,
+      "file": "世界书/085-军用科技.txt",
+      "comment": "企业：军用科技",
+      "keys": [
+        "军用科技",
+        "Militech"
+      ],
+      "templateId": 43
+    },
+    {
+      "id": 86,
+      "file": "世界书/086-长征与黑墙.txt",
+      "comment": "长征与黑墙",
+      "keys": [
+        "长征",
+        "黑墙",
+        "自动贸易口",
+        "网络隔离"
+      ],
+      "templateId": 43
+    },
+    {
+      "id": 87,
+      "file": "世界书/087-网络与心智.txt",
+      "comment": "网络与心智",
+      "keys": [
+        "城市网",
+        "深潜",
+        "网络行者",
+        "工具AI",
+        "人工心智",
+        "数字意识",
+        "数字化意识"
+      ],
+      "templateId": 43
+    },
+    {
+      "id": 6,
+      "file": "世界书/006-千早爱音.txt"
+    },
+    {
+      "id": 25,
+      "file": "世界书/025-PoppinParty.txt",
+      "comment": "乐队：Poppin'Party",
+      "keys": [
+        "PPP",
+        "Poppin'Party",
+        "popipa",
+        "户山香澄",
+        "市谷有咲",
+        "花园多惠",
+        "牛込里美",
+        "山吹沙绫"
+      ],
+      "enabled": true
+    },
+    {
+      "id": 33,
+      "file": "世界书/033-Hello-Happy-World.txt",
+      "comment": "乐队：Hello, Happy World!",
+      "keys": [
+        "HHW",
+        "Hello, Happy World",
+        "米歇尔",
+        "弦卷心",
+        "奥泽美咲",
+        "松原花音",
+        "濑田薰",
+        "北泽育美"
+      ],
+      "enabled": true
+    },
+    {
+      "id": 91,
+      "file": "世界书/091-来生-地点.txt",
+      "templateId": 43,
+      "comment": "地点：来生",
+      "keys": [
+        "来生酒吧",
+        "来生B2",
+        "亡者之酒"
+      ]
+    },
+    {
+      "id": 4,
+      "file": "世界书/004-高松灯.txt"
+    },
+    {
+      "id": 7,
+      "file": "世界书/007-长崎素世.txt"
+    },
+    {
+      "id": 8,
+      "file": "世界书/008-椎名立希.txt"
+    },
+    {
+      "id": 9,
+      "file": "世界书/009-要乐奈.txt"
+    },
+    {
+      "id": 10,
+      "file": "世界书/010-丰川祥子.txt"
+    },
+    {
+      "id": 12,
+      "file": "世界书/012-三角初华.txt"
+    },
+    {
+      "id": 13,
+      "file": "世界书/013-祐天寺若麦.txt"
+    },
+    {
+      "id": 14,
+      "file": "世界书/014-八幡海铃.txt"
+    },
+    {
+      "id": 2,
+      "file": "MVU/prompts/2.txt",
+      "comment": "[已停用]旧关系变量规则",
+      "enabled": false
+    },
+    {
+      "id": 15,
+      "file": "MVU/prompts/15.txt"
+    },
+    {
+      "id": 40,
+      "file": "MVU/prompts/40.txt"
+    },
+    {
+      "id": 88,
+      "file": "世界书/088-馬橋心玖.txt",
+      "templateId": 43,
+      "comment": "馬橋心玖",
+      "keys": [
+        "马桥心玖",
+        "馬橋心玖",
+        "心玖",
+        "Miku",
+        "Mahashi Miku",
+        "MahashiMiku",
+        "Miku Mahashi",
+        "MikuMahashi"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 89,
+      "file": "世界书/089-須賀蕾葉.txt",
+      "templateId": 43,
+      "comment": "須賀蕾葉",
+      "keys": [
+        "须贺蕾叶",
+        "須賀蕾葉",
+        "蕾葉",
+        "蕾叶",
+        "Raika",
+        "Suga Raika",
+        "SugaRaika",
+        "Raika Suga",
+        "RaikaSuga"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 93,
+      "file": "世界书/093-盗芯之夜入口.txt",
+      "templateId": 43,
+      "comment": "剧情：盗芯之夜入口",
+      "keys": [
+        "盗芯之夜",
+        "q_chip_night"
+      ]
+    },
+    {
+      "id": 94,
+      "file": "世界书/094-盗芯之夜-B01.txt",
+      "templateId": 43,
+      "comment": "[章节资料]盗芯之夜 · 小委托之后",
+      "keys": [
+        "__cxx_chip_night_B01"
+      ],
+      "enabled": false
+    },
+    {
+      "id": 95,
+      "file": "世界书/095-盗芯之夜-B02.txt",
+      "templateId": 43,
+      "comment": "[章节资料]盗芯之夜 · 录音里的房间",
+      "keys": [
+        "__cxx_chip_night_B02"
+      ],
+      "enabled": false
+    },
+    {
+      "id": 96,
+      "file": "世界书/096-盗芯之夜-B03.txt",
+      "templateId": 43,
+      "comment": "[章节资料]盗芯之夜 · 来生的桌边",
+      "keys": [
+        "__cxx_chip_night_B03"
+      ],
+      "enabled": false
+    },
+    {
+      "id": 97,
+      "file": "世界书/097-盗芯之夜-B04.txt",
+      "templateId": 43,
+      "comment": "[章节资料]盗芯之夜 · 把准备做完",
+      "keys": [
+        "__cxx_chip_night_B04"
+      ],
+      "enabled": false
+    },
+    {
+      "id": 98,
+      "file": "世界书/098-盗芯之夜-B05.txt",
+      "templateId": 43,
+      "comment": "[章节资料]盗芯之夜 · 303酒店",
+      "keys": [
+        "__cxx_chip_night_B05"
+      ],
+      "enabled": false
+    },
+    {
+      "id": 99,
+      "file": "世界书/099-盗芯之夜-B06.txt",
+      "templateId": 43,
+      "comment": "[章节资料]盗芯之夜 · 取件与临时藏身",
+      "keys": [
+        "__cxx_chip_night_B06"
+      ],
+      "enabled": false
+    },
+    {
+      "id": 100,
+      "file": "世界书/100-盗芯之夜-B07.txt",
+      "templateId": 43,
+      "comment": "[章节资料]盗芯之夜 · 门关上以后",
+      "keys": [
+        "__cxx_chip_night_B07"
+      ],
+      "enabled": false
+    },
+    {
+      "id": 101,
+      "file": "世界书/101-盗芯之夜-B08.txt",
+      "templateId": 43,
+      "comment": "[章节资料]盗芯之夜 · 逃出酒店",
+      "keys": [
+        "__cxx_chip_night_B08"
+      ],
+      "enabled": false
+    },
+    {
+      "id": 106,
+      "file": "世界书/106-泽海奏多.txt",
+      "comment": "泽海奏多",
+      "keys": [
+        "泽海奏多",
+        "奏多",
+        "Kanade",
+        "Sawami Kanata",
+        "SawamiKanata",
+        "Kanata Sawami",
+        "KanataSawami",
+        "沢海奏多",
+        "澤海奏多",
+        "Kanata"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 107,
+      "file": "世界书/107-汐见萤.txt",
+      "comment": "汐见萤",
+      "keys": [
+        "汐见萤",
+        "Hotaru",
+        "Shiomi Hotaru",
+        "ShiomiHotaru",
+        "Hotaru Shiomi",
+        "HotaruShiomi"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 108,
+      "file": "世界书/108-伊泽枣.txt",
+      "comment": "伊泽枣",
+      "keys": [
+        "伊泽枣",
+        "Natsume",
+        "Izawa Natsume",
+        "IzawaNatsume",
+        "Natsume Izawa",
+        "NatsumeIzawa"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 109,
+      "file": "世界书/109-琴平凪.txt",
+      "comment": "琴平凪",
+      "keys": [
+        "琴平凪",
+        "Nagi",
+        "Kotohira Nagi",
+        "KotohiraNagi",
+        "Nagi Kotohira",
+        "NagiKotohira"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 110,
+      "file": "世界书/110-滨崎茉幌.txt",
+      "comment": "滨崎茉幌",
+      "keys": [
+        "滨崎茉幌",
+        "茉幌",
+        "Mahoro",
+        "Hamasaki Mahoro",
+        "HamasakiMahoro",
+        "Mahoro Hamasaki",
+        "MahoroHamasaki"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 111,
+      "file": "世界书/111-和泉朋花.txt",
+      "comment": "和泉朋花",
+      "keys": [
+        "和泉朋花",
+        "朋花",
+        "Hooka",
+        "Izumi Houka",
+        "IzumiHouka",
+        "Houka Izumi",
+        "HoukaIzumi",
+        "Houka"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 112,
+      "file": "世界书/112-矢仓蓬咲.txt",
+      "comment": "矢仓蓬咲",
+      "keys": [
+        "矢仓蓬咲",
+        "蓬咲",
+        "Yomogi",
+        "Yakura Yomogi",
+        "YakuraYomogi",
+        "Yomogi Yakura",
+        "YomogiYakura"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 113,
+      "file": "世界书/113-梅里千樱梨.txt",
+      "comment": "梅里千樱梨",
+      "keys": [
+        "梅里千樱梨",
+        "千樱梨",
+        "Chieri",
+        "Umezato Chieri",
+        "UmezatoChieri",
+        "Chieri Umezato",
+        "ChieriUmezato"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 114,
+      "file": "世界书/114-四宫宁月.txt",
+      "comment": "四宫宁月",
+      "keys": [
+        "四宫宁月",
+        "宁月",
+        "Shizuku",
+        "Shinomiya Shizuku",
+        "ShinomiyaShizuku",
+        "Shizuku Shinomiya",
+        "ShizukuShinomiya"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 115,
+      "file": "世界书/115-薇欧拉.txt",
+      "comment": "薇欧拉",
+      "keys": [
+        "薇欧拉",
+        "Viola"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 18,
+      "file": "世界书/018-纯田真奈.txt",
+      "comment": "纯田真奈",
+      "keys": [
+        "纯田真奈",
+        "真奈",
+        "Mana",
+        "Sumita Mana",
+        "SumitaMana",
+        "Mana Sumita",
+        "ManaSumita",
+        "纯田まな",
+        "純田まな"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 116,
+      "file": "世界书/116-户山香澄.txt",
+      "comment": "户山香澄",
+      "keys": [
+        "户山香澄",
+        "香澄",
+        "Kasumi",
+        "ksm",
+        "Toyama Kasumi",
+        "ToyamaKasumi",
+        "Kasumi Toyama",
+        "KasumiToyama"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 117,
+      "file": "世界书/117-花园多惠.txt",
+      "comment": "花园多惠",
+      "keys": [
+        "花园多惠",
+        "多惠",
+        "Tae",
+        "おたえ",
+        "Hanazono Tae",
+        "HanazonoTae",
+        "Tae Hanazono",
+        "TaeHanazono"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 118,
+      "file": "世界书/118-牛込里美.txt",
+      "comment": "牛込里美",
+      "keys": [
+        "牛込里美",
+        "里美",
+        "Rimi",
+        "りみりん",
+        "Ushigome Rimi",
+        "UshigomeRimi",
+        "Rimi Ushigome",
+        "RimiUshigome"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 119,
+      "file": "世界书/119-山吹沙绫.txt",
+      "comment": "山吹沙绫",
+      "keys": [
+        "山吹沙绫",
+        "沙绫",
+        "Saaya",
+        "Saya",
+        "Yamabuki Saya",
+        "YamabukiSaya",
+        "Saya Yamabuki",
+        "SayaYamabuki",
+        "Yamabuki Saaya",
+        "Saaya Yamabuki",
+        "Sāya Yamabuki"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 120,
+      "file": "世界书/120-市谷有咲.txt",
+      "comment": "市谷有咲",
+      "keys": [
+        "市谷有咲",
+        "有咲",
+        "Arisa",
+        "ありさ",
+        "Ichigaya Arisa",
+        "IchigayaArisa",
+        "Arisa Ichigaya",
+        "ArisaIchigaya"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 121,
+      "file": "世界书/121-美竹兰.txt",
+      "comment": "美竹兰",
+      "keys": [
+        "美竹兰",
+        "Ran",
+        "Mitake Ran",
+        "MitakeRan",
+        "Ran Mitake",
+        "RanMitake"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 122,
+      "file": "世界书/122-青叶摩卡.txt",
+      "comment": "青叶摩卡",
+      "keys": [
+        "青叶摩卡",
+        "摩卡",
+        "Moca",
+        "摩卡酱",
+        "Aoba Moca",
+        "AobaMoca",
+        "Moca Aoba",
+        "MocaAoba"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 123,
+      "file": "世界书/123-上原绯玛丽.txt",
+      "comment": "上原绯玛丽",
+      "keys": [
+        "上原绯玛丽",
+        "绯玛丽",
+        "Himari",
+        "Uehara Himari",
+        "UeharaHimari",
+        "Himari Uehara",
+        "HimariUehara"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 124,
+      "file": "世界书/124-宇田川巴.txt",
+      "comment": "宇田川巴",
+      "keys": [
+        "宇田川巴",
+        "Tomoe",
+        "巴医生",
+        "Udagawa Tomoe",
+        "UdagawaTomoe",
+        "Tomoe Udagawa",
+        "TomoeUdagawa"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 125,
+      "file": "世界书/125-羽泽鸫.txt",
+      "comment": "羽泽鸫",
+      "keys": [
+        "羽泽鸫",
+        "Tsugumi",
+        "鸫鸫",
+        "Hazawa Tsugumi",
+        "HazawaTsugumi",
+        "Tsugumi Hazawa",
+        "TsugumiHazawa"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 126,
+      "file": "世界书/126-弦卷心.txt",
+      "comment": "弦卷心",
+      "keys": [
+        "弦卷心",
+        "Kokoro",
+        "Tsurumaki Kokoro",
+        "TsurumakiKokoro",
+        "Kokoro Tsurumaki",
+        "KokoroTsurumaki"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 127,
+      "file": "世界书/127-濑田薰.txt",
+      "comment": "濑田薰",
+      "keys": [
+        "濑田薰",
+        "Kaoru",
+        "Seta Kaoru",
+        "SetaKaoru",
+        "Kaoru Seta",
+        "KaoruSeta"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 128,
+      "file": "世界书/128-北泽育美.txt",
+      "comment": "北泽育美",
+      "keys": [
+        "北泽育美",
+        "育美",
+        "Hagumi",
+        "Kitazawa Hagumi",
+        "KitazawaHagumi",
+        "Hagumi Kitazawa",
+        "HagumiKitazawa"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 129,
+      "file": "世界书/129-松原花音.txt",
+      "comment": "松原花音",
+      "keys": [
+        "松原花音",
+        "花音",
+        "Kanon",
+        "Matsubara Kanon",
+        "MatsubaraKanon",
+        "Kanon Matsubara",
+        "KanonMatsubara"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 130,
+      "file": "世界书/130-奥泽美咲.txt",
+      "comment": "奥泽美咲",
+      "keys": [
+        "奥泽美咲",
+        "美咲",
+        "Misaki",
+        "米歇尔",
+        "Okusawa Misaki",
+        "OkusawaMisaki",
+        "Misaki Okusawa",
+        "MisakiOkusawa",
+        "Michelle"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 131,
+      "file": "世界书/131-丸山彩.txt",
+      "comment": "丸山彩",
+      "keys": [
+        "丸山彩",
+        "Aya",
+        "彩医生",
+        "Maruyama Aya",
+        "MaruyamaAya",
+        "Aya Maruyama",
+        "AyaMaruyama"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 132,
+      "file": "世界书/132-冰川日菜.txt",
+      "comment": "冰川日菜",
+      "keys": [
+        "冰川日菜",
+        "日菜",
+        "Hina",
+        "Hikawa Hina",
+        "HikawaHina",
+        "Hina Hikawa",
+        "HinaHikawa"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 133,
+      "file": "世界书/133-白鹭千圣.txt",
+      "comment": "白鹭千圣",
+      "keys": [
+        "白鹭千圣",
+        "千圣",
+        "Chisato",
+        "Shirasagi Chisato",
+        "ShirasagiChisato",
+        "Chisato Shirasagi",
+        "ChisatoShirasagi"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 134,
+      "file": "世界书/134-大和麻弥.txt",
+      "comment": "大和麻弥",
+      "keys": [
+        "大和麻弥",
+        "麻弥",
+        "Maya",
+        "Yamato Maya",
+        "YamatoMaya",
+        "Maya Yamato",
+        "MayaYamato"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 135,
+      "file": "世界书/135-若宫伊芙.txt",
+      "comment": "若宫伊芙",
+      "keys": [
+        "若宫伊芙",
+        "伊芙",
+        "Eve",
+        "Wakamiya Eve",
+        "WakamiyaEve",
+        "Eve Wakamiya",
+        "EveWakamiya"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 136,
+      "file": "世界书/136-凑友希那.txt",
+      "comment": "凑友希那",
+      "keys": [
+        "凑友希那",
+        "友希那",
+        "Yukina",
+        "Minato Yukina",
+        "MinatoYukina",
+        "Yukina Minato",
+        "YukinaMinato"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 137,
+      "file": "世界书/137-冰川纱夜.txt",
+      "comment": "冰川纱夜",
+      "keys": [
+        "冰川纱夜",
+        "纱夜",
+        "Sayo",
+        "Hikawa Sayo",
+        "HikawaSayo",
+        "Sayo Hikawa",
+        "SayoHikawa"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 138,
+      "file": "世界书/138-今井莉莎.txt",
+      "comment": "今井莉莎",
+      "keys": [
+        "今井莉莎",
+        "莉莎",
+        "Lisa",
+        "Imai Lisa",
+        "ImaiLisa",
+        "Lisa Imai",
+        "LisaImai"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 139,
+      "file": "世界书/139-宇田川亚子.txt",
+      "comment": "宇田川亚子",
+      "keys": [
+        "宇田川亚子",
+        "亚子",
+        "Ako",
+        "Udagawa Ako",
+        "UdagawaAko",
+        "Ako Udagawa",
+        "AkoUdagawa"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 140,
+      "file": "世界书/140-白金燐子.txt",
+      "comment": "白金燐子",
+      "keys": [
+        "白金燐子",
+        "燐子",
+        "Rinko",
+        "燐燐",
+        "Shirokane Rinko",
+        "ShirokaneRinko",
+        "Rinko Shirokane",
+        "RinkoShirokane"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 141,
+      "file": "世界书/141-仓田真白.txt",
+      "comment": "仓田真白",
+      "keys": [
+        "仓田真白",
+        "真白",
+        "Mashiro",
+        "小白",
+        "Kurata Mashiro",
+        "KurataMashiro",
+        "Mashiro Kurata",
+        "MashiroKurata"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 142,
+      "file": "世界书/142-桐谷透子.txt",
+      "comment": "桐谷透子",
+      "keys": [
+        "桐谷透子",
+        "透子",
+        "Touko",
+        "Kirigaya Toko",
+        "KirigayaToko",
+        "Toko Kirigaya",
+        "TokoKirigaya",
+        "Kirigaya Touko",
+        "Touko Kirigaya",
+        "Tōko Kirigaya"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 143,
+      "file": "世界书/143-广町七深.txt",
+      "comment": "广町七深",
+      "keys": [
+        "广町七深",
+        "七深",
+        "Nanami",
+        "Hiromachi Nanami",
+        "HiromachiNanami",
+        "Nanami Hiromachi",
+        "NanamiHiromachi"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 144,
+      "file": "世界书/144-二叶筑紫.txt",
+      "comment": "二叶筑紫",
+      "keys": [
+        "二叶筑紫",
+        "筑紫",
+        "Tsukushi",
+        "二助",
+        "Futaba Tsukushi",
+        "FutabaTsukushi",
+        "Tsukushi Futaba",
+        "TsukushiFutaba"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 145,
+      "file": "世界书/145-八潮瑠唯.txt",
+      "comment": "八潮瑠唯",
+      "keys": [
+        "八潮瑠唯",
+        "瑠唯",
+        "Rui",
+        "Yashio Rui",
+        "YashioRui",
+        "Rui Yashio",
+        "RuiYashio"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 146,
+      "file": "世界书/146-和奏瑞依.txt",
+      "comment": "和奏瑞依",
+      "keys": [
+        "和奏瑞依",
+        "瑞依",
+        "Rei",
+        "Layer",
+        "Wakana Rei",
+        "WakanaRei",
+        "Rei Wakana",
+        "ReiWakana",
+        "LAYER"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 147,
+      "file": "世界书/147-朝日六花.txt",
+      "comment": "朝日六花",
+      "keys": [
+        "朝日六花",
+        "六花",
+        "Rokka",
+        "Lock",
+        "Asahi Rokka",
+        "AsahiRokka",
+        "Rokka Asahi",
+        "RokkaAsahi",
+        "LOCK"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 148,
+      "file": "世界书/148-佐藤益木.txt",
+      "comment": "佐藤益木",
+      "keys": [
+        "佐藤益木",
+        "益木",
+        "Masuki",
+        "Masking",
+        "狂犬",
+        "Sato Masuki",
+        "SatoMasuki",
+        "Masuki Sato",
+        "MasukiSato",
+        "MASKING",
+        "Satou Masuki",
+        "Masuki Satou"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 149,
+      "file": "世界书/149-鳰原令王那.txt",
+      "comment": "鳰原令王那",
+      "keys": [
+        "鳰原令王那",
+        "令王那",
+        "Reona",
+        "Pareo",
+        "帕蕾欧",
+        "Nyubara Reona",
+        "NyubaraReona",
+        "Reona Nyubara",
+        "ReonaNyubara",
+        "PAREO",
+        "Nyuubara Reona",
+        "Reona Nyuubara",
+        "Reona Nyūbara"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 150,
+      "file": "世界书/150-珠手知由.txt",
+      "comment": "珠手知由",
+      "keys": [
+        "珠手知由",
+        "知由",
+        "Chiyu",
+        "Chuchu",
+        "CHU2",
+        "Tamade Chiyu",
+        "TamadeChiyu",
+        "Chiyu Tamade",
+        "ChiyuTamade",
+        "CHU²",
+        "チュチュ"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 5,
+      "file": "世界书/005-都筑诗船.txt",
+      "comment": "都筑诗船",
+      "keys": [
+        "都筑诗船",
+        "诗船",
+        "Shifune",
+        "乐奈外婆",
+        "乐奈的外婆",
+        "Tsuzuki Shifune",
+        "TsuzukiShifune",
+        "Shifune Tsuzuki",
+        "ShifuneTsuzuki"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 151,
+      "file": "世界书/151-鰐部七菜.txt",
+      "comment": "鰐部七菜",
+      "keys": [
+        "鰐部七菜",
+        "七菜",
+        "Nanana",
+        "Wanibe Nanana",
+        "WanibeNanana",
+        "Nanana Wanibe",
+        "NananaWanibe"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 152,
+      "file": "世界书/152-户山明日香.txt",
+      "comment": "户山明日香",
+      "keys": [
+        "户山明日香",
+        "明日香",
+        "Asuka",
+        "Toyama Asuka",
+        "ToyamaAsuka",
+        "Asuka Toyama",
+        "AsukaToyama"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 16,
+      "file": "世界书/016-月岛麻里奈.txt",
+      "comment": "月岛麻里奈",
+      "keys": [
+        "月岛麻里奈",
+        "麻里奈",
+        "Marina",
+        "Tsukishima Marina",
+        "TsukishimaMarina",
+        "Marina Tsukishima",
+        "MarinaTsukishima"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 153,
+      "file": "世界书/153-q_main_pre_heist-P1.txt",
+      "comment": "主线一·盗芯之前 · 小委托之后",
+      "keys": [
+        "__cxx_node_q_main_pre_heist_P1"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 154,
+      "file": "世界书/154-q_main_pre_heist-P2.txt",
+      "comment": "主线一·盗芯之前 · 录音里的房间",
+      "keys": [
+        "__cxx_node_q_main_pre_heist_P2"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 155,
+      "file": "世界书/155-q_main_pre_heist-P3.txt",
+      "comment": "主线一·盗芯之前 · 来生的桌边",
+      "keys": [
+        "__cxx_node_q_main_pre_heist_P3"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 156,
+      "file": "世界书/156-q_main_pre_heist-P4.txt",
+      "comment": "主线一·盗芯之前 · 把准备做完",
+      "keys": [
+        "__cxx_node_q_main_pre_heist_P4"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 157,
+      "file": "世界书/157-q_main_heist-P1.txt",
+      "comment": "主线二·盗芯之夜 · 进入酒店与套房取件",
+      "keys": [
+        "__cxx_node_q_main_heist_P1"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 158,
+      "file": "世界书/158-q_main_heist-P2.txt",
+      "comment": "主线二·盗芯之夜 · 夹层避险与门内命案",
+      "keys": [
+        "__cxx_node_q_main_heist_P2"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 159,
+      "file": "世界书/159-q_main_heist-P3.txt",
+      "comment": "主线二·盗芯之夜 · 断联、护匣受损与活体接入",
+      "keys": [
+        "__cxx_node_q_main_heist_P3"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 160,
+      "file": "世界书/160-q_main_heist-P4.txt",
+      "comment": "主线二·盗芯之夜 · 冲出封锁与搭档生死结算",
+      "keys": [
+        "__cxx_node_q_main_heist_P4"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 161,
+      "file": "世界书/161-q_main_dual_soul-P1.txt",
+      "comment": "主线三·双魂与暗流 · 安全屋初见与老街诊断",
+      "keys": [
+        "__cxx_node_q_main_dual_soul_P1"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 162,
+      "file": "世界书/162-q_main_dual_soul-P2.txt",
+      "comment": "主线三·双魂与暗流 · 寻找心玖与恢复喵梦联系",
+      "keys": [
+        "__cxx_node_q_main_dual_soul_P2"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 163,
+      "file": "世界书/163-q_main_dual_soul-P3.txt",
+      "comment": "主线三·双魂与暗流 · 八咫鸟外围与网监探员",
+      "keys": [
+        "__cxx_node_q_main_dual_soul_P3"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 164,
+      "file": "世界书/164-q_main_dual_soul-P4.txt",
+      "comment": "主线三·双魂与暗流 · 核心会面与联系有咲",
+      "keys": [
+        "__cxx_node_q_main_dual_soul_P4"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 165,
+      "file": "世界书/165-q_main_dual_soul-P5.txt",
+      "comment": "主线三·双魂与暗流 · 原始记录、外环公路与旧友重逢",
+      "keys": [
+        "__cxx_node_q_main_dual_soul_P5"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 166,
+      "file": "世界书/166-地区地点-暗池.txt",
+      "comment": "暗池：地点与设施",
+      "keys": [
+        "暗池",
+        "RiNG社区",
+        "RING-Live!",
+        "SPACE 旧址",
+        "CiRCLE",
+        "红花街",
+        "宇田川巴的老街诊所",
+        "羽丘女子学园",
+        "乐奈与诗船的公寓",
+        "RING-Live! · 乐器店",
+        "RING-Live! · 旧唱片店",
+        "RING-Live! · 咖啡馆",
+        "RING-Live! · 录音与租赁",
+        "Lust？Love？Live！",
+        "暗池 · 武器店",
+        "暗池 · 义体医生",
+        "暗池 · 医疗点",
+        "暗池 · 垃圾商店",
+        "暗池 · 交通设施",
+        "暗池层叠市场",
+        "回声线缆台",
+        "暗池 · 近战武器商贩",
+        "暗池 · 酒吧",
+        "暗池转单台",
+        "走廊里的第二把锁",
+        "借条背面"
+      ],
+      "enabled": true,
+      "templateId": 43,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 167,
+      "file": "世界书/167-地区地点-荒川下城.txt",
+      "comment": "荒川下城：地点与设施",
+      "keys": [
+        "荒川下城",
+        "赤羽街区",
+        "祥子的赤羽出租屋",
+        "赤羽黑诊所",
+        "荒川下城 · 武器店",
+        "荒川下城 · 义体医生",
+        "荒川下城 · 医疗点",
+        "荒川下城 · 垃圾商店",
+        "荒川下城 · 交通设施",
+        "荒川综合医院",
+        "荒川下城 · 近战武器商贩",
+        "河闸食堂",
+        "退水线上的白漆",
+        "一只饭盒的重量",
+        "东京天空塔"
+      ],
+      "enabled": true,
+      "templateId": 43,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 168,
+      "file": "世界书/168-catalog-underpool-assault-P1.txt",
+      "comment": "走廊里的第二把锁 · 了解现场与协助意愿",
+      "keys": [
+        "__cxx_node_catalog-underpool-assault_P1"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 169,
+      "file": "世界书/169-catalog-underpool-assault-P2.txt",
+      "comment": "走廊里的第二把锁 · 核对线索与实际处置",
+      "keys": [
+        "__cxx_node_catalog-underpool-assault_P2"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 170,
+      "file": "世界书/170-catalog-underpool-assault-P3.txt",
+      "comment": "走廊里的第二把锁 · 结果与交接",
+      "keys": [
+        "__cxx_node_catalog-underpool-assault_P3"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 171,
+      "file": "世界书/171-catalog-underpool-theft-P1.txt",
+      "comment": "借条背面 · 确认委托范围",
+      "keys": [
+        "__cxx_node_catalog-underpool-theft_P1"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 172,
+      "file": "世界书/172-catalog-underpool-theft-P2.txt",
+      "comment": "借条背面 · 核对线索与实际处置",
+      "keys": [
+        "__cxx_node_catalog-underpool-theft_P2"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 173,
+      "file": "世界书/173-catalog-underpool-theft-P3.txt",
+      "comment": "借条背面 · 结果与交接",
+      "keys": [
+        "__cxx_node_catalog-underpool-theft_P3"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 174,
+      "file": "世界书/174-catalog-lowtown-police-P1.txt",
+      "comment": "退水线上的白漆 · 了解现场与协助意愿",
+      "keys": [
+        "__cxx_node_catalog-lowtown-police_P1"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 175,
+      "file": "世界书/175-catalog-lowtown-police-P2.txt",
+      "comment": "退水线上的白漆 · 核对线索与实际处置",
+      "keys": [
+        "__cxx_node_catalog-lowtown-police_P2"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 176,
+      "file": "世界书/176-catalog-lowtown-police-P3.txt",
+      "comment": "退水线上的白漆 · 结果与交接",
+      "keys": [
+        "__cxx_node_catalog-lowtown-police_P3"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 177,
+      "file": "世界书/177-catalog-lowtown-recovery-P1.txt",
+      "comment": "一只饭盒的重量 · 确认委托范围",
+      "keys": [
+        "__cxx_node_catalog-lowtown-recovery_P1"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 178,
+      "file": "世界书/178-catalog-lowtown-recovery-P2.txt",
+      "comment": "一只饭盒的重量 · 核对线索与实际处置",
+      "keys": [
+        "__cxx_node_catalog-lowtown-recovery_P2"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 179,
+      "file": "世界书/179-catalog-lowtown-recovery-P3.txt",
+      "comment": "一只饭盒的重量 · 结果与交接",
+      "keys": [
+        "__cxx_node_catalog-lowtown-recovery_P3"
+      ],
+      "enabled": false,
+      "templateId": 43
+    },
+    {
+      "id": 181,
+      "file": "世界书/181-生物技术.txt",
+      "templateId": 43,
+      "comment": "企业：生物技术",
+      "keys": [
+        "生物技术",
+        "Biotechnica"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 182,
+      "file": "世界书/182-泽塔科技.txt",
+      "templateId": 43,
+      "comment": "企业：泽塔科技",
+      "keys": [
+        "泽塔科技",
+        "Zetatech"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 183,
+      "file": "世界书/183-创伤小组.txt",
+      "templateId": 43,
+      "comment": "企业：创伤小组",
+      "keys": [
+        "创伤小组",
+        "Trauma Team"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 184,
+      "file": "世界书/184-夜氏公司.txt",
+      "templateId": 43,
+      "comment": "企业：夜氏公司",
+      "keys": [
+        "夜氏公司",
+        "Night Corp"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 185,
+      "file": "世界书/185-轨道航空.txt",
+      "templateId": 43,
+      "comment": "企业：轨道航空",
+      "keys": [
+        "轨道航空",
+        "Orbital Air"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 186,
+      "file": "世界书/186-苏石化.txt",
+      "templateId": 43,
+      "comment": "企业：苏石化",
+      "keys": [
+        "苏石化",
+        "SovOil"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 187,
+      "file": "世界书/187-沛卓石化.txt",
+      "templateId": 43,
+      "comment": "企业：沛卓石化",
+      "keys": [
+        "沛卓石化",
+        "Petrochem"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 188,
+      "file": "世界书/188-健立.txt",
+      "templateId": 43,
+      "comment": "企业：健立",
+      "keys": [
+        "健立",
+        "Kendachi"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 189,
+      "file": "世界书/189-宪法军火.txt",
+      "templateId": 43,
+      "comment": "企业：宪法军火",
+      "keys": [
+        "宪法军火",
+        "Constitutional Arms"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 190,
+      "file": "世界书/190-全食品.txt",
+      "templateId": 43,
+      "comment": "企业：全食品",
+      "keys": [
+        "全食品",
+        "All Foods"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 191,
+      "file": "世界书/191-德拉曼.txt",
+      "templateId": 43,
+      "comment": "企业：德拉曼",
+      "keys": [
+        "德拉曼",
+        "Delamain"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 192,
+      "file": "世界书/192-高加索.txt",
+      "templateId": 43,
+      "comment": "企业：高加索",
+      "keys": [
+        "高加索",
+        "Kaukaz"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 193,
+      "file": "世界书/193-岐路司.txt",
+      "templateId": 43,
+      "comment": "企业：岐路司",
+      "keys": [
+        "岐路司",
+        "Kiroshi"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 194,
+      "file": "世界书/194-迪纳拉科技.txt",
+      "templateId": 43,
+      "comment": "企业：迪纳拉科技",
+      "keys": [
+        "迪纳拉科技",
+        "Dynalar Technologies"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 195,
+      "file": "世界书/195-乌鸦微控.txt",
+      "templateId": 43,
+      "comment": "企业：乌鸦微控",
+      "keys": [
+        "乌鸦微控",
+        "Raven Microcybernetics"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 196,
+      "file": "世界书/196-海啸.txt",
+      "templateId": 43,
+      "comment": "企业：海啸",
+      "keys": [
+        "海啸",
+        "Tsunami"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 197,
+      "file": "世界书/197-预算武器.txt",
+      "templateId": 43,
+      "comment": "企业：预算武器",
+      "keys": [
+        "预算武器",
+        "Budget Arms"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 198,
+      "file": "世界书/198-达拉理工.txt",
+      "templateId": 43,
+      "comment": "企业：达拉理工",
+      "keys": [
+        "达拉理工",
+        "Darra Polytechnic"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 199,
+      "file": "世界书/199-诺科他.txt",
+      "templateId": 43,
+      "comment": "企业：诺科他",
+      "keys": [
+        "诺科他",
+        "Nokota"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 200,
+      "file": "世界书/200-新闻54.txt",
+      "templateId": 43,
+      "comment": "企业：新闻54",
+      "keys": [
+        "新闻54",
+        "Network 54"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 201,
+      "file": "世界书/201-全球新闻社.txt",
+      "templateId": 43,
+      "comment": "企业：全球新闻社",
+      "keys": [
+        "全球新闻社",
+        "WNS"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 202,
+      "file": "世界书/202-世界卫星通讯.txt",
+      "templateId": 43,
+      "comment": "企业：世界卫星通讯",
+      "keys": [
+        "世界卫星通讯",
+        "WorldSat Communications"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 203,
+      "file": "世界书/203-KTech.txt",
+      "templateId": 43,
+      "comment": "企业：KTech",
+      "keys": [
+        "KTech"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 204,
+      "file": "世界书/204-虎爪组.txt",
+      "templateId": 43,
+      "comment": "街头势力：虎爪组",
+      "keys": [
+        "虎爪组",
+        "虎爪帮"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 205,
+      "file": "世界书/205-漩涡帮.txt",
+      "templateId": 43,
+      "comment": "街头势力：漩涡帮",
+      "keys": [
+        "漩涡帮",
+        "漩涡帮东京派"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 206,
+      "file": "世界书/206-兽群.txt",
+      "templateId": 43,
+      "comment": "街头势力：兽群",
+      "keys": [
+        "兽群",
+        "动物帮",
+        "兽群保安"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 207,
+      "file": "世界书/207-圣莲会.txt",
+      "templateId": 43,
+      "comment": "街头势力：圣莲会",
+      "keys": [
+        "圣莲会",
+        "圣莲街族"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 208,
+      "file": "世界书/208-六番街联防会.txt",
+      "templateId": 43,
+      "comment": "街头势力：六番街联防会",
+      "keys": [
+        "六番街联防会",
+        "六番街"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 209,
+      "file": "世界书/209-红花互助会.txt",
+      "templateId": 43,
+      "comment": "街头势力：红花互助会",
+      "keys": [
+        "红花互助会"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 210,
+      "file": "世界书/210-八咫鸟.txt",
+      "templateId": 43,
+      "comment": "街头势力：八咫鸟",
+      "keys": [
+        "八咫鸟"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 211,
+      "file": "世界书/211-清道夫.txt",
+      "templateId": 43,
+      "comment": "街头势力：清道夫",
+      "keys": [
+        "清道夫",
+        "拆件团伙"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 212,
+      "file": "世界书/212-乱刀众.txt",
+      "templateId": 43,
+      "comment": "街头势力：乱刀众",
+      "keys": [
+        "乱刀众",
+        "东京乱刀会"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 213,
+      "file": "世界书/213-远雷运输队与外环车队.txt",
+      "templateId": 43,
+      "comment": "街头势力：远雷运输队与外环车队",
+      "keys": [
+        "远雷运输队",
+        "远雷车队",
+        "外环车队"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 214,
+      "file": "世界书/214-灰旗团.txt",
+      "templateId": 43,
+      "comment": "街头势力：灰旗团",
+      "keys": [
+        "灰旗团"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "prevent_recursion": true,
+        "exclude_recursion": true,
+        "match_whole_words": false,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 215,
+      "file": "世界书/215-森川柚枼.txt",
+      "comment": "森川柚枼",
+      "keys": [
+        "森川柚枼",
+        "柚枼",
+        "Sen Chuan You Ye",
+        "SenChuanYouYe",
+        "森川柚叶",
+        "森川柚葉",
+        "Sen Chuan Youye",
+        "Senchuan Youye"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 216,
+      "file": "世界书/216-琳星夜.txt",
+      "comment": "琳星夜",
+      "keys": [
+        "琳星夜",
+        "星夜",
+        "常夜灯",
+        "灯闪万事屋",
+        "LinXingye",
+        "Lin Xingye",
+        "Xingye Lin",
+        "XingyeLin",
+        "Lin Xing Ye"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 217,
+      "file": "世界书/217-Vesper.txt",
+      "comment": "Vesper",
+      "keys": [
+        "Vesper",
+        "I:P",
+        "Masquerena",
+        "EM:P 榴弹喵",
+        "榴弹喵"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 56,
+      "file": "运行时/gameplay-rules.txt",
+      "comment": "[正文玩法] 剧情与结算规则"
+    },
+    {
+      "id": 17,
+      "file": "世界书/017-真次凛凛子.txt",
+      "keys": [
+        "凛凛子",
+        "ring",
+        "Matsugi Ririko",
+        "MatsugiRiriko",
+        "Ririko Matsugi",
+        "RirikoMatsugi"
+      ],
+      "extensions": {
+        "match_whole_words": true,
+        "case_sensitive": false
+      }
+    }
+  ],
+  "deferredEntries": [],
+  "chapters": [
+    "chip-night"
+  ],
+  "scopeNote": "2026-10-20：67份人设保留；作者最后手改稿三线13节点以默认关闭世界书装载。新故事走13节点，已有实际旧盗芯进度保留原路线。插图描述为供图待办，不配置虚假图片。 2026-10-20：作者授权企业改编植入，原UID81—85扩写，UID180—203新增24家，原作来源与2051改编对照单列。 2026-10-20 R4：作者授权企业深化与11个东京街头势力植入；移除康陶UID180，编号不复用，保留原作与前后全文对照DOCX。 2026-10-20：梦限大五人暂移，62份完整人设及凛凛子简版保留；薇欧拉保留，前后稿见梦限大暂移归档。 2026-10-20：三份玩家投稿经作者确认后装入UID215—217；琳星夜保留先天超常体质并明确能力上限与弱点，Vesper的黑墙猎犬为网监追踪人员与程序的街头绰号。",
+  "retiredIds": [
+    30,
+    31,
+    32,
+    34,
+    35,
+    90,
+    102,
+    103,
+    104,
+    105
+  ]
+}

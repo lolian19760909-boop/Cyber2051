@@ -1,0 +1,197 @@
+{
+  "at": "2026-10-21T15:24:49.629Z",
+  "version": "2.3.4",
+  "manifest": "535bdd32ccb0ffb05970d89f985be0ef375d678db8565393e43b3496110b31ac",
+  "baseUrl": "https://cyber2051.top/resources/2.3.4/535bdd32ccb0ffb05970d89f985be0ef375d678db8565393e43b3496110b31ac/",
+  "entries": 822,
+  "oldManifest": "a27b8070058a40dc4981bb7b0a0fe47b33b701040afb3e3a1d0c7e13a3d2c9d0",
+  "delta": [
+    {
+      "id": "3d9741dd6b7b684ca4da56350b296da4424f399df55ed8d1990844ce7d450156",
+      "file": "3d9741dd6b7b684ca4da56350b296da4424f399df55ed8d1990844ce7d450156.webp",
+      "bytes": 201724
+    },
+    {
+      "id": "18f502264153aadfe3d88bb4a93419c7214743f48186a348f04d5f44c3a8c02f",
+      "file": "18f502264153aadfe3d88bb4a93419c7214743f48186a348f04d5f44c3a8c02f.webp",
+      "bytes": 315380
+    },
+    {
+      "id": "4a77f22a37a37a2ea878d8da38622c8487d2abd703f3f054154e9b2f1c77f1be",
+      "file": "4a77f22a37a37a2ea878d8da38622c8487d2abd703f3f054154e9b2f1c77f1be.webp",
+      "bytes": 280354
+    },
+    {
+      "id": "ef491d2fbc14de79852e41fe4bcda99a83c596f29674049dea08b8c9ba041d60",
+      "file": "ef491d2fbc14de79852e41fe4bcda99a83c596f29674049dea08b8c9ba041d60.webp",
+      "bytes": 208888
+    },
+    {
+      "id": "d82e0e39a16c9e11eee76c6977bc1c3193a1702bbe01f63684566976e4841fa2",
+      "file": "d82e0e39a16c9e11eee76c6977bc1c3193a1702bbe01f63684566976e4841fa2.webp",
+      "bytes": 295680
+    },
+    {
+      "id": "60cf6f8dd9926e71ca982d4fdcd649b01f2e33c0a185634dde7856db10d8c3c8",
+      "file": "60cf6f8dd9926e71ca982d4fdcd649b01f2e33c0a185634dde7856db10d8c3c8.webp",
+      "bytes": 230186
+    },
+    {
+      "id": "0db35d4e7b19c16661459a9662e277647b506fa9b2465ad0045147f70266ed8d",
+      "file": "0db35d4e7b19c16661459a9662e277647b506fa9b2465ad0045147f70266ed8d.webp",
+      "bytes": 495250
+    },
+    {
+      "id": "06b679cb404460589be8d3ec9cd8e270a3428aeb26c56e6c26f7dfb0e8079a78",
+      "file": "06b679cb404460589be8d3ec9cd8e270a3428aeb26c56e6c26f7dfb0e8079a78.webp",
+      "bytes": 289020
+    },
+    {
+      "id": "3b5358c05536f8b34fea7247708f4b556c405c7361f5e2412a6a4525aac422c4",
+      "file": "3b5358c05536f8b34fea7247708f4b556c405c7361f5e2412a6a4525aac422c4.webp",
+      "bytes": 268504
+    },
+    {
+      "id": "1d3d621a76e4ad943a77f5dba33af7d80bc952b42821de7c2a871fc9fd10eb5a",
+      "file": "1d3d621a76e4ad943a77f5dba33af7d80bc952b42821de7c2a871fc9fd10eb5a.webp",
+      "bytes": 419138
+    },
+    {
+      "id": "93b0016ad15fb27885aa00a70998deb2d220192be7a2b4fb3d801218aecf7901",
+      "file": "93b0016ad15fb27885aa00a70998deb2d220192be7a2b4fb3d801218aecf7901.webp",
+      "bytes": 363570
+    },
+    {
+      "id": "417da3769f69ef1cf71b098156608db9753f950dd21d2794b611b23fdaa153b8",
+      "file": "417da3769f69ef1cf71b098156608db9753f950dd21d2794b611b23fdaa153b8.webp",
+      "bytes": 433970
+    },
+    {
+      "id": "2b80ed73e267e1a28da7978eee350f57313045a5d0226795a9ca3318421ca2f1",
+      "file": "2b80ed73e267e1a28da7978eee350f57313045a5d0226795a9ca3318421ca2f1.webp",
+      "bytes": 298764
+    },
+    {
+      "id": "7ca553a433b58d8762c3d9f68c6ce66836b964f89a763405eea77a22e91432c6",
+      "file": "7ca553a433b58d8762c3d9f68c6ce66836b964f89a763405eea77a22e91432c6.webp",
+      "bytes": 253204
+    },
+    {
+      "id": "a818d36605dfe457ed0078ec87c6dbc9a2448ddbef05f4822c17c805dbb64ed1",
+      "file": "a818d36605dfe457ed0078ec87c6dbc9a2448ddbef05f4822c17c805dbb64ed1.webp",
+      "bytes": 177774
+    },
+    {
+      "id": "9c8d801efa680c9aa36e62afad71191528ef39567a760e4cad63cf85c5eae326",
+      "file": "9c8d801efa680c9aa36e62afad71191528ef39567a760e4cad63cf85c5eae326.webp",
+      "bytes": 184454
+    },
+    {
+      "id": "5bf43a0c73b4698f441098e2dff5e6b01c44e73ab4a00249e981e09e0a250c10",
+      "file": "5bf43a0c73b4698f441098e2dff5e6b01c44e73ab4a00249e981e09e0a250c10.webp",
+      "bytes": 175130
+    }
+  ],
+  "archive": {
+    "bytes": 595085379,
+    "sha256": "66867288256e20b43b40882962dcbdb9b4fb124e5bfa453959c0d3d0bf0b11bb"
+  },
+  "publicGET": [
+    {
+      "file": "manifest.json",
+      "bytes": 220547,
+      "sha256": "db99b0343faeee324ed3907d82284bfff522287743055c148715b86ca23cd207"
+    },
+    {
+      "file": "3d9741dd6b7b684ca4da56350b296da4424f399df55ed8d1990844ce7d450156.webp",
+      "bytes": 201724,
+      "sha256": "3d9741dd6b7b684ca4da56350b296da4424f399df55ed8d1990844ce7d450156"
+    },
+    {
+      "file": "18f502264153aadfe3d88bb4a93419c7214743f48186a348f04d5f44c3a8c02f.webp",
+      "bytes": 315380,
+      "sha256": "18f502264153aadfe3d88bb4a93419c7214743f48186a348f04d5f44c3a8c02f"
+    },
+    {
+      "file": "4a77f22a37a37a2ea878d8da38622c8487d2abd703f3f054154e9b2f1c77f1be.webp",
+      "bytes": 280354,
+      "sha256": "4a77f22a37a37a2ea878d8da38622c8487d2abd703f3f054154e9b2f1c77f1be"
+    },
+    {
+      "file": "ef491d2fbc14de79852e41fe4bcda99a83c596f29674049dea08b8c9ba041d60.webp",
+      "bytes": 208888,
+      "sha256": "ef491d2fbc14de79852e41fe4bcda99a83c596f29674049dea08b8c9ba041d60"
+    },
+    {
+      "file": "d82e0e39a16c9e11eee76c6977bc1c3193a1702bbe01f63684566976e4841fa2.webp",
+      "bytes": 295680,
+      "sha256": "d82e0e39a16c9e11eee76c6977bc1c3193a1702bbe01f63684566976e4841fa2"
+    },
+    {
+      "file": "60cf6f8dd9926e71ca982d4fdcd649b01f2e33c0a185634dde7856db10d8c3c8.webp",
+      "bytes": 230186,
+      "sha256": "60cf6f8dd9926e71ca982d4fdcd649b01f2e33c0a185634dde7856db10d8c3c8"
+    },
+    {
+      "file": "0db35d4e7b19c16661459a9662e277647b506fa9b2465ad0045147f70266ed8d.webp",
+      "bytes": 495250,
+      "sha256": "0db35d4e7b19c16661459a9662e277647b506fa9b2465ad0045147f70266ed8d"
+    },
+    {
+      "file": "06b679cb404460589be8d3ec9cd8e270a3428aeb26c56e6c26f7dfb0e8079a78.webp",
+      "bytes": 289020,
+      "sha256": "06b679cb404460589be8d3ec9cd8e270a3428aeb26c56e6c26f7dfb0e8079a78"
+    },
+    {
+      "file": "3b5358c05536f8b34fea7247708f4b556c405c7361f5e2412a6a4525aac422c4.webp",
+      "bytes": 268504,
+      "sha256": "3b5358c05536f8b34fea7247708f4b556c405c7361f5e2412a6a4525aac422c4"
+    },
+    {
+      "file": "1d3d621a76e4ad943a77f5dba33af7d80bc952b42821de7c2a871fc9fd10eb5a.webp",
+      "bytes": 419138,
+      "sha256": "1d3d621a76e4ad943a77f5dba33af7d80bc952b42821de7c2a871fc9fd10eb5a"
+    },
+    {
+      "file": "93b0016ad15fb27885aa00a70998deb2d220192be7a2b4fb3d801218aecf7901.webp",
+      "bytes": 363570,
+      "sha256": "93b0016ad15fb27885aa00a70998deb2d220192be7a2b4fb3d801218aecf7901"
+    },
+    {
+      "file": "417da3769f69ef1cf71b098156608db9753f950dd21d2794b611b23fdaa153b8.webp",
+      "bytes": 433970,
+      "sha256": "417da3769f69ef1cf71b098156608db9753f950dd21d2794b611b23fdaa153b8"
+    },
+    {
+      "file": "2b80ed73e267e1a28da7978eee350f57313045a5d0226795a9ca3318421ca2f1.webp",
+      "bytes": 298764,
+      "sha256": "2b80ed73e267e1a28da7978eee350f57313045a5d0226795a9ca3318421ca2f1"
+    },
+    {
+      "file": "7ca553a433b58d8762c3d9f68c6ce66836b964f89a763405eea77a22e91432c6.webp",
+      "bytes": 253204,
+      "sha256": "7ca553a433b58d8762c3d9f68c6ce66836b964f89a763405eea77a22e91432c6"
+    },
+    {
+      "file": "a818d36605dfe457ed0078ec87c6dbc9a2448ddbef05f4822c17c805dbb64ed1.webp",
+      "bytes": 177774,
+      "sha256": "a818d36605dfe457ed0078ec87c6dbc9a2448ddbef05f4822c17c805dbb64ed1"
+    },
+    {
+      "file": "9c8d801efa680c9aa36e62afad71191528ef39567a760e4cad63cf85c5eae326.webp",
+      "bytes": 184454,
+      "sha256": "9c8d801efa680c9aa36e62afad71191528ef39567a760e4cad63cf85c5eae326"
+    },
+    {
+      "file": "5bf43a0c73b4698f441098e2dff5e6b01c44e73ab4a00249e981e09e0a250c10.webp",
+      "bytes": 175130,
+      "sha256": "5bf43a0c73b4698f441098e2dff5e6b01c44e73ab4a00249e981e09e0a250c10"
+    },
+    {
+      "file": "bundle.zip",
+      "bytes": 595085379,
+      "sha256": "66867288256e20b43b40882962dcbdb9b4fb124e5bfa453959c0d3d0bf0b11bb"
+    }
+  ],
+  "pass": true
+}

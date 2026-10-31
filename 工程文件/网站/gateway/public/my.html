@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>我的投稿 · 创意工坊 · 东京都2051</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/workshop/theme.css?v=motion20261027"><script src="/workshop/theme-runtime.js?v=motion20261027"></script><script>CxxThemeRuntime.install(window);</script><link rel="stylesheet" href="/site.css?v=motion20261027"><link rel="stylesheet" href="/workshop/poster-system.css?v=motion20261027">
+<script src="/i18n.js?v=site-accounts-20261031"></script>
+<script src="/user.js?v=account-ui-20261031"></script><script src="/workshop/submission-template.js?v=submission20261006"></script>
+<script src="/workshop/site-ui.js?v=motion20261027" defer></script></head>
+<body class="site account-page poster-theme">
+<a class="skip-link" href="#main" data-ui-zh="跳到内容" data-ui-en="Skip to content" data-ui-ja="本文へ移動">跳到内容</a>
+<header class="site-header">
+  <div class="bar">
+    <a class="logo" href="/"><span class="cube"></span>TOKYO 2051</a>
+    <nav class="nav">
+      <a href="/" data-i18n="nav.home">首页</a><a href="/recent.html" data-ui-zh="近期详情" data-ui-en="Latest details" data-ui-ja="最近の情報">近期详情</a><a href="/play/" data-ui-zh="开始游玩" data-ui-en="Play now" data-ui-ja="プレイする">开始游玩</a>
+      <a class="on" href="/workshop.html" data-i18n="nav.ws">创意工坊</a>
+      <a href="/workshop/" data-i18n="nav.fb">留言墙</a>
+      <a href="/recent.html#download">卡下载</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap narrow">
+<div class="page-register" aria-hidden="true"><span>03 / YOUR CREATIONS</span><span>TOKYO 2051</span></div>
+  <header class="page-masthead"><h1 class="page-title" data-i18n="my.title">我的投稿</h1>
+  <p data-ui-zh="修改后需重新审核。" data-ui-en="Changes require another review." data-ui-ja="変更後は再審査が必要です。">修改后需重新审核。</p></header>
+  <div class="panel">
+    <div class="toolbar login-actions">
+      <span id="loginstate" class="meta" role="status" aria-live="polite">正在检查登录状态……</span>
+      <button id="loginbtn" class="btn sm" hidden data-i18n="sub.login.btn">登录 / 注册</button>
+      <button id="cancel-login" class="btn sm ghost" hidden data-ui-zh="取消登录" data-ui-en="Cancel login" data-ui-ja="ログインを中止">取消登录</button>
+      <button id="logoutbtn" class="btn sm ghost" hidden data-ui-zh="退出登录" data-ui-en="Sign out" data-ui-ja="ログアウト">退出登录</button>
+    </div>
+  </div>
+  <form id="my-controls" class="toolbar list-toolbar" hidden role="search">
+    <label class="fld" for="q" data-ui-zh="搜索我的投稿" data-ui-en="Search my posts" data-ui-ja="自分の投稿を検索">搜索我的投稿</label>
+    <input id="q" type="search" data-ui-ph-zh="标题 / 简介" data-ui-ph-en="Title / summary" data-ui-ph-ja="タイトル / 概要">
+    <button id="search" type="submit" class="btn sm" data-i18n="ws.search">搜索</button>
+    <button id="clear-search" type="button" class="btn sm ghost" data-ui-zh="清除" data-ui-en="Clear" data-ui-ja="クリア">清除</button>
+    <button id="refresh-my" type="button" class="btn sm ghost" data-ui-zh="刷新" data-ui-en="Refresh" data-ui-ja="更新">刷新</button>
+    <a class="btn sm ghost" href="/workshop/submit.html" data-ui-zh="新投稿" data-ui-en="New post" data-ui-ja="新規投稿">新投稿</a>
+  </form>
+  <p id="msg" class="msg" role="status" aria-live="polite"></p>
+  <button id="retry" class="btn sm ghost" hidden data-i18n="common.retry">重试</button>
+  <div id="list" aria-busy="false"><div class="empty" data-ui-zh="登录后显示你的投稿。" data-ui-en="Sign in to see your posts." data-ui-ja="ログインすると投稿を表示します。">登录后显示你的投稿。</div></div>
+  <nav id="my-pagination" class="pagination" hidden aria-label="投稿翻页 / Post pages / 投稿ページ">
+    <button id="prev" class="btn ghost" disabled data-ui-zh="上一页" data-ui-en="Previous" data-ui-ja="前へ">上一页</button>
+    <span id="page" class="meta"></span>
+    <button id="next" class="btn ghost" disabled data-ui-zh="下一页" data-ui-en="Next" data-ui-ja="次へ">下一页</button>
+  </nav>
+</main>
+
+<footer class="site-footer">
+  <div class="fline"><span data-i18n="footer.line">CYBER2051.TOP · 粉丝二创作品，与官方无关</span></div>
+</footer>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const myStrings=new Map();
+const ML=(zh,en,ja)=>{const lang=window.CXXI18N?.current()||'zh';const value=window.CXXUI?.t?window.CXXUI.t(zh,en,ja):lang==='en'?en:lang==='ja'?ja:zh;myStrings.set(value,[zh,en,ja]);return value;};
+const TYPE_CN={character:'NPC / 人物资料',world_factor:'世界 / 地点资料',user_identity:'玩家出身资料',contract:'委托 / 侧剧情',shop_item:'商店物品',blueprint:'蓝图',recipe:'配方',skill:'技能',function:'功能',code_component:'代码集成提案'};
+const authHeaders=extra=>CXXUser.headers(extra);
+let loginName=null,loginPending=false,loading=false,filterChanged=false,requestId=0,abort,listItems=[],pageIndex=0,nextCursor=null,total=0,lastRequested=0;
+let query=new URLSearchParams(location.search).get('q')||'';
+const cursors=[null];$('q').value=query;
+function say(value,err=false){$('msg').textContent=value;$('msg').className='msg '+(err?'err':'');}
+function emptyLoggedOut(){const e=document.createElement('div');e.className='empty';e.textContent=ML('登录后显示你的投稿。','Sign in to see your posts.','ログインすると投稿を表示します。');$('list').replaceChildren(e);}
+function renderLogin(name){
+  loginName=name;$('loginstate').textContent=name?ML('已登录：','Signed in: ','ログイン中：')+name:ML('登录后管理你的投稿；填写中的草稿不会被登录操作清空。','Sign in to manage your posts. Login does not clear drafts.','ログインすると投稿を管理できます。ログイン操作で下書きは消えません。');
+  $('loginbtn').hidden=Boolean(name);$('logoutbtn').hidden=!name;$('my-controls').hidden=!name;$('my-pagination').hidden=!name;
+  if(!name){requestId++;abort?.abort();listItems=[];loading=false;$('list').setAttribute('aria-busy','false');$('retry').hidden=true;emptyLoggedOut();}
+}
+function renderPage(){
+  const box=$('list');box.replaceChildren();
+  if(!listItems.length){
+    const e=document.createElement('div');e.className='empty';e.textContent=query?ML('没有匹配的投稿。清除搜索再看看。','No matching posts. Clear the search to see all.','該当する投稿はありません。検索をクリアしてください。'):ML('你还没有投稿。','No posts yet.','投稿はまだありません。');
+    const a=document.createElement('a');a.href='/workshop/submit.html';a.textContent=ML('去投稿 →','Create a post →','投稿する →');e.append(document.createElement('br'),a);box.append(e);
+  }
+  for(const it of listItems)box.append(card(it));
+  $('page').textContent=ML('第 '+(pageIndex+1)+' 页 · 共 '+total+' 份','Page '+(pageIndex+1)+' · '+total+' posts',(pageIndex+1)+' ページ · 全 '+total+' 件');
+  $('prev').disabled=loading||pageIndex===0;$('next').disabled=loading||!nextCursor;
+}
+async function load(target=pageIndex){
+  if(!loginName)return;
+  const request=++requestId;lastRequested=target;abort?.abort();abort=new AbortController();loading=true;
+  $('list').setAttribute('aria-busy','true');$('prev').disabled=true;$('next').disabled=true;$('search').disabled=true;$('retry').hidden=true;say(ML('正在读取投稿……','Loading posts…','投稿を読み込んでいます…'));
+  const params=new URLSearchParams({pageSize:'24'});if(cursors[target])params.set('cursor',cursors[target]);if(query)params.set('q',query);
+  try{
+    const r=await fetch('/api/workshop/me/submissions?'+params,{headers:authHeaders(),cache:'no-store',signal:abort.signal});
+    if(r.status===401){if(request===requestId){CXXUser.logout();say(ML('登录已过期，请重新登录。','Login expired. Sign in again.','ログイン期限切れです。再ログインしてください。'),true);}return;}
+    const j=await r.json();if(!r.ok||!j.ok||!Array.isArray(j.items))throw Error('read_failed');
+    if(request!==requestId)return;
+    filterChanged=false;pageIndex=target;listItems=j.items;nextCursor=j.nextCursor||null;total=Number.isFinite(j.total)?j.total:j.items.length;say('');renderPage();
+  }catch(e){if(request!==requestId||e.name==='AbortError')return;say(ML('读取失败，已显示的投稿仍保留。','Could not load posts. Previously loaded posts are kept.','読み込めませんでした。表示済みの投稿は保持しています。'),true);$('retry').hidden=false;}
+  finally{if(request===requestId){loading=false;$('list').setAttribute('aria-busy','false');$('search').disabled=false;$('prev').disabled=filterChanged||pageIndex===0;$('next').disabled=filterChanged||!nextCursor;}}
+}
+$('my-controls').addEventListener('submit',event=>{event.preventDefault();query=$('q').value.trim();filterChanged=true;cursors.splice(0,cursors.length,null);const url=new URL(location.href);if(query)url.searchParams.set('q',query);else url.searchParams.delete('q');history.replaceState(null,'',url);load(0);});
+$('clear-search').addEventListener('click',()=>{$('q').value='';$('my-controls').requestSubmit();});
+$('refresh-my').addEventListener('click',()=>load(filterChanged?0:pageIndex));
+$('prev').addEventListener('click',()=>{if(!loading&&!filterChanged&&pageIndex>0)load(pageIndex-1);});
+$('next').addEventListener('click',()=>{if(loading||filterChanged||!nextCursor)return;cursors[pageIndex+1]=nextCursor;load(pageIndex+1);});
+$('retry').addEventListener('click',()=>load(lastRequested));
+$('loginbtn').addEventListener('click',async()=>{
+  if(loginPending)return;loginPending=true;$('loginbtn').disabled=true;$('cancel-login').hidden=false;
+  try{const user=await CXXUser.login({onState:state=>{$('loginstate').textContent=state.message;}});renderLogin(user.displayName);load(0);}
+  catch(e){$('loginstate').textContent=e.message;}
+  finally{loginPending=false;$('loginbtn').disabled=false;$('cancel-login').hidden=true;}
+});
+$('cancel-login').addEventListener('click',()=>CXXUser.cancelLogin());
+$('logoutbtn').addEventListener('click',()=>CXXUser.logout());
+document.addEventListener('cxx-user-changed',e=>{if(loginPending)return;const name=e.detail.account?.displayName||null;const changed=name!==loginName;renderLogin(name);if(changed&&name)load(0);});
+
+function card(it) {
+  const CL=(zh,en,ja)=>{const lang=CXXI18N.current?.()||'zh';return lang==='en'?en:lang==='ja'?ja:zh;};
+  const types={character:['NPC / 人物资料','NPC / character lore','NPC / 人物資料'],world_factor:['世界 / 地点资料','World / location lore','世界 / 場所資料'],user_identity:['玩家出身资料','Player origin','プレイヤーの出自資料'],contract:['委托 / 侧剧情','Contract / side story','依頼 / サイドストーリー'],shop_item:['商店物品','Shop item','ショップ品'],blueprint:['蓝图','Blueprint','設計図'],recipe:['配方','Recipe','レシピ'],skill:['技能','Skill','スキル'],function:['功能','Function','機能']};
+  const states={pending:['待审核','Pending review','審査待ち'],approved:['已通过','Approved','承認済み'],rejected:['未通过','Rejected','却下'],withdrawn:['已撤回','Withdrawn','取下げ済み']};
+  const c=document.createElement('article');c.className='card list-item';c.setAttribute?.('data-post-id',String(it.id));
+  const meta=document.createElement('div');meta.className='meta';
+  const renderMeta=()=>{meta.textContent='#'+it.id+' · '+(types[it.type]?CL(...types[it.type]):TYPE_CN[it.type]||it.type)+' · rev'+it.revision+' · '+(states[it.status]?CL(...states[it.status]):it.status)+(it.hasFile?' · '+Math.round((it.fileSize||0)/1024)+' KB':'');};
+  renderMeta();
+  const t=document.createElement('h2');t.className='list-item-title';t.textContent=it.title;
+  const s=document.createElement('p');s.className='meta';s.textContent=(it.summary||CL('无简介','No summary','概要なし')).slice(0,160);
+  c.append(meta,t,s);
+  let note;
+  if(it.reviewNote){note=document.createElement('p');note.className='review-note';note.textContent=CL('审核说明：','Review note: ','審査の補足：')+it.reviewNote;c.append(note);}
+  const acts=document.createElement('div');acts.className='toolbar';acts.style.margin='0';
+  const feedback=document.createElement('p');feedback.className='msg inline-message';feedback.setAttribute?.('role','status');feedback.setAttribute?.('aria-live','polite');
+  let rowPending=false,lastFeedback=null,lastError=false;
+  const langActions=[];
+  const mk=(label,cls,fn)=>{const b=document.createElement('button');b.type='button';b.className='btn sm '+cls;b.textContent=Array.isArray(label)?CL(...label):label;b.addEventListener('click',fn);if(Array.isArray(label))langActions.push([b,label]);return b;};
+  const say=(message,err=false)=>{lastFeedback=message;lastError=err;feedback.textContent=Array.isArray(message)?CL(...message):message;feedback.className='msg inline-message '+(err?'err':'ok');};
+  const pending=value=>{rowPending=value;for(const button of c.querySelectorAll('button'))button.disabled=value;c.setAttribute?.('aria-busy',String(value));};
+  const failed=['操作未成功，请稍后重试。','Action failed. Retry later.','操作できませんでした。後で再試行してください。'];
+  const network=['网络中断，结果尚未确认。请刷新列表确认后再操作。','Connection lost; the result is unconfirmed. Refresh the list before retrying.','接続が途切れ、結果を確認できません。一覧を更新してから再操作してください。'];
+  const prefix='post-'+it.id+'-',canEdit=CxxSubmissionTemplate.isOpen(it.type,it.payload)&&it.status!=='withdrawn';
+  acts.append(mk(canEdit?['改稿','Edit','編集']:['查看原稿','Read original','原稿を見る'],'',()=>{if(!rowPending)location.href='/workshop/submit.html?edit='+encodeURIComponent(it.id);}));
+  acts.append(mk(['导出原稿','Export original','原稿を書き出す'],'ghost',()=>{
+    const url=URL.createObjectURL(new Blob([JSON.stringify(it,null,2)+'\n'],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='workshop-original-'+it.id+'-rev'+it.revision+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }));
+  const file=document.createElement('input');file.type='file';file.accept='.png,.json,.txt,.js';file.style.display='none';
+  file.addEventListener('change',async()=>{
+    if(rowPending)return;const f=file.files[0];if(!f)return;
+    if(f.size>10*1024*1024){say(['附件超过 10MB。','Attachment exceeds 10MB.','添付は 10MB 以下にしてください。'],true);file.value='';return;}
+    pending(true);say(['正在上传附件……','Uploading attachment…','添付を送信しています…']);
+    try{
+      const headers=authHeaders({'X-Filename':encodeURIComponent(f.name),'Content-Type':'application/octet-stream'}),bytes=new Uint8Array(await f.arrayBuffer());
+      if(!c.isConnected||headers.Authorization!==authHeaders().Authorization)return;
+      const r=await fetch('/api/workshop/submissions/'+it.id+'/attachment',{method:'POST',headers,body:bytes}),j=await r.json().catch(()=>({}));
+      if(!r.ok){say(failed,true);return;}
+      it.status='pending';it.revision=j.revision||it.revision+1;it.hasFile=true;it.fileSize=f.size;renderMeta();say(['附件已更新，投稿重新待审。','Attachment updated; the post awaits review again.','添付を更新しました。投稿は再審査待ちです。']);
+    }catch{say(network,true);}finally{pending(false);file.value='';}
+  });
+  if(canEdit&&it.type!=='contract')acts.append(mk(it.hasFile?['换附件','Replace attachment','添付を差し替え']:['传附件','Add attachment','添付を追加'],'ghost',()=>{if(!rowPending)file.click();}),file);
+  let withdrawBox,renderWithdrawNote=()=>{};
+  if(it.status!=='withdrawn'){
+    withdrawBox=document.createElement('div');withdrawBox.className='panel withdraw-confirm';withdrawBox.hidden=true;withdrawBox.style.marginTop='12px';withdrawBox.setAttribute?.('role','group');withdrawBox.setAttribute?.('aria-labelledby',prefix+'withdraw-note');
+    const withdrawNote=document.createElement('p');withdrawNote.id=prefix+'withdraw-note';withdrawNote.className='hint';
+    const noteText=['撤回这份投稿？它会离开公开目录，记录仍保留。','Withdraw this post? It leaves the public catalog; the record is kept.','この投稿を取り下げますか？公開一覧から外れますが、記録は残ります。'];
+    renderWithdrawNote=()=>{withdrawNote.textContent=CL(...noteText);};renderWithdrawNote();
+    const withdrawActions=document.createElement('div');withdrawActions.className='toolbar';
+    const withdraw=mk(['撤回','Withdraw','取り下げ'],'warn',()=>{if(rowPending)return;withdrawBox.hidden=false;confirmWithdraw.focus?.();});
+    const confirmWithdraw=mk(['确认撤回','Confirm withdrawal','取下げを確定'],'warn',async()=>{
+      if(rowPending||withdrawBox.hidden)return;
+      pending(true);say(['正在撤回……','Withdrawing…','取り下げています…']);
+      try{const r=await fetch('/api/workshop/submissions/'+it.id+'/withdraw',{method:'POST',headers:authHeaders({'Content-Type':'application/json'}),body:'{}'});if(!r.ok){say(failed,true);return;}it.status='withdrawn';renderMeta();acts.hidden=true;withdraw.hidden=true;withdrawBox.hidden=true;say(['已撤回，公开目录中已隐藏。','Withdrawn and hidden from the public catalog.','取り下げました。公開一覧から非表示になりました。']);feedback.tabIndex=-1;feedback.focus?.();}
+      catch{say(network,true);}finally{pending(false);}
+    });
+    const cancelWithdraw=mk(['取消','Cancel','キャンセル'],'ghost',()=>{if(rowPending)return;withdrawBox.hidden=true;withdraw.focus?.();});
+    withdrawActions.append(confirmWithdraw,cancelWithdraw);withdrawBox.append(withdrawNote,withdrawActions);acts.append(withdraw);
+  }
+  // 撤回后仍可查看和导出原稿，改投与附件操作由 canEdit 控制。
+  c.append(acts,feedback);
+  if(withdrawBox)c.append(withdrawBox);
+  c.addEventListener('cxx-card-language',()=>{renderMeta();if(note)note.textContent=CL('审核说明：','Review note: ','審査の補足：')+it.reviewNote;for(const [b,label]of langActions)b.textContent=CL(...label);renderWithdrawNote();if(lastFeedback)say(lastFeedback,lastError);});
+  return c;
+}
+async function boot(){
+  try{const user=await CXXUser.check();const alreadyLoaded=Boolean(loginName);renderLogin(user?.displayName||null);if(user&&!alreadyLoaded)load(0);}
+  catch{renderLogin(null);say(ML('登录状态暂不可用，请重试登录。','Login status unavailable. Retry login.','ログイン状態を確認できません。再度ログインしてください。'),true);}
+}
+document.addEventListener('cxx-lang-changed',()=>{if(!loginPending)renderLogin(loginName);if(loginName&&!listItems.length&&!loading)renderPage();for(const c of $('list').querySelectorAll('[data-post-id]'))c.dispatchEvent(new Event('cxx-card-language'));if(loginName)$('page').textContent=ML('第 '+(pageIndex+1)+' 页 · 共 '+total+' 份','Page '+(pageIndex+1)+' · '+total+' posts',(pageIndex+1)+' ページ · 全 '+total+' 件');const value=myStrings.get($('msg').textContent);if(value)$('msg').textContent=ML(...value);});
+boot();
+</script>
+</body>
+</html>

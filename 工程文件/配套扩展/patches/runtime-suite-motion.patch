@@ -1,0 +1,38 @@
+diff --git a/visual/runtime/motion.mjs b/visual/runtime/motion.mjs
+index bc803f4..86df93d 100644
+--- a/visual/runtime/motion.mjs
++++ b/visual/runtime/motion.mjs
+@@ -156,8 +156,16 @@ export function createMotion({ settings = () => ({ enabled: true, reducedMotion:
+       Object.assign(previous.style, { position:'absolute', left:from.box.left-box.left+container.scrollLeft+'px', top:from.box.top-box.top+container.scrollTop+'px', width:from.box.width+'px', height:from.box.height+'px', margin:'0', zIndex:'1', pointerEvents:'none' });
+       previous.hidden = false; previous.inert = true; next.hidden = false;
+       const begin = view.performance?.now() || 0;
++      // 旧页退出结束就提交隐藏：entry.settle() 会 cancel() 掉动画并把透明度弹回元素自身的 1，
++      // 若等两条通道都结束才统一隐藏，这段时间里旧页会重新压住新页（隔空复显）。
++      // 只认"这一过渡仍然拥有容器"的完成回调；被替代／取消／销毁时不隐藏，交给 task.finish 收尾。
++      const retireOld = status => {
++        if (status !== 'completed') return;
++        if (transitions.get(container) !== task) return;
++        previous.hidden = true;
++      };
+       Promise.all([
+-        channel(previous, 'navigate', [from.visual, { opacity:0, transform:`translateX(${-Math.sign(direction)*r.distance}px)` }], {duration:r.exit}),
++        channel(previous, 'navigate', [from.visual, { opacity:0, transform:`translateX(${-Math.sign(direction)*r.distance}px)` }], {duration:r.exit}, retireOld),
+         channel(next, 'navigate', [start || r.entry(direction)[0], {opacity:1,transform:'none'}]),
+       ]).then(values => {
+         if (done) return;
+@@ -197,7 +205,14 @@ export function createMotion({ settings = () => ({ enabled: true, reducedMotion:
+       transitions.set(container,{finish});
+       const r=recipe(), incoming=channel(container,'update',[start || r.entry(direction)[0],r.entry(direction)[1]]);
+       // Ghost is owned by the same scope but never catches focus or input.
+-      const outgoing=ghost?channel(ghost,'update',[{opacity:1},{opacity:0}],{duration:r.exit}):Promise.resolve(result('completed'));
++      // 旧副本的退场同样要在"自己退出完成"时立刻收起来：settle() 里的 cancel() 会让它弹回不透明，
++      // 而它 z-index 高于新内容，等待入场结束再统一清理就会出现旧画面复显。
++      const retireGhost = status => {
++        if (status !== 'completed' || !ghost) return;
++        if (transitions.get(container)?.finish !== finish) return;
++        ghost.style.display = 'none';
++      };
++      const outgoing=ghost?channel(ghost,'update',[{opacity:1},{opacity:0}],{duration:r.exit},retireGhost):Promise.resolve(result('completed'));
+       return Promise.all([incoming,outgoing]).then(values=>{finish();return result(values.every(v=>v.status==='completed')?'completed':'cancelled');});
+     }
+ 

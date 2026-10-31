@@ -1,0 +1,235 @@
+(function(root,factory){const api=factory(root);if(typeof module==='object'&&module.exports)module.exports=api;else root.CxxGameplayHost=api;})(typeof globalThis==='object'?globalThis:window,function(root){
+  'use strict';
+  const CryptoCompat=typeof module==='object'&&module.exports?require('./crypto-compat.js'):globalThis.CxxCrypto;
+  const KEY='__cxx_gameplay_actions',clone=v=>JSON.parse(JSON.stringify(v));
+  const saving=e=>['host-busy','update-already-running','action-not-saved','action-mvu-busy'].includes(e.code);
+  function create({api=root,host,backup,getSeed,waitForInstall,core:Core=root.CxxUpdateCore,content:Content=root.CxxContent,gameplay:G=root.CxxGameplay,actions:Actions=root.CxxGameplayActions,talents:T=root.CxxTalents,talentUI:UI=root.CxxTalentUI}){
+    const c=()=>api.SillyTavern.getContext(),doc=root.parent?.document || root.document;
+    const sendReady=()=>{
+      const b=doc.querySelector('#send_but');
+      if(!b || b.disabled || b.isConnected===false || !b.getClientRects().length)return false;
+      const style=doc.defaultView.getComputedStyle(b);if(style.display==='none')return false;
+      if(style.visibility!=='hidden')return true;
+      if(doc.body.getAttribute('data-cxx-gal-active')!=='1')return false;
+      const gal=doc.defaultView.__cxx_gal_g1__;if(typeof gal?.nativeSendReady!=='function')return false;
+      try{const current=host.getContext();return !current.busy && gal.nativeSendReady({characterKey:current.characterKey,chatId:current.chatId})===true;}catch(_){return false;}
+    };
+    const fail=(code,message)=>{throw Object.assign(new Error(message),{code});};
+    const mvu=()=>api.Mvu || root.Mvu || doc.defaultView?.Mvu;
+    const extraBusy=()=>false;
+    function assertMvuIdle(){
+      if(extraBusy())fail('action-mvu-busy','MVU正在计算变量，请等待完成，不重复发送行动');
+      if(doc.defaultView.__cxx_gal_g1__?.numericBusy?.()===true)fail('action-mvu-busy','MVU结果正在解析或等待保存，请等待核对，不重复发送行动');
+    }
+    function assertMvuRequestPolicy(){
+      if(!mvu())fail('action-mvu-settings','MVU尚未加载，请先确认本卡的MVU脚本已启用。');
+    }
+    const hash=value=>Core.sha256(value);
+    const raw=root.CxxUpdateBackup.nativeAdapters({api,host,fetch:root.fetch.bind(root),root});
+    const identity=()=>{const v=host.getContext();return {characterKey:v.characterKey,chatId:v.chatId};};
+    async function disk(){const expected=host.getContext(),value=await raw.readCurrent(expected);return value.jsonl.trim().split(/\r?\n/).map(JSON.parse);}
+    async function read(){
+      const expected=host.getContext(),mvuBusy=extraBusy();host.assertContext(expected);
+      const full=await backup.captureFull(),rows=full.payload.diskJSONL.trim().split(/\r?\n/).map(JSON.parse);
+      host.assertContext(expected);
+      if(Core.canonical(rows.slice(1))!==Core.canonical(full.payload.messages) || Core.canonical(rows[0].chat_metadata)!==Core.canonical(full.payload.header.chat_metadata))fail('action-not-saved','当前聊天尚在保存，暂不确认行动结果');
+      const messages=rows.slice(1);let stat,floor;
+      for(let i=messages.length-1;i>=0;i--){stat=messages[i].variables?.[messages[i].swipe_id || 0]?.stat_data;if(stat){floor=i;break;}}
+      if(!stat)fail('action-mvu-missing','当前聊天没有已保存的MVU变量，请先完成原生开局');
+      const vars=rows[0].chat_metadata.variables || {},state=Content.withMigration(host.readState(),vars);
+      const stories=Content.storyChoices(state.registry,{subscriptions:state.subscriptions,pins:vars.__cxx_content_pins || {}}),card=api.getCharData('current');
+      const openingEligible=messages.length===1 && !messages[0].is_user && messages[0].mes===(card.data?.first_mes ?? card.first_mes) && !vars.__cxx_migration && vars.__cxx_content_origin?.newChat===true;
+      const growthIdentity=vars.__cxx_identity;
+      return {context:identity(),messages,stat,floor,records:vars[KEY]?.records || {},busy:mvuBusy || extraBusy(),growthIdentity,
+        stories,openingEligible,sendReady:sendReady(),
+        catalog:{...G.catalogue(state.registry,{mapIndex:getSeed().mapIndex,subscriptions:state.subscriptions,pins:vars.__cxx_content_pins || {},starts:stories.starts,openingManifest:getSeed().openingManifest}),growthIdentity}};
+    }
+    async function putRecord(record){
+      assertMvuIdle();
+      const expected=host.getContext();host.assertContext(expected);const before=await disk();
+      if(record.status==='submitted' && !before[0].chat_metadata.variables?.[KEY]?.records?.[record.id])assertMvuRequestPolicy();
+      const vars=api.getVariables({type:'chat'});
+      if(Core.canonical(before[0].chat_metadata.variables || {})!==Core.canonical(vars))fail('action-not-saved','聊天设置尚未保存，停止提交');
+      assertMvuIdle();
+      const save=async()=>{await api.updateVariablesWith(all=>({...all,[KEY]:{...(all[KEY] || {}),format:1,records:{...(all[KEY]?.records || {}),[record.id]:clone(record)}}}),{type:'chat'});
+      host.assertContext(expected);let saveError;
+      try{await c().saveMetadata();}catch(e){saveError=e;}
+      if(saveError)throw saveError;};
+      if(host.withChatSave)await host.withChatSave(expected,save);else await save();
+      host.assertContext(expected);const rows=await disk();
+      if(Core.canonical(rows[0].chat_metadata.variables?.[KEY]?.records?.[record.id] || null)!==Core.canonical(record))fail('action-save-unconfirmed','行动记录没有保存确认');
+      if(Core.canonical(rows.slice(1))!==Core.canonical(before.slice(1)))fail('action-context','保存行动记录期间聊天发生变化，停止发送');
+    }
+    const engine=Actions.create({gameplay:T?{...G,plan:T.plan,prompt:T.prompt}:G,allowGameplay:request=>Boolean(T)&&['growth-initialize','talent-allocate'].includes(request.action),hash,uuid:()=>CryptoCompat.uuid(),host:{read,
+      lock:work=>host.withLock(async()=>{await host.assertNoPendingInstall();return work();}),
+      getRecord:async id=>(await disk())[0].chat_metadata.variables?.[KEY]?.records?.[id],putRecord,
+      async send(text,expected){
+        assertMvuIdle();assertMvuRequestPolicy();
+        host.assertContext({...expected,cardId:'cyber2051'});
+        const input=doc.querySelector('#send_textarea'),button=doc.querySelector('#send_but');
+        if(!input || !sendReady())fail('action-send-unavailable','酒馆发送入口不可用，请先连接模型并等待当前生成结束');
+        if(input.value.trim())fail('action-draft-exists','酒馆输入框已有草稿，已保留草稿并停止发送；请查看行动记录');
+        const win=doc.defaultView;input.value=text;input.dispatchEvent(new win.Event('input',{bubbles:true}));button.click();
+      }
+    }});
+    async function enable(expected){
+      return host.withLock(async()=>{
+        await host.assertNoPendingInstall();const current=await read();
+        if(current.busy)fail('action-mvu-busy','MVU正在计算变量，请等待完成，不修改玩法容器');
+        if(!G.same(current.context,expected.context) || await hash(current.messages)!==expected.messagesHash)fail('action-context','聊天或回复分支已变化，请重新查看启用说明');
+        const floor=current.floor,swipe=current.messages[floor].swipe_id || 0,old=current.messages[floor].variables[swipe],next=G.initializeVariables(old);
+        host.assertContext({...current.context,cardId:'cyber2051'});
+        assertMvuIdle();
+        const save=async()=>{await api.updateVariablesWith(value=>{
+          if(Core.canonical(value)!==Core.canonical(old))fail('action-context','当前分支变量已变化，停止启用');return clone(next);
+        },{type:'message',message_id:floor});
+        await c().saveChat();};
+        if(host.withChatSave)await host.withChatSave({...current.context,cardId:'cyber2051'},save);else await save();
+        const after=await read(),planned=clone(current.messages);planned[floor].variables[swipe]=next;
+        if(Core.canonical(after.messages)!==Core.canonical(planned))fail('action-save-unconfirmed','启用后的完整聊天读回不一致，请保留记录并排查');
+        return after;
+      });
+    }
+    const playerRead=root.CxxPlayerHost.createReader({api,host});
+    async function readMedia(){const saved=await playerRead({reuse:true});return {...saved,busy:extraBusy()};}
+    const player=root.CxxPlayerHost.create({api,host,read:playerRead,assertIdle:assertMvuIdle,waitForInstall});
+    let panel=null,body=null,message=null,preview=null,activeTab='天赋',last=null,busy=false,returnFocus=null,timer=null,waiting=null,waitPaused=false,talentView=null,growthStatus='';
+    const disposers=[];
+    function element(tag,text,parent,cls){const n=doc.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;parent?.append(n);return n;}
+    function status(text){if(message)message.textContent=text;}
+    async function run(fn){if(busy)return;const currentPanel=panel;busy=true;try{await fn();}catch(e){if(panel===currentPanel){status(e.message);if(e.code==='action-mvu-busy'){showMvuWait();waitForSaved(1000);}}}finally{busy=false;}}
+    function button(label,work,parent=body){const b=element('button',label,parent);b.type='button';b.addEventListener('click',()=>run(work));return b;}
+    async function choose(request){
+      assertMvuIdle();if(request.action!=='enable')assertMvuRequestPolicy();
+      if(request.action==='enable'){const current=await read();preview={enable:true,context:current.context,messagesHash:await hash(current.messages)};}
+      else preview=await engine.prepare(request);renderPreview();
+    }
+    function renderPreview(){
+      if(preview.enable){body.replaceChildren();element('h3','为当前聊天启用正文玩法',body);element('p','只在当前已保存的最新变量楼层补齐空的库存、蓝图、装备、技能、事件表和对应结构。余额、委托、旧楼层与未知字段保持原样；不会发放测试物品。',body);button('确认启用空容器',async()=>{last=await enable(preview);preview=null;status('空容器已保存并读回，已有资产保持不动');await render(false);});button('取消',async()=>{preview=null;await render(false);});return;}
+      body.replaceChildren();element('h3',preview.plan.title,body);element('p',preview.plan.description,body);
+      if(preview.plan.request.action==='start'){const origin=preview.plan.changes.find(c=>c.path.at(-1)==='origin')?.after;if(origin){element('p',origin.body,body);if(origin.background)element('p',origin.background,body);element('p','起始背景：'+origin.eraName+'。前置事件只是过去背景，不代表你已完成任务，也不会补发奖励。',body);}}
+      const rows=element('dl',undefined,body);for(const change of preview.plan.changes){
+        const p=change.path,labels={yen:'余额',spent:'累计支出',inventory:'库存',equipment:'装备',blueprints:'蓝图',skills:'技能',resources:'资源',events:'事件'};
+        const key=p.at(-1),name=preview.plan.definitions.find(d=>d.id===key)?.name || key;
+        element('dt',p[1]==='wallet'?labels[key] || key:(labels[p[2]] || '玩法')+' · '+name,rows);
+        const display=v=>v===null?'无':typeof v!=='object'?String(v):v.quantity!==undefined?String(v.quantity):v.itemId || (v.active?'已启用':v.learned?(p[2]==='skills'?'已学习，未启用':'已学习'):v.owned?'已获得':v.status || '已登记');
+        element('dd',display(change.before)+' → '+display(change.after),rows);
+      }
+      button('确认并发送行动',async()=>{const ticket=preview,result=await engine.confirm(ticket,'confirm');preview=null;activeTab='行动记录';if(result.status==='submitted')last.records[ticket.id]={id:ticket.id,ticket,status:'submitted'};status(result.reason || result.status);await render(false);});
+      button('取消',async()=>{await engine.confirm(preview,'cancel');preview=null;status('已取消，没有发送行动或修改游戏资产');await render(false);});
+    }
+    function row(title,description){const box=element('article',undefined,body,'cxx-game-row');element('h3',title,box);if(description)element('p',description,box);return box;}
+    function quantity(box){const label=element('label','数量 ',box),input=element('input',undefined,label);input.type='number';input.min='1';input.max='999';input.value='1';input.setAttribute('aria-label','数量');return ()=>Number(input.value);}
+    function owned(kind,key,record){try{return last.catalog.get(kind,key,record.definitionRef);}catch(e){row(key,e.message);return null;}}
+    async function render(refresh=true){
+      if(!panel)return;
+      for(const b of panel.querySelectorAll('nav>[data-gameplay-tab]'))b.setAttribute('aria-pressed',String(b.dataset.gameplayTab===activeTab));
+      const currentPanel=panel;
+      if(!['天赋','人物资料','行动记录','出身开场'].includes(activeTab)){body.replaceChildren();row(activeTab+' · 待更新','将在后续版本开放。已有存档记录保留，当前不提交这类行动。');return;}
+      if(extraBusy()){showMvuWait();waitForSaved(1000);return;}
+      if(refresh){const saved=await read();if(panel!==currentPanel)return;if(saved.busy || extraBusy()){showMvuWait();waitForSaved(1000);return;}last=saved;}
+      if(preview){renderPreview();return;}
+      if(!last){body.replaceChildren();element('p','请等聊天保存完成后点“读取已保存状态”。',body);return;}
+      talentView?.destroy();talentView=null;panel.setAttribute('data-talents',String(activeTab==='天赋'));growthStatus='';
+      if(activeTab==='天赋'){
+        body.replaceChildren();if(!T||!UI){row('天赋组件未就绪','请使用包含成长组件的新版卡。');return;}
+        const recent=Object.values(last.records).reverse().find(r=>r.ticket.context.characterKey===last.context.characterKey&&r.ticket.context.chatId===last.context.chatId&&['growth-initialize','talent-allocate'].includes(r.ticket.plan.request?.action));
+        let awaitingSave=false;
+        if(recent){
+          const checked=await engine.inspect(recent.id);if(panel!==currentPanel)return;
+          awaitingSave=recent.status!=='acknowledged'&&!['success','refused'].includes(checked.status);
+          growthStatus=({success:'本次配点已保存并核对。',refused:'本次配点未生效：',submitted:'正在等待正文与变量保存：',unconfirmed:'本次配点结果尚未确认：'}[checked.status]||'')+(checked.reason||'');
+          if(awaitingSave)growthStatus+=' 请等本轮结束后读取状态；需要处理时打开“行动记录”。';
+          else if(recent.status==='acknowledged'&&!['success','refused'].includes(checked.status))growthStatus+=' 已停止等待，当前显示实际存档。';
+          status(growthStatus);
+        }
+        const submit=async request=>{
+          assertMvuIdle();assertMvuRequestPolicy();const ticket=await engine.prepare(request),result=await engine.confirm(ticket,'confirm');
+          status(result.reason||result.status);if(result.status!=='submitted')throw Error(result.reason||'发送结果尚未确认，请查看行动记录');
+          waitPaused=false;waitForSaved(3000);return result;
+        };
+        talentView=UI.mount({document:doc,parent:body,talents:T,state:last.stat.terminal?.gameplay?.growth,
+          initial:last.growthIdentity?.growthSetup,identityName:last.growthIdentity?.name,awaitingSave,saveNotice:growthStatus,
+          onApply:build=>submit({action:'talent-allocate',build}),onInitialize:initial=>submit({action:'growth-initialize',initial})});return;
+      }
+      body.replaceChildren();const state=G.read(last.stat);element('p','钱包：'+state.yen+' 日元 · '+(state.enabled?'当前聊天已启用':'尚未启用正文玩法'),body);
+      if(!state.enabled && !['人物资料','行动记录','出身开场'].includes(activeTab)){element('p','启用只补齐空容器，保留现有余额、委托和未知字段。商品与技能需要通过剧情获得。',body);button('查看启用说明',()=>choose({action:'enable'}));return;}
+      const list=kind=>[...last.catalog.lists[kind].values()];
+      if(activeTab==='商店')for(const shop of list('shops')){
+        const box=row(shop.name,shop.description+' · '+shop.location.mapId+'/'+shop.location.placeId);
+        for(const offer of shop.offers){const line=element('div',undefined,box);let target;try{target=last.catalog.get(offer.kind,offer.targetId);}catch(e){element('p',e.message,line);continue;}
+          element('span',target.name+' · '+offer.price+'日元 ',line);const count=quantity(line);button('购买 '+target.name,()=>choose({action:'buy',id:shop.id,offerId:offer.id,quantity:count()}),line);}
+      }
+      if(activeTab==='库存')for(const [key,record]of Object.entries(state.inventory)){if(key==='$meta' || !record.quantity)continue;const d=owned('items',key,record);if(!d)continue;const box=row(d.name+' × '+record.quantity,d.description);if(d.use){const count=quantity(box);button('使用 '+d.name,()=>choose({action:'use',id:key,quantity:count()}),box);}}
+      if(activeTab==='蓝图')for(const [key,record]of Object.entries(state.blueprints)){if(key==='$meta')continue;const d=owned('blueprints',key,record);if(!d)continue;const box=row(d.name,(record.learned?'已学习':'已获得，尚未学习')+' · '+d.description);if(!record.learned)button('学习 '+d.name,()=>choose({action:'learn-blueprint',id:key}),box);}
+      if(activeTab==='配方'){
+        const recipes=new Map(list('recipes').map(d=>[d.id,d]));
+        for(const [key,record]of Object.entries(state.blueprints))if(record?.learned){const b=owned('blueprints',key,record);for(const id of b?.recipes || [])try{recipes.set(id,last.catalog.related('recipes',id,b));}catch(e){row(id,e.message);}}
+        for(const d of recipes.values()){const box=row(d.name,d.description);element('p','材料 '+JSON.stringify(d.materials)+' → 产物 '+JSON.stringify(d.outputs)+' · 费用 '+(d.cost || 0)+'日元',box);const count=quantity(box);button('制作 '+d.name,()=>choose({action:'craft',id:d.id,quantity:count()}),box);}
+      }
+      if(activeTab==='装备'){
+        for(const [slot,record]of Object.entries(state.equipment))if(record?.itemId){const box=row(slot,record.itemId+' · '+(record.effects?.description || ''));button('卸下 '+slot,()=>choose({action:'unequip',slot}),box);}
+        for(const [key,record]of Object.entries(state.inventory)){if(key==='$meta' || !record.quantity)continue;const d=owned('items',key,record);if(!d?.slots?.length)continue;const box=row(d.name,d.effects?.description || d.description);for(const slot of d.slots)button('装备到 '+slot,()=>choose({action:'equip',id:key,slot}),box);}
+      }
+      if(activeTab==='技能')for(const [key,record]of Object.entries(state.skills)){if(key==='$meta')continue;const d=owned('skills',key,record);if(!d)continue;const box=row(d.name,d.description+' · '+(record.active?'已启用':record.learned?'已学习':'尚未学习'));if(!record.learned)button('学习 '+d.name,()=>choose({action:'learn-skill',id:key}),box);else{button(record.active?'停用':'启用',()=>choose({action:record.active?'deactivate-skill':'activate-skill',id:key}),box);if(record.active)button('使用 '+d.name,()=>choose({action:'use-skill',id:key}),box);}}
+      if(activeTab==='服务')for(const d of list('services')){const box=row(d.name,d.description+' · '+d.location.mapId+'/'+d.location.placeId);button('申请 '+d.name,()=>choose({action:'service',id:d.id}),box);}
+      if(activeTab==='目击')for(const d of list('encounters')){const done=state.events[d.id],box=row(d.name,done?'已处理：'+done.status:d.description);if(!done)for(const outcome of d.outcomes)button(outcome.name,()=>choose({action:'encounter',id:d.id,outcomeId:outcome.id}),box);}
+      if(activeTab==='人物资料')for(const d of last.stories.npcs){const box=row(d.name,d.identity);for(const field of ['background','relationships','boundaries'])if(d[field])element('p',d[field],box);element('p','来源 '+d.definitionRef.packageId+' / '+d.definitionRef.version,box);for(const m of d.media || []){const img=element('img',undefined,box);img.alt=m.alt;img.loading='lazy';img.style.maxWidth='100%';img.addEventListener('error',()=>{img.remove();element('p','这份人物素材暂不可用：'+m.alt,box);},{once:true});img.src=doc.defaultView.CxxResources?.source(m.url)||m.url;}}
+      if(activeTab==='出身开场')row('玩家身份','请在新聊天的开局身份页选择；现有聊天不会重新初始化。');
+      let results={},saveWait;if(activeTab==='行动记录')try{results=await engine.inspectAll();}catch(e){if(panel!==currentPanel)return;if(saving(e))saveWait=e;for(const id of Object.keys(last.records))results[id]={status:saving(e)?'submitted':'unconfirmed',reason:e.message};}
+      if(panel!==currentPanel)return;
+      if(extraBusy()){showMvuWait();waitForSaved(1000);return;}
+      if(activeTab==='行动记录')for(const record of Object.values(last.records).reverse()){
+        if(record.ticket.context.characterKey!==last.context.characterKey || record.ticket.context.chatId!==last.context.chatId){row(record.ticket.plan.title,'来自原聊天的历史行动记录。此处保留出处，不在新聊天重发或重新结算；当前资产以已保存的MVU为准。');continue;}
+        const box=row(record.ticket.plan.title,record.id+' · '+(record.status==='acknowledged'?'已停止等待':'已提交'));const result=results[record.id] || {status:'submitted'};
+        element('p',({success:'已保存成功',refused:'已确认拒绝',submitted:'等待保存',unconfirmed:'结果未确认'}[result.status] || result.status)+' · '+(result.reason || ''),box);
+        if(result.status==='unconfirmed' && record.status!=='acknowledged')button('停止等待说明',async()=>{assertMvuIdle();body.replaceChildren();element('p','停止等待不会重发行动，也不能撤销已经发生的剧情或资产变化。确认后可以选择新的行动；原记录仍保留。',body);button('确认停止等待',async()=>{assertMvuIdle();await engine.acknowledge(record.id,'acknowledge-unconfirmed');await render();});button('返回记录',()=>render());},box);
+      }
+      if(!body.querySelector('article'))element('p',activeTab==='行动记录'?'还没有提交过正文行动。':'当前聊天没有可用的'+activeTab+'内容。安装相关内容包后，再按剧情条件使用；不会自动获得或学会。',body);
+      if(saveWait)throw saveWait;
+    }
+    function close(){cancelWait();waitPaused=false;talentView?.destroy();talentView=null;panel?.remove();panel=null;body=null;message=null;preview=null;last=null;growthStatus='';if(returnFocus?.isConnected)returnFocus.focus();}
+    async function open(tab){
+      const playerTabs={'人物':'人物','User':'人物','天赋':'天赋','装备':'物品栏','库存':'物品栏','物品栏':'物品栏','义体':'义体'};
+      if(playerTabs[tab]){close();return player.open(playerTabs[tab]);}
+      if(['天赋','商店','库存','蓝图','配方','装备','技能','服务','目击','资源','槽位','人物资料','出身开场','行动记录'].includes(tab))activeTab=tab;
+      if(panel){preview=null;panel.focus();await run(()=>render());return;}
+      returnFocus=doc.activeElement;panel=element('section',undefined,doc.body,'cxx-game-panel');panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label','正文玩法');panel.tabIndex=-1;
+      const style=element('style',undefined,panel);style.textContent=(root.CxxGameplayPanelStyle||'');
+      const head=element('header',undefined,panel);element('h2','正文玩法',head);const closeButton=element('button','关闭正文玩法',head);closeButton.type='button';closeButton.addEventListener('click',close);
+      
+      message=element('p','所有交易和效果以AI回复后的MVU保存记录为准。',panel);message.setAttribute('role','status');
+      const nav=element('nav',undefined,panel);for(const name of ['天赋','商店','库存','蓝图','配方','装备','技能','服务','目击','资源','槽位','人物资料','出身开场','行动记录']){const enabled=['天赋','人物资料','出身开场','行动记录'].includes(name),b=button(name,async()=>{activeTab=name;preview=null;await render();},nav);b.dataset.gameplayTab=name;if(!enabled){const badge=element('small','待更新',b);badge.className='cxx-game-pending';b.disabled=true;b.title='将在后续版本开放';b.setAttribute('aria-description','将在后续版本开放');}}
+      button('读取已保存状态',async()=>{waitPaused=false;await render();if(!extraBusy())status(growthStatus||'已从酒馆存档读回当前状态');},panel);body=element('div',undefined,panel);
+      panel.addEventListener('keydown',e=>{if(e.key==='Escape'){e.stopPropagation();close();}if(e.key==='Tab'){const nodes=[...panel.querySelectorAll('button,input'),...(talentView?.shadow.querySelectorAll('button,input,[tabindex="0"]')||[])].filter(n=>!n.disabled&&n.getClientRects().length);const focus=talentView?.shadow.activeElement||doc.activeElement;if(e.shiftKey && focus===nodes[0]){e.preventDefault();nodes.at(-1)?.focus();}else if(!e.shiftKey && focus===nodes.at(-1)){e.preventDefault();nodes[0]?.focus();}}});
+      // Popover's auto-sized centered box can place its close button above a short viewport.
+      Object.assign(panel.style,{width:'calc(100% - 24px)',maxWidth:'900px',height:'90%',margin:'auto',boxSizing:'border-box'});
+      if(typeof panel.showPopover==='function'){panel.setAttribute('popover','manual');panel.showPopover();}panel.focus();await run(()=>render());
+    }
+    function listen(name,fn){if(!name || !api.eventOn)return;api.eventOn(name,fn);disposers.push(()=>api.eventRemoveListener?.(name,fn));}
+    function cancelWait(){if(timer)clearTimeout(timer);timer=null;waiting=null;}
+    function showMvuWait(text=waitPaused?'MVU仍在计算，等待已暂停自动读取；请稍后点“读取已保存状态”':'MVU正在计算变量'){
+      status(text);talentView?.destroy();talentView=null;body?.replaceChildren();if(body)element('p',text,body);
+    }
+    const currentWait=value=>value===waiting && value.panel===panel && Core.canonical(value.context)===Core.canonical(identity());
+    function waitForSaved(delay){
+      if(!panel || waitPaused)return;
+      if(!waiting || !currentWait(waiting)){cancelWait();waiting={panel,context:identity(),until:Date.now()+120000,saveAttempt:0};}
+      if(!timer){const value=waiting;timer=setTimeout(()=>refreshWait(value),delay);}
+    }
+    async function refreshWait(value){
+      if(!currentWait(value))return;timer=null;
+      if(Date.now()>=value.until){cancelWait();waitPaused=true;if(extraBusy())showMvuWait();else status('等待保存已超时，结果未确认；请稍后点“读取已保存状态”，不自动重发或结算');return;}
+      if(busy || extraBusy()){if(extraBusy())showMvuWait();waitForSaved(1000);return;}
+      busy=true;
+      try{await render();if(!currentWait(value))return;if(extraBusy()){waitForSaved(1000);return;}status(growthStatus||'已从酒馆存档读回当前状态');cancelWait();}
+      catch(e){if(!currentWait(value))return;status(e.message);if(saving(e) && value.saveAttempt++<3)waitForSaved(1000);else cancelWait();}
+      finally{busy=false;}
+    }
+    function refreshAfterGeneration(){waitForSaved(3000);}
+    function start(){player.start();listen(api.tavern_events?.CHAT_CHANGED,close);for(const name of new Set([api.iframe_events?.GENERATION_ENDED,api.tavern_events?.GENERATION_ENDED,api.tavern_events?.GENERATION_STOPPED]))listen(name,refreshAfterGeneration);}
+    function stop(){player.stop();for(const off of disposers)off();close();}
+    return {open,close,start,stop,read,readMedia,engine,enable,player};
+  }
+  return {create};
+});

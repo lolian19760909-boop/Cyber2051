@@ -1,0 +1,93 @@
+(function(root,factory){const value=factory(root);if(typeof module==='object'&&module.exports)module.exports=value;else root.CxxLegacyExport=value;})(globalThis,function(root){
+  'use strict';
+  const copy=value=>JSON.parse(JSON.stringify(value));
+  const fail=(code,message)=>{throw Object.assign(Error(message),{code});};
+  const object=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
+  function create({api=root,Core=root.CxxUpdateCore,Backup=root.CxxUpdateBackup,report=()=>{},wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),backupOptions={}}={}){
+    let job=null,disposed=false;
+    const context=()=>api.SillyTavern.getContext();
+    function source(){
+      if(typeof api.getCharData!=='function')fail('legacy-capability','缺少角色读取接口，请更新酒馆助手后重试。');
+      const raw=api.getCharData('current'),data=raw?.data||raw;
+      const version=String(data?.character_version||raw?.character_version||'').replace(/^v/i,'');
+      const scripts=data?.extensions?.tavern_helper?.scripts||[];
+      const flat=nodes=>nodes.flatMap(node=>[node,...(node.type==='folder'?flat(node.scripts||[]):[])]);
+      if(!/2051/.test(data?.name||raw?.name||'')||!/^1\.\d+\.\d+$/.test(version)
+        ||!flat(scripts).some(script=>/MagVarUpdate/.test(script.content||'')||script.id==='07d0d1a7-897e-4a2d-adb4-e95d360e6ba2'))
+        fail('legacy-source','请打开2051的1.x旧卡聊天，再使用此工具。');
+      return {version};
+    }
+    function getContext(){
+      const c=context(),provider=api.Mvu||api.parent?.Mvu;
+      return {cardId:'cyber2051',characterKey:api.getCurrentCharacterId()||'',chatId:c.getCurrentChatId?.()||'',
+        busy:!!c.groupId||api.builtin.duringGenerating()||provider?.isDuringExtraAnalysis?.()===true};
+    }
+    function assertContext(expected){
+      if(disposed)fail('legacy-disposed','工具已关闭，请重新打开工具。');
+      const actual=getContext();
+      if(['cardId','characterKey','chatId'].some(key=>actual[key]!==expected[key]))fail('context-changed','角色或聊天已切换，请在原聊天重新准备存档。');
+      if(!actual.characterKey||!actual.chatId||actual.busy)fail('host-busy','请打开单角色旧聊天，等待回复和变量处理完成后重试。');
+    }
+    async function ready(){
+      for(const name of ['getCharData','getCurrentCharacterId','getChatMessages','getTavernVersion','getTavernHelperVersion'])
+        if(typeof api[name]!=='function')fail('legacy-capability','缺少 '+name+'，请更新酒馆助手后重试。');
+      if(!api.SillyTavern?.getContext||!api.builtin?.duringGenerating)fail('legacy-capability','缺少酒馆聊天或生成状态接口。');
+      const c=context();
+      if(!Array.isArray(c.chat)||!object(c.chatMetadata)||typeof c.saveChat!=='function'||typeof c.getRequestHeaders!=='function')
+        fail('legacy-capability','缺少完整聊天保存与读取接口。');
+    }
+    async function prepare(){
+      await ready();const {version}=source(),expected=getContext();assertContext(expected);
+      report('正在保存并核对完整旧聊天…');await wait(2100);assertContext(expected);
+      const snapshot=()=>{assertContext(expected);const c=context();return Core.canonical({messages:copy(c.chat),metadata:copy(c.chatMetadata)});};
+      const before=snapshot();
+      if(![...context().chat].reverse().some(message=>object(message.variables?.[message.swipe_id??0]?.stat_data)))
+        fail('legacy-mvu-missing','当前聊天没有已保存的MVU进度，请先在旧卡完成变量处理。');
+      const seed={cardId:'cyber2051',baseVersion:version,baseline:{legacyMVU:1},
+        migration:{buildId:'legacy-mvu:'+version,saveSchema:1,contract:'cyber2051.raw-save.v1',playerStores:[]}};
+      // 1.x has no installer or install ledger. Reuse the current transport with
+      // an export-only host; the adapter never adds an updater to the old card.
+      const host={getContext,assertContext,ready,readState:()=>({}),withReadLock:async work=>{assertContext(expected);const result=await work();assertContext(expected);return result;}};
+      const backup=Backup.create({...backupOptions,api,host,core:Core,seed,readOnlyExport:true});
+      const result=await backup.captureMigration({completeDisk:true});
+      const assertCurrent=()=>{if(snapshot()!==before||source().version!==version)fail('migration-export-stale','聊天或变量已变化，请重新准备存档。');};
+      assertCurrent();const file=await backup.prepareExportFile(result.document);
+      try{assertCurrent();}catch(error){file.revoke();throw error;}
+      report('存档已准备好。请下载，再在2.2.11的“卡更新 → 换卡续玩”导入并创建副本。');
+      return {...file,assertCurrent};
+    }
+    return {info:()=>({cardVersion:source().version,toolVersion:'2.2.11',revision:'R2'}),
+      exportMigration(){if(job)return job;job=prepare().finally(()=>{job=null;});return job;},
+      destroy(){disposed=true;}};
+  }
+  function mount({document:doc,tool,subscribe}){
+    const panel=doc.createElement('dialog');panel.dataset.cxxLegacyExport='1';panel.setAttribute('aria-label','1.x旧版存档导出');
+    panel.style.cssText='position:fixed;inset:5%;z-index:2147483647;box-sizing:border-box;max-width:640px;width:90%;max-height:90%;margin:auto;overflow:auto;padding:clamp(16px,4vw,24px);background:#111820;color:#eef;border:1px solid #5faeb5;font:16px/1.7 system-ui;overflow-wrap:anywhere';
+    const el=(tag,text,parent=panel)=>{const node=doc.createElement(tag);node.textContent=text;parent.append(node);return node;};
+    el('h2','1.x旧版存档导出');const versions=el('p','目标版本 2.2.11');
+    el('p','打开要继续玩的旧聊天，准备并下载存档。另行导入2.2.11，在“卡更新 → 换卡续玩”中导入，核对后创建续玩副本。每个旧聊天分别导出。');
+    const status=el('p','保留全部对话、备用回复及原始存档。新版已移除好感度系统，按2.2.11现行规则继续游玩。');status.setAttribute('role','status');
+    const actions=el('div','');actions.style.cssText='display:flex;gap:8px;flex-wrap:wrap';
+    const button=label=>{const node=el('button',label,actions);node.type='button';node.style.cssText='min-height:44px;max-width:100%;padding:8px 14px;background:#263943;color:white;border:1px solid #abc;font:inherit;cursor:pointer';return node;};
+    const prepare=button('准备续玩存档'),download=button('下载存档'),close=button('关闭');download.disabled=true;
+    let prepared=null,busy=false,disposed=false;
+    const report=message=>{if(!disposed)status.textContent=message;};
+    const clear=()=>{prepared?.revoke();prepared=null;download.disabled=true;};
+    prepare.onclick=async()=>{
+      if(busy||disposed)return;busy=true;clear();prepare.disabled=true;panel.setAttribute('aria-busy','true');
+      try{const file=await tool.exportMigration();if(disposed)file.revoke();else prepared=file;}
+      catch(error){report((error.code?'['+error.code+'] ':'')+error.message);}
+      finally{busy=false;prepare.disabled=false;download.disabled=!prepared;panel.removeAttribute('aria-busy');}
+    };
+    download.onclick=()=>{
+      if(busy||!prepared)return;
+      try{prepared.assertCurrent();const link=doc.createElement('a');link.href=prepared.url;link.download=prepared.filename;doc.body.append(link);link.click();link.remove();report('已请求下载。请在下载记录中核对文件，再导入2.2.11。');}
+      catch(error){clear();report(error.message);}
+    };
+    close.onclick=()=>panel.close();doc.body.append(panel);
+    const show=()=>{try{const info=tool.info();versions.textContent='旧卡 '+info.cardVersion+' → 新卡 '+info.toolVersion+' · 导出工具 '+info.revision;}catch(error){report(error.message);}if(!panel.open)panel.showModal();};
+    const unsubscribe=subscribe(show);
+    return {show,report,destroy(){disposed=true;tool.destroy();unsubscribe?.();clear();panel.remove();}};
+  }
+  return {create,mount};
+});

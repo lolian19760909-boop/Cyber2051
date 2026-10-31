@@ -1,0 +1,11 @@
+{
+  "display_name": "Cyber2051 上下文桥",
+  "author": "Cyber2051 engineering",
+  "version": "0.2.0",
+  "minimum_client_version": "1.18.0",
+  "loading_order": 999,
+  "js": "index.js",
+  "auto_update": false,
+  "generate_interceptor": "CxxContextBridge_intercept",
+  "hooks": { "clean": "clean" }
+}

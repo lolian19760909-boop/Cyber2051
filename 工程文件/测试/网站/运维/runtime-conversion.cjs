@@ -1,0 +1,11 @@
+'use strict';
+const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
+const { componentsOf, regexScript } = require("../../../工具/lib/runtime-components.cjs");
+const d = JSON.parse(fs.readFileSync(path.join(__dirname, "../../../卡片源码/字段快照/roundtrip/card.json"))).data;
+const c = componentsOf(d);
+assert.equal(c.worldbook.entries.length, d.character_book.entries.length);
+c.worldbook.entries.forEach((e, i) => { const old = d.character_book.entries[i]; assert.equal(e.uid, old.id); assert.equal(e.content, old.content); assert.equal(e.enabled, old.enabled); assert.equal(e.position.order, old.insertion_order); assert.deepEqual(e.strategy.keys, old.keys); assert.deepEqual(e.extra.__cxx_card_extensions, old.extensions); });
+c.regex.scripts.forEach((r, i) => { const old = d.extensions.regex_scripts[i]; assert.equal(r.find_regex, old.findRegex); assert.equal(r.replace_string, old.replaceString); assert.equal(r.enabled, !old.disabled); assert.equal(r.source.user_input, old.placement.includes(1)); assert.equal(r.source.ai_output, old.placement.includes(2)); });
+assert.throws(() => regexScript({ placement: [99] }), /未核对/);
+assert.equal(JSON.stringify(c.scripts.trees), JSON.stringify(d.extensions.tavern_helper.scripts));
+console.log(`PASS ${c.worldbook.entries.length} 条世界书/${c.regex.scripts.length} 条正则/脚本树无损保持；未知正则模式被拒绝（离线转换）`);

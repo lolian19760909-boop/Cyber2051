@@ -1,0 +1,10 @@
+{
+  "name": "cxx-workshop-gateway",
+  "version": "0.1.0",
+  "private": true,
+  "description": "赛博小祥2051 创意工坊网关骨架（零依赖，E5 §9.2 契约）",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

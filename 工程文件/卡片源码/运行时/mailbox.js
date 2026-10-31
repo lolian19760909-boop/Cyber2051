@@ -1,0 +1,36 @@
+/* Public announcements only. No chat, MVU, rewards, HTML or model requests. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.CxxMailboxFactory=api;})(globalThis,function(){
+ 'use strict';
+ const Boot=typeof module==='object'&&module.exports?require('./boot-loader.js'):globalThis.CxxBootLoader;
+ const URL='https://cyber2051.top/updates/v3/announcements.json',KEY='cyber2051:official-mail:v1',LIMIT=524288,TTL=3600000;
+ function validate(doc){if(doc?.format!==1||doc.type!=='cyber2051.announcements'||!Number.isSafeInteger(doc.revision)||doc.revision<1||!Array.isArray(doc.items)||doc.items.length>100)throw Error('公告清单格式无效。');const ids=new Set();for(const m of doc.items){if(!/^[a-zA-Z][a-zA-Z0-9_-]{0,79}$/.test(m.id)||ids.has(m.id)||!Number.isSafeInteger(m.revision)||m.revision<1||typeof m.title!=='string'||!m.title.trim()||m.title.length>120||typeof m.body!=='string'||m.body.length>12000||!Number.isFinite(Date.parse(m.publishedAt)))throw Error('公告内容格式无效。');ids.add(m.id);}return doc;}
+ function store({fetcher,verify,storage,now=Date.now}){let cache={},doc=null,active=null,ended=false,status='尚未刷新',listeners=new Set();try{cache=JSON.parse(storage?.getItem(KEY)||'{}');}catch{}if(!cache||typeof cache!=='object'||Array.isArray(cache))cache={};cache.read=cache.read&&typeof cache.read==='object'?cache.read:{};
+  const persist=()=>{try{storage?.setItem(KEY,JSON.stringify(cache));}catch{}};
+  const state=()=>({items:doc?.items||[],unread:(doc?.items||[]).filter(m=>cache.read[m.id]!==m.revision).length,read:{...cache.read},loading:!!active,status});
+  const emit=()=>{if(!ended)for(const fn of listeners)fn(state());};
+  const ready=(async()=>{try{if(cache.document){await verify(cache.document);validate(cache.document);if(!ended){doc=cache.document;status='已载入缓存公告';}}}catch{delete cache.document;delete cache.checkedAt;persist();status='本地公告缓存校验失败，请刷新。';}emit();})();
+  async function refresh(force=false){await ready;if(ended||active)return state();if(!force&&doc&&now()-(cache.checkedAt||0)<TTL)return state();const controller=new AbortController();active=controller;status='正在读取官方公告…';emit();const timer=setTimeout(()=>controller.abort(),15000);
+   try{const response=await fetcher(URL,{credentials:'omit',redirect:'error',cache:'no-store',signal:controller.signal});if(!response.ok)throw Error('公告服务返回 '+response.status);if(Number(response.headers.get('content-length'))>LIMIT)throw Error('公告清单过大');const chunks=[];let size=0;if(response.body?.getReader){const reader=response.body.getReader();try{for(;;){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>LIMIT){await reader.cancel();throw Error('公告清单过大');}chunks.push(value);}}finally{reader.releaseLock();}}else{const bytes=new Uint8Array(await response.arrayBuffer());size=bytes.length;chunks.push(bytes);}if(size>LIMIT)throw Error('公告清单过大');const bytes=new Uint8Array(size);let at=0;for(const part of chunks){bytes.set(part,at);at+=part.length;}const next=JSON.parse(new TextDecoder().decode(bytes));await verify(next);validate(next);if(doc&&next.revision<doc.revision)throw Error('公告清单版本过旧');if(ended||controller.signal.aborted)return state();doc=next;cache={...cache,document:next,checkedAt:now(),read:Object.fromEntries(next.items.filter(m=>cache.read[m.id]!==undefined).map(m=>[m.id,cache.read[m.id]]))};persist();status=next.items.length?'官方公告已更新':'暂无官方通知';}
+   catch(e){if(!ended)status='刷新失败：'+(e.name==='AbortError'?'连接超时或已取消':e.message)+(doc?'。仍可阅读已缓存公告。':'。请稍后重试。');}finally{clearTimeout(timer);active=null;emit();}return state();
+  }
+  function mark(id){if(!doc)return;for(const m of doc.items)if(id===undefined||id===m.id)cache.read[m.id]=m.revision;persist();emit();}
+  return {state,ready,refresh,mark,subscribe(fn){listeners.add(fn);fn(state());return()=>listeners.delete(fn);},destroy(){ended=true;active?.abort();listeners.clear();}};
+ }
+ function create({win,fetcher,verify,storage}){const inbox=store({fetcher,verify,storage}),doc=win.document;let panel=null,selected=null,focus=null,stop=null;
+  function close(){panel?.close();panel?.remove();panel=null;stop?.();stop=null;focus?.isConnected&&focus.focus({preventScroll:true});}
+  function open(){if(panel){panel.focus();return;}focus=doc.activeElement;panel=doc.createElement('dialog');panel.className='cxx-mailbox';panel.setAttribute('aria-label','官方邮箱');doc.body.append(panel);panel.addEventListener('cancel',e=>{e.preventDefault();close();});
+   const el=(tag,text,parent=panel)=>{const n=doc.createElement(tag);if(text!==undefined)n.textContent=text;parent.append(n);return n;},style=el('style');style.textContent=typeof CxxMailboxStyle==='string'?CxxMailboxStyle:'';
+   const header=el('header'),brand=el('div',undefined,header);brand.className='mail-brand';el('small','TOKYO 2051 / OFFICIAL INBOX',brand);el('h2','官方邮箱',brand);
+   const button=(label,fn,parent=header)=>{const b=el('button',label,parent);b.type='button';b.onclick=fn;return b;},refresh=button('刷新',()=>void inbox.refresh(true));button('全部已读',()=>inbox.mark());button('关闭',close);
+   const layout=el('div');layout.className='mail-layout';const list=el('nav',undefined,layout);list.className='mail-list';list.setAttribute('aria-label','收件列表');const article=el('article',undefined,layout),status=el('footer');status.setAttribute('role','status');let detailKey='';
+   function render(s){if(!panel)return;const scroll=list.scrollTop,focused=doc.activeElement?.dataset.mailId;list.replaceChildren();refresh.disabled=s.loading;Boot.small(status,{label:s.status+' · '+s.unread+' 封未读',busy:s.loading});panel.dataset.selected=String(!!selected);
+    for(const item of [...s.items].sort((a,b)=>Date.parse(b.publishedAt)-Date.parse(a.publishedAt))){const b=button('',()=>{selected=item.id;inbox.mark(item.id);if(win.matchMedia?.('(max-width:700px)').matches)article.querySelector('.mail-back')?.focus();},list);b.dataset.mailId=item.id;b.dataset.unread=String(s.read[item.id]!==item.revision);b.setAttribute('aria-current',String(selected===item.id));el('strong',(s.read[item.id]!==item.revision?'● ':'')+item.title,b);el('small',new Date(item.publishedAt).toLocaleDateString('zh-CN')+' · 官方通知',b);}
+    if(!s.items.length)el('p',s.loading?'正在收取通知…':'暂无通知。',list);list.scrollTop=scroll;if(focused)[...list.children].find(n=>n.dataset.mailId===focused)?.focus({preventScroll:true});
+    const m=s.items.find(x=>x.id===selected),key=m?JSON.stringify([m.id,m.revision,m.title,m.body,m.publishedAt]):'empty';if(key===detailKey)return;detailKey=key;article.replaceChildren();if(!m){if(selected){selected=null;panel.dataset.selected='false';}const empty=el('div','选择一封邮件，阅读官方通知。',article);empty.className='mail-empty';return;}button('‹ 收件列表',()=>{const back=selected;selected=null;render(inbox.state());[...list.children].find(n=>n.dataset.mailId===back)?.focus();},article).className='mail-back';el('h3',m.title,article);el('small','发件人 · 东京都 2051 官方  /  '+new Date(m.publishedAt).toLocaleString('zh-CN'),article);el('div',m.body,article).className='mail-content';article.scrollTop=0;
+   }
+   stop=inbox.subscribe(render);panel.showModal();void inbox.refresh();
+  }
+  return {...inbox,open,close,destroy(){close();inbox.destroy();}};
+ }
+ return {URL,KEY,LIMIT,validate,store,create};
+});

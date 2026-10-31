@@ -1,0 +1,62 @@
+(function(root,factory){const value=factory();if(typeof module==='object'&&module.exports)module.exports=value;else root.CxxSettingsUI=value;})(globalThis,function(){
+ 'use strict';
+ const categories=[['reading','阅读与显示'],['scale','内容尺度'],['combat','战斗结算'],['generation','生成与变量'],['memory','长期记忆与剧情'],['voice','翻译与声音'],['resources','资源与性能'],['saves','存档与更新'],['diagnostics','运行诊断与帮助']];
+ function mount({parent,win,back,archive,resources}){
+  const doc=parent.ownerDocument,host=doc.createElement('section');host.className='cxx-settings-center';parent.append(host);const motion=globalThis.CxxMotion?.mount(host);let section='',cleanup=null,live=true,search='';try{section=win.sessionStorage.getItem('cxx-settings-section')||'';}catch{}
+  const n=(tag,text,into)=>{const e=doc.createElement(tag);if(text!=null)e.textContent=text;into.append(e);return e;};
+  const style=n('style',(globalThis.CxxSettingsStyle||''),host);
+  const sizeWindow=doc.defaultView,resizeLayout=()=>{if(host.clientWidth)host.dataset.layout=host.clientWidth<=650?'compact':'wide';},resizeObserver=sizeWindow.ResizeObserver?new sizeWindow.ResizeObserver(resizeLayout):null;resizeObserver?.observe(host);sizeWindow.addEventListener('resize',resizeLayout);const layoutFrame=sizeWindow.requestAnimationFrame(resizeLayout);
+  const top=n('header',null,host);top.className='cxx-settings-top';n('h2','设置',top);
+  const content=n('div',null,host);content.className='cxx-settings-content';
+  const work=n('div',null,content);work.className='cxx-settings-work';const nav=n('nav',null,work);nav.className='cxx-settings-nav';const detail=n('main',null,work);detail.className='cxx-settings-detail';
+  const action=(label,fn,where=detail)=>{const b=n('button',label,where);b.type='button';b.onclick=async()=>{if(b.disabled)return;b.disabled=true;try{await fn();}catch(e){if(live)status.textContent=e.message;win.CxxDiagnostics?.report({module:'设置',stage:section,message:e.message});}finally{if(live)b.disabled=false;}};return b;};
+  action('返回主菜单',back,top);const query=n('input',null,nav);query.type='search';query.placeholder='查找设置';query.setAttribute('aria-label','查找设置');query.oninput=()=>{search=query.value.trim();links.forEach(([id,b])=>b.hidden=!!search&&!b.textContent.includes(search));};
+  const links=categories.map(([id,label])=>[id,action(label,()=>{show(id);detail.scrollIntoView({block:'start'});},nav)]);const status=n('p','',host);status.className='cxx-settings-status';status.setAttribute('role','status');
+  function prefsService(){const prefs=win.Cxx236Preferences;if(!prefs){n('p','偏好服务正在加载，请稍后重新进入此页。',detail);return null;}return prefs;}
+ function scalePage(){
+  const prefs=prefsService();if(!prefs)return;
+  const body=n('div',null,detail);body.className='cxx-settings-scale-page';
+  const draw=()=>{body.replaceChildren();const on=prefs.read().nsfw===true;
+   n('p',on?'已开启：终端影像的「瑟瑟」分组可以查看大图。':'默认关闭：终端影像的「瑟瑟」分组只列张数，缩略图与大图都是锁住的占位。',body);
+   const state=n('div',null,body);state.className='cxx-settings-state';
+   n('span',on?'当前：已开启':'当前：已关闭',state);
+   const b=n('button',on?'关闭 NSFW 内容':'开启 NSFW 内容',state);b.type='button';b.className='cxx-settings-scale-toggle';b.setAttribute('aria-pressed',String(on));
+   b.onclick=async()=>{if(b.disabled)return;b.disabled=true;try{await prefs.save({...prefs.read(),nsfw:!on,nsfwChosen:true});status.textContent=on?'NSFW 内容已关闭，画廊里的成人图片重新锁住。':'NSFW 内容已开启，画廊里的成人图片现在可以查看。';if(live&&section==='scale')draw();}catch(e){status.textContent=e.message;}finally{b.disabled=false;}};
+   n('p','只影响终端「影像」分组与成人图片的显示，正文、存档与回复分支不变。',body);
+  };draw();
+ }
+ function combatPage(){
+  const prefs=prefsService();if(!prefs)return;
+  const body=n('div',null,detail);body.className='cxx-settings-scale-page';
+  const draw=()=>{body.replaceChildren();const battleMode=prefs.read().battleMode||'fast';
+   n('p',battleMode==='tactical'?'即时战术：遭遇战打开战斗面板，逐轮选行动、换弹与走位。':battleMode==='text'?'纯文本：遭遇战在后台按同一套算式结算，结果直接并进正文。':'速决（默认）：遭遇战一键结算，胜负、掉血与逐条战报都会写进存档，随时能在战斗条上展开查看。',body);
+   const row=n('div',null,body);row.className='cxx-settings-scale-row';row.setAttribute('role','group');row.setAttribute('aria-label','战斗结算方式');
+   [['fast','速决'],['text','纯文本'],['tactical','即时战术']].forEach(([value,label])=>{const btn=n('button',label,row);btn.type='button';btn.setAttribute('aria-pressed',String(battleMode===value));btn.onclick=async()=>{if(btn.disabled||battleMode===value)return;row.querySelectorAll('button').forEach(x=>x.disabled=true);try{await prefs.save({...prefs.read(),battleMode:value});status.textContent='战斗结算方式已改为「'+label+'」，下一场遭遇战生效。';if(live&&section==='combat')draw();}catch(e){status.textContent=e.message;}finally{row.querySelectorAll('button').forEach(x=>x.disabled=false);}};});
+   const strategyLabel=n('label','速决行动偏好 ',body),strategy=n('select',null,strategyLabel);strategy.setAttribute('aria-label','速决行动偏好');for(const [value,label]of [['auto','配装适配'],['weapon','武器优先'],['hack','破解优先']]){const o=n('option',label,strategy);o.value=value;}strategy.value=prefs.read().fastStrategy||'auto';strategy.disabled=battleMode==='tactical';strategy.onchange=async()=>{strategy.disabled=true;try{await prefs.save({...prefs.read(),fastStrategy:strategy.value});status.textContent='速决行动偏好已保存，下一次结算生效。';}catch(e){status.textContent=e.message;strategy.value=prefs.read().fastStrategy||'auto';}finally{strategy.disabled=battleMode==='tactical';}};
+   n('p','配装适配会在智力适合且持有接入仓与攻击程序时优先破解，其余沿当前武器行动。速决消耗弹药、耐力和 RAM；手雷、部署、主动治疗剂和超频在即时战术中选择。',body);
+  };draw();
+ }
+  // Interface theme (DESIGN.md 10.5): applies at once and is remembered by this browser only.
+  function themes(){const theme=win.CxxTheme;if(!theme)return null;const box=n('div',null,detail);box.className='cxx-settings-theme';box.setAttribute('role','group');box.setAttribute('aria-label','界面主题');n('span','界面主题',box);const row=n('div',null,box);
+   const buttons=theme.themes.map(t=>{const b=n('button',null,row);b.type='button';b.dataset.theme=t.id;n('i',null,b).setAttribute('aria-hidden','true');n('span',t.name,b);b.onclick=()=>{try{const result=theme.set(t.id);status.textContent=result.saved?'已切换为'+t.name:'已切换为'+t.name+'；本机浏览器无法记住，下次打开会恢复为红。';}catch(e){status.textContent=e.message;}};return b;});
+   const sync=current=>buttons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.theme===current)));sync(theme.read());return theme.subscribe(sync);}
+  function select(label,values,value,change){const row=n('label',label,detail),input=n('select',null,row);input.setAttribute('aria-label',label);for(const [id,text]of values){const o=n('option',text,input);o.value=id;}input.value=value;input.onchange=async()=>{const next=input.value;input.disabled=true;status.textContent='正在保存…';try{await change(next);value=next;if(live)status.textContent='已保存并核对';}catch(e){if(live){input.value=value;status.textContent=e.message;}}finally{if(live)input.disabled=false;}};return input;}
+  function show(id){const previous=section;if(motion&&previous!==id&&detail.children.length)void motion.swap(detail,()=>showNow(id),{direction:categories.findIndex(x=>x[0]===id)>categories.findIndex(x=>x[0]===previous)?1:-1});else showNow(id);}
+  function showNow(id){cleanup?.();cleanup=null;section=id;try{win.sessionStorage.setItem('cxx-settings-section',id);}catch{}host.dataset.detail=String(!!id);links.forEach(([key,b])=>b.setAttribute('aria-current',String(key===id)));detail.replaceChildren();status.textContent='';const category=categories.find(x=>x[0]===id);if(!category){n('p','选择一个设置分类。',detail);return;}
+   const up=action('‹ 设置分类',()=>{show('');nav.scrollIntoView({block:'start'});});up.className='cxx-settings-back';n('h3',category[1],detail);
+   if(id==='scale')scalePage();
+  if(id==='combat')combatPage();
+  if(id==='reading'){const stopTheme=themes();cleanup=stopTheme;const prefs=win.Cxx236Preferences;if(!prefs){n('p','阅读服务正在加载。',detail);return;}const state=prefs.read(),save=patch=>prefs.save({...prefs.read(),...patch});select('阅读方式',[['native','原生阅读'],['gal','Gal 阅读']],state.gal?'gal':'native',async v=>{await save({gal:v==='gal'});if(v==='gal'){win.__cxx_launcher__?.close();win.__cxx_gal_g1__?.open();}});action('进入 Gal 阅读 →',async()=>{if(!win.__cxx_gal_g1__)throw Error('Gal 阅读正在准备，请稍后再试。');await save({gal:true});win.__cxx_launcher__?.close();win.__cxx_gal_g1__.open();});select('设备布局',[['auto','跟随设备'],['mobile','手机'],['desktop','电脑']],state.device,v=>save({device:v}));select('特效强度',[['high','高'],['medium','中'],['low','低']],state.level,v=>save({level:v}));const orientation=win.CxxEntryExperience?.button(win,detail);cleanup=()=>{stopTheme?.();orientation?.();};n('p','字号与行距可在阅读界面即时调整。',detail);}
+   if(id==='generation'&&win.CxxVariableMode){const mode=win.CxxVariableMode;n('p','正文解析：同一次回复生成剧情与变量。额外解析：正文完成后，由 MVU 发起变量分析请求。',detail);const input=select('变量规则',[['main','正文解析'],['extra','额外解析']],mode.read().mode,v=>mode.select(v));cleanup=mode.subscribe(s=>{input.value=s.mode;input.disabled=s.busy;if(s.error)status.textContent=s.error;});n('p','模型连接在酒馆扩展设置的 MVU 面板中调整。切换规则会保留当前模型连接。',detail);const from=n('input',null,detail),to=n('input',null,detail),result=n('div',null,detail);for(const [field,label]of [[from,'成长检查起始楼层'],[to,'成长检查结束楼层']]){field.type='number';field.min='1';field.placeholder=label;field.setAttribute('aria-label',label);}action('检查旧档成长记录',async()=>{const service=win.CxxGrowthRepair;if(!service)throw Error('成长检查服务正在加载。');status.textContent='正在分析所选原文…';const preview=await service.inspect(+from.value,+to.value);if(!live||section!=='generation')return;result.replaceChildren();for(const row of preview.rows)n('p','第 '+row.floor+' 层 · '+row.reason+' · '+row.xp+' 经验'+(row.duplicate?'（已结算）':''),result);action('确认补算',async()=>{await service.apply(preview.id);status.textContent='已保存补算结果';result.replaceChildren();},result);status.textContent='检查完成，请核对成果后确认补算。';});n('p','楼层下的“重跑”可重新处理本层变量指令。额外模式还可重新分析本层变量。',detail);}
+   if(id==='generation'&&win.__cxx_experience__&&win.CxxApiConnection){const stopMode=cleanup,stopConnection=win.CxxApiConnection.mountSettings({parent:detail,service:win.__cxx_experience__});cleanup=()=>{stopMode?.();stopConnection();};}
+   if(id==='memory'){n('p','剧情检测随正文记录主线与委托进度。长期记忆可选：在记忆面板配置原版数据库后，管理经历、手记、召回与旧聊天补建。',detail);action('打开长期记忆与剧情',()=>{if(!win.CxxLongMemory)throw Error('长期记忆与剧情服务正在加载。');return win.CxxLongMemory.openPanel();});}
+   if(id==='voice'){const prefs=win.Cxx236Preferences;if(prefs)select('本故事使用镜译',[['off','关闭 · 原文阅读'],['on','开启 · 译文、朗读与通话']],prefs.read().mirror?'on':'off',v=>prefs.save({...prefs.read(),mirror:v==='on'}));n('p','此开关控制本故事的译文显示、朗读和通话。镜译的全局自动翻译与自动朗读在插件中单独管理。',detail);action('镜译操作引导',()=>{if(!win.CxxMirrorSetupService)throw Error('镜译服务正在加载。');return win.CxxMirrorSetupService.open();});action('手机与联系人',()=>win.Cxx233Runtime.invokeScriptButton('手机'));}
+   if(id==='resources'){const stopArt=win.CxxResources?.panel(detail),stopModel=win.CxxLive2D?.panel(detail);cleanup=()=>{stopArt?.();stopModel?.();};n('p','图片按页面自动下载。整包预载或导入离线包后，可在断网时使用。',detail);action('查看资源预载',resources);}
+   if(id==='saves'){const current=win.TavernHelper?.getChatWorldbookName?.('current')||win.SillyTavern?.getContext?.().chatMetadata?.__cxx_story_profile?.binding?.worldbook;n('p',current?'原世界书：'+current+'。每条故事路线使用独立的 user 条目。':'创建人物后，资料保存在原世界书内，只供当前故事使用。',detail);action('创意工坊',()=>win.Cxx233Runtime.invokeScriptButton('创意工坊'));action('存档 / 读档',()=>archive({tab:'save'}));action('导入旧版进度',()=>archive({tab:'stories',import:true}));action('更新与续玩',()=>{const updater=win.Cxx233Updater;if(typeof updater?.openPanel!=='function')throw Error('更新服务正在加载，请稍后重试。');return updater.openPanel('update');});}
+   if(id==='diagnostics'){const plugins=win.CxxPlugins?.panel(detail),diagnostics=win.CxxDiagnostics?.panel(detail);cleanup=()=>{plugins?.();diagnostics?.();};if(!diagnostics)n('p','诊断服务正在加载，请重新进入此页。',detail);const noticeBox=win.CxxEntryExperience?.announcements(win),noticeAction=action('公告'+(noticeBox?.unread?' ●':''),()=>noticeBox?.open(true)),noticeStop=noticeBox?.subscribe?.(s=>{const label='公告'+(s?.unread?' ●':'');if(noticeAction&&noticeAction.textContent!==label)noticeAction.textContent=label;});if(noticeStop)cleanup=()=>{plugins?.();diagnostics?.();noticeStop();};}
+   detail.scrollTop=0;
+  }
+  show(section);return()=>{motion?.dispose();live=false;resizeObserver?.disconnect();sizeWindow.cancelAnimationFrame(layoutFrame);sizeWindow.removeEventListener('resize',resizeLayout);cleanup?.();host.remove();};
+ }
+ return {mount,categories};
+});

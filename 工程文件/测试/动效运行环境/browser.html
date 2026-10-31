@@ -1,0 +1,9 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>视觉运行环境 · 组件检查</title><link rel="stylesheet" href="/extension/style.css"><style>body{margin:24px;font:16px system-ui;background:#17191f;color:#eee}button,input,select{font:inherit}button{padding:8px;margin:4px}#stage{width:min(760px,100%);height:320px;border:1px solid #888;margin-block:18px}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:300px;overflow:auto}.tools{display:flex;flex-wrap:wrap}summary{cursor:pointer}h1{font-size:24px}</style></head><body>
+<h1>视觉运行环境 · 组件检查</h1><p>使用官方Rive／Lottie样本、自制网页作品和正式维护代码；宿主设置／聊天事件为检查夹具。</p>
+<div class="tools"><button data-sample="rating">评分样本</button><button data-sample="data-binding">数据绑定样本</button><button id="pause">暂停样本</button><button id="play">继续样本</button><button id="close">关闭样本</button><button id="cycle">20次加载与关闭</button><button id="switch">模拟切换聊天</button><button id="disable">卸载并重载扩展</button></div>
+<div class="tools"><button data-lottie="json">Lottie JSON</button><button data-lottie="lottie">dotLottie 容器</button><button data-lottie="webgl">Lottie WebGL</button><button id="seek">暂停并定位第30帧</button><button id="segment">播放第10至40帧</button></div>
+<div class="tools"><button id="external-image">Lottie外置图片</button><button id="missing-image">检查缺失图片提示</button></div>
+<div class="tools"><button id="web-project">网页图形作品</button><button id="reveal">图形显现</button><button id="dissolve">图形消散</button><button id="isolation">检查作品与宿主隔离</button><button id="narrow">切换窄屏尺寸</button></div>
+<label>绑定文字<input id="value" value="50 / 100"></label><button id="bind">应用文字</button><button id="report">刷新检查结果</button>
+<output id="status" role="status">准备就绪</output><div id="stage"></div><pre id="report-output"></pre><div id="extensions_settings"></div>
+<script type="module" src="/fixture/browser.mjs"></script></body></html>

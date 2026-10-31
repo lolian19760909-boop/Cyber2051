@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script>if(["#download","#announcements","#city-view"].includes(location.hash))location.replace("/recent.html"+location.hash);</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>东京都2051 · 人物、故事与城市</title>
+<meta name="description" content="东京都2051：基于 BanG Dream! 人物与赛博朋克世界观的粉丝角色卡。查看正式下载，探索创意工坊，分享你的故事。">
+<meta name="theme-color" content="#100f14"><link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<script src="/workshop/hero-art.js?v=art20261016"></script>
+<link rel="stylesheet" href="/workshop/theme.css?v=motion20261027"><script src="/workshop/theme-runtime.js?v=motion20261027"></script><script>CxxThemeRuntime.install(window);</script><link rel="stylesheet" href="/site.css?v=motion20261027">
+<link rel="stylesheet" href="/workshop/poster-system.css?v=motion20261027">
+<link rel="stylesheet" href="/workshop/visual-kit.css?v=motion20261027">
+<link rel="stylesheet" href="/workshop/home-visual.css?v=loading20261027">
+<script src="/i18n.js?v=site-accounts-20261031" defer></script><script src="/user.js?v=account-ui-20261031" defer></script><script src="/workshop/site-ui.js?v=motion20261027" defer></script>
+<script src="/workshop/home.js?v=svgflow20261027" defer></script>
+<script type="module" src="/workshop/site-audio.mjs?v=audio20261027"></script>
+</head>
+<body class="site home-page poster-theme">
+<section class="site-boot" id="site-boot" aria-label="Tokyo2051 入场 / Opening" hidden>
+  <div class="boot-backdrop" aria-hidden="true"></div><div class="boot-signal-plane" aria-hidden="true"></div>
+  <div class="boot-center">
+    <div class="boot-brand" aria-hidden="true"></div>
+    <div class="boot-ascii" aria-hidden="true"><pre></pre></div>
+    <div class="boot-lock" aria-hidden="true"><span></span><i></i><span></span></div>
+  </div>
+  <span class="boot-signature" aria-hidden="true">人物・城市・故事</span>
+  <p class="boot-status sr-only" role="status" data-ui-zh="正在进入 Tokyo2051" data-ui-en="Entering Tokyo2051" data-ui-ja="Tokyo2051へ">正在进入 Tokyo2051</p>
+  <progress class="sr-only" max="3" value="0" aria-label="关键画面 / Key images"></progress>
+</section>
+<script>
+// One title owner hands off to the fully laid-out homepage.
+(()=>{
+ const root=document.documentElement,initial=document.getElementById('site-boot'),template=initial.cloneNode(true);initial.remove();let current,running=Promise.resolve({reason:'disabled'}),module,attempt=0;
+ const permitted=()=>{let mode;try{mode=localStorage.getItem('cxx-display-mode');}catch{}return mode!=='static'&&root.dataset.motion!=='off'&&!matchMedia('(prefers-reduced-motion:reduce)').matches&&!document.hidden;};
+ function play(repeat=false){
+  current?.finish('superseded');if(!permitted()||(!repeat&&(location.hash||performance.getEntriesByType('navigation')[0]?.type==='back_forward')))return running=Promise.resolve({reason:'disabled'});
+  const node=template.cloneNode(true);node.hidden=false;document.body.prepend(node);root.dataset.boot='loading';let resolve,clean,active=true;const started=performance.now(),listeners=[];running=new Promise(done=>{resolve=done;});
+  const on=(owner,type,fn,options)=>{owner.addEventListener(type,fn,options);listeners.push(()=>owner.removeEventListener(type,fn,options));};
+  const bridge={node,started,get active(){return active;},cleanup(fn){clean=fn;if(!active)fn();},finish(reason='skip'){if(!active)return;active=false;listeners.forEach(fn=>fn());clean?.();node.remove();if(current===bridge)root.removeAttribute('data-boot');resolve({reason,finishedAt:performance.now()});document.dispatchEvent(new CustomEvent('cxx-boot-finished',{detail:{reason}}));}};current=bridge;
+  on(document,'keydown',()=>bridge.finish('keyboard'),true);on(window,'wheel',()=>bridge.finish('input'),{passive:true});on(window,'pagehide',()=>bridge.finish('pagehide'));on(document,'visibilitychange',()=>{if(document.hidden)bridge.finish('hidden');});
+  const reduce=matchMedia('(prefers-reduced-motion:reduce)');on(reduce,'change',()=>{if(reduce.matches)bridge.finish('preference');});
+  (module||=import('/workshop/site-boot.mjs?v=motion20261027'+(attempt?'&retry='+attempt:''))).then(value=>{if(bridge.active)value.mount(bridge);}).catch(()=>{module=null;attempt++;bridge.finish('unavailable');});return running;
+ }
+ window.CXXBoot={play,cancel:()=>current?.finish('skip'),get active(){return !!current?.active;},get finished(){return running;}};play();
+})();
+</script>
+<a class="skip-link" href="#main" data-ui-zh="跳到内容" data-ui-en="Skip to content" data-ui-ja="本文へ移動">跳到内容</a>
+<header class="site-header poster-theme"><div class="bar"><a class="logo" href="/"><span class="cube"></span>TOKYO 2051</a><nav class="nav"><a class="on" href="/" data-i18n="nav.home">首页</a><a href="/recent.html" data-ui-zh="近期详情" data-ui-en="Latest details" data-ui-ja="最近の情報">近期详情</a><a href="/play/" data-ui-zh="开始游玩" data-ui-en="Play now" data-ui-ja="プレイする">开始游玩</a><a href="/workshop.html" data-i18n="nav.ws">创意工坊</a><a href="/workshop/" data-i18n="nav.fb">留言墙</a><a href="/recent.html#download" data-i18n="nav.dl">卡下载</a></nav></div></header>
+<main id="main" class="home-main">
+    <section class="hero" data-art-character="Saki" data-art-background="neonring_midnight2" data-art-state="ready" aria-labelledby="home-title">
+  <picture class="hero-backdrop"><source media="(max-width:600px)" srcset="/workshop/assets/hero-20261005/backgrounds/neonring_midnight2-mobile.webp"><img class="hero-city" src="/workshop/assets/hero-20261005/backgrounds/neonring_midnight2.webp" width="1792" height="896" alt="" fetchpriority="high" decoding="async"></picture>
+  <div class="hero-air" aria-hidden="true"><picture><source media="(max-width:600px)" srcset="/workshop/assets/visual-kit-20261016/atmosphere-512.webp"><img src="/workshop/assets/visual-kit-20261016/atmosphere-960.webp" width="960" height="480" alt="" loading="lazy" decoding="async" fetchpriority="low"></picture></div>
+<div class="wrap hero-inner">
+    <div class="hero-copy">
+      <h1 id="home-title"><span class="sr-only">Tokyo 2051</span><span class="wordmark-shell"><img class="hero-wordmark" src="/workshop/assets/game-ui/wordmark.webp" width="1200" height="400" alt="" fetchpriority="high" decoding="async"><span class="wordmark-fallback" aria-hidden="true" hidden>TOKYO 2051</span></span></h1>
+<p class="hero-intro"><span data-ui-zh="基于《BanG Dream!》人物与《赛博朋克 2077》世界观的粉丝角色卡。" data-ui-en="A fan-made rolecard inspired by the characters of BanG Dream! and the world of Cyberpunk 2077." data-ui-ja="『BanG Dream!』の人物と『Cyberpunk 2077』の世界観に着想を得たファン作品。">基于《BanG Dream!》人物与《赛博朋克 2077》世界观的粉丝角色卡。</span></p>
+      <div class="hero-actions game-menu">
+        <a class="game-command game-command-primary" id="hero-primary" href="/play/"><span id="hero-primary-label" data-ui-zh="开始游玩" data-ui-en="Play now" data-ui-ja="プレイする">开始游玩</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 12h17M14 5l7 7-7 7"/></svg></a>
+        <a class="game-command" href="/recent.html" data-ui-zh="近期详情" data-ui-en="Latest details" data-ui-ja="最近の情報">近期详情</a>
+        <a class="game-command" href="/workshop.html" data-ui-zh="创意工坊" data-ui-en="Workshop" data-ui-ja="創作工房">创意工坊</a>
+        <a class="game-command" href="/recent.html#download" data-ui-zh="角色卡下载" data-ui-en="Rolecard download" data-ui-ja="カードをダウンロード">角色卡下载</a>
+        <a class="game-command" href="/resources.html" data-ui-zh="资源包" data-ui-en="Resource packs" data-ui-ja="リソース">资源包</a>
+        <a class="game-command" href="/workshop/" data-ui-zh="留言墙" data-ui-en="Message wall" data-ui-ja="掲示板">留言墙</a>
+      </div>
+    </div>
+    <div class="hero-portrait"><div class="hero-figure"><span class="hero-rim" aria-hidden="true"></span><picture><source media="(max-width:600px)" srcset="/workshop/assets/hero-20261005/portraits/Saki-mobile.webp"><img class="hero-person" crossorigin="anonymous" src="/workshop/assets/hero-20261005/portraits/Saki.webp" width="1024" height="1536" alt="丰川祥子，项目现有赛博风格立绘" fetchpriority="high" decoding="async"></picture><span class="hero-key" aria-hidden="true"></span></div></div>
+    <div class="hero-bottom">
+      <div class="hero-caption">SAKIKO TOGAWA / 丰川祥子</div>
+      <p class="poster-feedback sr-only" role="status" aria-live="polite"></p>
+    </div>
+  </div>
+<aside class="site-audio" aria-label="音乐与音效"></aside>
+</section>
+<script>window.CXXHeroArt?.mount();</script>
+
+</main>
+<footer class="site-footer"><div class="fline"><span>CYBER2051.TOP</span><span data-ui-zh="粉丝二创作品，与官方无关" data-ui-en="Fan creation, unaffiliated with the originals" data-ui-ja="非公式のファン作品です">粉丝二创作品，与官方无关</span><span>BanG Dream! © BanG Dream! Project · Cyberpunk 2077 © CD PROJEKT RED</span></div></footer>
+
+</body></html>

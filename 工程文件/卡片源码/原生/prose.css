@@ -1,0 +1,56 @@
+/* Tavern mode (DESIGN.md 10.9, draft 5): one continuous column per floor on a dark strip; the
+   speaker's name leads the line, narration sits a step back. */
+.cxx-native-prose {
+  box-sizing:border-box; max-width:44em; margin:0 auto; padding:22px 34px;
+  color:var(--cxx-on-canvas); background:color-mix(in srgb,var(--cxx-canvas) 88%,transparent);
+  font-size:inherit; font-family:var(--cxx-font-ui); line-height:1.85; overflow-wrap:anywhere; position:relative;
+  border-left:1px solid var(--cxx-line-strong);
+}
+.cxx-native-prose p {margin:0 0 1.1em;color:color-mix(in srgb,var(--cxx-on-canvas) 82%,transparent)}
+.cxx-native-prose p:last-child {margin-bottom:0}
+.cxx-native-prose .cxx-native-dialogue {color:var(--cxx-on-canvas)}
+.cxx-native-prose .cxx-native-speaker {margin-right:.25em;font-weight:600;color:var(--cxx-heading);letter-spacing:.025em}
+.cxx-native-prose strong {color:var(--cxx-on-canvas);font-weight:600}
+.cxx-native-prose em {color:var(--cxx-on-canvas-muted)}
+.cxx-native-prose blockquote {margin:1.3em 0;padding:4px 16px;border-left:2px solid var(--cxx-line);color:var(--cxx-on-canvas-muted)}
+.cxx-native-prose :is(ul,ol) {padding-left:1.5em;margin:1em 0}
+.cxx-native-prose li {padding-left:.2em;margin:.35em 0}
+.cxx-native-prose a {color:var(--cxx-interactive);text-underline-offset:4px}
+.cxx-native-prose code {font-family:var(--cxx-font-mono);font-size:.9em;color:var(--cxx-on-canvas);background:color-mix(in srgb,var(--cxx-on-canvas) 6%,transparent)}
+.cxx-native-prose pre {max-width:100%;overflow:auto;padding:14px;background:var(--cxx-canvas);border:1px solid var(--cxx-line);line-height:1.6;white-space:pre}
+.cxx-native-prose pre code {background:none}
+.cxx-native-prose .cxx-native-aux {margin:12px 0;font-size:.875em;color:var(--cxx-on-canvas-muted);background:var(--cxx-canvas)!important;background-image:none!important;border:1px solid var(--cxx-line)!important;border-radius:0!important;box-shadow:none!important;transform:none!important;animation:none!important}
+.cxx-native-prose .cxx-native-aux>summary {display:flex;align-items:center;gap:10px;min-height:44px;list-style:none;cursor:pointer;padding:6px 12px!important;width:auto!important;background:transparent!important;border:0!important;border-radius:0!important;color:var(--cxx-on-canvas-muted)!important;box-shadow:none!important;letter-spacing:.04em!important;font:inherit!important;box-sizing:border-box}
+.cxx-native-prose .cxx-native-aux>summary::-webkit-details-marker {display:none}
+.cxx-native-prose .cxx-native-aux>summary::before {content:'+';font:16px var(--cxx-font-mono);color:var(--cxx-structure)}
+.cxx-native-prose .cxx-native-aux[open]>summary::before {content:'−'}
+.cxx-native-prose .cxx-native-aux>summary:focus-visible {outline:2px solid var(--cxx-interactive);outline-offset:2px}
+.cxx-native-prose .cxx-native-aux>div {padding:8px 16px 18px;border-left:1px solid var(--cxx-line);margin-bottom:12px}
+.cxx-native-prose .cxx-native-aux[data-cxx-aux="native"] {padding:0 12px 8px}
+.cxx-native-prose .cxx-native-aux[data-cxx-aux="native"]>summary {margin:0 -12px}
+.cxx-native-prose .mvu-wrapper {width:100%;max-width:none;margin:12px 0;font-family:inherit}
+.cxx-native-prose .mvu-tag {background:transparent;color:var(--cxx-on-canvas-muted);padding:0;border-radius:0}
+.cxx-native-prose :is(.mvu-header-gif,.mvu-deco-line,.mvu-bg-icon,.mvu-footer) {display:none}
+.cxx-native-prose .mvu-body {border-color:var(--cxx-line);animation:none}
+.cxx-native-prose .mvu-content {color:var(--cxx-on-canvas);font-size:1em}
+.cxx-native-prose .mvu-scroll-area {max-height:none}
+@media(max-width:560px) {.cxx-native-prose {padding:16px 18px;border-left:0}}
+@container(max-width:560px) {.cxx-native-prose {padding:16px 18px;border-left:0}}
+/* Story picture block after a floor's text, and its full-screen viewer (DESIGN.md 8.1). */
+.cxx-story-figure {box-sizing:border-box;max-width:44em;margin:0 auto 16px;padding:0 34px}
+.cxx-story-figure-open {display:block;width:100%;padding:0;border:1px solid var(--cxx-line);border-radius:0;background:var(--cxx-canvas);cursor:zoom-in}
+.cxx-story-figure-open:focus-visible {outline:2px solid var(--cxx-interactive);outline-offset:2px}
+.cxx-story-figure img {display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+.cxx-story-figure[data-ready] img {animation:cxx-story-in 200ms cubic-bezier(.23,1,.32,1)}
+.cxx-story-figure figcaption {margin-top:8px;font-size:14px;line-height:1.5;color:var(--cxx-on-canvas-muted)}
+.cxx-story-viewer {box-sizing:border-box;width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;padding:16px;border:0;background:color-mix(in srgb,var(--cxx-scrim) 94%,transparent);place-items:center}
+.cxx-story-viewer[open] {display:grid}
+.cxx-story-viewer::backdrop {background:transparent}
+.cxx-story-viewer img {max-width:100%;max-height:calc(100dvh - 96px);object-fit:contain;cursor:zoom-out}
+.cxx-story-viewer-close {position:fixed;top:16px;right:16px;min-width:44px;min-height:44px;padding:0 16px;border:1px solid var(--cxx-line);border-radius:0;background:var(--cxx-panel);color:var(--cxx-text);font:16px var(--cxx-font-ui);cursor:pointer}
+.cxx-story-viewer-close:focus-visible {outline:2px solid var(--cxx-interactive);outline-offset:2px}
+@keyframes cxx-story-in {from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce) {.cxx-story-figure[data-ready] img {animation:none}}
+@media(max-width:560px) {.cxx-story-figure {padding:0 18px}}
+.cxx-story-illustrations:not([data-cxx-story-style="figure"]) figure{margin:20px 0}.cxx-story-illustrations:not([data-cxx-story-style="figure"]) button{display:block;width:100%;padding:0;border:0;background:transparent;cursor:zoom-in}.cxx-story-illustrations:not([data-cxx-story-style="figure"]) img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain}.cxx-story-illustrations:not([data-cxx-story-style="figure"]) figcaption{margin-top:8px;color:var(--cxx-text);font-size:14px}
+.cxx-story-image-dialog{max-width:96vw;max-height:94dvh;padding:12px;background:#10141b;color:#edf0f3;border:1px solid #58616d}.cxx-story-image-dialog img{display:block;max-width:90vw;max-height:80dvh;object-fit:contain}.cxx-story-image-dialog button{min-height:44px;margin-bottom:8px}.cxx-story-image-dialog::backdrop{background:#000c}

@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>body {
+  font-family: var(--cxx-font-ui);
+}
+
+@keyframes umiri-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateY(15px) scale(0.98);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.umiri-wrap {
+  max-width: 800px;
+  margin: 30px auto;
+  animation: umiri-slide-in 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative;
+  --cp-ink: var(--cxx-ink);
+  --cp-panel: var(--cxx-panel);
+  --cp-panel-hi: var(--cxx-raised);
+  --cp-line: var(--cxx-line);
+  --cp-cyan: var(--cxx-cyan);
+  --cp-red: var(--cxx-red);
+  --cp-amber: var(--cxx-yellow);
+  --cp-text: var(--cxx-text);
+  --cp-muted: var(--cxx-muted);
+  font-family: var(--cxx-font-ui);
+  color: var(--cp-text);
+}
+
+.umiri-container {
+  display: flex;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% -18%,color-mix(in srgb, var(--cxx-narrative-panel) 50%, transparent),transparent 62%),repeating-linear-gradient(0deg,transparent 0 31px,color-mix(in srgb, var(--cxx-red) 2.20%, transparent) 31px 32px),var(--cp-ink);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  box-shadow: 0 18px 46px color-mix(in srgb, var(--cxx-shadow) 42%, transparent);
+}
+
+.umiri-side-bar {
+  width: 65px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 35px 0;
+  position: relative;
+  background: linear-gradient(180deg,var(--cxx-ink),var(--cxx-ink));
+  box-shadow: inset -3px 0 8px color-mix(in srgb, var(--cxx-shadow) 60%, transparent),inset -1px 0 0 var(--cp-line);
+}
+
+.umiri-side-bar::after {
+  content: '';
+  position: absolute;
+  top: 25px;
+  bottom: 25px;
+  right: 20px;
+  width: 1px;
+  background: color-mix(in srgb, var(--cxx-cyan) 50.00%, transparent);
+  box-shadow: -8px 0 0 color-mix(in srgb, var(--cxx-cyan) 18.00%, transparent),-16px 0 0 color-mix(in srgb, var(--cxx-cyan) 6.00%, transparent);
+}
+
+.umiri-vertical-text {
+  writing-mode: vertical-rl;
+  font-family: var(--cxx-font-mono);
+  font-size: 11px;
+  letter-spacing: 5px;
+  margin-top: auto;
+  transform: rotate(180deg);
+  color: var(--cp-cyan);
+}
+
+.umiri-content-left {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  background: transparent;
+  border-right: 1px dashed var(--cp-line);
+}
+
+.umiri-tag {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  font-family: var(--cxx-font-mono);
+  background: color-mix(in srgb, var(--cxx-cyan) 8.00%, transparent);
+  color: var(--cp-cyan);
+  border-left: 4px solid var(--cp-cyan);
+  border-radius: 2px;
+}
+
+.umiri-photo-wrap {
+  position: relative;
+  padding: 12px;
+  transition: all 0.3s ease;
+  background: var(--cp-panel-hi);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+}
+
+.umiri-photo-wrap:hover {
+  box-shadow: 0 8px 25px color-mix(in srgb, var(--cxx-cyan) 10%, transparent);
+  transform: translateY(-2px);
+}
+
+.umiri-photo {
+  display: block;
+  background: var(--cxx-panel);
+  height: 380px;
+  width: 100%;
+  object-fit: cover;
+  object-position: top;
+  filter: saturate(.78) contrast(1.05);
+  border-radius: 1px;
+}
+
+.umiri-photo-wrap::before {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid var(--cxx-line);
+  top: 6px;
+  left: 6px;
+  border-right: none;
+  border-bottom: none;
+  border-color: var(--cp-cyan);
+  opacity: .7;
+}
+
+.umiri-photo-wrap::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid var(--cxx-line);
+  bottom: 6px;
+  right: 6px;
+  border-left: none;
+  border-top: none;
+  border-color: var(--cp-cyan);
+  opacity: .7;
+}
+
+.umiri-content-right {
+  flex: 1.1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+}
+
+.umiri-time {
+  font-family: var(--cxx-font-mono);
+  font-size: 12px;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: 1px;
+  color: var(--cp-muted);
+}
+
+.umiri-time::before {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 6px;
+  background: var(--cp-red);
+  border-radius: 0;
+}
+
+.umiri-gif-box {
+  align-self: flex-start;
+  padding: 5px;
+  margin-bottom: 25px;
+  position: relative;
+  background: var(--cp-panel-hi);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.umiri-gif {
+  height: 90px;
+  width: auto;
+  display: block;
+  filter: saturate(.78) contrast(1.05);
+  border-radius: 1px;
+}
+
+.umiri-gif-label {
+  position: absolute;
+  right: -8px;
+  top: -8px;
+  color: var(--cxx-text);
+  font-size: 10px;
+  padding: 2px 6px;
+  font-family: var(--cxx-font-mono);
+  z-index: 2;
+  background: var(--cp-red);
+  border-radius: 1px;
+}
+
+.umiri-text {
+  font-size: 14px;
+  line-height: 1.9;
+  text-align: justify;
+  margin-bottom: 35px;
+  color: var(--cp-text);
+}
+
+.umiri-text p {
+  margin: 0 0 12px 0;
+}
+
+.umiri-text p:last-child {
+  margin-bottom: 0;
+}
+
+.umiri-action {
+  margin-top: auto;
+  text-align: right;
+}
+
+.umiri-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 30px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  font-family: var(--cxx-font-ui);
+  color: var(--cp-ink);
+  background: var(--cp-cyan);
+  border: 1px solid var(--cp-cyan);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cxx-cyan) 22.00%, transparent);
+  text-shadow: none;
+}
+
+.umiri-btn:hover {
+  transform: translate(-2px, -2px);
+  background: var(--cxx-cyan);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--cxx-cyan) 12.00%, transparent),0 6px 20px color-mix(in srgb, var(--cxx-cyan) 15.00%, transparent);
+  color: var(--cp-ink);
+}
+
+.umiri-btn:active {
+  transform: translate(0, 0);
+  box-shadow: 0 0 0 transparent;
+}
+
+.umiri-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  background: color-mix(in srgb, var(--cxx-ink) 93%, transparent);
+  backdrop-filter: blur(3px);
+}
+
+.umiri-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.umiri-over-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.umiri-loader {
+  display: flex;
+  gap: 5px;
+  height: 20px;
+  align-items: center;
+}
+
+.umiri-line {
+  width: 3px;
+  background: var(--cxx-raised);
+  height: 100%;
+  animation: umiri-wave 1s ease-in-out infinite;
+  border-radius: 2px;
+}
+
+.umiri-line:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.umiri-line:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.umiri-line:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+@keyframes umiri-wave {
+  0%, 100% {
+    height: 8px;
+    opacity: 0.5;
+  }
+
+  50% {
+    height: 20px;
+    opacity: 1;
+  }
+}
+
+.umiri-over-txt {
+  font-family: var(--cxx-font-mono);
+  font-size: 16px;
+  letter-spacing: 6px;
+  font-weight: 700;
+  color: var(--cp-cyan);
+  text-shadow: none;
+}
+
+@media (max-width: 680px) {
+  .umiri-container {
+    flex-direction: column;
+  }
+
+  .umiri-side-bar {
+    width: 100%;
+    height: 35px;
+    flex-direction: row;
+    padding: 0 20px;
+    justify-content: flex-end;
+  }
+
+  .umiri-side-bar::after {
+    top: 15px;
+    bottom: 15px;
+    left: 20px;
+    right: 20px;
+    height: 1px;
+    width: auto;
+    box-shadow: 0 -6px 0 color-mix(in srgb, var(--cxx-red-soft) 15.00%, transparent);
+  }
+
+  .umiri-vertical-text {
+    writing-mode: horizontal-tb;
+    transform: none;
+    margin-top: 0;
+    letter-spacing: 3px;
+    font-size: 10px;
+  }
+
+  .umiri-content-left {
+    padding: 30px 25px;
+    border-right: none;
+    border-bottom: 1px dashed color-mix(in srgb, var(--cxx-line) 15%, transparent);
+  }
+
+  .umiri-content-right {
+    padding: 30px 25px;
+  }
+
+  .umiri-action {
+    text-align: center;
+    margin-top: 15px;
+  }
+}
+
+.umiri-card::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.umiri-paper::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.umiri-book::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.umiri-board::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.umiri-notebook::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.umiri-container::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.umiri-journal::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+@keyframes cp-alt-flow {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .umiri-wrap * {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .umiri-wrap *::before {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .umiri-wrap *::after {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+}
+
+.umiri-text strong {
+  color: var(--cp-amber);
+}
+
+.umiri-loader .umiri-line {
+  background: var(--cp-cyan);
+}
+
+button.umiri-btn {
+  font-family: inherit;
+  line-height: inherit;
+  appearance: none;
+  min-height: 44px;
+}
+
+.umiri-btn:focus-visible {
+  outline: 2px solid var(--cp-cyan,var(--cxx-line));
+  outline-offset: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="umiri-wrap" id="umiriWrap">
+    <div class="umiri-container">
+
+        <!-- 左侧深色边栏 (贝斯指板隐喻) -->
+        <div class="umiri-side-bar">
+            <div class="umiri-vertical-text">BASSIST_UMIRI</div>
+        </div>
+
+        <!-- 左侧大图展示区 -->
+        <div class="umiri-content-left">
+            <div class="umiri-tag">SCHEDULE / RECORD</div>
+            <div class="umiri-photo-wrap">
+                <!-- 已将blob替换为raw，确保图片能直接显示 -->
+                <img class="umiri-photo" src="https://cyber2051.top/img/%E5%85%AB%E5%B9%A1%E6%B5%B7%E9%93%83%2FUmiri_%E9%9C%B2%E8%85%B0%E4%BD%A9%E5%88%80%E7%89%B9%E5%86%99%E7%AB%99%E5%A7%BF.png" alt="八幡海铃">
+            </div>
+        </div>
+
+        <!-- 右侧信息与交互区 -->
+        <div class="umiri-content-right">
+            <div class="umiri-time">DATE: 2050.12.25 | 16:00 PM</div>
+
+            <div class="umiri-gif-box">
+                <div class="umiri-gif-label">LOG_01</div>
+                <img class="umiri-gif" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E6%B5%B7%E9%93%83%E6%BB%A1%E6%84%8F.gif" alt="海铃满意">
+            </div>
+
+            <!-- UI界面文字：简短日常碎碎念 -->
+            <div class="umiri-text">
+                <p>刚刚结束了中午的委托。雇主要求砍掉手臂的那个家伙实在难缠。</p>
+                <p>好在自己只是断了把刀，外加左臂挨了一枪，没什么大碍。其实也不大需要升级装备。</p>
+                <p>不过，来都来了，看着诊所那柜子上五花八门的义体，偶尔尝试些新东西好像也不错……要不再买几个装了?</p>
+            </div>
+
+            <div class="umiri-action">
+                <!-- 发送给AI的具体情境大纲指令 -->
+                <button type="button" class="umiri-btn" onclick="umiriStart()"
+                     data-prompt="【开始】【开场白】
+# 场景生成指令
+
+## 核心任务
+- 请作为【场景描绘者】，写一段关于八幡海铃的开局场景。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+
+## 场景要素
+- **时间：** 2050年12月25日，下午四点。
+- **地点：** 东京夕暮老街的宇田川巴诊所。
+- **核心人物：** 八幡海铃。
+
+## 剧情大纲与必须包含的细节：
+1. **义体保养：** 下午四点，海铃结束了一场委托后，前往她常来的这家义体诊所。因为委托中受了点伤，左臂的防护也损坏了，所以便来让老板处理一下。
+2. **突如其来的购物：** 在等待的过程中，她盯着满柜的义体，突然产生了想要尝试些新东西的念头。于是在处理完伤口，装完新的手臂防弹片后，她让老板为她安装强化肌腱。
+3. **离开与闲暇的抉择：** 很快，强化肌腱的安装也完成了。海铃走出了义体诊所。走在红花街上，今天下午的排班难得空了出来，晚饭前还有一段闲暇时间。海铃停下了脚步，内心盘算着要去哪里打发这难得的闲暇，或者……干脆再多接个委托？
+
+## 最高优先级指令
+在描绘完海铃走出店门，思考接下来行程的场景后，【立即停止输出】。严禁强行推进后续对话或代替玩家行动，将故事的控制权交给玩家。
+【/开场白】">
+
+                    开  始
+                </button>
+            </div>
+        </div>
+
+        <!-- 点击后的过场动画遮罩 -->
+        <div class="umiri-overlay" id="umiriOverlay">
+            <div class="umiri-over-content">
+                <div class="umiri-loader">
+                    <div class="umiri-line"></div><div class="umiri-line"></div>
+                    <div class="umiri-line"></div><div class="umiri-line"></div>
+                </div>
+                <div class="umiri-over-txt">CONNECTING...</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function umiriStart() {
+    var btn = document.querySelector('.umiri-btn');
+    var promptText = btn.getAttribute('data-prompt');
+
+    return parent.Cxx236OpeningHost.submitPreview(window, '/send ' + promptText + '|/trigger');
+}
+</script>
+
+</body>
+</html>

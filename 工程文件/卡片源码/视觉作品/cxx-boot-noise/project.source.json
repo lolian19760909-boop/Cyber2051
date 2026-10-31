@@ -1,0 +1,12 @@
+{
+  "format": "tavern-visual-project",
+  "schema": 1,
+  "id": "cxx-boot-noise",
+  "version": "1",
+  "title": "系统自检扫描噪点",
+  "engine": {"id": "web-bundle", "version": "1"},
+  "scene": {"file": "entry.js", "interactive": false},
+  "inputs": [{"id": "theme", "type": "string"}, {"id": "active", "type": "boolean"}],
+  "events": [],
+  "files": ["entry.js"]
+}

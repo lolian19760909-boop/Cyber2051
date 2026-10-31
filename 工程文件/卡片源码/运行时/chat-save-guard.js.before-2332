@@ -1,0 +1,774 @@
+(function(root,factory){const value=factory();if(typeof module==='object'&&module.exports)module.exports=value;else root.CxxChatSaveGuard=value;})(globalThis,function(){
+ 'use strict';
+ const copy=v=>JSON.parse(JSON.stringify(v));
+ // JSON applies toJSON/Date and undefined rules before the replacer. Sort each
+ // object once, without serializing and reparsing the whole chat first.
+ const canonical=v=>JSON.stringify(v,(_key,value)=>value&&typeof value==='object'&&!Array.isArray(value)?Object.fromEntries(Object.keys(value).sort().map(k=>[k,value[k]])):value);
+  function slimChat(rows){
+   let changed=false;const out=rows.map(row=>{
+    const vars=row&&row.variables;if(!vars||typeof vars!=='object')return row;
+    let rowChanged=false;const next=Array.isArray(vars)?vars.slice():{...vars};
+    for(const [swipe,data] of Object.entries(vars)){
+     if(!data||typeof data!=='object'||!data.stat_data||!data.display_data)continue;
+     if(canonical(data.stat_data)!==canonical(data.display_data))continue;
+     const {display_data,...rest}=data;next[swipe]=rest;rowChanged=true;
+    }
+    if(!rowChanged)return row;
+    changed=true;return {...row,variables:next};
+   });
+   return changed?out:rows;
+  }
+ const fail=(code,message,details)=>{throw Object.assign(Error(message),{code,...(details?{details}:{})});};
+ const sameScope=(a,b)=>a&&b&&a.characterKey===b.characterKey&&a.chatId===b.chatId;
+ // ST and TT authors-note.loadSettings fill these fields when a chat opens.
+ // Compare that loaded representation, keeping explicit values and raw disk
+ // fingerprints intact so actual edits in another window still conflict.
+ function normalizeAuthorNote(metadata,note={}){
+  const defaults={note_prompt:note.default??'',note_interval:note.defaultInterval??1,note_position:note.defaultPosition??1,note_depth:note.defaultDepth??4,note_role:note.defaultRole??0};
+  for(const [key,value]of Object.entries(defaults))metadata[key]??=value;
+  return metadata;
+ }
+ // Prompt Template initializes empty variable slots and render-cache flags
+ // while displaying a loaded message. Compare only their empty/default form;
+ // stored variables, initialization markers and raw save fingerprints remain.
+ function normalizeTemplateMessage(message){
+  if(Array.isArray(message.variables)&&message.variables.every(v=>v===null||v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===0))delete message.variables;
+  if(Array.isArray(message.variables_initialized)&&message.variables_initialized.length===0)delete message.variables_initialized;
+  if(Array.isArray(message.is_ejs_processed)&&message.is_ejs_processed.every(v=>v===null||typeof v==='boolean'))delete message.is_ejs_processed;
+ }
+ function loadVariables(disk,loaded){
+  const before=disk.metadata.variables,after=loaded.metadata.variables;
+  if(!after||typeof after!=='object'||Array.isArray(after)||before!==undefined&&(!before||typeof before!=='object'||Array.isArray(before)))return;
+  // Only additive card-owned initialization (and TH's empty map) is equivalent.
+  // Existing persisted values, removed fields and third-party values still compare.
+  const added=Object.keys(after).filter(k=>!Object.hasOwn(before||{},k));
+  if(added.some(k=>!/^__cxx_[A-Za-z0-9_]+$/.test(k))||Object.keys(before||{}).some(k=>canonical(before[k])!==canonical(after[k])))return;
+  disk.metadata.variables={...(before||{}),...Object.fromEntries(added.map(k=>[k,copy(after[k])]))};
+ }
+ // Diagnostics contain field paths and digests, never message or variable text.
+ async function differences(left,right){
+  const found=[];
+  async function describe(value){const text=canonical(value),bytes=text===undefined?null:new TextEncoder().encode(text);return {type:value===undefined?'missing':value===null?'null':Array.isArray(value)?'array':typeof value,length:bytes?.length??0,sha256:bytes&&globalThis.crypto?.subtle?Array.from(new Uint8Array(await globalThis.crypto.subtle.digest('SHA-256',bytes)),b=>b.toString(16).padStart(2,'0')).join(''):null};}
+  async function walk(a,b,path){
+   if(found.length>=32||canonical(a)===canonical(b))return;
+   if(a&&b&&typeof a==='object'&&typeof b==='object'&&Array.isArray(a)===Array.isArray(b)){for(const key of new Set([...Object.keys(a),...Object.keys(b)])){await walk(a[key],b[key],path+'/'+String(key).replaceAll('~','~0').replaceAll('/','~1'));if(found.length>=32)break;}}
+   else found.push({path,left:await describe(a),right:await describe(b)});
+  }
+  await walk(left,right,'');return found;
+ }
+ async function conflict(phase,left,right){
+  const message=phase==='load'?'载入的聊天与已保存内容不一致，尚未写入。开局草稿已保留，请复制诊断后重新打开故事。':'已保存的故事在本窗口载入后发生了变化。当前修改仍在页面中，请先导出，再重新打开故事。';
+  fail('chat-save-conflict',message,{phase,left:phase==='load'?'disk':'baseline',right:phase==='load'?'loaded':'disk',differences:await differences(left,right)});
+ }
+ // A baseline belongs to a loaded window, not to the most recent arbitrary read.
+ function create({scope,snapshot,read,normalize=async x=>x,waitLoaded,opened=()=>null,locks,native=false,notify=()=>{},warn=()=>{},now=Date.now}){
+  let epoch=0,state,serial=Promise.resolve(),closed=false,lastError=null,lastFailure=null,errorVersion=0,paused=null,localOnly=false;const timeline=[],writes=new Set();
+  function step(s,phase,extra={}){s.phase=phase;timeline.push({at:new Date().toISOString(),epoch:s.epoch,phase,...extra});if(timeline.length>32)timeline.shift();}
+  function assert(s){if(paused)throw paused;if(closed||state!==s||!sameScope(scope(),s.scope))fail('context-changed','角色或聊天已切换，停止保存。');}
+  function report(error){if(error?.code==='context-changed'||error===lastError)return error;lastError=lastFailure=error;errorVersion++;notify(error);return error;}
+  const retryable=e=>e&&e.code!=='chat-save-conflict'&&e.code!=='context-changed';
+  // A receipt is captured with this exact loaded snapshot, before any async read.
+  // It comes from the host load response whose objects are actually installed.
+  function openedLocally(s,disk,diskLoaded,loaded){
+   if(!s.opened||!sameScope(s.opened.scope,s.scope)||!Array.isArray(s.opened.rows)||canonical(s.opened.rows)!==canonical(disk))return false;
+   const metadata={...loaded.metadata};
+   if(diskLoaded.metadata.variables===undefined)delete metadata.variables;else metadata.variables=diskLoaded.metadata.variables;
+   // Proven host-load objects may receive additive plugin configuration. The
+   // untouched disk receipt must still match every persisted field and message.
+   for(const key of Object.keys(metadata))if(!Object.hasOwn(diskLoaded.metadata,key))delete metadata[key];
+   return canonical({...loaded,metadata})===canonical(diskLoaded);
+  }
+  function reset({retry=false,initial=null}={}){
+   if(paused)return Promise.reject(paused);
+   const expected=copy(scope()),previous=retry&&state&&sameScope(state.scope,expected)?state:null,captured=previous?copy(previous.captured):copy(initial||snapshot());
+   const receipt=previous?previous.opened:opened(expected,captured),s={scope:expected,epoch:++epoch,baseline:null,pending:null,commits:0,captured,opened:receipt?copy(receipt):null};state=s;lastError=null;
+   step(s,'load-start');s.ready=(async()=>{
+    let loaded=await normalize(copy(captured));const disk=await read(s.scope);assert(s);
+    if(!captured.messages.length&&disk.length>1&&waitLoaded){
+     const arrived=copy(await waitLoaded(s.scope));assert(s);s.captured=copy(arrived);
+     const receipt=opened(s.scope,arrived);s.opened=receipt?copy(receipt):null;loaded=await normalize(arrived);assert(s);
+    }
+    if(disk.length){
+     const diskLoaded=await normalize({messages:copy(disk.slice(1)),metadata:copy(disk[0].chat_metadata||{})});
+     // ST generates an integrity UUID on loading an older file that lacks it.
+     if(!diskLoaded.metadata.integrity&&loaded.metadata.integrity)diskLoaded.metadata.integrity=loaded.metadata.integrity;
+     loadVariables(diskLoaded,loaded);
+     // 打开聊天时插件/宿主会往 chat_metadata 里加记账用的标量键（yuzi 的锚点、
+     // pick 的随机种子等），磁盘文件里本来就没有。只有“磁盘上压根没有、内存里是个
+     // 标量”的键才不算差异；对象/数组型的新键可能是插件的真实状态，仍然参与比对，
+     // 由 openedLocally 用宿主载入回执单独放行。variables 的加法合并由 loadVariables 判定。
+     for(const key of Object.keys(loaded.metadata)){if(key==='variables'||Object.hasOwn(diskLoaded.metadata,key))continue;const value=loaded.metadata[key];if(value===null||typeof value!=='object')delete loaded.metadata[key];}
+     if(canonical(diskLoaded)!==canonical(loaded)&&!openedLocally(s,disk,diskLoaded,loaded))await conflict('load',diskLoaded,loaded);
+    }
+    s.baseline=canonical(disk);step(s,'load-ready',{messages:Math.max(0,disk.length-1)});return s;
+   })();s.ready.catch(error=>{if(state===s){s.error=error;s.retryAt=now()+1000;step(s,'load-failed',{code:error.code||'chat-save-read'});}});return s.ready;
+  }
+  function ticket({allowPaused=false}={}){if(paused){if(allowPaused)return state;throw paused;}if(!state||!sameScope(state.scope,scope()))reset();else if(retryable(state.error)&&now()>=state.retryAt)reset({retry:true});return state;}
+  async function ready(s=ticket()){await s.ready;assert(s);return s;}
+  async function current(s){
+   assert(s);const disk=await read(s.scope);assert(s);const fingerprint=canonical(disk);
+   if(s.pending&&fingerprint===s.pending){s.baseline=fingerprint;s.pending=null;}
+   if(fingerprint!==s.baseline)await conflict('changed',JSON.parse(s.baseline),disk);
+   return disk;
+  }
+  // 浏览器没有跨窗口保存锁时（http://局域网IP 不是安全地址），至少保证同一窗口内的保存不并行。
+  const localQueues=new Map();
+  function localLock(key,work){
+   const previous=localQueues.get(key)||Promise.resolve(),next=previous.catch(()=>{}).then(work);
+   localQueues.set(key,next);
+   return next.finally(()=>{if(localQueues.get(key)===next)localQueues.delete(key);});
+  }
+  async function locked(s,work){
+   const key='cxx-chat-save:'+JSON.stringify([s.scope.characterKey,s.scope.chatId]);
+   const run=async()=>{assert(s);return work();};
+   if(!locks?.request){
+    if(!localOnly){localOnly=true;warn({code:'chat-save-lock-local',message:'当前页面不是安全地址，无法检查其他窗口是否也在保存。保存改为在本窗口排队执行，请只在一个窗口打开这个故事。'});}
+    return localLock(key,run);
+   }
+   return locks.request(key,{mode:'exclusive'},run);
+  }
+  async function commitWork(target,rows,send,loaded=ticket()){
+   try{
+    if(!sameScope(target,scope()))fail('context-changed','角色或聊天已切换，停止保存。');
+    const s=await ready(loaded);step(s,'save-check');
+    return await locked(s,async()=>{
+     const disk=await current(s),expected=canonical(typeof rows==='function'?await rows(disk):rows);s.pending=expected;assert(s);
+     step(s,'save-write');const response=await send();assert(s);step(s,'save-response',{status:response.status??(response.ok?200:0)});
+     if(!response.ok)fail('chat-save-http','故事保存接口返回 '+response.status+'，尚未确认保存。');
+     step(s,'save-readback');const actual=canonical(await read(s.scope));assert(s);
+     // An overlapping read may already have confirmed and cleared s.pending.
+     if(actual!==expected)fail('chat-save-unconfirmed','故事写入后读回不一致，当前修改仍保留，请重试确认。',{phase:'save-readback',left:'intended',right:'disk',differences:await differences(JSON.parse(expected),JSON.parse(actual))});
+     s.baseline=actual;s.pending=null;s.commits++;lastError=null;step(s,'save-confirmed');return response;
+    });
+   }catch(error){throw report(error);}
+  }
+  function commit(...args){const work=commitWork(...args);writes.add(work);work.finally(()=>writes.delete(work)).catch(()=>{});return work;}
+  async function whenIdle(){while(writes.size)await Promise.all([...writes]);}
+  function run(expected,work){
+   const job=serial.catch(()=>{}).then(async()=>{
+    try{
+     if(!sameScope(expected,scope()))fail('context-changed','角色或聊天已切换，停止保存。');
+     const s=await ready(),version=errorVersion;
+     const action=async()=>{
+      await current(s);const commits=s.commits;
+      const value=await work();assert(s);
+      if(errorVersion!==version)throw lastFailure;
+      if(native){
+       const intended=await normalize(copy(snapshot())),disk=await read(s.scope);assert(s);
+       const actual=await normalize({messages:copy(disk.slice(1)),metadata:copy(disk[0]?.chat_metadata||{})});
+       if(canonical(actual)!==canonical(intended))
+        fail('chat-save-unconfirmed','故事尚未完整保存，当前修改仍保留，请重试确认。',{phase:'native-readback',left:'intended',right:'disk',differences:await differences(intended,actual)});
+       s.baseline=canonical(disk);
+      }else if(s.commits===commits)await current(s);
+      // A completed commit already checked the baseline under the shared lock
+      // and read back the full write. Keep a final check for work with no commit.
+      lastError=null;return value;
+     };
+     // ST takes its cross-window lock only in commit; nesting it here deadlocks.
+     return native?await locked(s,action):await action();
+    }catch(error){throw report(error);}
+   });serial=job;return job;
+  }
+  async function inspect(){
+   try{const s=await ready();await locked(s,()=>current(s));return {kind:'ready'};}
+   catch(error){return {kind:'blocked',code:error.code||'chat-save-read',message:error.message,details:error.details||null};}
+  }
+  return {reset,run,commit,whenIdle,ready,ticket,report,inspect,pause(){paused=Object.assign(Error('故事正在载入，尚未允许写入原档。'),{code:'chat-load-pending'});epoch++;if(state)state={...state,epoch};},resume({restore=false,initial=null}={}){paused=null;return restore&&state?Promise.resolve(state):reset({initial});},async retry(){if(retryable(state?.error))await reset({retry:true});return inspect();},destroy(){closed=true;epoch++;},status:()=>({revision:'20261024.1',scope:state?.scope,epoch,phase:paused?'load-transition':state?.phase,commits:state?.commits??0,pending:!!state?.pending,error:(state?.error||lastError)?.code||null,details:(state?.error||lastError)?.details||null,timeline:copy(timeline),nativeAutosaveCovered:!native})};
+ }
+ // TT stages frames before publishing. Guard the actual finish/metadata command,
+ // leaving unrelated IPC and new-copy targets alone.
+ function wrapNative({bridge,guard,scope,beforeWrite=null,normalizeRows=async rows=>rows,observe=null,decode=text=>new TextDecoder().decode(text),base64=text=>Uint8Array.from(atob(text),c=>c.charCodeAt(0))}){
+  const core=bridge?.core;
+  if(typeof core?.invoke!=='function')return null;
+  const original=core.invoke,sessions=new Map();let closed=false;
+  const invokeNow=(...args)=>{
+   const ticket=observe?.before(args[0],args[1]);
+   let result;try{result=observe?.invoke?observe.invoke(args[0],args[1],()=>original.apply(core,args)):original.apply(core,args);}catch(error){observe?.after(ticket,null,error);throw error;}
+   return Promise.resolve(result).then(value=>{observe?.after(ticket,value);return value;},error=>{observe?.after(ticket,null,error);throw error;});
+  };
+  const invoke=(...args)=>{const waiting=observe?.wait?.(args[0],args[1]);return waiting?Promise.resolve(waiting).then(()=>invokeNow(...args)):invokeNow(...args);};
+  function target(raw){
+   const current=scope();
+   return raw?.kind==='character'&&raw.characterId===String(current.characterKey).replace(/\.png$/,'')&&raw.fileName===current.chatId?copy(current):null;
+  }
+  function confirmTicket(expected,entered,handoff){
+   if(closed||!sameScope(expected,scope()))fail('context-changed','故事已切换，停止旧窗口提交。');
+   const loaded=guard.ticket();
+   if(loaded!==entered&&!(handoff?.previous===entered&&handoff.ticket===loaded))fail('context-changed','聊天已经重新载入，停止旧保存请求。');
+   return loaded;
+  }
+  async function wrapped(command,args,options){
+   if(closed)return invoke(command,args,options);
+   if(command==='begin_chat_commit'){
+    const expected=target(args?.target),entered=expected?guard.ticket({allowPaused:true}):null,request=expected?copy(args):args;
+    const handoff=expected&&beforeWrite?await beforeWrite(entered):null;
+    const loaded=expected?confirmTicket(expected,entered,handoff):null,result=await invoke(command,request,options);
+    if(expected&&result?.sessionId){
+     try{
+      if(closed)fail('context-changed','保存保护已卸载，停止旧窗口提交。');
+      await guard.ready(loaded);
+      if(closed)fail('context-changed','保存保护已卸载，停止旧窗口提交。');
+      sessions.set(result.sessionId,{expected,loaded,frames:[],size:0});
+     }catch(error){await invoke('abort_chat_commit',{sessionId:result.sessionId}).catch(()=>{});throw guard.report(error);}
+    }
+    return result;
+   }
+   if(command==='append_chat_commit_chunk'){
+    const headers=new Headers(options?.headers),session=sessions.get(headers.get('session-id'));
+    if(!session)return invoke(command,args,options);
+    const bytes=headers.get('chunk-encoding')==='base64'?base64(args.data):args?.buffer?new Uint8Array(args.buffer,args.byteOffset||0,args.byteLength).slice():new Uint8Array(args).slice();
+    if(Number(headers.get('offset'))!==session.size)fail('chat-save-frame','TT 存档分帧顺序不一致。');
+    const result=await invoke(command,args,options);
+    if(Number(result)!==session.size+bytes.byteLength)fail('chat-save-frame','TT 存档分帧读回长度不一致。');
+    session.frames.push(bytes);session.size+=bytes.byteLength;return result;
+   }
+   if(command==='abort_chat_commit'){sessions.delete(args?.sessionId||args?.session_id);return invoke(command,args,options);}
+   if(command==='finish_chat_commit'){
+    const id=args?.sessionId||args?.session_id,session=sessions.get(id);
+    if(!session)return invoke(command,args,options);
+    try{
+     if(beforeWrite)await beforeWrite();
+     if(!sameScope(session.expected,scope()))fail('context-changed','故事已切换，停止旧窗口提交。');
+     if(Number(args.expectedSize??args.expected_size)!==session.size)fail('chat-save-frame','TT 存档提交长度不一致。');
+     const all=new Uint8Array(session.size);let offset=0;for(const frame of session.frames){all.set(frame,offset);offset+=frame.byteLength;}
+     const rows=decode(all).split(/\r?\n/).filter(x=>x.trim()).map(x=>JSON.parse(x));
+     const expected=await normalizeRows(rows);
+     const response=await guard.commit(session.expected,expected,async()=>({ok:true,value:await invoke(command,args,options)}),session.loaded);
+     return response.value;
+    }catch(error){
+     // A rejected preflight did not consume the backend's staged session.
+     await invoke('abort_chat_commit',{sessionId:id}).catch(()=>{});
+     throw guard.report(error);
+    }finally{sessions.delete(id);}
+   }
+   if(command==='commit_chat_metadata'){
+    const expected=target(args?.target);if(!expected)return invoke(command,args,options);
+    const entered=guard.ticket({allowPaused:true}),request=copy(args),metadata=copy(request.chatMetadata??request.chat_metadata);
+    const handoff=beforeWrite?await beforeWrite(entered):null,loaded=confirmTicket(expected,entered,handoff);
+    const response=await guard.commit(expected,disk=>{
+     if(!disk.length)fail('chat-save-read','当前故事文件尚未建立。');
+     disk[0].chat_metadata=metadata;return disk;
+    },async()=>({ok:true,value:await invoke(command,request,options)}),loaded);
+    return response.value;
+   }
+   return invoke(command,args,options);
+  }
+  // Tauri freezes core itself, but exports it through a writable core property.
+  const descriptors=Object.getOwnPropertyDescriptors(core);
+  descriptors.invoke={value:wrapped,enumerable:descriptors.invoke?.enumerable??true,writable:false,configurable:false};
+  const replacement=Object.create(Object.getPrototypeOf(core),descriptors);
+  try{if(!Reflect.set(bridge,'core',replacement)||bridge.core!==replacement)return null;}catch{return null;}
+  return ()=>{closed=true;if(bridge.core===replacement)Reflect.set(bridge,'core',core);for(const sessionId of sessions.keys())invoke('abort_chat_commit',{sessionId}).catch(()=>{});sessions.clear();};
+ }
+ // Native streams are attributed to the protected navigation or an observed host load.
+ // An unknown or incomplete stream cannot authorize publishing over the old file.
+ function createNativeOpenObserver({excluded=()=>false,decode=bytes=>new TextDecoder().decode(bytes)}={}){
+  let serial=0,active=null;
+  const validTarget=(raw,expected)=>raw?.kind==='character'&&raw.characterId===String(expected.characterKey).replace(/\.png$/,'')&&raw.fileName===expected.chatId;
+  const bytes=value=>ArrayBuffer.isView(value)?new Uint8Array(value.buffer,value.byteOffset,value.byteLength):Object.prototype.toString.call(value)==='[object ArrayBuffer]'?new Uint8Array(value):null;
+  function problem(state,reason){if(state&&!state.error)state.error=reason;}
+  function start(expected){if(active)fail('chat-reopen-busy','重新打开故事仍在进行。');active={id:++serial,scope:copy(expected),records:[],resources:new Map(),error:null};return active.id;}
+  function before(command,args){
+   const state=active;if(!state)return null;
+   if(command==='get_chat_payload_path'||command==='open_cold_chat'){
+    const target=command==='open_cold_chat'?args?.target:{kind:'character',characterId:args?.characterName,fileName:args?.fileName};
+    if(!validTarget(target,state.scope))return null;
+    if(excluded())problem(state,'concurrent-background-read');
+    const record={kind:command==='open_cold_chat'?'cold':'file',frames:[],size:0,complete:false,path:null,rid:null};state.records.push(record);
+    if(state.records.length!==1)problem(state,'ambiguous-load');return{state,record,command,args};
+   }
+   if(command==='plugin:fs|open'){
+    const record=state.records.find(r=>r.kind==='file'&&r.path===args?.path&&r.rid===null);
+    if(!record){problem(state,'unattributed-file-open');return null;}return{state,record,command,args};
+   }
+   if(['plugin:fs|fstat','plugin:fs|read','read_chat_bytes','plugin:resources|close'].includes(command)){
+    const record=state.resources.get(args?.rid);
+    if(!record){if(command!=='plugin:resources|close')problem(state,'unattributed-native-read');return null;}
+    return{state,record,command,args};
+   }
+   return null;
+  }
+  function after(ticket,result,error){
+   if(!ticket||active!==ticket.state)return;
+   const {state,record,command,args}=ticket;
+   if(error){problem(state,'native-read-failed');return;}
+   try{
+    if(command==='get_chat_payload_path'){if(typeof result!=='string'||!result)throw Error('missing-file-path');record.path=result;}
+    else if(command==='open_cold_chat'){if(!Number.isSafeInteger(result?.readerId)||result.readerId<0)throw Error('missing-cold-reader');record.rid=result.readerId;state.resources.set(record.rid,record);}
+    else if(command==='plugin:fs|open'){if(!Number.isSafeInteger(result)||result<0)throw Error('missing-file-reader');record.rid=result;state.resources.set(result,record);}
+    else if(command==='plugin:fs|fstat'){if(!Number.isSafeInteger(result?.size)||result.size<0)throw Error('invalid-file-size');record.expected=result.size;if(result.size===0)record.complete=true;}
+    else if(command==='plugin:fs|read'||command==='read_chat_bytes'){
+     const data=bytes(result);if(!data)throw Error('invalid-native-bytes');let chunk=data;
+     if(command==='plugin:fs|read'){
+      if(record.kind!=='file'||!Number.isSafeInteger(record.expected)||data.length<8)throw Error('invalid-file-frame');
+      const count=Number(new DataView(data.buffer,data.byteOffset+data.byteLength-8,8).getBigUint64(0));
+      if(!Number.isSafeInteger(count)||count<=0||count>data.length-8||count>args.len||record.size+count>record.expected)throw Error('invalid-file-frame-size');
+      chunk=data.subarray(0,count);
+     }else if(record.kind!=='cold')throw Error('invalid-cold-frame');
+     if(record.complete)throw Error('bytes-after-eof');
+     if(chunk.length){record.frames.push(chunk.slice());record.size+=chunk.length;}
+     if(record.kind==='file'&&record.size===record.expected||record.kind==='cold'&&!chunk.length)record.complete=true;
+    }else if(command==='plugin:resources|close'&&!record.complete)throw Error('native-stream-closed-early');
+   }catch(failure){problem(state,failure.message||'invalid-native-stream');}
+  }
+  function finish(id){
+   const state=active;active=null;
+   if(!state||state.id!==id||state.error||state.records.length!==1||!state.records[0].complete)fail('chat-reopen-evidence','本次重新打开未取得唯一完整的原始聊天记录，已保留重新打开前的内容。',{reason:state?.error||'incomplete-load'});
+   const record=state.records[0],all=new Uint8Array(record.size);let offset=0;for(const frame of record.frames){all.set(frame,offset);offset+=frame.length;}
+   let rows;try{rows=decode(all).replace(/^\uFEFF/,'').split(/\r?\n/).filter(line=>line.trim()).map(line=>JSON.parse(line));}catch{fail('chat-reopen-evidence','重新打开的原始聊天记录不完整，已保留原内容。',{reason:'invalid-jsonl'});}
+   if(!rows.length||!rows[0]||typeof rows[0]!=='object'||Array.isArray(rows[0]))fail('chat-reopen-evidence','重新打开的聊天缺少文件头，已保留原内容。');
+   return{scope:copy(state.scope),rows};
+  }
+  return{start,before,after,finish,ready:id=>active?.id===id&&(!!active.error||active.records.length===1&&active.records[0].complete),cancel(){active=null;}};
+ }
+
+ const SINGLETON='__cxx_chat_save_guard_v1';
+ function acquire({win,api,loadHostState}){
+  if(win[SINGLETON]){win[SINGLETON].users++;return win[SINGLETON];}
+  const original=win.fetch,fetcher=original.bind(win),ctx=()=>api.SillyTavern.getContext();
+  const scope=()=>({characterKey:api.getCurrentCharacterId(),chatId:ctx().getCurrentChatId()});
+  const isNative=!!(win.__TAURI_INTERNALS__||win.__TAURI__?.core?.invoke);
+  const nativeCore=win.__TAURI__?.core,nativeReadInvoke=typeof nativeCore?.invoke==='function'?nativeCore.invoke.bind(nativeCore):null;
+  let coldTools,readDepth=0,reopenFlight=null,reopenReceipt=null,loading=null,checkpoint=null,recoveryDraft=null,failedNavigation=null;
+  const closingCold=new Map();
+  const nativeOpen=createNativeOpenObserver({decode:bytes=>new win.TextDecoder().decode(bytes)});
+  function loadColdTools(){
+   if(coldTools)return coldTools;
+   // Import in the host realm: the transport module uses that window's Tauri bridge.
+   coldTools=new Promise((resolve,reject)=>{
+    const id='__cxx_cold_tools_'+Math.random().toString(36).slice(2),script=win.document.createElement('script');
+    const finish=(value,error)=>{delete win[id];script.remove();error?reject(Error(error)):resolve(value);};
+    win[id]=finish;script.type='module';
+    script.textContent=`import('/scripts/chat-payload-transport.js').then(m=>window[${JSON.stringify(id)}](m)).catch(e=>window[${JSON.stringify(id)}](null,String(e)));`;
+    script.onerror=()=>finish(null,'未能读取 TT 的延迟分支接口。');
+    win.document.head.append(script);
+   });return coldTools;
+  }
+  function retainedCold(sourceId){return [...new Set([...(ctx().chat||[]),...(checkpoint?.loaded.messages||[]),...(loading?.before?.loaded.messages||[]),...(loading?.installed?.loaded.messages||[]),...(recoveryDraft?.loaded.messages||[])])].filter(m=>m?.tt_swipe_cold&&(sourceId===undefined||m.tt_swipe_cold.sourceId===sourceId));}
+  async function hydratePreserved(message,records){
+   const reference=message?.tt_swipe_cold;if(!reference)return;
+   const tools=await loadColdTools();
+   if(typeof tools.readColdSwipeRecord!=='function'){await tools.hydrateMessageSwipes(message);return;}
+   let source=records.get(reference.sourceId);if(!source){source=new Map();records.set(reference.sourceId,source);}
+   let pending=source.get(reference.record);if(!pending){pending=tools.readColdSwipeRecord({sourceId:reference.sourceId,record:reference.record});source.set(reference.record,pending);}
+   const original=await pending;
+   if(message.tt_swipe_cold!==reference)return;
+   // Match TT hydration: keep every already loaded/edited slot and appended
+   // branch. Copies receive separate objects, not shared mutable swipe_info.
+   for(const key of ['swipes','swipe_info'])if(!Array.isArray(message[key])||!Array.isArray(original?.[key])||message[key].length<original[key].length)fail('chat-load-cold','备用分支尚未完整载入，当前内容已保留。');
+   for(const key of ['swipes','swipe_info'])for(let i=0;i<original[key].length;i++)if(message[key][i]===null||message[key][i]===undefined)message[key][i]=copy(original[key][i]);
+   delete message.tt_swipe_cold;
+  }
+  function releaseColdRecords(load){if(![...closingCold.values()].some(job=>job.records===load.coldRecords))load.coldRecords.clear();}
+  async function preserveCold(messages){
+   const jobs=[...new Set(messages.map(m=>closingCold.get(m?.tt_swipe_cold?.sourceId)).filter(Boolean))];if(jobs.length)await Promise.all(jobs);
+   const cold=messages.filter(m=>m?.tt_swipe_cold);if(!cold.length)return;
+   const records=loading?.coldRecords||new Map();for(const message of cold)await hydratePreserved(message,records);
+  }
+  function closeColdSource(sourceId,close){
+   if(!Number.isInteger(sourceId)||sourceId<0)return close();
+   if(closingCold.has(sourceId))return closingCold.get(sourceId);
+   const first=retainedCold(sourceId);if(!first.length)return close();
+   // TT closes the previous cold source synchronously at the start of clearChat.
+   // Keep that source open until every retained message can stand on its own,
+   // including a recovery snapshot captured while hydration was awaiting IPC.
+   const records=loading?.coldRecords||new Map(),job=(async()=>{for(;;){const cold=[...new Set([...first,...retainedCold(sourceId)])].filter(m=>m.tt_swipe_cold?.sourceId===sourceId);if(!cold.length)break;for(const message of cold)await hydratePreserved(message,records);}return close();})();job.records=records;
+   closingCold.set(sourceId,job);job.finally(()=>{records.delete(sourceId);if(closingCold.get(sourceId)===job)closingCold.delete(sourceId);}).catch(()=>{});return job;
+  }
+  async function normalize(value){
+   normalizeAuthorNote(value.metadata,ctx().extensionSettings?.note);
+   // 宿主会在打开聊天时往 chat_metadata 里塞运行时字段（定时世界书效果等），
+   // 磁盘文件里本来就没有。比对前统一剔除，否则加载必然判成不一致。
+   for(const key of ['timedWorldInfo','timedEffects','lastInContextMessageId','chat_id_hash','pick_reroll_seed'])delete value.metadata[key];
+   // 扩展也会在聊天打开时往 chat_metadata.extensions 里建空命名空间（小白盒写的是
+   // {"LittleWhiteBox":{"storySummary":{}}}，38 字节，里面没有任何内容），磁盘文件里本来没有。
+   // 只有“一层层全是空对象”的壳才剔除；任何一层带真实值就原样保留，仍参与比对。
+   const hollow=item=>{if(!item||typeof item!=='object'||Array.isArray(item))return false;const keys=Object.keys(item);return keys.length?keys.every(name=>hollow(item[name])):true;};
+   const namespaces=value.metadata.extensions;
+   if(namespaces&&typeof namespaces==='object'&&!Array.isArray(namespaces)){
+    for(const name of Object.keys(namespaces))if(hollow(namespaces[name]))delete namespaces[name];
+    if(!Object.keys(namespaces).length)delete value.metadata.extensions;
+   }
+   if(isNative){
+    const cold=value.messages.filter(m=>m.tt_swipe_cold);
+    if(cold.length){const tools=await loadColdTools();for(const m of cold)await tools.hydrateMessageSwipes(m);}
+   }
+   for(const m of value.messages){ctx().ensureMessageMediaIsArray?.(m);normalizeTemplateMessage(m);}
+   return copy(value);
+  }
+  // 存档瘦身：MVU 写完变量会把 stat_data 整份复制进 display_data（显示层快照）。
+  // 两者内容完全相同时删掉 display_data（下一次变量更新会重新生成）；有任何差异就原样保留。
+  async function post(path,body){
+   readDepth++;try{
+   let result;try{result=await fetcher(new URL('/api/'+path,win.location.href).href,{method:'POST',headers:ctx().getRequestHeaders(),credentials:'same-origin',cache:'no-store',signal:AbortSignal.timeout(15000),body:JSON.stringify(body)});}catch(error){fail('chat-save-read','读取故事接口未完成，可重新检查保存。',{endpoint:path,reason:error.name||'network'});}
+   const text=await result.text().catch(()=>null);let data=null;try{data=text===null||!text.trim()?null:JSON.parse(text);}catch{}
+   return {result,data,text};
+   }finally{readDepth--;}
+  }
+  // Tauri Tavern streams the exported file itself, while SillyTavern wraps it in {result}. Accept both,
+  // and never mistake a readable story body for an unreadable chat just because the wrapper is missing.
+  function storySource(data,text){
+   if(data&&typeof data==='object')for(const key of ['result','content','data','text','chat','jsonl'])if(typeof data[key]==='string'&&data[key].trim())return {text:data[key]};
+   if(typeof text==='string'&&text.trim().startsWith('{'))return {text:text.trim()};
+   if(typeof text==='string'&&text.trim().startsWith('['))return {text:text.trim(),array:true};
+   return null;
+  }
+  function storyRows(source){
+   if(!source)return null;let rows;
+   if(source.array){try{rows=JSON.parse(source.text);}catch{return null;}if(!Array.isArray(rows))return null;}
+   else try{rows=source.text.split(/\r?\n/).filter(x=>x.trim()).map(x=>JSON.parse(x));}catch{fail('chat-save-read','故事文件不是完整JSONL，停止保存。',{export:{kind:'invalid-jsonl'}});}
+   if(!rows.length)return [];
+   const head=rows[0];
+   if(!head||typeof head!=='object'||Array.isArray(head)||head.chat_metadata!==undefined&&(head.chat_metadata===null||typeof head.chat_metadata!=='object'))fail('chat-save-read','故事文件头不完整，停止保存。',{export:{kind:'invalid-head'}});
+   return rows;
+  }
+  function chatFiles(data){
+   const name=x=>x&&typeof x==='object'?(x.file_name??x.fileName??x.file??null):null;
+   if(Array.isArray(data)){const files=data.map(name);return {known:files.every(f=>typeof f==='string'),files};}
+   if(data&&typeof data==='object'){const files=Object.values(data).map(name);if(files.length&&files.every(f=>typeof f==='string'))return {known:true,files};}
+   return {known:false,files:[]};
+  }
+  async function readNative(target){
+   if(!nativeReadInvoke)return null;
+   let rid=null,closing=null,expired=false,timer;const close=()=>rid===null?Promise.resolve():closing||=(Promise.resolve(nativeReadInvoke('plugin:resources|close',{rid})));
+   const check=()=>{if(expired)fail('chat-save-read','读取故事超时，当前内容已保留。');};
+   const job=(async()=>{
+    let path;try{path=await nativeReadInvoke('get_chat_payload_path',{characterName:String(target.characterKey).replace(/\.png$/,''),fileName:target.chatId,allowNotFound:true});}
+    catch(error){if(/(?:unknown|unrecognized|unsupported)\s+command\b.*get_chat_payload_path|\bcommand\b.*get_chat_payload_path.*(?:not found|not registered|unknown|unsupported)/i.test(String(error?.message||error)))return null;throw error;}
+    check();if(path===null||path===undefined||path==='')return [];
+    if(typeof path!=='string')fail('chat-save-read','故事路径接口没有返回有效路径。');
+    try{
+     const opened=await nativeReadInvoke('plugin:fs|open',{path,options:{read:true}});if(!Number.isSafeInteger(opened)||opened<0)fail('chat-save-read','未取得有效的故事读取资源。');rid=opened;check();
+     const stat=await nativeReadInvoke('plugin:fs|fstat',{rid});check();if(!Number.isSafeInteger(stat?.size)||stat.size<0)fail('chat-save-read','故事文件长度不可核对。');
+     const frames=[];let size=0;
+     while(size<stat.size){const len=Math.min(262144,stat.size-size),result=await nativeReadInvoke('plugin:fs|read',{rid,len});check();const bytes=ArrayBuffer.isView(result)?new Uint8Array(result.buffer,result.byteOffset,result.byteLength):Object.prototype.toString.call(result)==='[object ArrayBuffer]'?new Uint8Array(result):null;
+      if(!bytes||bytes.length<8)fail('chat-save-read','故事读取分帧不完整。');const count=Number(new DataView(bytes.buffer,bytes.byteOffset+bytes.byteLength-8,8).getBigUint64(0));
+      if(!Number.isSafeInteger(count)||count<=0||count>len||count>bytes.length-8||size+count>stat.size)fail('chat-save-read','故事读取长度不一致。');frames.push(bytes.subarray(0,count).slice());size+=count;
+     }
+     const bytes=new Uint8Array(size);let offset=0;for(const frame of frames){bytes.set(frame,offset);offset+=frame.length;}
+     const text=new win.TextDecoder('utf-8',{fatal:true}).decode(bytes).replace(/^\uFEFF/,'');return size?storyRows({text}):[];
+    }finally{await close();}
+   })();
+   const timeout=new Promise((_,reject)=>{timer=(win.setTimeout||setTimeout)(()=>{expired=true;void close().catch(()=>{});reject(Object.assign(Error('读取故事超时，当前内容已保留。'),{code:'chat-save-read'}));},15000);});
+   try{return await Promise.race([job,timeout]);}finally{(win.clearTimeout||clearTimeout)(timer);}
+  }
+  async function read(target){
+   if(isNative){const rows=await readNative(target);if(rows!==null)return rows;}
+   const {result,data,text}=await post('chats/export',{avatar_url:target.characterKey,is_group:false,file:target.chatId+'.jsonl',format:'jsonl',exportfilename:'save-check.jsonl'});
+   if(result.ok){const rows=storyRows(storySource(data,text));if(rows)return rows;}
+   const listing=await post('characters/chats',{avatar_url:target.characterKey,simple:true});
+   const files=chatFiles(listing.data),present=files.files.some(name=>name===target.chatId+'.jsonl'||name===target.chatId);
+   if(listing.result.ok&&files.known&&!present)return [];
+   if(result.status===404&&typeof data?.message==='string'&&data.message.startsWith('Could not find JSONL file to export.')&&listing.result.ok&&files.known)return [];
+   fail('chat-save-read','未能读取当前故事，停止本次保存。',{export:{status:result.status,kind:data===null?'invalid-json':typeof data,body:typeof text==='string'?text.slice(0,120):null},listing:{status:listing.result.status,kind:Array.isArray(listing.data)?'array':typeof listing.data,hasTarget:present,listed:files.files.slice(0,5)}});
+  }
+  const snapshot=()=>({messages:copy(ctx().chat),metadata:copy(ctx().chatMetadata)});
+  const receipts=[];
+  function opened(expected,captured){
+   const current=ctx();if(!sameScope(expected,scope())||canonical(snapshot())!==canonical(captured))return null;
+   const found=[...(reopenReceipt?[...receipts,reopenReceipt]:receipts)].reverse().find(r=>sameScope(r.scope,expected)&&(r.metadata===current.chatMetadata||current.chat.length>0)&&r.messages.length===current.chat.length&&r.messages.every((message,i)=>message===current.chat[i]));
+   return found?{scope:copy(found.scope),rows:copy(found.rows)}:null;
+  }
+  function observeLoad(response,target,load=null){
+   if(!response.ok||typeof response.json!=='function')return response;
+   const json=response.json;
+   try{Object.defineProperty(response,'json',{configurable:true,writable:true,value:async function(...args){
+    try{
+     const rows=await json.apply(this,args);
+     if(load){
+      if(closed||loading!==load)fail('context-changed','载入已取消，忽略迟到的聊天响应。');
+      if(!Array.isArray(rows)||rows.length&&(!rows[0]?.chat_metadata||typeof rows[0].chat_metadata!=='object'||Array.isArray(rows[0].chat_metadata)))fail('chat-load-invalid','宿主没有返回完整聊天，原内容已保留。');
+      const disk=load.expected||await read(target);
+      if(canonical(rows)!==canonical(disk))await conflict('load',{rows:disk},{rows});
+      if(!disk.length)load.allowNew=true;load.expected=null;
+     }
+     if(this===response&&Array.isArray(rows)&&(!rows.length||rows[0]?.chat_metadata&&typeof rows[0].chat_metadata==='object'&&!Array.isArray(rows[0].chat_metadata))){
+      const receipt={scope:copy(target),rows:copy(rows),metadata:rows[0]?.chat_metadata,messages:rows.slice(1)};
+      receipts.push(receipt);if(receipts.length>4)receipts.shift();if(load)load.receipt=receipt;
+     }
+     return rows;
+    }catch(error){if(load)await restoreLoad(load,error);throw error;}
+   }});}catch(error){if(load)throw Object.assign(Error('宿主载入响应不可核对，原档保持不动。'),{code:'chat-load-evidence',cause:error});}
+   return response;
+  }
+  // ST and TT clear the prior chat before loading the selected file. A timer
+  // may request a ticket in that interval; compare only after rows arrive.
+  async function waitLoaded(expected){const end=Date.now()+30000;while(!ctx().chat.length){if(!sameScope(scope(),expected))fail('context-changed','故事已切换，停止旧故事载入检查。');if(Date.now()>=end)fail('chat-load-pending','故事仍在读取，请稍后再保存。');await new Promise(resolve=>win.setTimeout(resolve,20));}return snapshot();}
+  const guard=create({scope,snapshot,read,normalize,waitLoaded,opened,locks:win.navigator?.locks,notify:e=>{win.toastr?.error(e.message,'故事保存未完成');},warn:e=>{win.toastr?.warning?.(e.message,'存档提示');}});
+  const nativeObserver={wait(command,args){
+   if(ctx().chat.length||!['get_chat_payload_path','open_cold_chat'].includes(command))return;
+   const current=scope(),raw=command==='open_cold_chat'?args?.target:{kind:'character',characterId:args?.characterName,fileName:args?.fileName};
+   if(raw?.kind==='character'&&raw.characterId===String(current.characterKey).replace(/\.png$/,'')&&raw.fileName===current.chatId&&loading?.accepting)return waitPriorLoad(current);
+  },invoke(command,args,send){return command==='plugin:resources|close'?closeColdSource(args?.rid,send):send();},before(command,args){
+   if(!loading&&!ctx().chat.length&&['get_chat_payload_path','open_cold_chat'].includes(command)){
+    const raw=command==='open_cold_chat'?args?.target:{kind:'character',characterId:args?.characterName,fileName:args?.fileName},current=scope();
+    if(raw?.kind==='character'&&raw.characterId===String(current.characterKey).replace(/\.png$/,'')&&raw.fileName===current.chatId){const load=beginLoad(current);load.nativeId=nativeOpen.start(current);}
+   }
+   return nativeOpen.before(command,args);
+  },after(ticket,result,error){nativeOpen.after(ticket,result,error);if(error&&ticket?.state&&loading?.nativeId===ticket.state.id){const load=loading;void restoreLoad(load,Object.assign(Error('故事读取未完成，当前内容已保留。'),{code:'chat-load-native',cause:error})).catch(e=>guard.report(e));}}};
+  const removeNative=isNative?wrapNative({bridge:win.__TAURI__,guard,scope,beforeWrite:ensureWritable,observe:nativeObserver,normalizeRows:async rows=>{
+   const cold=rows.slice(1).filter(m=>m.tt_swipe_cold);
+   if(cold.length){const tools=await loadColdTools();for(const m of cold)await tools.hydrateMessageSwipes(m);}
+   return rows;
+  },decode:bytes=>new win.TextDecoder().decode(bytes),base64:text=>Uint8Array.from(win.atob(text),c=>c.charCodeAt(0))}):null;
+  let closed=false,hostStatePromise=null,drainTimer=null,drainFlight=null,lastSaved=null;
+  // Navigation owns a write barrier before the host may clear its live arrays.
+  // It is released only by a complete load receipt plus disk and object checks.
+  function capture({references=false}={}){const c=ctx();return {scope:copy(scope()),loaded:references?{messages:c.chat.slice(),metadata:c.chatMetadata}:snapshot(),characterVariables:!references&&typeof api.getVariables==='function'?copy(api.getVariables({type:'character'})):null,composer:String(win.document.querySelector?.('#send_textarea')?.value??'')};}
+  function beginLoad(target,{explicit=false,allowNew=false}={}){
+   if(loading)fail('chat-load-pending','另一故事仍在载入，请稍后再打开。');
+   const fromLive=explicit||ctx().chat.length,before=fromLive?capture():checkpoint;
+   const load={target:target?copy(target):null,before:before?(fromLive?before:copy(before)):null,explicit,allowNew,receipt:null,error:null,expected:null,nativeId:null,coldRecords:new Map()};
+   loading=load;failedNavigation=null;lastSaved=null;(win.clearTimeout||clearTimeout)(drainTimer);drainTimer=null;guard.pause();return load;
+  }
+  async function restoreLoad(load,error,{finish=false}={}){
+   load.error=error;if(loading!==load)return;
+   recoveryDraft=load.repeatSnapshot||load.before;failedNavigation=finish?null:load;
+   const old=load.repeatSnapshot||load.before,current=scope();
+   if(old&&current.characterKey===old.scope.characterKey&&(!load.target||sameScope(current,load.target)||sameScope(current,old.scope)||sameScope(current,load.repeatScope))){
+    const c=ctx(),character=c.characters?.[c.characterId];
+    if(isNative)await preserveCold(old.loaded.messages);
+    if(loading!==load||!sameScope(current,scope()))return;
+    if(current.chatId!==old.scope.chatId){if(!character){guard.report(error);return;}character.chat=old.scope.chatId;}
+    c.chat.splice(0,c.chat.length,...copy(old.loaded.messages));
+    if(typeof c.updateChatMetadata==='function')c.updateChatMetadata(copy(old.loaded.metadata),true);
+    else {for(const key of Object.keys(c.chatMetadata))delete c.chatMetadata[key];Object.assign(c.chatMetadata,copy(old.loaded.metadata));}
+    const selected=win.document.querySelector?.('#selected_chat_pole');if(selected)selected.value=old.scope.chatId;
+    checkpoint=capture({references:true});nativeOpen.cancel();
+    if(!load.explicit||finish){loading=null;await guard.resume({restore:!load.repeatSnapshot});releaseColdRecords(load);}
+    // Rendering does not write a chat. Keep the current composer (which the user
+    // may have edited during a slow load); its pre-load value is in recoveryDraft.
+    if(typeof c.clearChat==='function'&&typeof c.printMessages==='function'){await c.clearChat({clearData:false});await c.printMessages();}
+   }
+   guard.report(error);
+  }
+  async function acceptLoadWork(load){
+   if(loading!==load){if(load.error)throw load.error;return;}
+   if(load.error)throw load.error;
+   const target=load.target||scope();
+   if(!sameScope(target,scope()))fail('context-changed','载入目标已经变化，停止原故事写入。');
+   if(load.nativeId!==null&&!load.receipt){if(!nativeOpen.ready(load.nativeId))fail('chat-load-pending','故事仍在读取，原档保持不动。');const evidence=nativeOpen.finish(load.nativeId);load.nativeId=null;const cold=evidence.rows.slice(1).filter(m=>m.tt_swipe_cold);if(cold.length){const tools=await loadColdTools();for(const message of cold)await tools.hydrateMessageSwipes(message);}load.receipt={...evidence,metadata:ctx().chatMetadata,messages:ctx().chat.slice()};}
+   const receipt=load.receipt;
+   if(!receipt)fail('chat-load-pending','尚未取得完整的聊天载入结果，原档保持不动。');
+   const disk=await read(target);
+   if(loading!==load)fail('context-changed','载入检查已被新的操作替代。');
+   if(!sameScope(target,scope()))fail('context-changed','载入目标已经变化，停止原故事写入。');
+   if(canonical(disk)!==canonical(receipt.rows)||load.expected&&canonical(disk)!==canonical(load.expected))await conflict('load',{rows:load.expected||receipt.rows},{rows:disk});
+   const empty=!disk.length,seeded=disk.length===1&&receipt.messages.length===0&&ctx().chat.length<=1;
+   if(!empty&&!seeded&&(receipt.messages.length!==ctx().chat.length||!receipt.messages.every((m,i)=>m===ctx().chat[i])))fail('chat-load-pending','完整聊天尚未装入当前页面，原档保持不动。');
+   if(empty&&!load.allowNew)fail('chat-load-pending','未取得已保存故事的内容，原档保持不动。');
+   // Keep ownership until baseline verification finishes. Native reload may
+   // clear ctx again before this asynchronous read returns; retain the objects
+   // that were just verified instead of taking a later snapshot of that gap.
+   reopenReceipt=receipt;const installed=capture({references:true});load.installed=installed;
+   // ST hands the exact response objects to chat. Once their identity and the
+   // unchanged disk receipt are proven, later edits on those objects are local
+   // unsaved work (including MVU's first-message initialization). Establish the
+   // baseline from the received file, retaining those edits for the normal save.
+   // TT's byte-stream observer does not prove parsed-object identity; keep its
+   // existing fully hydrated live-state check instead of applying this shortcut.
+   // reset() copies initial synchronously; do not copy the full history twice.
+   const initial=seeded?{messages:[],metadata:copy(ctx().chatMetadata)}:!isNative&&!empty?{messages:receipt.rows.slice(1),metadata:receipt.rows[0].chat_metadata}:null;
+   try{
+    const verified=await guard.resume({initial});if(loading!==load)fail('context-changed','载入检查已被新的操作替代。');
+    const waitingRepeat=load.repeatSnapshot===installed&&sameScope(load.repeatScope,scope())&&ctx().chat.length===0;
+    if(!isNative&&!empty&&!seeded&&!waitingRepeat&&(receipt.messages.length!==ctx().chat.length||!receipt.messages.every((m,i)=>m===ctx().chat[i]))){
+     // Retain the newly verified full chat if another native clear has begun
+     // but its /get has not reached the observer yet. It must supply fresh load
+     // evidence before saving; an unrelated object replacement gets no pass.
+     load.repeatSnapshot=installed;load.repeatScope=copy(scope());fail('chat-load-pending','载入期间聊天对象已经变化，等待新的完整载入结果后保存。');
+    }
+    checkpoint=installed;loading=null;releaseColdRecords(load);return verified;
+   }
+   catch(error){if(loading===load)guard.pause();throw error;}
+  }
+  function acceptLoad(load){
+   if(load.accepting)return load.accepting;
+   const job=acceptLoadWork(load);load.accepting=job;job.finally(()=>{if(load.accepting===job)load.accepting=null;}).catch(()=>{});return job;
+  }
+  async function waitPriorLoad(expected){
+   const prior=loading;if(!prior?.accepting)return;
+   if(prior.installed&&prior.installed.scope.characterKey===expected.characterKey){prior.repeatSnapshot=prior.installed;prior.repeatScope=copy(expected);}
+   try{await prior.accepting;}catch(error){if(loading===prior)await restoreLoad(prior,error);throw error;}
+   if(closed||!sameScope(expected,scope()))fail('context-changed','载入期间故事已经切换，停止旧请求。');
+  }
+  async function ensureWritable(previous){
+   const load=loading;if(!load)return;
+   if(load.error)throw load.error;
+   // A deliberate new-chat command may save its first greeting without /get.
+   if(load.allowNew&&!load.receipt&&!sameScope(load.before?.scope,scope())){
+    const target=scope(),disk=await read(target);
+    if(!disk.length){load.target=copy(target);load.receipt={scope:copy(target),rows:[],messages:[],metadata:ctx().chatMetadata};}
+   }
+   try{const verified=await acceptLoad(load);return {previous,ticket:verified};}catch(error){if(error.code!=='chat-load-pending')await restoreLoad(load,error);throw error;}
+  }
+  async function navigate({target=null,work,allowNew=false}={}){
+   if(typeof work!=='function')fail('chat-load-unavailable','宿主打开接口尚未就绪。');
+   await guard.whenIdle();const load=beginLoad(target,{explicit:true,allowNew});
+   try{
+    if(isNative&&load.before)await preserveCold(load.before.loaded.messages);
+    if(target)load.expected=await read(target);
+    if(target&&!load.expected.length&&!allowNew)fail('chat-load-missing','未找到要打开的故事，当前内容已保留。');
+    if(isNative){if(!removeNative)fail('chat-save-native-hook','TT 载入保护接口尚未接通。');if(target)load.nativeId=nativeOpen.start(target);}
+    const value=await work();
+    if(load.error)throw load.error;
+    if(loading===load)await ensureWritable();
+    return value;
+   }catch(error){await restoreLoad(load,error,{finish:true});throw error;}
+   finally{if(load.nativeId!==null)nativeOpen.cancel();releaseColdRecords(load);}
+  }
+  const hostState=()=>hostStatePromise||=(isNative?Promise.resolve(null):Promise.resolve().then(()=>loadHostState?loadHostState():import(new URL('/script.js',win.location.href).href)).then(m=>m?.saveChatConditional===ctx().saveChat&&typeof m.isChatSaving==='boolean'?m:null).catch(()=>null));
+  async function waitHostSave(expected){
+   const native=await hostState();
+   do{await guard.whenIdle();if(closed||!sameScope(expected,scope()))fail('context-changed','故事已切换，停止旧窗口提交。');if(!native?.isChatSaving)return;await new Promise(r=>(win.setTimeout||setTimeout)(r,20));}while(true);
+  }
+  // A native caller may time out before it ever reaches fetch. After a completed
+  // write, reconcile the newest in-memory state once the host is idle. Never replay
+  // a captured old payload, and never cross a loaded-chat ticket.
+  function scheduleDrain(){
+   if(closed||isNative||loading||!lastSaved)return;
+   (win.clearTimeout||clearTimeout)(drainTimer);
+   drainTimer=(win.setTimeout||setTimeout)(()=>{drainTimer=null;drainFlight=drain().catch(e=>guard.report(e)).finally(()=>{drainFlight=null;});},250);
+  }
+  async function drain(){
+   const saved=lastSaved;if(!saved||closed||loading||saved.metadata!==ctx().chatMetadata||!sameScope(saved.scope,scope())||guard.ticket()!==saved.ticket)return;
+   const native=await hostState();
+   if(native?.is_send_press||api.builtin?.duringGenerating?.()||win.Mvu?.isDuringExtraAnalysis?.()){scheduleDrain();return;}
+   await waitHostSave(saved.scope);
+   if(loading||lastSaved!==saved||saved.metadata!==ctx().chatMetadata||guard.ticket()!==saved.ticket)return;
+   const current=await normalize(snapshot());
+   if(canonical(current)===saved.projection)return;
+   // Native ST clears the in-memory chat at the start of a reload and only sends
+   // /api/chats/get after it has the full character record. Saving that blank
+   // window would replace a complete file with a header-only chat.
+   if(!current.messages.length&&saved.count)return;
+   if(typeof ctx().saveChat!=='function')fail('chat-save-unavailable','宿主保存接口尚未就绪。');
+   await waitHostSave(saved.scope);
+   if(loading||lastSaved!==saved||saved.metadata!==ctx().chatMetadata||guard.ticket()!==saved.ticket||closed)return;
+   // ST's conditional saver polls on a 100 ms timer even when initially idle.
+   // A native autosave can win that interval and make this repair time out.
+   // Its public single-chat saver uses the same guarded fetch without that poll.
+   if(typeof native?.saveChat==='function'){native.cancelDebouncedChatSave?.();await native.saveChat();}
+   else await ctx().saveChat();
+   await guard.whenIdle();
+  }
+  async function wrapped(input,init){
+   if(closed)return fetcher(input,init);
+   const url=new URL(typeof input?.url==='string'?input.url:String(input),win.location.href);
+   const method=String(init?.method||input?.method||'GET').toUpperCase();
+   if(url.origin!==win.location.origin||method!=='POST')return fetcher(input,init);
+   // ST continues its character-form save after swallowing getChat errors.
+   // Do not persist that failed destination over the restored selection.
+   const failed=loading?.error?loading:failedNavigation;
+   if(url.pathname==='/api/characters/edit'&&failed?.before&&failed.target&&failed.target.chatId!==failed.before.scope.chatId&&scope().characterKey===failed.before.scope.characterKey){
+    const request=new win.Request(typeof input?.clone==='function'?input.clone():url.href,init);
+    const form=await request.formData();
+    if(form.get('avatar_url')===failed.before.scope.characterKey&&form.get('chat')===failed.target.chatId){const selected=win.document.querySelector?.('#selected_chat_pole');if(selected)selected.value=failed.before.scope.chatId;failedNavigation=null;throw failed.error;}
+   }
+   if(url.pathname==='/api/chats/get'){
+    if(!ctx().chat.length&&loading?.accepting)await waitPriorLoad(copy(scope()));
+    let load=loading;
+    // Native ST navigation clears chat before fetch; unrelated background reads
+    // with still-installed messages remain read-only and cannot bless old memory.
+    if(!load&&!ctx().chat.length)load=beginLoad(scope());
+    let payload;try{payload=await new win.Request(typeof input?.clone==='function'?input.clone():url.href,init).json();}catch(error){if(load)await restoreLoad(load,error);throw error;}
+    const target={characterKey:payload.avatar_url,chatId:String(payload.file_name??'').replace(/\.jsonl$/,'')};
+    if(load&&load.target&&!sameScope(target,load.target))return fetcher(input,init);
+    if(load)load.target=copy(target);
+    readDepth++;try{
+     const signal=typeof AbortSignal.any==='function'?AbortSignal.any([...(init?.signal?[init.signal]:[]),AbortSignal.timeout(30000)]):init?.signal||AbortSignal.timeout(30000);
+     const response=await fetcher(input,{...init,signal});
+     if(load&&!response.ok)fail('chat-load-http','故事读取返回 HTTP '+response.status+'，当前内容已保留。');
+     return observeLoad(response,target,load);
+    }catch(error){if(load)await restoreLoad(load,error);throw error;}finally{readDepth--;}
+   }
+   if(isNative&&url.pathname==='/api/chats/export'){readDepth++;try{return await fetcher(input,init);}finally{readDepth--;}}
+   if(isNative||url.pathname!=='/api/chats/save')return fetcher(input,init);
+   const captured=copy(scope()),entered=guard.ticket({allowPaused:true});
+   // Clone Request bodies so inspecting them never consumes the real request.
+   let payload,packed=false;
+   try{
+   const inspect=new win.Request(typeof input?.clone==='function'?input.clone():url,init);
+   let body=await inspect.arrayBuffer();
+   packed=inspect.headers.get('Content-Encoding')?.toLowerCase()==='gzip';
+   if(packed){
+    if(typeof win.DecompressionStream!=='function')fail('chat-save-compression','当前浏览器不能核对压缩存档，请升级浏览器后保存。');
+    body=await new win.Response(new win.Blob([body]).stream().pipeThrough(new win.DecompressionStream('gzip'))).arrayBuffer();
+   }
+   payload=JSON.parse(new win.TextDecoder().decode(body));
+   }catch(error){throw guard.report(error);}
+   const target={characterKey:payload.avatar_url,chatId:payload.file_name};
+   if(sameScope(target,captured)&&!sameScope(captured,scope()))throw guard.report(Object.assign(Error('故事已切换，停止旧窗口提交。'),{code:'context-changed'}));
+   if(!sameScope(target,scope()))return fetcher(input,init);
+   if(!Array.isArray(payload.chat))fail('chat-save-payload','保存请求缺少完整聊天。');
+   // 压缩过的请求体不瘦身：换个未压缩 body 却留着 Content-Encoding 头会让服务端解错。
+   const slimRows=packed?payload.chat:slimChat(payload.chat);
+   const write=()=>{
+    if(slimRows===payload.chat)return fetcher(input,init);
+    const body=JSON.stringify({...payload,chat:slimRows});
+    try{
+     // Request 入参：保留原方法／头部，只换 body。
+     if(typeof input?.clone==='function'&&typeof win.Request==='function')return fetcher(new win.Request(input,{body}));
+     // URL 入参：合并 init，方法缺省按保存接口补 POST。
+     return fetcher(input,{...init,method:init?.method||'POST',body});
+    }catch{return fetcher(input,init);}
+   };
+   const handoff=await ensureWritable(entered),loaded=guard.ticket();
+   if(loaded!==entered&&!(handoff?.previous===entered&&handoff.ticket===loaded))fail('context-changed','聊天已经重新载入，停止旧保存请求。');
+   if(!payload.chat.slice(1).length&&lastSaved?.count&&lastSaved.ticket===loaded)fail('chat-save-loading','聊天还在载入，已阻止用空内容覆盖存档。');
+   const response=await guard.commit(target,slimRows,write,loaded);
+   if(typeof ctx().saveChat==='function'){
+    checkpoint=capture({references:true});lastSaved={scope:target,ticket:loaded,metadata:ctx().chatMetadata,count:payload.chat.slice(1).length,projection:canonical(await normalize({messages:payload.chat.slice(1),metadata:payload.chat[0]?.chat_metadata||{}}))};scheduleDrain();
+   }
+   return response;
+  }
+  win.fetch=wrapped;
+  // This is a separate user action. Ordinary retry remains read-only.
+  // preserve() must durably retain the complete supplied snapshot before resolving.
+  function reopen({preserve}={}){
+   if(reopenFlight)return reopenFlight;
+   reopenFlight=(async()=>{
+    if(closed)fail('context-changed','保存保护已卸载，请重新进入当前卡。');
+    if(typeof preserve!=='function')fail('chat-reopen-preserve','请先保存完整的当前内容，再重新打开。');
+    const expected=copy(scope()),c=ctx(),reload=c.reloadCurrentChat;
+    if(typeof reload!=='function')fail('chat-reopen-unavailable','当前宿主未提供重新打开接口，当前内容已保留。');
+    if(isNative&&!removeNative)fail('chat-save-native-hook','当前 TT 的读取保护接口未接通，当前内容已保留。');
+    if(c.is_send_press||typeof api.builtin?.duringGenerating==='function'&&api.builtin.duringGenerating())fail('chat-reopen-busy','请等当前生成结束后重新打开。');
+    const side=()=>({characterVariables:typeof api.getVariables==='function'?copy(api.getVariables({type:'character'})):null,composer:String(win.document.querySelector?.('#send_textarea')?.value??'')});
+    const before=snapshot(),extra=side(),signature=canonical({loaded:before,...extra}),previousMetadata=c.chatMetadata,previousMessages=c.chat.slice();
+    const unchanged=()=>signature===canonical({loaded:snapshot(),...side()});
+    const disk=await read(expected);if(closed||!sameScope(expected,scope())||!unchanged())fail('context-changed','准备重新打开期间内容改变，请重新操作。');
+    const complete=copy(before),coldBefore=complete.messages.filter(message=>message.tt_swipe_cold);
+    if(coldBefore.length){const tools=await loadColdTools();for(const message of coldBefore)await tools.hydrateMessageSwipes(message);}
+    const rescue={format:1,type:'cxx-chat-reopen-draft',createdAt:new Date().toISOString(),scope:expected,loaded:before,completeLoaded:complete,disk,
+     ...extra};
+    await preserve(copy(rescue));
+    if(closed||!sameScope(expected,scope())||!unchanged())fail('context-changed','内容已保全，但聊天、输入或角色变量又有变化；请重新操作。');
+    try{
+     await navigate({target:expected,work:()=>reload.call(c)});
+     if(!sameScope(expected,scope())||ctx().chatMetadata===previousMetadata||ctx().chat.length&&ctx().chat.every((message,i)=>message===previousMessages[i]))fail('chat-reopen-evidence','宿主没有载入新的聊天对象，原内容已保全。');
+     await guard.reset();return{kind:'ready',preserved:true};
+    }finally{nativeOpen.cancel();}
+   })().finally(()=>{reopenFlight=null;});return reopenFlight;
+  }
+  const loadListeners=[];
+  // Keep a shallow list of the live objects: edits and swipes remain current,
+  // but clearChat cannot erase the retained list. Deep-copy only on navigation.
+  const rememberLive=()=>{if(!closed&&!loading)checkpoint=capture({references:true});};
+  const events=api.tavern_events||ctx().eventTypes||{},source=ctx().eventSource;
+  for(const key of ['MESSAGE_SENT','MESSAGE_RECEIVED','MESSAGE_EDITED','MESSAGE_UPDATED','MESSAGE_DELETED','MESSAGE_SWIPED','MESSAGE_SWIPE_DELETED','CHARACTER_MESSAGE_RENDERED','USER_MESSAGE_RENDERED','CHAT_LOADED']){
+   const event=events[key];if(!event)continue;
+   if(typeof api.eventOn==='function'&&typeof api.eventRemoveListener==='function'){api.eventOn(event,rememberLive);loadListeners.push(()=>api.eventRemoveListener(event,rememberLive));}
+   else if(typeof source?.on==='function'&&typeof source?.removeListener==='function'){source.on(event,rememberLive);loadListeners.push(()=>source.removeListener(event,rememberLive));}
+  }
+  const service={users:1,guard,navigate,recoveryDraft:()=>recoveryDraft?copy(recoveryDraft):null,whenIdle:()=>guard.whenIdle(),inspect:()=>guard.inspect(),retry:()=>guard.retry(),reopen,reset:({reuseScope=false}={})=>reopenFlight||loading?.explicit?Promise.resolve({kind:'reopening'}):loading?ensureWritable():reuseScope?guard.ready():guard.reset(),run:(e,f)=>{
+   if(isNative&&!removeNative)fail('chat-save-native-hook','TT 保存保护接口未接通，请导出诊断；此窗口暂停卡内保存。');
+   return ensureWritable().then(()=>guard.run(e,async()=>{await waitHostSave(e);const result=await f();await guard.whenIdle();return result;}));
+  },status:()=>({...guard.status(),nativeAutosaveCovered:!isNative||!!removeNative}),release(){
+   if(--service.users>0)return;closed=true;loading=null;loadListeners.splice(0).forEach(remove=>remove());(win.clearTimeout||clearTimeout)(drainTimer);lastSaved=null;receipts.length=0;reopenReceipt=null;nativeOpen.cancel();guard.destroy();removeNative?.();if(win.fetch===wrapped)win.fetch=original;if(win[SINGLETON]===service)delete win[SINGLETON];
+  }};
+  win[SINGLETON]=service;checkpoint=capture({references:true});guard.reset().catch(()=>{});return service;
+ }
+ // slimChat 单独导出：保存瘦身规则要能被离线回归直接核对，不必模拟整条保存链路。
+ return {create,acquire,wrapNative,createNativeOpenObserver,canonical,normalizeAuthorNote,slimChat};
+});

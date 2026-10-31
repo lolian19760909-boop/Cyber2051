@@ -1,0 +1,205 @@
+(function(root,factory){const value=factory(root);if(typeof module==='object'&&module.exports)module.exports=value;else root.CxxStoryLibrary=value;})(globalThis,function(root){
+ 'use strict';
+ const structuredClone=(typeof module==='object'&&module.exports?require('../共享/data-clone.js'):globalThis.CxxDataClone).clone;
+ const Parser=()=>typeof module==='object'&&module.exports?require('../Gal/parser.js'):root.CxxGalParser||root.parent?.Cxx233Runtime?.parser;
+ const KEY='__cxx_story_v1',copy=v=>structuredClone(v),fail=s=>{throw Error(s);};
+ const metadata=rows=>rows?.[0]?.chat_metadata?.[KEY];
+ function openingRows(character,context,route,at=new Date().toISOString()){
+  const raw=typeof character?.json_data==='string'?JSON.parse(character.json_data):character,card=raw?.data||raw;
+  const first=card?.first_mes,alternates=card?.alternate_greetings||[];
+  if(typeof first!=='string'||!/^<OpeningForm\/>[ \t]*(?:\r?\n|$)/.test(first)||!Array.isArray(alternates)||alternates.some(x=>typeof x!=='string'))throw Object.assign(Error('角色卡开场消息尚未就绪，草稿已保留，请重新进入当前角色卡。'),{code:'creation-greeting-missing'});
+  const swipes=[first,...alternates],name=character?.name||card.name||context.name2;
+  return [{user_name:context.name1,character_name:name,create_date:at,chat_metadata:{[KEY]:copy(route)}},
+   {name,is_user:false,is_system:false,send_date:at,mes:first,extra:{},swipe_id:0,swipes,swipe_info:swipes.map(()=>({send_date:at,extra:{}}))}];
+ }
+ function playable(rows){const m=metadata(rows),v=rows?.[0]?.chat_metadata?.variables;if(m?.kind==='checkpoint')return false;if(m?.kind==='route'||v?.__cxx_identity?.setupToken||v?.__cxx_migration)return true;return (rows||[]).slice(1).some(x=>x.is_user||/<cxx-story>[\s\S]*\S[\s\S]*<\/cxx-story>/.test(x.mes||''));}
+ const internalBackup=id=>/^cxx-backup-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(id||'');
+ function slotIndex(items){
+  const routes=items.filter(x=>!internalBackup(x.chatId)&&x.meta?.kind!=='checkpoint'&&x.playable!==false),used=new Set(),out=[];
+  const order=[...routes].sort((a,b)=>(Number.isInteger(b.meta?.slot)-Number.isInteger(a.meta?.slot))||String(a.meta?.createdAt||a.chatId).localeCompare(String(b.meta?.createdAt||b.chatId)));
+  for(const item of order){let slot=item.meta?.slot;if(!Number.isSafeInteger(slot)||slot<1||slot>100000||used.has(slot)){slot=1;while(used.has(slot))slot++;}used.add(slot);out.push({...item,slot});}
+  return out.sort((a,b)=>a.slot-b.slot);
+ }
+ function routeMeta(prior,fields){const value=copy(prior||{});for(const key of ['pointId','pointKind','rowsHash','exportContext','sourceChatId','cleanupWarning'])delete value[key];return {...value,...fields};}
+ const cleanName=s=>{if(typeof s!=='string'||!s.trim()||s.length>80||/[\u0000-\u001f]/.test(s))fail('名称须为 1—80 个可见字符。');return s.trim();};
+ function describe(rows,locate){
+  const messages=(rows||[]).slice(1);let scene={},game={},text='';
+  for(let i=messages.length-1;i>=0;i--){const m=messages[i];if(m.is_system||m.is_user)continue;const raw=String(m.mes||'');let parts;try{parts=Parser().settlementParts(raw);}catch{}if(!scene.location&&typeof parts?.scene?.location==='string')scene=parts.scene;
+   const vars=Array.isArray(m.variables)?m.variables[m.swipe_id||0]:m.variables;if(!Object.keys(game).length&&vars?.stat_data?.terminal?.gameplay)game=vars.stat_data.terminal.gameplay;
+   if(!text){if(parts?.body&&/<cxx-story>/.test(raw))text=parts.body.replace(/<(think|thinking|script|style)\b[^>]*>[\s\S]*?<\/\1>/gi,'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,180);}
+   if(scene.location&&text&&Object.keys(game).length)break;
+  }
+  const place=game.location&&locate?.(game.location.mapId,game.location.placeId);
+  return {schema:1,location:String(scene.location||place?.name||'地点未记录').slice(0,100),time:[scene.date,scene.time].filter(x=>typeof x==='string').join(' ').slice(0,80),excerpt:text,characters:Array.isArray(scene.characters)?scene.characters.map(p=>typeof p?.name==='string'?p.name:'').filter(Boolean).slice(0,5):[],floor:Math.max(0,messages.length-1),lastAt:messages.at(-1)?.send_date||'',identity:String(game.origin?.name||'').slice(0,80)};
+ }
+ function createStore({adapter:A,hash,uuid,now=()=>new Date().toISOString(),validateCover=async v=>copy(v),storage,storageKey='cxx-story-creation'}){
+  let flight=null,pendingCreation=null,pendingPoint=null,pendingRestore=null,journalKey;
+  function readJournal(){const key=typeof storageKey==='function'?storageKey():storageKey;if(key!==journalKey){journalKey=key;pendingCreation=null;try{pendingCreation=JSON.parse(storage?.getItem(key)||'null');}catch{}}}
+  readJournal();
+  function journal(value){if(storage){if(value)storage.setItem(journalKey,JSON.stringify(value));else storage.removeItem(journalKey);}pendingCreation=value;}
+  function serial(work){if(flight)return Promise.reject(Error('存档操作正在进行，请等待保存确认。'));const p=Promise.resolve().then(async()=>{await A.begin?.();return work();}).finally(()=>{A.end?.();if(flight===p)flight=null;});flight=p;return p;}
+  async function chooseSlot(requested,exclude){const all=slotIndex(await A.list()).filter(x=>x.chatId!==exclude),used=new Set(all.map(x=>x.slot));if(requested!==undefined){if(!Number.isSafeInteger(requested)||requested<1||requested>100000||used.has(requested))fail('此档位已被占用或已变化，请重新选择空档位。');return requested;}let slot=1;while(used.has(slot))slot++;return slot;}
+  async function ensureRoute(name,cover,fields={}){
+   const current=await A.current(),old=metadata(current.rows);
+   if(old?.kind==='checkpoint')fail('当前聊天是只读存档点，请从存档管理读取为新路线。');
+   if(old?.schema===1)return old;if(old)fail('故事元数据版本尚不支持，原记录保留。');
+   const slot=await chooseSlot(fields.slot,current.chatId);
+   const route={schema:1,kind:'route',storyId:uuid(),routeId:uuid(),name:cleanName(name||'当前故事'),createdAt:now(),quickPoint:null,slot,indexVersion:1,...fields,...(cover?{cover}:{} )};
+   await A.tagCurrent(route);return route;
+  }
+  async function writeNew(id,rows){const target=await hash(rows);if(await A.exists(id)){if(await hash(await A.read(id))===target)return id;fail('副本编号已存在且内容不同，原记录保留。');}try{await A.write(id,rows);}catch(error){if(await A.exists(id).catch(()=>false)){if(await hash(await A.read(id))===target)return id;}throw error;}const actual=await A.read(id);if(await hash(actual)!==target)throw Object.assign(Error('写入后读回核对失败，原故事与旧快速存档保持不变。'),{code:'corrupt-copy'});return id;}
+  async function list(){const all=(await A.list()).filter(x=>!internalBackup(x.chatId)),routes=all.filter(x=>x.meta?.kind==='route'),quick=new Set(routes.map(x=>x.meta.quickPoint).filter(Boolean)),slots=new Map(slotIndex(all).map(x=>[x.chatId,x.slot]));return all.filter(x=>x.meta?.kind==='checkpoint'?x.meta.pointKind!=='quick'||quick.has(x.chatId):x.playable!==false).map(x=>({...x,slot:slots.get(x.chatId)}));}
+  async function remember(){const current=await A.current(),old=await ensureRoute(),all=slotIndex(await A.list()),slot=all.find(x=>x.chatId===current.chatId)?.slot||await chooseSlot(undefined,current.chatId);const next={...old,indexVersion:1,slot,lastPlayedAt:now()};await A.tagCurrent(next);return next;}
+  async function point(name,quick=false,cover=null){return serial(async()=>{
+   const title=cleanName(quick?'快速存档':name),art=cover?await validateCover(cover):null;
+   const route=await ensureRoute(),current=await A.current(),requestKey=JSON.stringify([current.chatId,title,quick,art]);if(pendingPoint&&pendingPoint.key!==requestKey)fail('上次存档结果尚未确认，请先重试同一存档以检查结果。');const doc=pendingPoint?.doc||await A.capture(),id=pendingPoint?.id||'cxxpoint_'+uuid(),pointId=pendingPoint?.pointId||uuid();pendingPoint||={key:requestKey,doc,id,pointId,createdAt:now()};
+   if(!pendingPoint.rows){
+   const info={...copy(route),schema:1,kind:'checkpoint',storyId:route.storyId,routeId:route.routeId,pointId,name:title,pointKind:quick?'quick':'named',createdAt:pendingPoint.createdAt,sourceChatId:doc.sourceContext.chatId};
+   const rows=[copy(doc.payload.header),...copy(doc.payload.messages)];
+   info.preview=A.describe?A.describe(rows):describe(rows);if(art)info.cover=art;else delete info.cover;
+   rows[0].chat_metadata[KEY]=info;
+   const archive=copy(doc);delete archive.payload.messages;delete archive.payload.header;delete archive.sha256;
+   info.exportContext=archive;info.rowsHash=await hash(rows); // Hash excludes itself.
+   pendingPoint.rows=copy(rows);
+   }
+   const rows=pendingPoint.rows,info=metadata(rows);
+   const check=()=>{if(!pendingPoint.written)try{A.assertExportCurrent?.(doc);}catch(error){pendingPoint=null;throw error;}};
+   check();try{await writeNew(id,rows);}catch(error){if(error.code==='corrupt-copy'){pendingPoint.id='cxxpoint_'+uuid();pendingPoint.pointId=uuid();pendingPoint.rows=null;}throw error;}check();pendingPoint.written=true;
+   if(quick){await A.tagCurrent({...route,quickPoint:id});if(route.quickPoint&&A.removePoint){try{const old=await readPoint(route.quickPoint),m=metadata(old);if(m.storyId===route.storyId&&m.routeId===route.routeId&&m.pointKind==='quick')await A.removePoint(route.quickPoint,m.rowsHash);}catch(e){info.cleanupWarning='新的快速存档已确认；旧副本暂留：'+e.message;}}}
+   pendingPoint=null;return {chatId:id,meta:info};
+  });}
+  async function readPoint(id){const rows=await A.read(id),info=metadata(rows);if(info?.kind!=='checkpoint'||info.schema!==1)fail('这不是可读取的存档点。');const original=info.rowsHash;delete info.rowsHash;if(await hash(rows)!==original)fail('存档点内容已被改动，校验失败。原路线不受影响。');info.rowsHash=original;return rows;}
+  async function exportPoint(id){const rows=await readPoint(id),info=metadata(rows),doc=copy(info.exportContext);doc.payload.header=copy(rows[0]);doc.payload.messages=copy(rows.slice(1));doc.sha256=await hash(doc);return A.validateExport(doc);}
+  async function restore(id){return serial(async()=>{
+   if(pendingRestore&&pendingRestore.id!==id)fail('上次读档尚未打开，请先重试同一个存档点。');
+   await A.flush();
+   if(!pendingRestore){
+   const doc=await exportPoint(id),source=doc.payload.header.chat_metadata[KEY];
+   doc.payload.header.chat_metadata[KEY]=routeMeta(source,{schema:1,kind:'route',storyId:source.storyId,routeId:uuid(),name:source.name+' · 新路线',parentPointId:source.pointId,parentRouteId:source.routeId,createdAt:now(),lastPlayedAt:now(),slot:await chooseSlot(),indexVersion:1,quickPoint:null});
+   doc.sha256=await hash(withoutHash(doc));pendingRestore={id,doc};
+   }
+   const pending=pendingRestore,result=pending.result||await A.importDocument(pending.doc);pending.result=result;
+   await A.open(result.chatId);pendingRestore=null;return result;
+  });}
+  async function switchStory(id){return serial(async()=>{await A.flush();const rows=await A.read(id);if(metadata(rows)?.kind==='checkpoint')fail('请使用“读取为新路线”。');const creating=metadata(rows)?.stage==='creating';await A.open(id,{recovering:creating});return creating?metadata(rows):remember();});}
+  async function rename(name){return serial(async()=>{const route=await ensureRoute();await A.tagCurrent({...route,name:cleanName(name)});});}
+  async function newStory(name,cover=null,slot,creationId,openingDraft){return serial(async()=>{
+   readJournal();const title=cleanName(name),art=cover?await validateCover(cover):null,current=await A.current(),signature=JSON.stringify([title,art,slot]);
+   if(pendingCreation&&(creationId?pendingCreation.creationId!==creationId:pendingCreation.signature!==signature)){
+    // 上一次创建失败的日志不能永久挡住新建：只有那份聊天真的还在磁盘上才拦。
+    const alive=pendingCreation.chatId?await A.exists(pendingCreation.chatId):false;
+    if(alive)fail('档位 '+pendingCreation.slot+' 的创建尚未完成，请先继续该档位。');
+    journal(null);
+   }
+   if(creationId){const matches=(await A.list()).filter(x=>x.meta?.kind==='route'&&x.meta.creationId===creationId);if(matches.length>1)throw Object.assign(Error('同一创建编号对应多个故事，请导出诊断核对。'),{code:'creation-conflict'});if(matches.length){const match=matches[0],rows=await A.read(match.chatId);if(metadata(rows)?.creationId!==creationId)fail('创建记录读回不一致。');journal({...pendingCreation,signature,slot:match.meta.slot,creationId,chatId:match.chatId,created:true});if(current.chatId!==match.chatId)await A.open(match.chatId,{recovering:match.meta.stage==='creating'});return {chatId:match.chatId,meta:metadata(rows)};}}
+   if(!pendingCreation){const chosen=await chooseSlot(slot);await A.flush();journal({signature,slot:chosen,from:current.chatId,creationId:creationId||uuid(),createdAt:now(),...(A.emptyRows?{chatId:'cxxstory_'+uuid()}: {})});}
+   if(A.emptyRows){const p=pendingCreation;if(!p.rows){const route={schema:1,kind:'route',storyId:uuid(),routeId:uuid(),creationId:p.creationId,name:title,createdAt:p.createdAt,quickPoint:null,slot:p.slot,indexVersion:1,stage:'creating',...(openingDraft?{openingDraft:copy(openingDraft)}:{}),...(art?{cover:art}:{})};journal({...p,rows:await A.emptyRows(route)});}if(await A.exists(pendingCreation.chatId)){const rows=await A.read(pendingCreation.chatId);if(metadata(rows)?.creationId!==pendingCreation.creationId)fail('建档编号对应内容已变化，请检查该档位。');}else{if(pendingCreation.created)throw Object.assign(Error('未找到本次创建的聊天。草稿已保留，请检查保存结果后恢复创建。'),{code:'creation-chat-missing',details:{chatId:pendingCreation.chatId,creationId:pendingCreation.creationId,created:true,slot:pendingCreation.slot}});await writeNew(pendingCreation.chatId,pendingCreation.rows);}journal({...pendingCreation,created:true});if(current.chatId!==pendingCreation.chatId)await A.open(pendingCreation.chatId);return {chatId:pendingCreation.chatId,meta:metadata((await A.current()).rows)};}
+   if(!pendingCreation.chatId)try{await A.newChat();}finally{const after=await A.current();if(after.chatId!==current.chatId)journal({...pendingCreation,chatId:after.chatId,created:true});else journal(null);}if(!pendingCreation)fail('新聊天尚未建立，请重试。');const after=await A.current();if(after.chatId!==pendingCreation.chatId)fail('请回到刚才的新聊天完成建档。');const route=await ensureRoute(title,art,{slot:pendingCreation.slot,stage:'creating',creationId:pendingCreation.creationId,...(openingDraft?{openingDraft:copy(openingDraft)}:{})});return {chatId:after.chatId,meta:route};
+  });}
+  async function saveOpeningDraft(draft,chatId){return serial(async()=>{const current=await A.current(),old=metadata(current.rows);if(current.chatId!==chatId||!old||old.creationId!==draft.creationId)throw Object.assign(Error('草稿与当前创建的故事不一致，原记录已保留。'),{code:'creation-owner-mismatch'});if(old.stage==='playing')throw Object.assign(Error('这个故事已完成创建，请继续游戏。'),{code:'creation-already-complete'});if(current.rows.length===1)await A.ensureOpening?.(chatId,draft.creationId);await A.tagCurrent({...old,openingDraft:copy(draft)});});}
+  async function finishCreation(){return serial(async()=>{const old=await ensureRoute(),next={...old,stage:'playing',lastPlayedAt:now()};delete next.openingDraft;await A.tagCurrent(next);journal(null);});}
+  async function decorate(id,cover){return serial(async()=>{
+   const art=cover?await validateCover(cover):null,current=await A.current();let rows=await A.read(id);if(metadata(rows)?.kind==='checkpoint')rows=await readPoint(id);
+   if(id===current.chatId){const route=await ensureRoute(),next={...route};if(art)next.cover=art;else delete next.cover;await A.tagCurrent(next);return;}
+   const info=metadata(rows);if(!info||info.schema!==1)fail('旧故事请先继续一次，再更换配图。');const before=await hash(rows);
+   if(art)info.cover=art;else delete info.cover;
+   if(info.kind==='checkpoint'){delete info.rowsHash;info.rowsHash=await hash(rows);}
+   if(await hash(await A.read(id))!==before)fail('此存档刚刚发生变化，请刷新后重试。');
+   await A.write(id,rows);if(await hash(await A.read(id))!==await hash(rows))fail('配图保存尚未读回确认，请刷新检查后重试。');
+  });}
+  async function exportCurrent(){return serial(async()=>{await ensureRoute();const doc=await A.capture();A.assertExportCurrent?.(doc);return doc;});}
+  async function importDocument(doc){return serial(async()=>{await A.flush();const parsed=await A.validateExport(doc),prior=parsed.payload.header.chat_metadata[KEY],sourceHash=parsed.sha256;parsed.payload.header.chat_metadata[KEY]=routeMeta(prior,{schema:1,indexVersion:1,kind:'route',storyId:prior?.storyId||'import_'+sourceHash,routeId:'import_'+sourceHash,name:prior?.name||'旧版续玩',slot:prior?.slot||1,createdAt:prior?.createdAt||parsed.createdAt||'1970-01-01T00:00:00.000Z',quickPoint:null,...(prior?.routeId?{parentRouteId:prior.routeId}:{})});parsed.sha256=await hash(withoutHash(parsed));const result=await A.importDocument(parsed);await A.open(result.chatId);await remember();return result;});}
+  async function branchAt(floor){return serial(async()=>{const doc=await A.capture();if(!Number.isInteger(floor)||floor<1||floor>=doc.payload.messages.length)fail('路线起点无效。');doc.payload.messages=doc.payload.messages.slice(0,floor+1);const prior=doc.payload.header.chat_metadata[KEY];doc.payload.header.chat_metadata[KEY]=routeMeta(prior,{schema:1,kind:'route',storyId:prior?.storyId||uuid(),routeId:uuid(),name:(prior?.name||'故事')+' · 第'+floor+'层分支',createdAt:now(),slot:await chooseSlot(),quickPoint:null});doc.sha256=await hash(withoutHash(doc));const result=await A.importDocument(doc);await A.open(result.chatId);return result;});}
+  async function inspectPending(){
+   readJournal();const result=(code,message,action='none',extra={})=>({code,message,action,...extra});
+   if(flight)return result('operation-running','保存仍在执行，正在等待宿主确认。','wait');
+   const c=await A.current(),install=await A.inspectInstall?.();
+   if(install?.kind==='blocked')return result(install.code,install.message,'rescue');
+   if(install?.kind==='pending'){const chatId=install.backup?.journal?.context?.chatId,phase=install.backup?.journal?.status||install.backup?.journal?.phase||'待核对';return chatId!==c.chatId?result('recovery-original-chat','未完成的安装属于另一个故事，请先进入对应故事恢复。','open-story',{chatId,phase}):result('migration-pending-install','发现未收尾的安装记录，可核对并恢复后继续创建。','recover',{chatId,phase});}
+   const save=await A.inspectSave?.();if(save?.kind==='blocked')return result(save.code,save.message,'rescue',{details:save.details});
+   if(pendingRestore)return result(pendingRestore.result?'restore-open-pending':'restore-import-pending',pendingRestore.result?'新路线已建立；重试同一读档会打开已有路线。':'读档导入尚未确认，请重试同一存档点。','retry',{chatId:pendingRestore.result?.chatId,pointId:pendingRestore.id});
+   if(pendingPoint){const p=pendingPoint;if(!p.rows)return result('point-preparing','存档尚未写入，可重试同一笔保存。','retry');if(!await A.exists(p.id))return result('point-not-written','未发现本次副本，可重试同一笔保存。','retry');if(await hash(await A.read(p.id))!==await hash(p.rows))return result('point-conflict','副本内容未核对一致；旧档仍保留。','rescue');return result('point-written','本次副本已经写入并读回一致；重试原操作完成档位登记。','retry');}
+   const p=pendingCreation,m=metadata(c.rows),id=p?.chatId||(m?.stage==='creating'?c.chatId:null);
+   if(id){if(!await A.exists(id))return result('creation-chat-missing',p?.created?'未找到本次创建的聊天；恢复会保留草稿并使用新的聊天编号。':'尚未写入聊天，可继续同一次创建。',p?.created?'recover':'retry',{chatId:id,creationId:p?.creationId,slot:p?.slot,replacement:!!p?.created});const actual=metadata(await A.read(id));if(!actual||p&&actual.creationId!==p.creationId)return result('creation-conflict','聊天中的创建编号与本地记录不一致，请导出诊断。','rescue',{chatId:id});if(id!==c.chatId)return result('creation-original-chat','本次创建已有聊天，请回到对应故事继续。','open-story',{chatId:id});if(actual.stage==='playing')return result('creation-complete','故事已完成创建，可以继续游戏。','open-story',{chatId:id});return result('creation-resumable','已找到同一次创建，可恢复并继续未完成的保存。','recover',{chatId:id});}
+   return result('creation-ready','未发现阻塞记录，可继续保存当前草稿。','retry');
+  }
+  async function recoverPending({creationId,slot}={}){const check=await inspectPending();if(check.code==='creation-chat-missing'&&check.replacement)return serial(async()=>{readJournal();const p=pendingCreation;if(!p?.created||p.chatId!==check.chatId||p.creationId!==check.creationId)fail('创建记录已经变化，请重新检查。');const matches=(await A.list()).filter(x=>x.meta?.creationId===p.creationId);if(matches.length) return {code:'creation-original-chat',message:'已重新找到本次创建，请进入原故事继续。',action:'open-story',chatId:matches[0].chatId};if(await A.exists(p.chatId))return {code:'creation-original-chat',message:'原聊天已恢复，请重新检查后继续。',action:'open-story',chatId:p.chatId};const chosen=await chooseSlot(slot??p.slot);const next={...p,slot:chosen,creationId:creationId||p.creationId,chatId:'cxxstory_'+uuid(),created:false,replacesChatId:p.chatId};delete next.rows;if(await A.exists(next.chatId))fail('新聊天编号已被占用，请重新检查。');if(storage)storage.setItem(journalKey+':retired:'+p.chatId,JSON.stringify(p));journal(next);return {code:'creation-replacement-ready',message:'草稿已保留，继续创建新的聊天。',action:'retry',chatId:next.chatId};});if(check.code==='migration-pending-install'){await A.recoverInstall();const next=await inspectPending();return next.code==='creation-resumable'?{...next,action:'retry'}:next;}if(check.code==='creation-resumable')return {...check,action:'retry'};return check;}
+  async function openRecovery(id){const check=await inspectPending();if(check.action!=='open-story'||check.chatId!==id)fail('恢复目标已经变化，请重新检查。');return serial(async()=>{if(!await A.exists(id))fail('原聊天已不存在，请导出救援文件。');await A.open(id,{recovering:true});});}
+  return {inspectPending,recoverPending,openRecovery,saveOpeningDraft,branchAt,list,details:async id=>{const rows=await A.read(id);return {meta:metadata(rows),messages:rows.length-1,preview:A.describe?A.describe(rows):describe(rows)};},ensureRoute:()=>serial(()=>ensureRoute()),remember:()=>serial(remember),finishCreation,flush:()=>serial(()=>A.flush()),point,restore,switchStory,rename,newStory,decorate,exportCurrent,exportPoint,importDocument,busy:()=>!!flight};
+ }
+ function withoutHash(doc){const value=copy(doc);delete value.sha256;return value;}
+ function create({api=root,top=api.parent||api,host,backup,Core=root.CxxUpdateCore,crypto=root.CxxCrypto}){
+  const ctx=()=>api.SillyTavern.getContext(),owner=host.getContext().characterKey,disposers=[];let panel=null,stopped=false,viewEpoch=0,operationContext=null,ui=null,launcher=null,navigation=0,dock=null,dockStyle=null;const drafts=new Map();
+  const hash=v=>Core.sha256(v),uuid=()=>crypto.uuid().replaceAll('-','');
+  function expected(){const e=host.getContext();if(stopped||e.characterKey!==owner||ctx().groupId||!e.chatId)fail('当前单角色故事尚未就绪。');if(operationContext)host.assertContext(operationContext);return {cardId:e.cardId,characterKey:e.characterKey,chatId:e.chatId};}
+  function idle(){const blocked=message=>{throw Object.assign(Error(message),{code:'story-busy',diagnosticKind:'not-started'});};const phone=top.CxxPhone?.read();if(phone?.busy||phone?.mic||phone?.dirty)blocked('请先完成通讯并确认记录保存，再操作存档。');if(ctx().isGenerating||api.builtin?.duringGenerating?.()||api.Mvu?.isDuringExtraAnalysis?.()||top.Mvu?.isDuringExtraAnalysis?.()||top.__cxx_tactical__?.busy?.())blocked('请等当前行动、正文与变量保存完成后操作存档。');}
+  async function post(path,body,e=expected()){const readOnly=['characters/chats','chats/export'].includes(path);const phase=path==='chats/save'?'写入存档':path==='characters/chats'?'检查档位':path==='chats/delete'?'清理旧存档':'读取存档';host.assertContext(e,readOnly);let r;try{r=await top.fetch('/api/'+path,{method:'POST',signal:AbortSignal.timeout(30000),headers:ctx().getRequestHeaders(),credentials:'same-origin',cache:'no-store',body:JSON.stringify(body)});}catch(error){throw Error(phase+'未确认：'+(error.name==='TimeoutError'?'请求超时，请先检查保存结果。':error.message));}host.assertContext(e,readOnly);const value=await r.json().catch(()=>null);if(!r.ok)throw Object.assign(Error(phase+'失败：宿主存档接口返回 HTTP '+r.status+(typeof value?.message==='string'?' · '+value.message.slice(0,500):'')),{code:'story-read-http',status:r.status});if(value===null)fail(phase+'失败：宿主返回格式异常。');host.assertContext(e,readOnly);return value;}
+  async function read(id){const e=expected(),data=await post('chats/export',{avatar_url:e.characterKey,is_group:false,file:id+'.jsonl',format:'jsonl',exportfilename:'story.jsonl'},e);if(typeof data.result!=='string')fail('未取得完整故事文件。');return data.result.trim().split(/\r?\n/).map(x=>JSON.parse(x));}
+  async function flush(){
+   idle();const e=expected();if(top.__cxx_player__?.saveState?.().pending)await top.__cxx_player__.waitForSaved();
+   const projection=()=>({metadata:copy(ctx().chatMetadata),messages:ctx().chat.map(m=>({user:!!m.is_user,system:!!m.is_system,swipe:m.swipe_id||0,text:m.mes,variables:copy(m.variables?.[m.swipe_id||0]||null)}))});
+   for(let attempt=0;attempt<3;attempt++){
+    host.assertContext(e);idle();const before=projection(),save=()=>ctx().saveChat();if(host.withChatSave)await host.withChatSave(e,save);else await save();host.assertContext(e);
+    const rows=await read(e.chatId),disk={metadata:rows[0].chat_metadata,messages:rows.slice(1).map(m=>({user:!!m.is_user,system:!!m.is_system,swipe:m.swipe_id||0,text:m.mes,variables:m.variables?.[m.swipe_id||0]||null}))};
+    if(await hash(before)===await hash(projection())&&await hash(before)===await hash(disk)){idle();return rows;}
+    if(attempt<2)await new Promise(resolve=>top.setTimeout(resolve,200*(attempt+1)));
+   }
+   top.CxxDiagnostics?.report({module:'存档',stage:'写入后核对',message:'当前故事读回仍不一致',context:{chat:e.chatId}});
+   fail('当前故事尚未完整读回确认，请重试保存。');
+  }
+
+  let resumeUpdates=null;
+  const adapter={
+   inspectSave:()=>host.inspectChatSave?.(),inspectInstall:()=>host.inspectInstall(),recoverInstall:()=>top.Cxx233Updater.recoverPending(),
+    emptyRows:async route=>openingRows(api.getCharData?.('current')||ctx().characters?.[ctx().characterId],ctx(),route),
+   async begin(){const e=expected();resumeUpdates=await top.Cxx233Updater?.pauseForStory?.();host.assertContext(e,true);operationContext=e;},end(){operationContext=null;resumeUpdates?.();resumeUpdates=null;},
+   current:async()=>({chatId:expected().chatId,rows:[{chat_metadata:copy(ctx().chatMetadata)},...copy(ctx().chat)]}),
+   describe:rows=>describe(rows,(map,id)=>top.CxxAtlasTool?.location(map,id)),
+   async tagCurrent(meta){idle();const e=expected();await host.assertPlayerWritable(e);const previous=copy(ctx().chatMetadata[KEY]);ctx().chatMetadata[KEY]=copy(meta);try{const rows=await flush();if(await hash(metadata(rows))!==await hash(meta))fail('故事登记尚未读回确认，请重试。');}catch(error){host.assertContext(e);if(previous===undefined)delete ctx().chatMetadata[KEY];else ctx().chatMetadata[KEY]=previous;if(!String(error.code||'').startsWith('chat-save-'))try{await flush();}catch{error.message+=' 原故事登记已在内存保留，持久化恢复仍需重试；请勿重载。';}throw error;}},
+   async list(){const e=expected(),data=await post('characters/chats',{avatar_url:e.characterKey,metadata:true},e);if(!data||data.error)fail('故事列表读取失败。');return Object.values(data).flatMap(row=>{const id=String(row.file_name||'').replace(/\.jsonl$/,'');if(!id)return [];const meta=row.chat_metadata?.[KEY]||null,count=Number(row.chat_items??row.mes_count??0),known=meta?.kind==='route'||meta?.kind==='checkpoint'||row.chat_metadata?.variables?.__cxx_identity?.setupToken;return [{chatId:id,playable:!!known||count>1,meta,name:meta?.name||id,messages:count,preview:meta?.preview||{floor:Math.max(0,count-1),location:'继续后读取地点',excerpt:String(row.mes||'').replace(/<[^>]*>/g,' ').slice(0,180),characters:[]},updatedAt:row.last_mes||''}];});},
+   flush,read,
+   // TT 把缺失文件映射成 HTTP 500，导出接口不能用来探测存在性；只信文件列表。
+   async exists(id){const e=expected(),data=await post('characters/chats',{avatar_url:e.characterKey,simple:true},e);if(!data||data.error)fail('检查档位失败，尚未写入新存档。');return Object.values(data).some(row=>String(row.file_name||'').replace(/\.jsonl$/,'')===id);},
+   async write(id,rows){idle();const e=expected();await host.assertPlayerWritable(e);const r=await post('chats/save',{avatar_url:e.characterKey,file_name:id,chat:rows,force:false},e);if(r.ok!==true)fail('宿主未确认副本保存。');},
+    async ensureOpening(id,creationId){
+     const e=expected();if(e.chatId!==id)fail('聊天已切换，停止恢复开场。');if(ctx().chat.length)return;
+     const rows=await read(id);host.assertContext(e);if(ctx().chat.length)return;const old=metadata(rows);
+     if(rows.length!==1)return; // A nonempty disk chat may still be loading; never replace it.
+     if(old?.kind!=='route'||old.stage!=='creating'||old.creationId!==creationId)fail('创建记录不匹配，原故事已保留。');
+     const seeded=openingRows(api.getCharData?.('current')||ctx().characters?.[ctx().characterId],ctx(),old),next=[copy(rows[0]),seeded[1]];
+     await adapter.write(id,next);host.assertContext(e);if(await hash(await read(id))!==await hash(next))fail('恢复开场尚未读回确认，请保留草稿重试。');
+     await adapter.open(id,{recovering:true});
+    },
+   async removePoint(id,expectedHash){const e=expected();if(!/^cxxpoint_[a-f0-9]{32}$/.test(id)||id===e.chatId)fail('旧快速存档编号不匹配。');const rows=await read(id),m=metadata(rows);if(m?.kind!=='checkpoint'||m.pointKind!=='quick'||m.rowsHash!==expectedHash)fail('旧快速存档已变化，保留副本。');await post('chats/delete',{avatar_url:e.characterKey,chatfile:id+'.jsonl'},e);},
+   async capture(){await flush();const {document}=await backup.captureMigration({completeDisk:true});backup.assertExportCurrent(document);return document;},
+   assertExportCurrent:doc=>backup.assertExportCurrent(doc),
+   async validateExport(doc){return backup.parseMigration(doc);},
+   async importDocument(doc){const parsed=await backup.parseMigration(doc),preview=await backup.previewMigration(parsed,{completeDisk:true});return backup.importMigration(parsed,{preview,confirm:'migrate-copy',completeDisk:true});},
+   async open(id,{recovering=false}={}){if(typeof ctx().openCharacterChat!=='function')fail('当前宿主缺少打开聊天接口。');navigation++;try{const save=host.startChatSaveGuard?.()||top.__cxx_chat_save_guard_v1;if(!save?.navigate)fail('故事载入保护尚未就绪，请刷新后重试。');await save.navigate({target:{characterKey:owner,chatId:id},work:()=>ctx().openCharacterChat(id)});if(!recovering)await top.CxxStoryProfile.selected(top);}finally{navigation--;operationContext=null;}operationContext=expected();},
+   async newChat(){if(typeof ctx().executeSlashCommandsWithOptions!=='function')fail('当前宿主缺少新建聊天接口。');navigation++;try{const save=host.startChatSaveGuard?.()||top.__cxx_chat_save_guard_v1;if(!save?.navigate)fail('故事载入保护尚未就绪，请刷新后重试。');await save.navigate({allowNew:true,work:()=>ctx().executeSlashCommandsWithOptions('/newchat')});}finally{navigation--;operationContext=null;}operationContext=expected();}
+  };
+  async function validateCover(value){
+   if(value.schema!==1)fail('配图记录版本不支持。');
+   if(value.kind==='gallery'){if(!root.CxxStoryAssets?.some(x=>x.id===value.id))fail('图库图片不存在。');return {schema:1,kind:'gallery',id:value.id};}
+   if(value.kind==='upload'){await root.CxxItemArt.merge(null,[value.asset]);return {schema:1,kind:'upload',asset:copy(value.asset)};}
+   fail('配图类型不支持。');
+  }
+  const store=createStore({adapter,hash,uuid,validateCover,storage:top.localStorage,storageKey:()=> 'cxx-story-creation:v2:'+JSON.stringify([owner,host.readState().instanceId||'uninitialized'])});
+  const operations=(root.CxxOperations||top.CxxOperations)?.create({scope:()=>{const e=host.getContext();const rows=ctx().chat||[];return JSON.stringify([e.characterKey,e.chatId,rows.length,rows.at(-1)?.swipe_id||0]);}});let unmountOperations;
+  if(operations){top.__cxx_operations__=operations;for(const [key,label]of Object.entries({point:'保存进度',restore:'读取存档',switchStory:'切换故事',newStory:'创建故事',finishCreation:'完成创建',decorate:'保存配图',rename:'保存名称',importDocument:'导入故事',flush:'核对当前故事'})){const fn=store[key];store[key]=(...args)=>operations.run(key,label,()=>fn(...args),{request:JSON.stringify(args),check:()=>store.inspectPending(),recover:()=>store.recoverPending(),open:async id=>{await store.openRecovery(id);await launcher?.changed();},rescue:()=>top.Cxx233Updater.openPanel('recovery'),context:{character:host.getContext().characterKey,chat:host.getContext().chatId,floor:ctx().chat.length-1,swipe:ctx().chat.at(-1)?.swipe_id||0}});}}
+  
+  function close(){viewEpoch++;if(ui){drafts.set(ui.scope,ui.state());ui.destroy();ui=null;}panel=null;}
+  async function download(doc){const current=metadata([doc.payload?.header])?.kind!=='checkpoint';if(current)backup.assertExportCurrent(doc);const file=await backup.prepareExportFile(doc);let requested=false;try{if(current)backup.assertExportCurrent(doc);const a=top.document.createElement('a');a.href=file.url;a.download='东京都2051-完整故事-'+new Date().toISOString().slice(0,10)+'.json';a.click();requested=true;}finally{if(requested)setTimeout(file.revoke,30000);else file.revoke();}}
+  async function open(options={}){
+   close();const e=expected(),epoch=viewEpoch,scope=e.chatId,UI=root.CxxStoryUI;if(!UI)fail('存档界面尚未加载，请刷新酒馆。');
+   const current=()=>{const rows=[{chat_metadata:copy(ctx().chatMetadata)},...copy(ctx().chat)];return {chatId:scope,playable:playable(rows),meta:metadata(rows)||null,name:'当前故事',messages:rows.length-1,preview:adapter.describe(rows)};};
+   ui=UI.mount({document:top.document,scope,initial:{...drafts.get(scope),...options},current:current(),store,covers:root.CxxStoryAssets||[],upload:file=>root.CxxItemArt.upload(file,top.document),download,onClose:()=>{close();options.onClose?.();},onContinue:()=>{close();void store.remember().catch(e=>top.toastr?.error(e.message));},onNew:options.onNew||(()=>service.menu('slots')),
+    async prepareImport(file){const text=await backup.readImportFile(file);host.assertContext(e);if(!panel||epoch!==viewEpoch)fail('已离开此存档页。');const parsed=await backup.parseMigration(text);await backup.previewMigration(parsed,{completeDisk:true});host.assertContext(e);if(!panel||epoch!==viewEpoch)fail('已离开此存档页。');return {document:parsed,meta:metadata([parsed.payload.header]),preview:adapter.describe([parsed.payload.header,...parsed.payload.messages])};}});
+   panel=ui.element;await ui.refresh();
+  }
+  function start(){if(operations)unmountOperations=(root.CxxOperations||top.CxxOperations).mount(top,operations,{blocking:true});top.__cxx_stories__?.destroy();top.__cxx_stories__=service;const events=api.tavern_events||ctx().eventTypes||{};const on=(e,fn)=>{if(e){api.eventOn(e,fn);disposers.push(()=>api.eventRemoveListener(e,fn));}};on(events.CHAT_CHANGED,()=>{close();if(!navigation&&host.getContext().characterKey===owner)void launcher?.changed();});if(api.getButtonEvent){on(api.getButtonEvent('故事存档'),()=>open());on(api.getButtonEvent('主菜单'),()=>service.menu());}if(root.CxxGameMenu){launcher=root.CxxGameMenu.create({win:top,store,context:()=>({...host.getContext(),instanceId:host.readState().instanceId}),openArchive:open,covers:root.CxxStoryAssets||[],version:root.CxxGameMenuVersion||'2.2.3',begin:(slot,id,draft)=>store.newStory('故事 '+String(slot).padStart(2,'0'),null,slot,id,draft),leave:()=>top.Cxx236OpeningHost?.refresh()});top.__cxx_launcher__=launcher;dock=top.document.createElement('button');dock.type='button';dock.className='cxx-menu-dock';dock.textContent='2051 设置';dock.onclick=()=>service.menu('home');dockStyle=top.document.createElement('style');dockStyle.textContent=root.CxxGameMenuStyle||'';top.document.head.append(dockStyle);const mountDock=()=>{const form=top.document.querySelector('#send_form');if(form&&dock.previousElementSibling!==form)form.after(dock);};mountDock();const watchDock=new top.MutationObserver(mountDock);watchDock.observe(top.document.body,{childList:true,subtree:true});disposers.push(()=>watchDock.disconnect());void launcher.open();}return service;}
+  function destroy(){unmountOperations?.();operations?.destroy();if(top.__cxx_operations__===operations)delete top.__cxx_operations__;stopped=true;close();launcher?.destroy();if(top.__cxx_launcher__===launcher)delete top.__cxx_launcher__;dock?.remove();dockStyle?.remove();disposers.splice(0).forEach(fn=>fn());if(top.__cxx_stories__===service)delete top.__cxx_stories__;}
+  const service={start,destroy,open,close,store,menu:async(next='home')=>{try{if(store.busy())throw Error('请等存档操作完成。');close();await launcher?.open(next);}catch(e){top.toastr?.error(e.message,'主菜单');}}};return service;
+ }
+ return {KEY,metadata,openingRows,playable,slotIndex,describe,createStore,create};
+});

@@ -1,0 +1,16 @@
+[
+  {
+    "id": "705d4a8c-0e4e-4478-a700-34808d225132",
+    "disabled": false
+  },
+  {
+    "id": "611a5e2c-71f9-4b14-92c0-7b9f7093509f",
+    "disabled": false
+  },
+  {
+    "id": "99628814-5206-4280-b6ba-9379a5c54d09",
+    "scriptName": "2051 台词显示｜气泡与上色样式（总开关）",
+    "disabled": false,
+    "findRegex": "/^(?![\\s\\S]*data-cxx-bda-style)(?=[\\s\\S]*(?:<cxx-story\\b|<cxx-say\\b|<span\\b[^>]*\\bbdc\\b|CXXDIALOGUE[0-9a-z]+X\\d+END))([\\s\\S]+)$/i"
+  }
+]

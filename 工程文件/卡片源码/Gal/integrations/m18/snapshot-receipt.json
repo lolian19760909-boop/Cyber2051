@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "readAt": "2026-10-03T17:52:37.582Z",
+  "kind": "verbatim-local-M18-snapshot",
+  "files": [
+    {
+      "source": "工程文件/卡片源码/地图/联动/opening-link.js",
+      "copy": "工程文件/卡片源码/Gal/integrations/m18/opening-link.js",
+      "bytes": 20925,
+      "sha256": "773917b52b4fc60375ddf68f4ca0c1f1082f4c59401d48c1f9e061280a3e197c",
+      "sourceBeforeEqualsAfter": true,
+      "copyEqualsSource": true
+    },
+    {
+      "source": "工程文件/卡片源码/地图/联动/terminal-host-state.js",
+      "copy": "工程文件/卡片源码/Gal/integrations/m18/terminal-host-state.js",
+      "bytes": 4421,
+      "sha256": "d815daf1fea4f1f1a931ba32d01df2e0db0c31f68b029db46e4f1e15f864582e",
+      "sourceBeforeEqualsAfter": true,
+      "copyEqualsSource": true
+    }
+  ],
+  "boundaries": [
+    "Shared sources read only.",
+    "No remote code fetched or executed.",
+    "No authored manifest copied or invented.",
+    "No production installation or release."
+  ]
+}

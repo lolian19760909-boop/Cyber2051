@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>body {
+  font-family: var(--cxx-font-ui);
+}
+
+.ae-wrap {
+  position: relative;
+  max-width: 680px;
+  margin: 10px auto;
+  --cp-ink: var(--cxx-ink);
+  --cp-panel: var(--cxx-panel);
+  --cp-panel-hi: var(--cxx-raised);
+  --cp-line: var(--cxx-line);
+  --cp-cyan: var(--cxx-cyan);
+  --cp-red: var(--cxx-red);
+  --cp-amber: var(--cxx-yellow);
+  --cp-text: var(--cxx-text);
+  --cp-muted: var(--cxx-muted);
+  font-family: var(--cxx-font-ui);
+  color: var(--cp-text);
+}
+
+.ae-paper {
+  position: relative;
+  padding: 40px 45px 45px 45px;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% -18%,color-mix(in srgb, var(--cxx-narrative-panel) 50%, transparent),transparent 62%),repeating-linear-gradient(0deg,transparent 0 31px,color-mix(in srgb, var(--cxx-red) 2.20%, transparent) 31px 32px),var(--cp-ink);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  box-shadow: 0 18px 46px color-mix(in srgb, var(--cxx-shadow) 42%, transparent),inset 0 1px color-mix(in srgb, var(--cxx-red) 18.00%, transparent);
+}
+
+.ae-paper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: 20px 20px;
+  pointer-events: none;
+  z-index: 0;
+  background-image: linear-gradient(color-mix(in srgb, var(--cxx-red) 5.00%, transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb, var(--cxx-red) 5.00%, transparent) 1px,transparent 1px);
+}
+
+.ae-holes {
+  position: absolute;
+  left: 15px;
+  top: 20px;
+  bottom: 20px;
+  width: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  z-index: 1;
+}
+
+.ae-hole {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--cp-ink);
+  box-shadow: inset 1px 1px 3px color-mix(in srgb, var(--cxx-shadow) 80%, transparent),0 0 0 1px var(--cp-line);
+}
+
+.ae-content {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.ae-header {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 2px dashed var(--cp-line);
+}
+
+.ae-num {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--cp-red);
+  font-family: var(--cxx-font-mono);
+}
+
+.ae-title {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  margin-bottom: 3px;
+  color: var(--cp-text);
+}
+
+.ae-tag {
+  margin-left: auto;
+  padding: 4px 12px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  background: color-mix(in srgb, var(--cxx-cyan) 8.00%, transparent);
+  color: var(--cp-cyan);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+}
+
+.ae-body {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+.ae-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ae-text {
+  font-size: 14px;
+  line-height: 2;
+  letter-spacing: 0.5px;
+  text-align: justify;
+  color: var(--cp-text);
+}
+
+.ae-gif-box {
+  display: inline-block;
+  padding: 6px;
+  align-self: flex-start;
+  transform: rotate(-2deg);
+  background: var(--cp-panel-hi);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.ae-gif-box img {
+  width: 80px;
+  height: auto;
+  display: block;
+  filter: saturate(.78) contrast(1.05);
+  border-radius: 1px;
+}
+
+.ae-right {
+  width: 220px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.ae-polaroid {
+  padding: 10px 10px 35px 10px;
+  transform: rotate(3deg);
+  transition: transform 0.3s ease;
+  background: var(--cp-panel-hi);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--cxx-shadow) 35%, transparent);
+  padding-bottom: 30px;
+}
+
+.ae-polaroid:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+.ae-polaroid img {
+  display: block;
+  border: 1px solid var(--cxx-line);
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  object-position: top;
+  filter: saturate(.78) contrast(1.05);
+  border-radius: 1px;
+}
+
+.ae-polaroid-text {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 2px;
+  opacity: 0.7;
+  color: var(--cp-cyan);
+  bottom: 8px;
+  font-family: var(--cxx-font-mono);
+}
+
+.ae-tape {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-4deg);
+  border-left: 2px dashed color-mix(in srgb, var(--cxx-red-soft) 50.00%, transparent);
+  border-right: 2px dashed color-mix(in srgb, var(--cxx-red-soft) 50.00%, transparent);
+  z-index: 10;
+  backdrop-filter: blur(2px);
+  background: var(--cp-red);
+  height: 2px;
+  width: 56px;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.ae-btn {
+  margin-top: auto;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  color: var(--cp-ink);
+  background: var(--cp-cyan);
+  border: 1px solid var(--cp-cyan);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cxx-cyan) 22.00%, transparent);
+  text-shadow: none;
+}
+
+.ae-btn:hover {
+  transform: translateY(-2px);
+  background: var(--cxx-cyan);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--cxx-cyan) 12.00%, transparent),0 6px 20px color-mix(in srgb, var(--cxx-cyan) 15.00%, transparent);
+  color: var(--cp-ink);
+}
+
+.ae-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--cxx-red-soft) 30.00%, transparent);
+}
+
+@media (max-width: 580px) {
+  .ae-body {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .ae-right {
+    margin-top: 20px;
+  }
+
+  .ae-paper {
+    padding: 30px 20px 30px 35px;
+  }
+}
+
+.ae-card::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.ae-paper::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.ae-book::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.ae-board::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.ae-notebook::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.ae-container::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.ae-journal::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+@keyframes cp-alt-flow {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .ae-wrap * {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .ae-wrap *::before {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .ae-wrap *::after {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+}
+
+button.ae-btn {
+  font-family: inherit;
+  line-height: inherit;
+  appearance: none;
+  min-height: 44px;
+}
+
+.ae-btn:focus-visible {
+  outline: 2px solid var(--cp-cyan,var(--cxx-line));
+  outline-offset: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="ae-wrap">
+    <div class="ae-paper">
+        <!-- 边缘打孔 -->
+        <div class="ae-holes">
+            <div class="ae-hole"></div><div class="ae-hole"></div><div class="ae-hole"></div>
+            <div class="ae-hole"></div><div class="ae-hole"></div><div class="ae-hole"></div>
+        </div>
+
+        <div class="ae-content">
+            <!-- 标题栏 -->
+            <div class="ae-header">
+                <span class="ae-num">02</span>
+                <span class="ae-title">千 早 爱 音</span>
+                <span class="ae-tag">2051.03 · 归国日</span>
+            </div>
+
+            <div class="ae-body">
+                <div class="ae-left">
+                    <!-- 表层引语，简单陈述，不剧透 -->
+                    <div class="ae-text">
+                        那段原本满怀期待的异国之旅，最终以最灰暗的方式提前画上了句号。
+                        <br><br>
+                        当曾经闪闪发光的自尊心被现实粉碎，经历了社会的现实，现在的她，充满了对未来的惶恐。
+                    </div>
+
+                    <div class="ae-gif-box">
+                        <img src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E7%88%B1%E9%9F%B3%E5%93%AD%E5%93%AD__2_.gif" alt="Anon">
+                    </div>
+
+                    <!-- 按钮脚本区（包含发送给AI的剧情大纲Prompt） -->
+                    <button type="button" class="ae-btn" onclick="sendAnonStart(this)" data-prompt="【开始】【开场白】
+# 场景生成指令
+## 核心任务
+请根据以下提供的元素，完整叙述并扩写一段开场剧情。
+
+## 叙事要求
+- 你的任务是【场景描绘者】，而非【剧情推进者】。
+- 必须在自然的文字叙述中，将下述所有背景信息和场景要素巧妙地融合进去。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+
+## 场景要素
+- **时间:** 2051年3月28日下午17:05。
+- **地点:** 东京都红花街。
+- **核心人物:** 千早爱音。
+
+## 剧情大纲（必须融入叙述）
+1. **沉重的归途:** 爱音的心情和行李一样沉重。因为没法适应生活而逃回日本，就算父母并不介意，她也觉得羞愧。
+2. **被敲诈的起始:** 也许是因为她心不在焉，在下机后没有多加分辨就上了一辆黑车，直到发现目的地不对才反应过来
+3. **慌乱:** 在黑车司机的狮子大开口，与对方明晃晃的弹簧刀的威胁下，爱音只得交出身上值钱的东西，包括大部分的行李。
+4. **街头的无助:** 因为没什么油水，被踹下车的爱音拍了拍衣服，委屈充斥着她的大脑。
+5. **现实的回归:** 在回过神后，她才发觉自己身处东京都著名的红花街，便决定赶紧离开这里，先回家再思考未来。
+6. **不知所措:** 她想到了一个致命的问题。自己完全没来过这里，因而不知道路往哪走。但她又害怕问到了心怀歹念的人。于是在原地急的跺脚
+
+## 【最高优先级指令】
+在描绘完爱音不知所措，急的跺脚后，【必须立即停止】。严禁进行任何后续的角色扮演或剧情推进，将故事的控制权完全交还给玩家。 【/开场白】">
+                        开 始
+                    </button>
+                </div>
+
+                <div class="ae-right">
+                    <div class="ae-polaroid">
+                        <div class="ae-tape"></div>
+                        <img src="https://cyber2051.top/img/%E5%8D%83%E6%97%A9%E7%88%B1%E9%9F%B3%2FAnno_%E5%8D%88%E5%A4%9C%E5%B0%8F%E5%B7%B7.png" alt="Anon">
+                        <div class="ae-polaroid-text">Somewhere lost</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function sendAnonStart(btn) {
+    var promptText = btn.getAttribute('data-prompt');
+    if (!promptText) return;
+
+    return parent.Cxx236OpeningHost.submitPreview(window, '/send ' + promptText + '|/trigger');
+}
+</script>
+
+</body>
+</html>

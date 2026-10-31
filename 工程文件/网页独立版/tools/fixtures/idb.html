@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>P1 IndexedDB 事务夹具</title>
+<style>
+  body { background: #08080b; color: #bbc3ca; font: 14px/1.6 ui-monospace, monospace; padding: 24px; }
+  h1 { color: #f25964; font-size: 16px; }
+  pre { white-space: pre-wrap; }
+  .ok { color: #7ac995; } .bad { color: #f25964; }
+</style>
+</head>
+<body>
+<h1>P1 · 真实 IndexedDB 原子提交与冲突检查</h1>
+<pre id="out">运行中…</pre>
+<script type="module">
+import { createIdbStatePort } from '/src/store/idb.mjs';
+import { createRulesEngine } from '/src/rules/engine.mjs';
+import { createTurnCoordinator } from '/src/app/turn.mjs';
+import { createIdentity } from '/src/core/ids.mjs';
+import { loadCardChainInBrowser } from '/src/reuse/browser-chain.mjs';
+
+const out = document.getElementById('out');
+const lines = [];
+const log = (ok, name, detail) => {
+  lines.push(`${ok ? 'PASS' : 'FAIL'}  ${name}${detail ? ` — ${detail}` : ''}`);
+  out.innerHTML = lines.map((l) => `<span class="${l.startsWith('PASS') ? 'ok' : 'bad'}">${l}</span>`).join('\n');
+};
+const assert = (cond, msg) => { if (!cond) throw new Error(msg); };
+const results = [];
+async function check(name, fn) {
+  try { const d = await fn(); results.push({ name, ok: true, detail: d || '' }); log(true, name, d); }
+  catch (e) { results.push({ name, ok: false, detail: e.message }); log(false, name, e.message); }
+}
+
+const REPLY = [
+  '<cxx-story>',
+  '雨落在霓虹上。',
+  '<cxx-say speaker="丰川祥子" expression="smile">「走吧。」</cxx-say>',
+  '</cxx-story>',
+  '',
+  '<ztl>{"location":"涩谷·中央街","time":"夜","characters":[{"name":"丰川祥子","outfit":"制服","thought":"别再拖了"}]}</ztl>',
+  '',
+  '<xuan>',
+  '1. 去车站',
+  '2. 留在原地',
+  '3. 找灯说话',
+  '4. 回公寓',
+  '5. 先看看终端',
+  '</xuan>',
+  '',
+  '<UpdateVariable>',
+  '[{"op":"replace","path":"/terminal/wallet/yen","value":1200},{"op":"replace","path":"/terminal/wallet/earned","value":1200}]',
+  '</UpdateVariable>',
+].join('\n');
+
+const fakeModel = {
+  kind: 'fake',
+  async chat(payload, { onDelta } = {}) { onDelta?.(REPLY); return { text: REPLY }; },
+  models: async () => ({ models: [] }),
+  embeddings: async () => ({}),
+  rerank: async () => ({}),
+};
+
+const identity = createIdentity({ mode: 'local', accountId: 'browser-fixture', runId: 'run-idb-1', branchId: 'main' });
+
+// 清库，保证可重复
+await new Promise((resolve) => {
+  const req = indexedDB.deleteDatabase('cxx2051-web');
+  req.onsuccess = req.onerror = req.onblocked = () => resolve();
+});
+
+await check('浏览器装载卡内规则链（37 个 UMD 文件，按依赖序）', async () => {
+  window.__CHAIN__ = await loadCardChainInBrowser({ baseUrl: '/card/' });
+  const n = window.__CHAIN__.loaded.length;
+  assert(window.__CHAIN__.schema && window.__CHAIN__.applier && window.__CHAIN__.z, '规则链对象不全');
+  return `装载 ${n} 个文件，全局 Cxx236Zod/Cxx236Schema/Cxx236Applier 就绪`;
+});
+
+await check('真实 IndexedDB：一次事务提交正文+状态+收据+节点', async () => {
+  const state = createIdbStatePort({});
+  const rules = createRulesEngine({ chain: window.__CHAIN__ });
+  const turn = createTurnCoordinator({ ports: { state, model: fakeModel }, rules, identity, parser: window.__CHAIN__.parser });
+  await turn.begin({ inputText: '浏览器闭环' });
+  await turn.generate({ modelPayload: {} });
+  await turn.validate();
+  const done = await turn.commit();
+  assert(done.status === 'committed', `应 committed，实际 ${done.status}`);
+  const parsed = turn.snapshot();
+  assert(parsed.choices === 5, `五选项应在浏览器里被识别，实际 ${parsed.choices}`);
+  const saved = await state.readState(identity.runId, identity.branchId);
+  assert(saved?.data?.terminal?.wallet?.yen === 1200, '状态未落库');
+  const node = await state.readNode(identity.runId, done.nodeId);
+  assert(node && node.message.raw.includes('霓虹'), '节点未落库');
+  assert(node.message.display.scene?.location === '涩谷·中央街', '场景未随节点持久化');
+  assert(node.message.display.paragraphs[1].characterId === 'Saki', '台词说话人未随节点持久化');
+  const receipt = await state.readReceipt(identity.runId, turn.snapshot().operationId);
+  assert(receipt && receipt.nodeId === done.nodeId, '收据未落库');
+  return `revision=${done.revision}，五选项+场景+台词+状态同事务写入`;
+});
+
+await check('真实 IndexedDB：同 operationId 重提回放且不涨修订号', async () => {
+  const state = createIdbStatePort({});
+  const head = await state.readHead(identity.runId);
+  const node = await state.readNode(identity.runId, head.headNodeId);
+  const replay = await state.commit({
+    accountId: identity.accountId, runId: identity.runId, branchId: identity.branchId,
+    operationId: node.operationId, expectedRevision: head.revision - 1,
+    nodeId: 'node-dup', parentNodeId: null, message: node.message, stateAfter: {},
+  });
+  const after = await state.readHead(identity.runId);
+  assert(replay.status === 'replayed', `应回放，实际 ${replay.status}`);
+  assert(after.revision === head.revision, '回放不应推进修订号');
+  return `replayed，revision 保持 ${after.revision}`;
+});
+
+await check('真实 IndexedDB：过期修订号提交返回 conflict 且不写入', async () => {
+  const state = createIdbStatePort({});
+  const before = await state.readHead(identity.runId);
+  const result = await state.commit({
+    accountId: identity.accountId, runId: identity.runId, branchId: identity.branchId,
+    operationId: 'op-conflict-1', expectedRevision: before.revision - 1,
+    nodeId: 'node-conflict', parentNodeId: null, message: { raw: 'x' }, stateAfter: {},
+  });
+  const after = await state.readHead(identity.runId);
+  assert(result.status === 'conflict', `应 conflict，实际 ${result.status}`);
+  assert(after.revision === before.revision, '冲突不应写入');
+  assert(!(await state.readNode(identity.runId, 'node-conflict')), '冲突不应留下节点');
+  return `conflict，revision 保持 ${after.revision}`;
+});
+
+await check('Web Locks：并发提交只有一个是 committed，其余回放或冲突', async () => {
+  const state = createIdbStatePort({});
+  const head = await state.readHead(identity.runId);
+  const mk = (i) => ({
+    accountId: identity.accountId, runId: identity.runId, branchId: identity.branchId,
+    operationId: `op-race-${i}`, expectedRevision: head.revision,
+    nodeId: `node-race-${i}`, parentNodeId: head.headNodeId, message: { raw: `race-${i}` },
+    stateAfter: { terminal: { wallet: { yen: 1, earned: 1, spent: 0 } } },
+  });
+  const outcomes = await Promise.all([mk(1), mk(2), mk(3)].map((op) => state.commit(op)));
+  const committed = outcomes.filter((o) => o.status === 'committed').length;
+  const conflicts = outcomes.filter((o) => o.status === 'conflict').length;
+  assert(committed === 1 && conflicts === 2, `应 1 committed + 2 conflict，实际 ${JSON.stringify(outcomes.map((o) => o.status))}`);
+  return `1 committed / 2 conflict，修订号只推进一次`;
+});
+
+window.__P1_RESULTS__ = { results, done: true };
+</script>
+</body>
+</html>

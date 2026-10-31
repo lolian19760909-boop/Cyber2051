@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "minimum": {
+    "sillytavern": "1.18.0",
+    "tavernHelper": null
+  },
+  "requirements": [
+    {
+      "id": "host-0",
+      "owner": "sillytavern",
+      "symbol": "SillyTavern.getContext",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "id": "host-1",
+      "owner": "sillytavern",
+      "symbol": "context.eventSource.on",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "id": "host-2",
+      "owner": "sillytavern",
+      "symbol": "context.eventSource.removeListener",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "id": "host-3",
+      "owner": "sillytavern",
+      "symbol": "context.setExtensionPrompt",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "id": "host-4",
+      "owner": "sillytavern",
+      "symbol": "context.stopGeneration",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "id": "host-5",
+      "owner": "sillytavern",
+      "symbol": "context.eventTypes.GENERATION_AFTER_COMMANDS",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "id": "host-6",
+      "owner": "sillytavern",
+      "symbol": "context.eventTypes.MESSAGE_SENT",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "id": "host-7",
+      "owner": "sillytavern",
+      "symbol": "context.eventTypes.MESSAGE_RECEIVED",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "id": "host-8",
+      "owner": "sillytavern",
+      "symbol": "context.eventTypes.GENERATION_ENDED",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "id": "host-9",
+      "owner": "sillytavern",
+      "symbol": "context.eventTypes.GENERATION_STOPPED",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "id": "host-10",
+      "owner": "sillytavern",
+      "symbol": "context.eventTypes.CHAT_CHANGED",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "id": "host-11",
+      "owner": "sillytavern",
+      "symbol": "context.eventTypes.WORLDINFO_ENTRIES_LOADED",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "id": "host-12",
+      "owner": "sillytavern",
+      "symbol": "context.eventTypes.CHAT_COMPLETION_PROMPT_READY",
+      "required": true,
+      "fallback": null
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "tavern-visual-runtime",
+  "private": true,
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "vendor": "node tools/prepare-vendor.mjs --write",
+    "test": "node --test ../../测试/动效运行环境/core.test.mjs ../../测试/动效运行环境/unity.test.mjs"
+  },
+  "dependencies": {
+    "@lottiefiles/dotlottie-web": "0.81.0",
+    "@rive-app/webgl2": "2.44.2"
+  }
+}

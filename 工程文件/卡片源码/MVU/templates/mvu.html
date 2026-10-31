@@ -1,0 +1,232 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body><div class="mvu-wrapper">
+    <details class="mvu-card">
+        <summary class="mvu-header">
+            <div class="mvu-tag">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>UPDATE</span>
+            </div>
+            <div class="mvu-deco-line"></div>
+            <!-- 这里的 GIF 表情 -->
+            <img src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E7%B4%A0%E4%B8%96%E5%A4%A7%E5%A4%B4.gif" class="mvu-header-gif" alt="sticker" />
+            <div class="mvu-indicator">
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+        </summary>
+        <div class="mvu-body">
+            <div class="mvu-scroll-area">
+                <div class="mvu-content">$1</div>
+            </div>
+            <div class="mvu-footer">
+                <i class="fa-regular fa-clock"></i> Just now
+            </div>
+            <!-- 背景水印 -->
+            <i class="fa-solid fa-chart-pie mvu-bg-icon"></i>
+        </div>
+    </details>
+</div>
+
+<style>@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+.mvu-wrapper {
+  width: 90%;
+  max-width: 380px;
+  margin: 10px auto;
+
+
+
+
+  font-size: 16px;
+  font-family: var(--cxx-font-mono);
+}
+
+.mvu-card {
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: var(--cxx-panel);
+  border: 1px solid var(--cxx-line);
+  border-radius: 2px;
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--cxx-shadow) 30.00%, transparent);
+  background-image: linear-gradient(color-mix(in srgb, var(--cxx-red) 3.50%, transparent) 1px,transparent 1px);
+  background-size: 100% 24px;
+}
+
+.mvu-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--cxx-shadow) 30.00%, transparent);
+}
+
+.mvu-header {
+  list-style: none;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 8px;
+  height: 44px;
+  background: var(--cxx-raised);
+  backdrop-filter: none;
+}
+
+.mvu-header::-webkit-details-marker {
+  display: none;
+}
+
+.mvu-tag {
+  padding: 4px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  color: var(--cxx-ink);
+  background: var(--cxx-cyan);
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.mvu-deco-line {
+  flex: 1;
+  height: 2px;
+  opacity: 0.6;
+  margin: 0 5px;
+  background: repeating-linear-gradient(90deg,var(--cxx-line) 0 4px,transparent 4px 8px);
+}
+
+.mvu-header-gif {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 2px color-mix(in srgb, var(--cxx-shadow) 10.00%, transparent));
+}
+
+.mvu-indicator {
+  color: var(--cxx-cyan);
+  font-size: 14px;
+  transition: transform 0.3s ease;
+  opacity: 0.7;
+  margin-left: 4px;
+}
+
+.mvu-card[open] .mvu-indicator {
+  transform: rotate(180deg);
+}
+
+.mvu-body {
+  padding: 10px 6px 10px 16px;
+  position: relative;
+  border-top: 1px dashed var(--cxx-cyan-soft);
+  animation: slideDown 0.3s ease-out;
+  border-color: var(--cxx-line);
+}
+
+.mvu-scroll-area {
+  max-height: 120px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.mvu-scroll-area::-webkit-scrollbar {
+  width: 4px;
+}
+
+.mvu-scroll-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mvu-scroll-area::-webkit-scrollbar-thumb {
+  background: var(--cxx-cyan-soft);
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.mvu-scroll-area:hover::-webkit-scrollbar-thumb {
+  background: var(--cxx-cyan);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mvu-content {
+  font-size: 16px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  position: relative;
+  z-index: 2;
+  font-weight: 500;
+  color: var(--cxx-text);
+}
+
+.mvu-footer {
+  margin-top: 8px;
+  padding-right: 10px;
+  font-size: 13px;
+  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  color: var(--cxx-muted);
+}
+
+.mvu-bg-icon {
+  position: absolute;
+  bottom: -5px;
+  right: 15px;
+  font-size: 2.5em;
+  opacity: 0.08;
+  z-index: 1;
+  transform: rotate(-15deg);
+  pointer-events: none;
+  color: var(--cxx-cyan);
+}
+
+@keyframes cp-mvu-drift {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 8px 0;
+  }
+}
+
+.mvu-card[open] .mvu-deco-line {
+  animation: cp-mvu-drift 2s linear infinite;
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .mvu-wrapper * {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+
+  .mvu-wrapper *::before {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+
+  .mvu-wrapper *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .mvu-deco-line {
+    animation: none !important;
+  }
+}
+</style></body></html>

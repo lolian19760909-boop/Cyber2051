@@ -1,0 +1,739 @@
+{
+  "schema": 2,
+  "kind": "live2d",
+  "name": "爱音机能服",
+  "version": "2",
+  "id": "7f7a77cf9e26559399caad45ea4d8837a553d16a33155eaea9fde5e849a8c3e5",
+  "entries": [
+    {
+      "file": "coat/back-left.png",
+      "id": "8d4a6db960bd260d6a2cdd0c3e85a56058d4967108246c7c935bfcf9ae5a37bc",
+      "bytes": 194430,
+      "mime": "image/png"
+    },
+    {
+      "file": "coat/back-right.png",
+      "id": "2d890faeba0e8a5e9dcde5992d81e983bbb87ac51f8c8865b160390e214f6fa2",
+      "bytes": 147919,
+      "mime": "image/png"
+    },
+    {
+      "file": "coat/trim-left.png",
+      "id": "fdf175b429103fca9474a29b201d6e404354114131b9a0c158ed7b5f53ddc8a3",
+      "bytes": 493367,
+      "mime": "image/png"
+    },
+    {
+      "file": "coat/trim-right.png",
+      "id": "8f3128b85ce9e9f0a64bb0e57d02ad7a8a6d11b729f97dc12aa42f13193862eb",
+      "bytes": 267707,
+      "mime": "image/png"
+    },
+    {
+      "file": "collar/choker-hd.png",
+      "id": "b0dcefc4fc6b98210c9cf11cc96d1a23617da0a715a1beddddb2b13ebec71cc6",
+      "bytes": 1039234,
+      "mime": "image/png"
+    },
+    {
+      "file": "collar/collar-left.png",
+      "id": "e73d8806ddbb8d800be09dea70020d1be9202037664063c21ecbf017e11d4e0b",
+      "bytes": 18157,
+      "mime": "image/png"
+    },
+    {
+      "file": "collar/collar-right.png",
+      "id": "6f9e512da80eb1619212000454c314fa3b70da8b01bccb39137a243a1b511e74",
+      "bytes": 18757,
+      "mime": "image/png"
+    },
+    {
+      "file": "detail/boot-left.png",
+      "id": "0b3bb29caa853a625254aa4df7bbead30306589a043e14f38a79ae8704c8abe4",
+      "bytes": 67069,
+      "mime": "image/png"
+    },
+    {
+      "file": "detail/boot-right.png",
+      "id": "ddeac809ebe7c83ab7ee7b312d07844f78f9c612a83088a96cc4466bca4ba53e",
+      "bytes": 63202,
+      "mime": "image/png"
+    },
+    {
+      "file": "fallback.png",
+      "id": "5315e6a8519e1be486de9b3f63ebc27c33849fa1edd61294acd49e7f63fcd312",
+      "bytes": 4216684,
+      "mime": "image/png"
+    },
+    {
+      "file": "model/002_casual_spring_01.model3.json",
+      "id": "a5c7d39165f8477078093818940cb13ac760fb7dbd5fbf02737443e416c3402b",
+      "bytes": 15000,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_angry01.exp3.json",
+      "id": "7ee4ad37df46dd08aa8aecffc482b5f70ee38ef54070929cfb6e9ec0b5de4ed7",
+      "bytes": 3347,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_angry02.exp3.json",
+      "id": "b83ff92983e05b341b0ee3bf142421ead5a0acf5ec2adf9965b4087b9d1397e4",
+      "bytes": 3373,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_bsmile01.exp3.json",
+      "id": "5c8ddafef24caff8ca7f48c8d1a72923bcbf3bcbb15d870f7b6e38344f16f2f5",
+      "bytes": 3327,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_bsmile02.exp3.json",
+      "id": "9980433e3b9052376d53707e2359f3062ab7a8e1df8f52bde49a8c441c32a41c",
+      "bytes": 3327,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_bsmile03.exp3.json",
+      "id": "15cc7c95af80b35d074482dc5c0bcc6d7933daf48e682383b70898e11c9b3d7a",
+      "bytes": 3343,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_bsmile04.exp3.json",
+      "id": "8bf30cada07c623eedafad23d66dc6158ef294fb3d19f3313b1bb009e5bb999d",
+      "bytes": 3343,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_cry01.exp3.json",
+      "id": "6edbce5713919f14f6c9784dd4bf08d1c3d6cd53f6a037bc71e91a8a32f40239",
+      "bytes": 3407,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_cry02.exp3.json",
+      "id": "26f19abadba986a970b6470f2fa134679083943a8bbb1ddabf80822c856f9867",
+      "bytes": 3404,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_heart01.exp3.json",
+      "id": "140bc44125c2ea60f93592365c8a1e7c7bdfb4cd72d418b1dce55ac5e100a3db",
+      "bytes": 3376,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_idle01.exp3.json",
+      "id": "fce1c641f3993c0fd700e57cde353c5e509a7c13b7c105240eeacc6eb305c4c5",
+      "bytes": 3132,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_idle02.exp3.json",
+      "id": "54f7c58e55d0915df9c1c21f190fcd746d735c88f11f16d80ea3a64fa4b230c5",
+      "bytes": 3132,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_idle03.exp3.json",
+      "id": "42d49a0ab07bb6d73762709e31c762e98cd599edcacb95ebcbcfcba6225f0e5c",
+      "bytes": 3148,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_kime01.exp3.json",
+      "id": "9a9b659847f43f7adf9792eea40ee03bbd64a74c4daa0914d4b0be8a7fa0356e",
+      "bytes": 3370,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_pale01.exp3.json",
+      "id": "4af44f453bda47abb9bea6570c1cfd352637165e95258174321ad24c5abfa1c2",
+      "bytes": 3363,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_pale02.exp3.json",
+      "id": "cc991c00763f8dc0d1904139125e0671121730d76a13430d319d12f3a1d83924",
+      "bytes": 3317,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_sad01.exp3.json",
+      "id": "41a1c850b663b218d5d1a62bd077c91c0dff36113caad115f917e7054eaa8882",
+      "bytes": 3444,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_sad02.exp3.json",
+      "id": "12072984877612c0f8c6d70ed6cdd9b95a19f8c809dd9e386a885343e9015d28",
+      "bytes": 3396,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_sad03.exp3.json",
+      "id": "9677f6768c0586c461ae8c366e442ea9b82b26e51ed0d5f517dad7cabb7be998",
+      "bytes": 3375,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_sdeprecate01.exp3.json",
+      "id": "5c01a2a80d99ee3c43f82539e42a641be0aed2805f099228e1f7f9d0e1e4264c",
+      "bytes": 3346,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_serious01.exp3.json",
+      "id": "cb5d14fa225f33155666a3af0dc4f8f34d9ca48002cee66b7e7efd18eb1a2846",
+      "bytes": 3350,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_serious02.exp3.json",
+      "id": "f6ffe6c6f0f87e60ed3711e17f52fcd9f6d581f8f02e6ecc5997b8dc32017e27",
+      "bytes": 3350,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_shadow01.exp3.json",
+      "id": "8831281cc55ab812ff2d9dddbe367907d48d989d321dc6c61b084671ca75ddc9",
+      "bytes": 3125,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_shy01.exp3.json",
+      "id": "36250d260660cab9c57047288af8d277864e6bdc5b56c75de6bc0aba506e575e",
+      "bytes": 3376,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_shy02.exp3.json",
+      "id": "3e38b35c911516f6caed2b92c5611824c78aa21f647173d4a5e8124f373c3dde",
+      "bytes": 3446,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_shy03.exp3.json",
+      "id": "155569cc28a1a727ebc1c2a9e907de3d67d383bc4ea9f471e68a34c9bd23ee30",
+      "bytes": 3436,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_smile01.exp3.json",
+      "id": "92b9d50ca40b726eb75afc0a1652bb1682450b442950da871ad2d948549b7f01",
+      "bytes": 3317,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_smile02.exp3.json",
+      "id": "db29127202c56fb8b663421003ebc292114e45d44a9145f57e96174ebc7e8813",
+      "bytes": 3341,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_smile03.exp3.json",
+      "id": "db59ef0afa5b0029b32eb7ca8992eb6cf5faff5756dc154ef459d90c5698e3b7",
+      "bytes": 3394,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_smile04.exp3.json",
+      "id": "32467f8919c27938223c3393a5a7eb23ce35cff88acc8fd9a6b08685c35900d7",
+      "bytes": 3327,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_smile05.exp3.json",
+      "id": "57153863c0a57c2db8b7f0ffa0ef7021b9b04576b02f414090d57fca0f715b1a",
+      "bytes": 3349,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_spin01.exp3.json",
+      "id": "877bbbf687130bab42defa5a925afd51bef545c50a9af2d58f2876a008e2897a",
+      "bytes": 3140,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_surprised01.exp3.json",
+      "id": "adcb308edc1af3578c7bff990a04730ab5369eb43b28c62dbeb287619cb74c35",
+      "bytes": 3375,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_surprised02.exp3.json",
+      "id": "78851d9ba4bf051b4ab5e63334e85810377978c3e52d833d9a3cf1590210fb14",
+      "bytes": 3375,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_thinking01.exp3.json",
+      "id": "f6c0b7dfc6c004a783be9cc649b94c62518b0d3ec37dfa27211fcff6be7b5ce5",
+      "bytes": 3393,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_thinking02.exp3.json",
+      "id": "b78cb88da27f77b9039d1b6c5fc16fdad2b1c496a1309f2a92302ac69024fadf",
+      "bytes": 3411,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/expressions/exp_upset01.exp3.json",
+      "id": "39d6cb992c28da7862dc26f73328f0aba6aa357dd08a4084132b6eda3d5ac096",
+      "bytes": 3299,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/model.moc3",
+      "id": "af53b434f3e43d314efff25ad12b9639bf10f4b096f7460b0549b17f7369f5aa",
+      "bytes": 4711424,
+      "mime": "application/octet-stream"
+    },
+    {
+      "file": "model/motions/mtn_angry01_C.motion3.json",
+      "id": "b0cf4e560dfcd12b75cc662f2ffae1bf5c0bca6534fca572c392f35a2c9e2aea",
+      "bytes": 14553,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_angry01_L.motion3.json",
+      "id": "12f7281586235f6d8503b9561d2d7c7afa59e2f1e73393b37085c7c04658eedd",
+      "bytes": 15403,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_angry01_R.motion3.json",
+      "id": "88edd5d7fcd793902f4513780240b97ffd7e69d15e6f054abd5e24fd60a3edba",
+      "bytes": 15519,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_bye01_C.motion3.json",
+      "id": "1f2ac8e912580738e5807fcc5f23acdfff9dd447a7fd77327b6b2cb1de3badd0",
+      "bytes": 12734,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_bye01_L.motion3.json",
+      "id": "55998ff7d851b9b91a8213217ebe743b955f4ae97f8b9f4e74cbe3f203a069ea",
+      "bytes": 12938,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_bye01_R.motion3.json",
+      "id": "d5ee6ff173f61d189ddeb7a0094b36575b22f76955c0be169f141c1bfc435651",
+      "bytes": 13071,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_check01_C.motion3.json",
+      "id": "fbd1acc4713cd1acd5734c874ad52a56afdac72d5a3a8ca46a626f57f28fa4a1",
+      "bytes": 14234,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_check01_L.motion3.json",
+      "id": "0724882bb0781b7a54d7d962bdaabcfa7030570b08f9edd907203690579f0b2c",
+      "bytes": 14201,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_check01_R.motion3.json",
+      "id": "e5ef8a940e571504fcfb0b0eb6923f3053999f2aa7bfed9168845023e492b5c6",
+      "bytes": 14328,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_check02_C.motion3.json",
+      "id": "3ca2a04769ba39ce1f4c5796a6b59058848322e74625c851a9018ed361009884",
+      "bytes": 14111,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_check02_L.motion3.json",
+      "id": "f22294f7a47cda587381b2993b2dbf0bfff2085f33b0a31cf3ce90cc805d2543",
+      "bytes": 14020,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_check02_R.motion3.json",
+      "id": "93724f8e680b6f96044d7e27706304344126ef49526d0a84b73940a04533b64b",
+      "bytes": 14086,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_cry01_C.motion3.json",
+      "id": "65f2498da4e3a24b8df4a0eb42826abd8698f87f8f32f49ac9b8ea60e134cafa",
+      "bytes": 15416,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_cry01_L.motion3.json",
+      "id": "5e0dd31517737f7ede5fdf40b3ca259a2d7cfd89a595ce2514f6b036d55c303c",
+      "bytes": 15354,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_cry01_R.motion3.json",
+      "id": "eb0acc8457b5c1c4a96b4469392d08ed9c12acddde2eced0902050de0afa87fa",
+      "bytes": 15353,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_denial01_C.motion3.json",
+      "id": "cd558bc60eb6abd0f94cc4dce8c0b1197a11549ed72fe4a9a37681e63fdec65f",
+      "bytes": 13695,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_denial01_L.motion3.json",
+      "id": "2b78e734960eae9cfc0660e62123a7cf228322138b67b35af3621ae18d2a727c",
+      "bytes": 13680,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_denial01_R.motion3.json",
+      "id": "c45655e125751e24ba603ea393bc0ba5c62a5b38060a86cbae8fc22b12d6bdf8",
+      "bytes": 13736,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_idle01_C.motion3.json",
+      "id": "e035a2f364863c2ff22d7ecdc2c03ee04c36d98a22988dd2ae5346cc448c587e",
+      "bytes": 9968,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_idle01_L.motion3.json",
+      "id": "b06670a664fdf91a20259266daec117e27efdbb14c44612dd5298c3e9e7f3a21",
+      "bytes": 9956,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_idle01_R.motion3.json",
+      "id": "e2cd5b287163a46d2b5e8e1dad437fc0b456e0aae1a20bee31a6eb17a6d7f89f",
+      "bytes": 9970,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_join01_C.motion3.json",
+      "id": "d6dd1a652f564cb84c6e7f48e56e63b145fac0a6905317fec37329ab0baefbf0",
+      "bytes": 13040,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_join01_L.motion3.json",
+      "id": "58b23f24b26791df3005b814cbc2c77838c59ed1abf2f5fbdca9f69fc590173b",
+      "bytes": 13041,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_join01_R.motion3.json",
+      "id": "049a0c19718df71a2a2411195610f2a797aaaba6a606af66d15f1f0da8b88aab",
+      "bytes": 13040,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_kime01_C.motion3.json",
+      "id": "dc00d06217b703978ec49d4fb893caa5373a9d9f5bfddd4d7859d770c1141b94",
+      "bytes": 14927,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_kime01_L.motion3.json",
+      "id": "4456528af530b46f074fe46385f0d4c382ed2a045a35504587d01d173f795b79",
+      "bytes": 15199,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_kime01_R.motion3.json",
+      "id": "1bc24252be941ee9dd3aedb5bc766f3192db709935739dc4706c5d5b4c7434c0",
+      "bytes": 14943,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_look01_C.motion3.json",
+      "id": "b96a1e8ec6662060eb5c6cbbe10a8262dd1f1d79bbdebf9250e07b5b9a9a2195",
+      "bytes": 18258,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_look01_L.motion3.json",
+      "id": "2ca0cdd934ad980c06326daee1aa4bd156e2ee43a86e8f4b5947a6a17233f4ec",
+      "bytes": 18294,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_look01_R.motion3.json",
+      "id": "b420024fd0eddee937fcd04fb6c97b5a121b4b48439ab48881521cf4d495d089",
+      "bytes": 18203,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_look02_C.motion3.json",
+      "id": "315eec9ba1b06d2e445755e4c7016d6fd9d68ab71fa8b8a020647f51a1732219",
+      "bytes": 13372,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_look02_L.motion3.json",
+      "id": "e7a71bde68917e94912c06768daad05c1eee6f9cbfe2ef09e3d7ede82b9dc86a",
+      "bytes": 13274,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_look02_R.motion3.json",
+      "id": "7bd3d25aa49ca4be1cfacc9ca73edfa39253def2036ed51a70d4cc31a1ddc70d",
+      "bytes": 13305,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_nod01_C.motion3.json",
+      "id": "8b4bbcea7cd17521869d724532e9f783980f6398e6304d4468cbc1f52fcba30b",
+      "bytes": 14529,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_nod01_L.motion3.json",
+      "id": "9da7acaa2802bcd7b75a01c93b8a7aac7acc672e26b2606c62399f5d8d71ada6",
+      "bytes": 14593,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_nod01_R.motion3.json",
+      "id": "f971d9d4d2339f033a47b2fcfc490e615b32d5c8cb929967f6a6b1fd56208be0",
+      "bytes": 15229,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_nod02_C.motion3.json",
+      "id": "4b39812a5a96f42f6d0e17c3a94b2075fd414e4b32041cc474ab455c5408cc37",
+      "bytes": 14070,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_nod02_L.motion3.json",
+      "id": "0b56104c17127b9c10709773de4c1a4d54439f2f412fb017872aebb99f4cf44e",
+      "bytes": 14364,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_nod02_R.motion3.json",
+      "id": "abfc93335cc97cfc81248fafe423c8b0463624cc49943df9b55781cffd120e6a",
+      "bytes": 14296,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_question01_C.motion3.json",
+      "id": "13cbd12e6e60d67f4a870ae66fe330631a51ea8f1229491486a4c10dd819683d",
+      "bytes": 15601,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_question01_L.motion3.json",
+      "id": "1a29147df596bfde07aa4c773ee0900702cfb5ade081d8ac97db7b4a92670315",
+      "bytes": 15344,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_question01_R.motion3.json",
+      "id": "52b2321a4ec890cf6077d3513f8a0f6d54861ef12282a2d8eb39a5e104fb1803",
+      "bytes": 15491,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_sad01_C.motion3.json",
+      "id": "1034da3f0c00e03861496dfe4a8204b18a2960c236551667ed1cdc4b40ce80c4",
+      "bytes": 14927,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_sad01_L.motion3.json",
+      "id": "809a963ffec8ccc391a2bf7ee84f346879c5ce52450f2bf3ccc8a040211c26c5",
+      "bytes": 14884,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_sad01_R.motion3.json",
+      "id": "cc79a16a148fc1fab7b5f3f9efc82e271f56f527b08fe69ff593b5ff3c2a3b2e",
+      "bytes": 14919,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_serious01_C.motion3.json",
+      "id": "0ee8638787cdafb018db7f12c8bc5f2ca37e6a888f8f10e6026fd58671a6c870",
+      "bytes": 13825,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_serious01_L.motion3.json",
+      "id": "2ddc180663967b6accd0d5d2396fcc9c86342ae2b094267754789cb39cb839dd",
+      "bytes": 14399,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_serious01_R.motion3.json",
+      "id": "3c9c12e31c7cbbb64bcf32df3851af632bc3cc55b2b523238f66dda97229d480",
+      "bytes": 14511,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_smile01_C.motion3.json",
+      "id": "e1ed2296c98e09de7b71fa50477666cdf85a51b36e67700b794c5181ca504f8b",
+      "bytes": 14380,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_smile01_L.motion3.json",
+      "id": "93e25e387fb62c534a68966d1923c5b3b413c41ec3ac83a7dba78c596c63dc4b",
+      "bytes": 14402,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_smile01_R.motion3.json",
+      "id": "ec344e2e44f909b83e935f2c5b23151e55b1750857c3cdf39dbd3a733e7a1cf6",
+      "bytes": 14383,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_smile02_C.motion3.json",
+      "id": "98ea528d25efed360f47b1a2a0cb35a603de44e6742f49a6a5c14724295b80c0",
+      "bytes": 15855,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_smile02_L.motion3.json",
+      "id": "0eddc7fbc3b220e79838a7e2454bad02afb0b0ad98f777fd61905d4a3d200d31",
+      "bytes": 16070,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_smile02_R.motion3.json",
+      "id": "37dab82f54b6cd23e4a1955221ba1a82bf08bb40f4d898750ee12d269ee57eb5",
+      "bytes": 15968,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_surprised01_C.motion3.json",
+      "id": "67756576432d6fc9061ce7d3d9f884f7963c3db3acb122f8309a50df6b7962d4",
+      "bytes": 16643,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_surprised01_L.motion3.json",
+      "id": "85760c683b755a7d43c2bd24480c668ffa15e9e38c42c4099238265b6217ef10",
+      "bytes": 16778,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_surprised01_R.motion3.json",
+      "id": "58d6f0490d837f84bfef2bbacdc18a556042fbfb8875c795b8961dc4d43bd528",
+      "bytes": 16725,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_surprised02_C.motion3.json",
+      "id": "683d9f6a4483226f40009c69c7a0da62b0a1ab7bbd468f8479166c50648f9e15",
+      "bytes": 14512,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_surprised02_L.motion3.json",
+      "id": "79b4c0dc7a7312664b757833f2d14871c31eab2557b6990e0a36b99efa87bdd5",
+      "bytes": 14864,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_surprised02_R.motion3.json",
+      "id": "745f53cf052350e634976c36e72b644416c3a175e189855ee365c6ffdf6cc33f",
+      "bytes": 14931,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_thinking01_C.motion3.json",
+      "id": "14b5cc1e94771df0e0ecd99733a81ebfd8179126b10d2c66acfebee98f1425ac",
+      "bytes": 12035,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_thinking01_L.motion3.json",
+      "id": "8704b8ba5d668c7b46704373e04d6823a55c1da36f1019a13fca29c00f2f0d7d",
+      "bytes": 12045,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_thinking01_R.motion3.json",
+      "id": "cbc687fcfc6ecabf9b887e49673245be479494dca8c2a3cf0d428e59252f8472",
+      "bytes": 11955,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_wink01_C.motion3.json",
+      "id": "728b98b23ccb4285d9344d171644376cfa703baacab5894b905ef30ef4756765",
+      "bytes": 14406,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_wink01_L.motion3.json",
+      "id": "7dadec4faf7f7bc16deb59082259f02840c1d3d0e94dfc63a0577f69fa3d8463",
+      "bytes": 14338,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/motions/mtn_wink01_R.motion3.json",
+      "id": "c6b6e6c072106e4c85c49f376048632097e82491782effca8817c0c0447da13a",
+      "bytes": 14319,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/physics3.json",
+      "id": "50fb041ca116d0b6734447c87872d8c8ec779e666076fed1d0125671031871fc",
+      "bytes": 24849,
+      "mime": "application/json"
+    },
+    {
+      "file": "model/texture_00--Texture2D-3198918989771340298.png",
+      "id": "940a0add05ce3c44ddb62b2d667c469d2bf012d7b705e495f01495d042e38b45",
+      "bytes": 2624012,
+      "mime": "image/png"
+    },
+    {
+      "file": "model/texture_01--Texture2D--4984305853756994986.png",
+      "id": "a76214b45fad22bce49fd59d11e5a7f56bd1a0a6d3dee0f414fb5d58ce557cb9",
+      "bytes": 2992717,
+      "mime": "image/png"
+    },
+    {
+      "file": "vendor/pixi.min.js",
+      "id": "403f2f2ee8145fa17f60c5c89403056efe2680e5096ec2762036486914ed19c5",
+      "bytes": 460333,
+      "mime": "text/javascript"
+    },
+    {
+      "file": "vendor/live2dcubismcore.min.js",
+      "id": "25ae938cb4fe282ce189b357bcc97e603d1e1f7ec78bf04150d401c23cdc792f",
+      "bytes": 207155,
+      "mime": "text/javascript"
+    },
+    {
+      "file": "vendor/live2d.min.js",
+      "id": "e4ea1f18bdd44b65394ffd5a1bab16982e88757d45134d1bd0737c8a6b3ddd08",
+      "bytes": 129056,
+      "mime": "text/javascript"
+    },
+    {
+      "file": "vendor/live2d-display.min.js",
+      "id": "0d081b7ad79a490f5613042fcd0ea2849d3db81c4ff9c95bfa1556e30c5b338e",
+      "bytes": 126888,
+      "mime": "text/javascript"
+    }
+  ],
+  "baseUrl": "https://cyber2051.top/resources/live2d-anon/7f7a77cf9e26559399caad45ea4d8837a553d16a33155eaea9fde5e849a8c3e5/",
+  "compatible": [
+    "a4983c7627aff62a95cf8def2c4ef0f480d1a60f1d9d17092579c2b475de1e46"
+  ]
+}

@@ -1,0 +1,118 @@
+```
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B站风格-幸运星随机背景+随机颜色弹幕</title>
+    <style>
+        body { margin: 0; padding: 20px; box-sizing: border-box; }
+
+        /* --- 动画定义 --- */
+        @keyframes danmaku-scroll {
+            from { transform: translateX(100vw); }
+            to { transform: translateX(-100%); }
+        }
+
+        /* --- 容器样式（背景将由JS随机设置） --- */
+        .danmaku-super-container-rgb {
+            height: 350px;
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #59262a;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+            background-size: 210px 210px;
+            background-position: center;
+            background-repeat: repeat;
+        }
+
+        .danmaku-track-rgb {
+            position: absolute;
+            width: max-content;
+            left: 0;
+            animation-name: danmaku-scroll;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+
+        /* --- 弹幕文字（改为随机颜色，支持阴影，类似B站默认风格） --- */
+        .danmaku-content-multicolor-rgb {
+            white-space: pre;
+            padding: 0 30px;
+            font-weight: bold;
+            font-size: 22px;
+            color: #ffffff; /* 默认纯白，将被JS覆盖 */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="danmaku-super-container-rgb" id="danmaku-container-final"></div>
+    <div id="danmaku-data-source" style="display: none;">$1</div>
+
+    <script>
+        (function() {
+            const dataSourceElem = document.getElementById('danmaku-data-source');
+            const targetContainer = document.getElementById('danmaku-container-final');
+
+            if (!dataSourceElem || !targetContainer) return;
+
+            /* --- 随机背景图列表（替换为幸运星相关图片） --- */
+            const bgImages = ["data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'210'%20height%3D'210'%3E%3Crect%20width%3D'210'%20height%3D'210'%20fill%3D'%230d0a0c'%2F%3E%3Cpath%20d%3D'M0%2030h210M30%200v210'%20stroke%3D'%2359262a'%20stroke-width%3D'1'%20opacity%3D'0.55'%2F%3E%3Cpath%20d%3D'M0%2015h210M15%200v210'%20stroke%3D'%23271016'%20stroke-width%3D'1'%2F%3E%3C%2Fsvg%3E"];
+            const randomImg = bgImages[Math.floor(Math.random() * bgImages.length)];
+            targetContainer.style.backgroundImage = `url(${randomImg})`;
+
+            // B站常见弹幕颜色（十六进制格式）
+            const biliColors = [
+                "#FFFFFF", // 白色
+                "#F08278", // 红色
+                "#E9BA59", // 橙色
+                "#D8A748", // 黄色
+                "#75B69F", // 绿色
+                "#6ECBD0", // 蓝色
+                "#C56F98", // 紫色
+                "#DC5C59", // 粉色
+                "#8FD9DD", // 青色
+                "#D2D5D4"  // 金色
+            ];
+
+            const rawDanmus = (dataSourceElem.textContent || dataSourceElem.innerText).trim();
+            const danmuLines = rawDanmus.split(/\r?\n/).filter(line => line.trim() !== '');
+
+            const trackStyles = [
+                { top: '2%', duration: '20s', delay: '-1s' },
+                { top: '15%', duration: '28s', delay: '-11s' },
+                { top: '28%', duration: '24s', delay: '-4s' },
+                { top: '42%', duration: '33s', delay: '-2s' },
+                { top: '56%', duration: '18s', delay: '-16s' },
+                { top: '70%', duration: '30s', delay: '-7s' },
+                { top: '85%', duration: '22s', delay: '-13s' }
+            ];
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.appendChild(document.createTextNode(text));
+                return div.innerHTML;
+            }
+
+            let allTracksHtml = '';
+            danmuLines.forEach((line, index) => {
+                const style = trackStyles[index % trackStyles.length];
+                // 随机选择B站颜色
+                const randomColor = biliColors[Math.floor(Math.random() * biliColors.length)];
+                const safeLine = escapeHtml(line.trim());
+                
+                allTracksHtml += `
+    <div class="danmaku-track-rgb" style="top: ${style.top}; animation-duration: ${style.duration}; animation-delay: ${style.delay};">
+        <div class="danmaku-content-multicolor-rgb" style="color: ${randomColor};">${safeLine}</div>
+    </div>`;
+            });
+            targetContainer.innerHTML += allTracksHtml;
+        })();
+    </script>
+
+</body>
+</html> 
+```

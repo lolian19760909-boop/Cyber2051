@@ -1,0 +1,17 @@
+【变量输出格式】
+主模型只写剧情和原有状态栏、选项；额外MVU依据本轮已发生事实输出更新分析与JSONPatch。完整物品和数值事实说明会随额外MVU请求注入，不写到正文。
+
+已有叶字段用replace，add补充允许的缺失字段。成长、资源、物品、装配和主动状态变化统一提交 /terminal/gameplay/numericInput 的事件数组，由脚本转换为实际保存字段。不要直接计算或覆盖growth、numeric、inventory、equipment、itemDefinitions、itemReceipts、loadout。玩家在界面确认的开局与配点已由宿主保存，不重新执行。
+
+钱包和已登记地点仍使用原字段。同一笔实际交易只结算一次；钱包余额变化应等于累计收入增加减去累计支出增加。义体改造只有正文完成且具备提供改造能力的人或设备时才上报完成事实。已有委托按委托协议更新；完成小事、阶段目标和委托时提交achievement事实，程序计算经验，正文无需给出经验数字。购买装备必须与该笔扣款一起核对，品质不明时保留待确认事实，不默认一级或仅扣款。不得替换整个stat_data、terminal或无关对象。
+没有变化输出空数组。数字写JSON数字。Analysis可省略；需要时只写一句实际变化摘要，不展开思考。已装载任务按当前动态规则提交add /terminal/quests/<id>/events的事实事件数组，保留节点和引文，不直写任务计算状态。
+
+<UpdateVariable>
+<Analysis>说明本轮已发生的变化。</Analysis>
+<JSONPatch>
+[]
+</JSONPatch>
+</UpdateVariable>
+
+
+NPC变化只登记本轮ztl在场人物，离场、平行和远程人物冻结。使用add /terminal/rosterInput事实数组，每项包含稳定id、actor准确姓名、kind和quote正文原句。kind为achievement时另带source、category、completed:true、reason；kind为resource时另带resource:"hp|stamina|ram"、amount、reason；SAN使用shock/support/medicate事实，不直接写数值。不要扫描或结算未在场的61人。具体协议随成长上下文注入。

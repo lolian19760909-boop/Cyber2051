@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "title": "剧情目录",
+    "file": "01.html",
+    "action": null
+  },
+  {
+    "id": 2,
+    "title": "开局一：丰川祥子",
+    "file": "02.html",
+    "action": "startSakikoScene"
+  },
+  {
+    "id": 3,
+    "title": "开局二：千早爱音",
+    "file": "03.html",
+    "action": "sendAnonStart"
+  },
+  {
+    "id": 4,
+    "title": "开局三：初华＆真奈",
+    "file": "04.html",
+    "action": "uikaStart"
+  },
+  {
+    "id": 5,
+    "title": "开局四：椎名立希",
+    "file": "05.html",
+    "action": "takiStart"
+  },
+  {
+    "id": 6,
+    "title": "开局五：高松灯",
+    "file": "06.html",
+    "action": "tomoStart"
+  },
+  {
+    "id": 7,
+    "title": "开局六：要乐奈",
+    "file": "07.html",
+    "action": "ranaStart"
+  },
+  {
+    "id": 8,
+    "title": "开局七：八幡海铃",
+    "file": "08.html",
+    "action": "umiriStart"
+  },
+  {
+    "id": 9,
+    "title": "开局八：祐天寺若麦",
+    "file": "09.html",
+    "action": "nyamuStart"
+  },
+  {
+    "id": 10,
+    "title": "开局九：若叶睦",
+    "file": "10.html",
+    "action": "mutsumiStart"
+  },
+  {
+    "id": 11,
+    "title": "开局十：长崎素世",
+    "file": "11.html",
+    "action": "soyoStart"
+  }
+]

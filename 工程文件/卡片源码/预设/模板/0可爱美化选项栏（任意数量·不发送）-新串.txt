@@ -1,0 +1,217 @@
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN" data-palette="day">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>
+/* Self-contained iframe surface; no remote fonts or permanent animations. */
+:root {
+    color-scheme: dark;
+    --panel: #120a0d;
+    --header: #291116;
+    --ink: #d2d5d4;
+    --line: #59262a;
+    --item: #150b0f;
+    --hover: #1d1013;
+    --accent: #dc5c59;
+}
+:root[data-palette="night"], .option-panel-container[data-palette="night"] {
+    color-scheme: dark;
+    --panel: #0d0a0c;
+    --header: #170b0f;
+    --ink: #d2d5d4;
+    --line: #59262a;
+    --item: #150b0f;
+    --hover: #1d1013;
+    --accent: #6ecbd0;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-width: 0;
+    width: 100%;
+    background: transparent !important;
+}
+body { font: 16px/1.55 'Bahnschrift','Arial Narrow','Noto Sans SC',sans-serif; color: var(--ink); }
+.option-panel-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--panel);
+    color: var(--ink);
+    overflow: hidden;
+}
+.option-panel-header {
+    margin: 0;
+    padding: 11px 14px;
+    background: var(--header);
+    border-bottom: 1px solid var(--line);
+    text-align: center;
+    font-size: 0.95em;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+.option-list { list-style: none; margin: 0; padding: 10px; display: grid; gap: 8px; }
+.option-item { min-width: 0; --item-accent: var(--accent); }
+.option-item:nth-child(4n + 2) { --item-accent: #6ecbd0; }
+.option-item:nth-child(4n + 3) { --item-accent: #c56f98; }
+.option-item:nth-child(4n + 4) { --item-accent: #d8a748; }
+.option-link {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px 12px;
+    appearance: none;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--item);
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.94em;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 120ms ease, border-color 120ms ease;
+}
+.option-link:focus-visible { outline: 2px solid var(--item-accent); outline-offset: 2px; }
+.option-icon { flex: 0 0 24px; text-align: center; }
+.option-label { min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.option-status { margin: 0; padding: 0 12px 10px; font-size: 0.78em; overflow-wrap: anywhere; }
+.option-status[data-error="true"] { font-weight: 700; }
+@media (hover: hover) and (pointer: fine) {
+    .option-link:hover { background: var(--hover); border-color: var(--item-accent); }
+}
+.option-link:active { background: var(--hover); }
+@media (max-width: 480px) {
+    .option-list { padding: 8px; gap: 7px; }
+    .option-link { padding: 9px 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .option-link { transition: none; }
+}
+
+</style></head>
+<body data-palette="day" data-izumi-options-panel="v2">
+<section class="option-panel-container" data-palette="day" aria-label="可选回复">
+<h2 class="option-panel-header">✨ 小此为你准备了几个选项哦～</h2>
+<ul class="option-list" id="izumi-option-list"></ul>
+<p class="option-status" id="izumi-option-status" role="status" aria-live="polite">正在读取当前消息的选项…</p>
+</section>
+<script>
+'use strict';
+
+// Static frontend: message text is never interpolated into HTML or JavaScript.
+function parseOptions(source) {
+    const normalized = source.replace(/\r\n?/g, '\n');
+    const header = /^[\t ]*>[\t ]*选项[\t ]*([0-9０-９零〇一二三四五六七八九十百千万亿两]+)[\t ]*[:：][\t ]*/gm;
+    const matches = Array.from(normalized.matchAll(header));
+    if (!matches.length || normalized.slice(0, matches[0].index).trim()) {
+        throw new Error('选项格式未识别：请让每项以独立一行的 >选项一： 或 >选项1： 开始。');
+    }
+    return matches.map((match, index) => {
+        const end = matches[index + 1]?.index ?? normalized.length;
+        const text = normalized.slice(match.index + match[0].length, end).replace(/\n[\t \n]*$/, '');
+        if (!text.trim()) throw new Error('存在空选项，请补充内容后再试。');
+        return { number: match[1], text };
+    });
+}
+
+function readBlocks(message) {
+    return Array.from(message.matchAll(/<options\s*>([\s\S]*?)<\/options\s*>/gi), match => match[1]);
+}
+
+function getBlockIndex(blocks) {
+    if (blocks.length === 1) return 0;
+    // The renderer keeps the source pre as a hidden sibling of this iframe.
+    const frame = window.frameElement;
+    const wrapper = frame?.closest('.TH-render');
+    const message = wrapper?.closest('.mes');
+    const ownCode = wrapper?.querySelector('pre code');
+    const codes = message ? Array.from(message.querySelectorAll('pre code')).filter(code =>
+        code.textContent.includes('data-izumi-options-panel="v2"')) : [];
+    const index = codes.indexOf(ownCode);
+    if (index < 0 || codes.length !== blocks.length) {
+        throw new Error('多个选项区无法对应：请在每条消息中保留一个 <options> 区域，或检查其他正则是否同时改写了选项。');
+    }
+    return index;
+}
+
+function appendOption(text) {
+    const parentWindow = window.parent;
+    const input = parentWindow.document.querySelector('#send_textarea');
+    if (!input || input.disabled || input.readOnly) {
+        throw new Error('输入框不可用，未填入任何内容。');
+    }
+    // Preserve the existing draft exactly; never send or focus the mobile keyboard.
+    const separator = input.value && !input.value.endsWith('\n') ? '\n' : '';
+    input.value = input.value + separator + text;
+    input.dispatchEvent(new parentWindow.Event('input', { bubbles: true }));
+}
+
+async function initializeOptions() {
+    const list = document.getElementById('izumi-option-list');
+    const status = document.getElementById('izumi-option-status');
+    try {
+        if (typeof getChatMessages !== 'function' || typeof getCurrentMessageId !== 'function') {
+            throw new Error('需要酒馆助手的前端渲染与当前消息接口；请开启“渲染前端界面”。');
+        }
+        const messages = await getChatMessages(getCurrentMessageId());
+        const raw = messages[0]?.message;
+        if (typeof raw !== 'string') throw new Error('无法读取当前消息，未生成选项。');
+        const blocks = readBlocks(raw);
+        if (!blocks.length) throw new Error('当前消息没有完整的 <options> 区域。');
+        const options = parseOptions(blocks[getBlockIndex(blocks)]);
+        const icons = ['◆', '▸', '◇', '●'];
+        const fragment = document.createDocumentFragment();
+        options.forEach((option, index) => {
+            const item = document.createElement('li');
+            item.className = 'option-item';
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'option-link';
+            const icon = document.createElement('span');
+            icon.className = 'option-icon';
+            icon.setAttribute('aria-hidden', 'true');
+            icon.textContent = icons[index % icons.length];
+            const label = document.createElement('span');
+            label.className = 'option-label';
+            label.textContent = option.text;
+            button.append(icon, label);
+            button.addEventListener('click', () => {
+                try {
+                    // Retain the original panel's [text] unwrapping convention.
+                    const text = option.text.startsWith('[') && option.text.endsWith(']')
+                        ? option.text.slice(1, -1) : option.text;
+                    if (!text.trim()) throw new Error('此选项没有可填入的文字。');
+                    appendOption(text);
+                    status.textContent = '已填入选项' + option.number + '，尚未发送。';
+                    status.dataset.error = 'false';
+                } catch (error) {
+                    status.textContent = error.message;
+                    status.dataset.error = 'true';
+                }
+            });
+            item.append(button);
+            fragment.append(item);
+        });
+        list.replaceChildren(fragment);
+        status.textContent = options.length + ' 个选项 · 点击只填入，不发送';
+    } catch (error) {
+        status.textContent = error.message;
+        status.dataset.error = 'true';
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeOptions, { once: true });
+} else {
+    initializeOptions();
+}
+
+</script>
+</body></html>
+```

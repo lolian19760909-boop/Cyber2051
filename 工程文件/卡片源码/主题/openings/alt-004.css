@@ -1,0 +1,36 @@
+/* 2051 / red-black interface — visual layer only */
+.taki-wrap{
+  --cp-ink:#08080b;--cp-panel:#120a0d;--cp-panel-hi:#1d1013;
+  --cp-line:#59262a;--cp-cyan:#6ecbd0;--cp-red:#dc5c59;
+  --cp-amber:#d8a748;--cp-text:#d2d5d4;--cp-muted:#a4a8aa;
+  font-family:'Bahnschrift','Arial Narrow','Noto Sans SC',sans-serif;
+  color:var(--cp-text);
+}
+.taki-board{background:var(--cp-ink)!important;background-image:linear-gradient(rgba(220,92,89,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(220,92,89,.05) 1px,transparent 1px)!important;background-size:20px 20px!important;border:1px solid var(--cp-line)!important;border-radius:2px!important;box-shadow:0 18px 46px rgba(0,0,0,.42)!important}
+.taki-card::after,.taki-paper::after,.taki-book::after,.taki-board::after,.taki-notebook::after,.taki-container::after,.taki-journal::after{
+  content:'';position:absolute;z-index:4;pointer-events:none;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent 15%,rgba(220,92,89,.08) 34%,rgba(220,92,89,.75) 50%,rgba(110,203,208,.55) 53%,transparent 68%);
+  background-size:220% 100%;animation:cp-alt-flow 12s linear infinite;
+}
+@keyframes cp-alt-flow{from{background-position:100% 0}to{background-position:-100% 0}}
+@media(prefers-reduced-motion:reduce){.taki-wrap *,.taki-wrap *::before,.taki-wrap *::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+.taki-board::before{background:rgba(220,92,89,.45)!important;box-shadow:4px 0 0 rgba(110,203,208,.12)!important}
+.taki-ring{background:linear-gradient(180deg,#3a2027,#59262a)!important;box-shadow:none!important;border:1px solid var(--cp-line)}
+.taki-ring::after{background:var(--cp-panel)!important;box-shadow:inset 1px 1px 2px rgba(0,0,0,.6)!important}
+.taki-title{color:var(--cp-red)!important}
+.taki-sub{color:var(--cp-cyan)!important}
+.taki-desc{color:var(--cp-text)!important;background:rgba(18,10,13,.75)!important;border-left:3px solid var(--cp-cyan)!important;border-radius:0 2px 2px 0!important}
+.taki-desc strong{color:var(--cp-amber)!important}
+.taki-gif-wrap{background:var(--cp-panel-hi)!important;border:1px solid var(--cp-line)!important;box-shadow:none!important}
+.taki-gif{filter:saturate(.78) contrast(1.05);border-radius:1px}
+.taki-tape{background:var(--cp-cyan)!important;height:2px!important;width:40px!important;border:none!important;box-shadow:none!important;border-radius:0!important}
+.taki-portrait{background:var(--cp-panel-hi)!important;border:1px solid var(--cp-line)!important;border-radius:2px!important;box-shadow:5px 5px 0 rgba(220,92,89,.12),0 8px 20px rgba(0,0,0,.35)!important;padding-bottom:30px}
+.taki-portrait img{width:100%;height:320px;object-fit:cover;object-position:top;filter:contrast(1.03)}
+.taki-photo-label{color:var(--cp-muted)!important}
+.taki-clip{background:var(--cp-line)!important}
+.taki-clip::after{border-color:var(--cp-cyan)!important}
+.taki-btn{color:var(--cp-ink)!important;background:var(--cp-cyan)!important;border:1px solid var(--cp-cyan)!important;border-radius:2px!important;box-shadow:0 0 0 1px rgba(110,203,208,.22)!important;text-shadow:none!important}
+.taki-btn:hover{background:#9be0e3!important;box-shadow:0 0 0 4px rgba(110,203,208,.12),0 6px 20px rgba(110,203,208,.15)!important;color:var(--cp-ink)!important}
+.taki-overlay{background:rgba(8,8,11,.93)!important;backdrop-filter:blur(3px)!important}
+.taki-over-txt{color:var(--cp-cyan)!important;text-shadow:none!important}
+.taki-over-txt::before{color:var(--cp-red)!important}

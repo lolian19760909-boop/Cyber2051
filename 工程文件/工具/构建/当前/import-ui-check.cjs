@@ -1,0 +1,21 @@
+'use strict';
+// Exercise ST's file input with the actual delivery filename and record the import body.
+const fs=require('fs'),path=require('path'),assert=require('assert/strict'),crypto=require('crypto');
+const {chromium}=require('C:/Users/lolian/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const root=path.resolve(__dirname,'../../..'),file=path.resolve(process.argv[2]),label=process.argv[3]||'current',out=path.join(root,'.cache/version227');
+(async()=>{fs.mkdirSync(out,{recursive:true});const bytes=fs.readFileSync(file),card=JSON.parse(bytes),report={file,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),errors:[]};
+ const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
+ try{const page=await browser.newPage({viewport:{width:1280,height:900}});page.on('pageerror',e=>report.errors.push(e.message));
+ await page.goto('http://127.0.0.1:6948');await page.waitForFunction(()=>window.SillyTavern&&document.querySelector('#character_import_file'));
+ await page.waitForFunction(()=>!document.querySelector('#preloader')&&![...document.querySelectorAll('.splash-screen')].some(e=>e.getBoundingClientRect().height>0),null,{timeout:90000});
+ const responsePromise=page.waitForResponse(r=>r.url().endsWith('/api/characters/import'),{timeout:90000});
+ await page.locator('#character_import_file').setInputFiles(file);const response=await responsePromise;
+ report.status=response.status();report.body=await response.text();report.request={method:'ST character_import_file change handler',fileName:path.basename(file)};
+ await page.waitForTimeout(2500);report.toasts=await page.locator('#toast-container').innerText().catch(()=>'');await page.screenshot({path:path.join(out,label+'-import.png')});
+ assert.equal(report.status,200);const result=JSON.parse(report.body);assert(!result.error,report.body);assert(result.file_name,report.body);
+ const token=(await(await page.request.get('http://127.0.0.1:6948/csrf-token')).json()).token;
+ const storedResponse=await page.request.post('http://127.0.0.1:6948/api/characters/get',{headers:{'X-CSRF-Token':token},data:{avatar_url:result.file_name+'.png'}});assert(storedResponse.ok());const stored=await storedResponse.json();
+ assert.equal(stored.data.character_version,card.data.character_version);assert.equal(stored.data.name,card.data.name);assert.deepEqual(stored.data.extensions.tavern_helper,card.data.extensions.tavern_helper);assert.deepEqual(stored.data.character_book,card.data.character_book);
+ report.readback={avatar:stored.avatar,version:stored.data.character_version,helperScripts:stored.data.extensions.tavern_helper.scripts.length,loreEntries:stored.data.character_book.entries.length,matching:true};
+ }catch(e){report.failure=e.stack;throw e;}finally{await browser.close();fs.writeFileSync(path.join(out,label+'-import.json'),JSON.stringify(report,null,2));}console.log(JSON.stringify(report,null,2));
+})().catch(e=>{console.error(e);process.exitCode=1;});

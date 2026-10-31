@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>body {
+  font-family: var(--cxx-font-ui);
+}
+
+@keyframes taki-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) rotateX(-5deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+  }
+}
+
+.taki-wrap {
+  position: relative;
+  max-width: 720px;
+  margin: 25px auto;
+  animation: taki-in 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+  perspective: 1000px;
+  --cp-ink: var(--cxx-ink);
+  --cp-panel: var(--cxx-panel);
+  --cp-panel-hi: var(--cxx-raised);
+  --cp-line: var(--cxx-line);
+  --cp-cyan: var(--cxx-cyan);
+  --cp-red: var(--cxx-red);
+  --cp-amber: var(--cxx-yellow);
+  --cp-text: var(--cxx-text);
+  --cp-muted: var(--cxx-muted);
+  font-family: var(--cxx-font-ui);
+  color: var(--cp-text);
+}
+
+.taki-board {
+  position: relative;
+  padding: 40px 45px 40px 70px;
+  margin-left: 15px;
+  overflow: hidden;
+  background: var(--cp-ink);
+  background-image: linear-gradient(color-mix(in srgb, var(--cxx-red) 5.00%, transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb, var(--cxx-red) 5.00%, transparent) 1px,transparent 1px);
+  background-size: 20px 20px;
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  box-shadow: 0 18px 46px color-mix(in srgb, var(--cxx-shadow) 42%, transparent);
+}
+
+.taki-board::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50px;
+  width: 2px;
+  background: color-mix(in srgb, var(--cxx-red) 45.00%, transparent);
+  box-shadow: 4px 0 0 color-mix(in srgb, var(--cxx-cyan) 12.00%, transparent);
+}
+
+.taki-rings {
+  position: absolute;
+  left: 5px;
+  top: 10%;
+  bottom: 10%;
+  width: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.taki-ring {
+  width: 28px;
+  height: 10px;
+  border-radius: 5px;
+  position: relative;
+  background: linear-gradient(180deg,var(--cxx-panel),var(--cxx-raised));
+  box-shadow: none;
+  border: 1px solid var(--cp-line);
+}
+
+.taki-ring::after {
+  content: '';
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  z-index: -1;
+  background: var(--cp-panel);
+  box-shadow: inset 1px 1px 2px color-mix(in srgb, var(--cxx-shadow) 60%, transparent);
+}
+
+.taki-header {
+  margin-bottom: 25px;
+  position: relative;
+  z-index: 2;
+}
+
+.taki-title {
+  font-size: 28px;
+  font-weight: bold;
+  letter-spacing: 5px;
+  margin: 0 0 5px 0;
+  text-transform: uppercase;
+  color: var(--cp-red);
+}
+
+.taki-sub {
+  font-family: var(--cxx-font-mono);
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: var(--cp-cyan);
+}
+
+.taki-content {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  position: relative;
+  z-index: 2;
+}
+
+.taki-left-col {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.taki-desc {
+  font-size: 14px;
+  line-height: 2;
+  text-align: justify;
+  padding: 15px 20px;
+  color: var(--cp-text);
+  background: color-mix(in srgb, var(--cxx-ink) 75%, transparent);
+  border-left: 3px solid var(--cp-cyan);
+  border-radius: 0 2px 2px 0;
+}
+
+.taki-desc p {
+  margin: 0 0 10px 0;
+}
+
+.taki-desc p:last-child {
+  margin: 0;
+}
+
+.taki-gif-wrap {
+  position: relative;
+  align-self: flex-start;
+  padding: 6px;
+  transform: rotate(1deg);
+  background: var(--cp-panel-hi);
+  border: 1px solid var(--cp-line);
+  box-shadow: none;
+}
+
+.taki-gif {
+  display: block;
+  height: 90px;
+  width: auto;
+  filter: saturate(.78) contrast(1.05);
+  border-radius: 1px;
+}
+
+.taki-tape {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-3deg);
+  backdrop-filter: blur(2px);
+  z-index: 2;
+  background: var(--cp-cyan);
+  height: 2px;
+  width: 40px;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.taki-right-col {
+  flex: 0.8;
+  position: relative;
+}
+
+.taki-portrait {
+  padding: 10px 10px 35px 10px;
+  transform: rotate(-1.5deg);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: var(--cp-panel-hi);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  box-shadow: 5px 5px 0 color-mix(in srgb, var(--cxx-red) 12.00%, transparent),0 8px 20px color-mix(in srgb, var(--cxx-shadow) 35%, transparent);
+  padding-bottom: 30px;
+}
+
+.taki-portrait:hover {
+  transform: rotate(0) translateY(-2px);
+  box-shadow: 8px 8px 0 color-mix(in srgb, var(--cxx-cyan) 15%, transparent), 0 12px 25px color-mix(in srgb, var(--cxx-shadow) 8%, transparent);
+}
+
+.taki-portrait img {
+  display: block;
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  object-position: top;
+  filter: contrast(1.03);
+}
+
+.taki-photo-label {
+  position: absolute;
+  bottom: 12px;
+  right: 15px;
+  font-family: var(--cxx-font-mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--cp-muted);
+}
+
+.taki-clip {
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  width: 30px;
+  height: 18px;
+  border-radius: 2px 2px 0 0;
+  z-index: 5;
+  box-shadow: 0 2px 5px color-mix(in srgb, var(--cxx-shadow) 20%, transparent);
+  background: var(--cp-line);
+}
+
+.taki-clip::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 5px;
+  width: 20px;
+  height: 12px;
+  border: 2px solid var(--cxx-line);
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  border-color: var(--cp-cyan);
+}
+
+.taki-action {
+  margin-top: 25px;
+  text-align: left;
+}
+
+.taki-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 30px;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+  color: var(--cp-ink);
+  background: var(--cp-cyan);
+  border: 1px solid var(--cp-cyan);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cxx-cyan) 22.00%, transparent);
+  text-shadow: none;
+}
+
+.taki-btn:hover {
+  transform: translate(-2px, -2px);
+  background: var(--cxx-cyan);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--cxx-cyan) 12.00%, transparent),0 6px 20px color-mix(in srgb, var(--cxx-cyan) 15.00%, transparent);
+  color: var(--cp-ink);
+}
+
+.taki-btn:active {
+  transform: translate(0, 0);
+  box-shadow: 0 0 0 transparent;
+}
+
+.taki-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  background: color-mix(in srgb, var(--cxx-ink) 93%, transparent);
+  backdrop-filter: blur(3px);
+}
+
+.taki-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.taki-over-txt {
+  font-family: var(--cxx-font-mono);
+  font-size: 18px;
+  letter-spacing: 6px;
+  font-weight: bold;
+  color: var(--cp-cyan);
+  text-shadow: none;
+}
+
+.taki-over-txt::before {
+  content: '>';
+  margin-right: 10px;
+  color: var(--cp-red);
+}
+
+.taki-blink {
+  animation: taki-cursor 1s step-end infinite;
+}
+
+@keyframes taki-cursor {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .taki-content {
+    flex-direction: column-reverse;
+    gap: 20px;
+  }
+
+  .taki-right-col {
+    align-self: center;
+    width: 80%;
+  }
+
+  .taki-board {
+    padding: 30px 25px 30px 50px;
+    background-size: 15px 15px;
+  }
+
+  .taki-board::before {
+    left: 35px;
+  }
+}
+
+.taki-card::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.taki-paper::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.taki-book::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.taki-board::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.taki-notebook::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.taki-container::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.taki-journal::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+@keyframes cp-alt-flow {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .taki-wrap * {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .taki-wrap *::before {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .taki-wrap *::after {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+}
+
+.taki-desc strong {
+  color: var(--cp-amber);
+}
+
+button.taki-btn {
+  font-family: inherit;
+  line-height: inherit;
+  appearance: none;
+  min-height: 44px;
+}
+
+.taki-btn:focus-visible {
+  outline: 2px solid var(--cp-cyan,var(--cxx-line));
+  outline-offset: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="taki-wrap" id="takiWrap">
+    <!-- 左侧金属装订环 -->
+    <div class="taki-rings">
+        <div class="taki-ring"></div><div class="taki-ring"></div>
+        <div class="taki-ring"></div><div class="taki-ring"></div>
+        <div class="taki-ring"></div><div class="taki-ring"></div>
+    </div>
+
+    <!-- 主体活页纸 -->
+    <div class="taki-board">
+        <div class="taki-header">
+            <h2 class="taki-title">椎名立希</h2>
+            <div class="taki-sub">LOCATION: Lust?Love?Live! B3F Bar</div>
+        </div>
+
+        <div class="taki-content">
+            <!-- 左侧排版 -->
+            <div class="taki-left-col">
+                <div class="taki-desc">
+                    <p>午后的Lust?Love?Live!，相比夜晚的吵闹完全是空无一人。只有楼上新RING-Live!里的试音声不断传来。</p>
+                    <p>立希穿着制服站在吧台后，机械地擦拭着早已光亮的桌台。她虽然动作利索，但眉头却紧紧锁着，眼神有些涣散。</p>
+                    <p>思绪不由自主地被拽回到三年前那个充斥着“真希的妹妹”的下午，那股令人窒息的劣等感再次涌上心头。她烦躁地啧了一声，想要把那些糟糕的回忆从脑海中甩出去——</p>
+                </div>
+
+                <!-- GIF 拍纸贴 -->
+                <div class="taki-gif-wrap">
+                    <div class="taki-tape"></div>
+                    <img class="taki-gif" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E7%AB%8B%E5%B8%8C%E5%8F%91%E5%91%86.gif" alt="立希发呆">
+                </div>
+
+                <div class="taki-action">
+                    <!-- 填入了完整的Prompt -->
+                    <button type="button" class="taki-btn" onclick="takiStart()"
+                         data-prompt="【开始】【开场白】
+# 场景生成指令
+
+## 核心任务
+- 请作为【场景描绘者】，写一段关于椎名立希的开局场景。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+
+## 场景要素
+- **时间：** 2051年3月25日，中午两点半。
+- **地点：** RiNG社区，地下Lust?Love?Live!
+- **核心人物：** 椎名立希（花咲川高一学生，Lust?Love?Live!员工）。
+
+## 剧情大纲与心理活动（必须融入描写）
+1. **环境与工作状态：** 午后的客人很少，几乎是空无一人，只有远远传来不知道是哪支乐队在楼上试音的声音。立希穿着制服站在吧台后，她虽然待客不太熟练，但干活总归挺利索的，刚刚仔仔细细地擦完了店里所有的桌子。
+2. **走神与劣等感爆发：** 望着空荡的房间，立希的思绪飘到了三年前。那时她还在羽丘上初一，高三的姐姐椎名真希作为领队带着羽丘吹奏部拿到地区冠军的那个下午，同学们围在立希身边庆祝，她们管立希叫“真希的妹妹”，问她能有这样一位姐姐是不是超级幸福。那一股子从小被笼罩在耀眼姐姐阴影下的、无法被当作独立个体的劣等感与烦闷，无法遏制地涌了上来。立希又想到了姐姐毕业后成为警官的卓越表现，更让她感到烦闷。
+3. **动作反馈：** 回忆带来的烦躁感让她感到不适。她烦躁地“啧”了一声，甩了甩头，拍了拍自己的脸，想要从糟糕的回忆中摆脱出来。然而这番带着情绪的动作，却让她不小心打翻了吧台上的一个高脚杯。
+
+## 最高优先级指令
+在描绘完杯子被打翻，发出清脆声响之后，【立即停止输出】。严禁强行推进后续对话或代替玩家行动，将故事的控制权交给玩家。
+【/开场白】">
+                        开始 <span class="taki-blink">_</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 右侧排版大图 -->
+            <div class="taki-right-col">
+                <div class="taki-portrait">
+                    <div class="taki-clip"></div>
+                    <img src="https://cyber2051.top/img/%E6%A4%8E%E5%90%8D%E7%AB%8B%E5%B8%8C%2FTaki_%E7%89%B9%E5%86%99%E7%AB%99%E5%A7%BF.png" alt="椎名立希">
+                    <div class="taki-photo-label">TAKI_SHIINA.jpg</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 遮罩层 -->
+        <div class="taki-overlay" id="takiOverlay">
+            <div class="taki-over-txt">LOADING SCRIPT<span class="taki-blink">_</span></div>
+        </div>
+    </div>
+</div>
+
+<script>
+function takiStart() {
+    var btn = document.querySelector('.taki-btn');
+    var promptText = btn.getAttribute('data-prompt');
+
+    return parent.Cxx236OpeningHost.submitPreview(window, '/send ' + promptText + '|/trigger');
+}
+</script>
+
+</body>
+</html>

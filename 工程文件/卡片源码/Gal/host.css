@@ -1,0 +1,1 @@
+body[data-cxx-gal-active="1"] #top-bar,body[data-cxx-gal-active="1"] #top-settings-holder {display:none!important} body[data-cxx-gal-active="1"] #chat,body[data-cxx-gal-active="1"] #send_form {visibility:hidden!important;pointer-events:none!important} #cxx-galgame-root{--cxx-gal-z-index:2147483000}

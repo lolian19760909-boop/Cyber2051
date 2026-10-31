@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path');
+const {overlay}=require('../../工具/lib/ui-motion-overlay.cjs'),{chromium}=require('../../独立制卡器/workbench/node_modules/playwright');
+const root=path.resolve(__dirname,'../..'),suite=path.join(root,'配套扩展/tavern-runtime-suite'),work=process.env.CXX_WORK||process.env.CXX_EVIDENCE||path.join(root,'.cache/ui-motion-20261024');
+const url=text=>'data:text/javascript;base64,'+Buffer.from(text).toString('base64');
+let source=fs.readFileSync(path.join(suite,'visual/runtime/motion.mjs'),'utf8');for(const name of ['graphic','interface'])source=source.replace(`'../recipes/${name}.mjs'`,JSON.stringify(url(fs.readFileSync(path.join(suite,`visual/recipes/${name}.mjs`),'utf8'))));
+process.env.CXX_TEST_CARD=process.env.CXX_TEST_CARD||path.join(work,'candidate.json');process.env.CXX_EVIDENCE=process.env.CXX_EVIDENCE||path.join(work,'menu');process.env.CXX_WIDTHS=process.env.CXX_WIDTHS||'1440,390';
+const launch=chromium.launch.bind(chromium),lifecycles=[];
+chromium.launch=async options=>{const browser=await launch(options),newPage=browser.newPage.bind(browser);browser.newPage=async options=>{const page=await newPage(options),goto=page.goto.bind(page),close=page.close.bind(page);page.goto=async(...args)=>{const value=await goto(...args);await page.evaluate(async src=>{const {createMotion}=await import(src);window.TavernMotion=createMotion();},url(source));await page.addScriptTag({content:fs.readFileSync(path.join(root,'卡片源码/共享/motion.js'),'utf8')});return value;};page.close=async(...args)=>{const state=await page.evaluate(()=>TavernMotion.diagnostics());lifecycles.push(state);fs.writeFileSync(path.join(work,'menu-motion-lifecycle.json'),JSON.stringify(lifecycles,null,2));if(state.scopes||state.active)throw Error('Menu motion scopes leaked: '+JSON.stringify(state));return close(...args);};return page;};return browser;};
+overlay(async()=>require('./menu-settings-browser.cjs')).catch(error=>{console.error(error);process.exitCode=1;});

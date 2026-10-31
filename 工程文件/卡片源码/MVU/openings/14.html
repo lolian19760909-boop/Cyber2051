@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+/* ===== 动画 ===== */
+@keyframes tomori-bounce-in {
+    0% { opacity: 0; transform: scale(0.88) translateY(22px); }
+    55% { transform: scale(1.02) translateY(-4px); }
+    75% { transform: scale(0.99) translateY(1px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes tomori-leaf-drift {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0.5; }
+    25% { transform: translateY(8px) rotate(12deg); opacity: 0.7; }
+    50% { transform: translateY(16px) rotate(-5deg); opacity: 0.55; }
+    75% { transform: translateY(24px) rotate(8deg); opacity: 0.35; }
+    100% { transform: translateY(32px) rotate(15deg); opacity: 0; }
+}
+@keyframes tomori-cloud-float {
+    0%, 100% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX(5px) translateY(-3px); }
+}
+@keyframes tomori-star-wink {
+    0%, 100% { opacity: 0.2; transform: scale(0.8) rotate(0deg); }
+    50% { opacity: 0.6; transform: scale(1.15) rotate(8deg); }
+}
+@keyframes tomori-bug-roll {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(8deg); }
+    75% { transform: rotate(-8deg); }
+}
+@keyframes tomori-gentle-sway {
+    0%, 100% { transform: rotate(-1deg); }
+    50% { transform: rotate(1deg); }
+}
+@keyframes tomori-penguin-waddle {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-2px) rotate(3deg); }
+    75% { transform: translateY(-2px) rotate(-3deg); }
+}
+@keyframes tomori-crayon-draw {
+    0% { width: 0; }
+    100% { width: 100%; }
+}
+@keyframes tomori-blink-soft {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.65; }
+}
+@keyframes tomori-dot-hop {
+    0%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-9px); }
+}
+@keyframes tomori-heart-pop {
+    0%, 100% { transform: scale(1); opacity: 0.25; }
+    50% { transform: scale(1.2); opacity: 0.5; }
+}
+
+.tomori-wrap {
+    max-width: 790px;
+    margin: 30px auto;
+    font-family: 'Zen Maru Gothic', 'Noto Sans SC', sans-serif;
+    animation: tomori-bounce-in 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+    position: relative;
+}
+
+/* ===== 主体：蜡笔绘本页 ===== */
+.tomori-sketchbook {
+    position: relative;
+    background:
+        radial-gradient(ellipse at 20% 15%, rgba(119, 187, 221, 0.05) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 85%, rgba(230, 195, 80, 0.04) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 50%, rgba(255, 245, 230, 0.3) 0%, transparent 70%),
+        linear-gradient(170deg, #FFFEF5 0%, #FFF9EC 30%, #FFFBF0 60%, #FEF8E8 100%);
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow:
+        0 16px 42px rgba(160, 140, 100, 0.1),
+        0 5px 14px rgba(0, 0, 0, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        inset 0 0 50px rgba(255, 240, 200, 0.06);
+    border: 2px solid rgba(119, 187, 221, 0.2);
+    /* 模拟画本纸张的微妙纹理 */
+}
+
+/* ===== 顶部：蜡笔涂鸦装饰条 ===== */
+.tomori-crayon-bar {
+    position: relative;
+    z-index: 6;
+    height: 38px;
+    background: linear-gradient(90deg,
+        rgba(119, 187, 221, 0.06) 0%,
+        rgba(230, 195, 80, 0.06) 50%,
+        rgba(119, 187, 221, 0.06) 100%);
+    border-bottom: 2px dashed rgba(119, 187, 221, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 20px;
+}
+
+/* CSS银杏叶（顶部装饰） */
+.tomori-ginkgo-mini {
+    position: relative;
+    width: 12px; height: 11px;
+    flex-shrink: 0;
+}
+.tomori-ginkgo-mini::before {
+    content: '';
+    position: absolute;
+    width: 12px; height: 10px;
+    background: rgba(220, 185, 60, 0.3);
+    border-radius: 50% 50% 0 0;
+    top: 0; left: 0;
+}
+.tomori-ginkgo-mini::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 1.5px; height: 5px;
+    background: rgba(180, 155, 60, 0.25);
+}
+
+/* CSS小企鹅图标（顶部） */
+.tomori-penguin-icon {
+    position: relative;
+    width: 14px; height: 16px;
+    flex-shrink: 0;
+    animation: tomori-penguin-waddle 2.5s ease-in-out infinite;
+}
+.tomori-penguin-icon::before {
+    content: '';
+    position: absolute;
+    width: 12px; height: 14px;
+    background: rgba(80, 90, 100, 0.25);
+    border-radius: 45% 45% 40% 40%;
+    top: 0; left: 1px;
+}
+.tomori-penguin-icon::after {
+    content: '';
+    position: absolute;
+    width: 8px; height: 9px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 45% 45% 50% 50%;
+    top: 3px; left: 3px;
+}
+.tomori-penguin-belly {
+    position: absolute;
+    top: 1px; left: 50%;
+    transform: translateX(-50%);
+    width: 3px; height: 3px;
+    background: rgba(230, 180, 70, 0.5);
+    border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+    z-index: 1;
+}
+
+/* 顶部蜡笔线 */
+.tomori-crayon-line {
+    flex: 1;
+    height: 2px;
+    background: repeating-linear-gradient(
+        90deg,
+        rgba(119, 187, 221, 0.15) 0px,
+        rgba(119, 187, 221, 0.15) 12px,
+        transparent 12px,
+        transparent 16px
+    );
+    border-radius: 2px;
+}
+
+/* ===== 纸胶带装饰 ===== */
+.tomori-tape-1 {
+    position: absolute;
+    top: -5px; left: 35px;
+    width: 70px; height: 20px;
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(119, 187, 221, 0.2),
+        rgba(119, 187, 221, 0.2) 3px,
+        rgba(150, 210, 240, 0.15) 3px,
+        rgba(150, 210, 240, 0.15) 6px
+    );
+    border-radius: 0 0 3px 3px;
+    transform: rotate(-3deg);
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+}
+.tomori-tape-2 {
+    position: absolute;
+    top: -4px; right: 50px;
+    width: 55px; height: 18px;
+    background: repeating-linear-gradient(
+        -45deg,
+        rgba(230, 195, 80, 0.2),
+        rgba(230, 195, 80, 0.2) 3px,
+        rgba(245, 220, 120, 0.15) 3px,
+        rgba(245, 220, 120, 0.15) 6px
+    );
+    border-radius: 0 0 3px 3px;
+    transform: rotate(2deg);
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+/* ===== 角落贴纸标签 ===== */
+.tomori-sticker-tag {
+    position: absolute;
+    top: 48px; right: 15px;
+    z-index: 8;
+    background: rgba(119, 187, 221, 0.12);
+    border: 1.5px dashed rgba(119, 187, 221, 0.25);
+    border-radius: 10px;
+    padding: 4px 10px;
+    animation: tomori-gentle-sway 4s ease-in-out infinite;
+}
+.tomori-sticker-tag-text {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 11px;
+    color: rgba(90, 155, 185, 0.55);
+    letter-spacing: 1px;
+}
+
+/* ===== 主内容区 ===== */
+.tomori-inner {
+    display: flex;
+    padding: 22px 26px 16px 26px;
+    gap: 0;
+    position: relative;
+    z-index: 3;
+}
+
+/* ===== 左侧：文字区 ===== */
+.tomori-left {
+    flex: 1.1;
+    padding: 12px 18px 12px 14px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* 日期标签 - 涂鸦标签风格 */
+.tomori-date-label {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 14px;
+    background: rgba(230, 195, 80, 0.12);
+    border: 1.5px dashed rgba(220, 185, 60, 0.25);
+    border-radius: 15px;
+    margin-bottom: 14px;
+}
+/* CSS小银杏叶图标 */
+.tomori-date-leaf {
+    width: 8px; height: 7px;
+    background: rgba(220, 185, 60, 0.45);
+    border-radius: 50% 50% 0 0;
+    position: relative;
+}
+.tomori-date-leaf::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 50%;
+    transform: translateX(-50%);
+    width: 1px; height: 3px;
+    background: rgba(180, 155, 60, 0.3);
+}
+.tomori-date-text {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 12px;
+    color: rgba(170, 140, 50, 0.55);
+    letter-spacing: 1.5px;
+}
+
+/* 名字 */
+.tomori-name-hand {
+    font-family: 'Caveat', cursive;
+    font-size: 36px;
+    font-weight: 700;
+    color: rgba(90, 155, 185, 0.5);
+    margin: 0;
+    line-height: 1.1;
+    letter-spacing: 1px;
+}
+.tomori-name-jp {
+    font-size: 13px;
+    color: rgba(110, 165, 195, 0.45);
+    letter-spacing: 5px;
+    margin-bottom: 16px;
+    font-weight: 400;
+    font-family: 'Noto Sans SC', sans-serif;
+}
+
+/* 正文区 - 画本格子线 */
+.tomori-text-area {
+    position: relative;
+    padding: 10px 12px 10px 22px;
+    margin-bottom: 16px;
+    background:
+        repeating-linear-gradient(
+            180deg,
+            transparent 0px,
+            transparent 25px,
+            rgba(119, 187, 221, 0.1) 25px,
+            rgba(119, 187, 221, 0.1) 26px
+        );
+    border-radius: 8px;
+    border: 1px solid rgba(119, 187, 221, 0.08);
+}
+/* 左边缝线效果 */
+.tomori-text-area::before {
+    content: '';
+    position: absolute;
+    left: 10px; top: 6px; bottom: 6px;
+    width: 1.5px;
+    background: repeating-linear-gradient(
+        180deg,
+        rgba(255, 160, 160, 0.2) 0px,
+        rgba(255, 160, 160, 0.2) 5px,
+        transparent 5px,
+        transparent 8px
+    );
+    border-radius: 2px;
+}
+.tomori-text {
+    font-size: 13.5px;
+    line-height: 26px;
+    color: rgba(110, 100, 80, 0.65);
+    text-align: justify;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 400;
+}
+.tomori-text p { margin: 0; }
+
+/* GIF区域 - 涂鸦便签风格 */
+.tomori-doodle-note {
+    align-self: flex-start;
+    position: relative;
+    background: rgba(255, 250, 235, 0.8);
+    padding: 6px 6px 28px 6px;
+    border-radius: 4px;
+    border: 1.5px dashed rgba(119, 187, 221, 0.2);
+    box-shadow: 0 3px 10px rgba(150, 130, 90, 0.06);
+    transform: rotate(1.5deg);
+    transition: all 0.3s ease;
+    margin-top: auto;
+}
+.tomori-doodle-note:hover { transform: rotate(0deg) scale(1.04); }
+.tomori-doodle-gif {
+    height: 82px; width: auto; display: block; border-radius: 3px;
+}
+.tomori-doodle-label {
+    position: absolute;
+    bottom: 6px; left: 0; right: 0;
+    text-align: center;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 12px;
+    color: rgba(110, 165, 195, 0.5);
+    letter-spacing: 1px;
+}
+/* 回形针装饰 */
+.tomori-paperclip {
+    position: absolute;
+    top: -8px; right: 12px;
+    width: 14px; height: 22px;
+    border: 1.5px solid rgba(119, 187, 221, 0.3);
+    border-radius: 7px 7px 0 0;
+    border-bottom: none;
+    z-index: 5;
+}
+.tomori-paperclip::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 2px;
+    width: 8px; height: 14px;
+    border: 1.5px solid rgba(119, 187, 221, 0.25);
+    border-radius: 4px 4px 0 0;
+    border-bottom: none;
+}
+
+/* ===== 中间分隔：蜡笔涂鸦线 ===== */
+.tomori-divider {
+    width: 38px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 0;
+    position: relative;
+}
+.tomori-div-dash {
+    flex: 1;
+    width: 1.5px;
+    background: repeating-linear-gradient(
+        180deg,
+        rgba(119, 187, 221, 0.2) 0px,
+        rgba(119, 187, 221, 0.2) 6px,
+        transparent 6px,
+        transparent 11px
+    );
+    border-radius: 2px;
+}
+/* CSS西瓜虫（分隔线装饰） */
+.tomori-bug {
+    width: 12px; height: 10px;
+    position: relative;
+    flex-shrink: 0;
+    animation: tomori-bug-roll 3s ease-in-out infinite;
+}
+.tomori-bug::before {
+    content: '';
+    position: absolute;
+    width: 12px; height: 10px;
+    background: rgba(140, 130, 120, 0.2);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    top: 0; left: 0;
+}
+.tomori-bug::after {
+    content: '';
+    position: absolute;
+    width: 8px; height: 1px;
+    background: rgba(120, 110, 100, 0.15);
+    top: 4px; left: 2px;
+    box-shadow:
+        0 2.5px 0 rgba(120, 110, 100, 0.12),
+        0 -2.5px 0 rgba(120, 110, 100, 0.12);
+}
+/* CSS银杏叶（分隔线装饰） */
+.tomori-div-ginkgo {
+    width: 14px; height: 13px;
+    position: relative;
+    flex-shrink: 0;
+}
+.tomori-div-ginkgo::before {
+    content: '';
+    position: absolute;
+    width: 14px; height: 11px;
+    background: rgba(220, 185, 60, 0.2);
+    border-radius: 50% 50% 5% 5%;
+    top: 0; left: 0;
+    /* 银杏叶中央缺口 */
+    border-top: 1px solid rgba(220, 185, 60, 0.15);
+}
+.tomori-div-ginkgo::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 1.5px; height: 5px;
+    background: rgba(180, 155, 60, 0.2);
+}
+
+/* ===== 右侧：立绘区 ===== */
+.tomori-right {
+    flex: 0.88;
+    padding: 12px 12px 12px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* 立绘相框 - 蜡笔画框 */
+.tomori-portrait-frame {
+    position: relative;
+    background: #FFFDF5;
+    padding: 8px;
+    border-radius: 16px;
+    border: 2px dashed rgba(119, 187, 221, 0.25);
+    box-shadow:
+        0 8px 22px rgba(119, 187, 221, 0.08),
+        0 2px 6px rgba(0,0,0,0.03);
+    transition: all 0.35s ease;
+    max-width: 255px;
+}
+.tomori-portrait-frame:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 14px 30px rgba(119, 187, 221, 0.14),
+        0 0 12px rgba(119, 187, 221, 0.04);
+    border-color: rgba(119, 187, 221, 0.4);
+}
+.tomori-portrait-img {
+    width: 100%; height: auto; display: block;
+    border-radius: 11px;
+}
+
+/* 相框上的纸胶带 */
+.tomori-frame-tape-top {
+    position: absolute;
+    top: -6px; left: 25px;
+    width: 45px; height: 14px;
+    background: rgba(119, 187, 221, 0.18);
+    transform: rotate(-4deg);
+    border-radius: 2px;
+    z-index: 5;
+}
+.tomori-frame-tape-bot {
+    position: absolute;
+    bottom: -5px; right: 20px;
+    width: 40px; height: 13px;
+    background: rgba(230, 195, 80, 0.18);
+    transform: rotate(3deg);
+    border-radius: 2px;
+    z-index: 5;
+}
+
+/* 相框角落的蜡笔圆圈 */
+.tomori-frame-circle {
+    position: absolute;
+    width: 14px; height: 14px;
+    border: 1.5px solid rgba(119, 187, 221, 0.2);
+    border-radius: 50%;
+    z-index: 3;
+}
+.tomori-frame-circle:nth-child(4) { top: 3px; left: 3px; border-color: rgba(255, 170, 160, 0.2); }
+.tomori-frame-circle:nth-child(5) { top: 3px; right: 3px; border-color: rgba(119, 187, 221, 0.2); }
+.tomori-frame-circle:nth-child(6) { bottom: 3px; left: 3px; border-color: rgba(230, 195, 80, 0.2); }
+.tomori-frame-circle:nth-child(7) { bottom: 3px; right: 3px; border-color: rgba(170, 210, 160, 0.2); }
+
+/* 图片下方文字 */
+.tomori-caption {
+    font-family: 'Patrick Hand', cursive;
+    text-align: center;
+    margin-top: 12px;
+    font-size: 15px;
+    color: rgba(110, 165, 195, 0.45);
+    letter-spacing: 2px;
+}
+
+/* ===== 散落装饰元素 ===== */
+/* 飘落的银杏叶 */
+.tomori-falling-leaf {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    animation: tomori-leaf-drift 5s ease-in-out infinite;
+}
+.tomori-falling-leaf-shape {
+    width: 10px; height: 9px;
+    background: rgba(220, 185, 60, 0.25);
+    border-radius: 50% 50% 5% 5%;
+    position: relative;
+}
+.tomori-falling-leaf-shape::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 50%;
+    transform: translateX(-50%);
+    width: 1px; height: 4px;
+    background: rgba(180, 155, 60, 0.2);
+}
+.tomori-falling-leaf:nth-child(1) { top: 8%; left: 15%; animation-delay: 0s; }
+.tomori-falling-leaf:nth-child(2) { top: 5%; right: 25%; animation-delay: 1.5s; }
+.tomori-falling-leaf:nth-child(3) { top: 12%; left: 55%; animation-delay: 3s; }
+.tomori-falling-leaf:nth-child(4) { top: 3%; left: 75%; animation-delay: 0.8s; }
+
+/* 云朵 */
+.tomori-cloud {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    animation: tomori-cloud-float 6s ease-in-out infinite;
+}
+.tomori-cloud-shape {
+    position: relative;
+    width: 28px; height: 12px;
+    background: rgba(119, 187, 221, 0.08);
+    border-radius: 12px;
+}
+.tomori-cloud-shape::before {
+    content: '';
+    position: absolute;
+    top: -5px; left: 6px;
+    width: 10px; height: 10px;
+    background: rgba(119, 187, 221, 0.08);
+    border-radius: 50%;
+}
+.tomori-cloud-shape::after {
+    content: '';
+    position: absolute;
+    top: -8px; left: 13px;
+    width: 12px; height: 12px;
+    background: rgba(119, 187, 221, 0.07);
+    border-radius: 50%;
+}
+.tomori-cloud:nth-child(1) { top: 50px; right: 35px; animation-delay: 0s; }
+.tomori-cloud:nth-child(2) { top: 75px; left: 20px; animation-delay: 2s; }
+.tomori-cloud:nth-child(2) .tomori-cloud-shape { width: 22px; height: 10px; }
+
+/* 星星贴纸 */
+.tomori-sticker-star {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    animation: tomori-star-wink 3.5s ease-in-out infinite;
+}
+.tomori-sticker-star::before {
+    font-size: 11px;
+}
+.tomori-sticker-star:nth-child(1)::before { content: '⭐'; }
+.tomori-sticker-star:nth-child(2)::before { content: '✦'; color: rgba(119, 187, 221, 0.35); font-size: 10px; }
+.tomori-sticker-star:nth-child(3)::before { content: '✧'; color: rgba(230, 195, 80, 0.35); font-size: 12px; }
+.tomori-sticker-star:nth-child(4)::before { content: '⋆'; color: rgba(119, 187, 221, 0.3); }
+.tomori-sticker-star:nth-child(5)::before { content: '✦'; color: rgba(255, 180, 170, 0.3); font-size: 9px; }
+.tomori-sticker-star:nth-child(1) { top: 55px; left: 42%; animation-delay: 0.3s; opacity: 0.35; }
+.tomori-sticker-star:nth-child(2) { bottom: 75px; right: 30px; animation-delay: 1s; }
+.tomori-sticker-star:nth-child(3) { top: 40%; left: 15px; animation-delay: 1.8s; }
+.tomori-sticker-star:nth-child(4) { bottom: 40px; left: 38%; animation-delay: 0.6s; }
+.tomori-sticker-star:nth-child(5) { top: 30%; right: 50px; animation-delay: 2.5s; }
+
+/* 小爱心 */
+.tomori-tiny-heart {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    animation: tomori-heart-pop 3.5s ease-in-out infinite;
+}
+.tomori-tiny-heart::before {
+    content: '♡';
+    font-size: 10px;
+    color: rgba(255, 170, 170, 0.3);
+}
+.tomori-tiny-heart:nth-child(1) { top: 85px; right: 22px; animation-delay: 0.5s; }
+.tomori-tiny-heart:nth-child(2) { bottom: 55px; left: 25px; animation-delay: 1.8s; }
+.tomori-tiny-heart:nth-child(3) { top: 55%; left: 48%; animation-delay: 2.5s; }
+
+/* CSS西瓜虫散落 */
+.tomori-loose-bug {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    width: 8px; height: 7px;
+    animation: tomori-bug-roll 4s ease-in-out infinite;
+}
+.tomori-loose-bug::before {
+    content: '';
+    position: absolute;
+    width: 8px; height: 7px;
+    background: rgba(140, 130, 120, 0.12);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+}
+.tomori-loose-bug:nth-child(1) { bottom: 90px; right: 50%; animation-delay: 0.5s; }
+.tomori-loose-bug:nth-child(2) { top: 45%; left: 28px; animation-delay: 2s; }
+
+/* 彩色圆点 */
+.tomori-dot-cluster {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    display: flex;
+    gap: 3px;
+}
+.tomori-color-dot {
+    border-radius: 50%;
+    opacity: 0.35;
+}
+.tomori-color-dot:nth-child(1) { width: 4px; height: 4px; background: rgba(119, 187, 221, 0.4); }
+.tomori-color-dot:nth-child(2) { width: 3px; height: 3px; background: rgba(230, 195, 80, 0.4); }
+.tomori-color-dot:nth-child(3) { width: 3.5px; height: 3.5px; background: rgba(255, 170, 160, 0.35); }
+
+/* ===== 按钮区 ===== */
+.tomori-action {
+    position: relative;
+    z-index: 5;
+    text-align: center;
+    padding: 6px 28px 22px 28px;
+}
+.tomori-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 30px;
+    background: rgba(119, 187, 221, 0.08);
+    color: rgba(90, 155, 185, 0.6);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    border: 1.5px dashed rgba(119, 187, 221, 0.25);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.35s ease;
+    font-family: 'Zen Maru Gothic', 'Noto Sans SC', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+.tomori-btn:hover {
+    background: rgba(119, 187, 221, 0.15);
+    color: rgba(70, 135, 165, 0.8);
+    border-color: rgba(119, 187, 221, 0.4);
+    box-shadow: 0 5px 16px rgba(119, 187, 221, 0.15);
+    transform: translateY(-2px);
+}
+.tomori-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(119, 187, 221, 0.1);
+}
+
+/* ===== 底部装饰 ===== */
+.tomori-bottom-deco {
+    position: relative;
+    z-index: 5;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border-top: 1.5px dashed rgba(119, 187, 221, 0.1);
+}
+.tomori-bottom-dot {
+    width: 3px; height: 3px;
+    border-radius: 50%;
+}
+.tomori-bottom-dot:nth-child(odd) { background: rgba(119, 187, 221, 0.2); }
+.tomori-bottom-dot:nth-child(even) { background: rgba(230, 195, 80, 0.2); }
+
+/* ===== 过场遮罩 ===== */
+.tomori-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255, 252, 240, 0.88);
+    backdrop-filter: blur(6px);
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    border-radius: 22px;
+}
+.tomori-overlay.active { opacity: 1; pointer-events: auto; }
+
+.tomori-loader {
+    display: flex;
+    gap: 9px;
+}
+.tomori-loader-dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    animation: tomori-dot-hop 1.3s ease-in-out infinite;
+}
+.tomori-loader-dot:nth-child(1) { background: rgba(119, 187, 221, 0.4); animation-delay: 0s; }
+.tomori-loader-dot:nth-child(2) { background: rgba(230, 195, 80, 0.4); animation-delay: 0.15s; }
+.tomori-loader-dot:nth-child(3) { background: rgba(255, 180, 170, 0.4); animation-delay: 0.3s; }
+
+.tomori-over-text {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 20px;
+    color: rgba(110, 165, 195, 0.5);
+    letter-spacing: 3px;
+}
+
+/* ===== 响应式 ===== */
+@media(max-width: 680px) {
+    .tomori-inner { flex-direction: column; padding: 18px 16px 12px 16px; }
+    .tomori-left { padding: 8px 5px; }
+    .tomori-right { padding: 12px 5px 8px; }
+    .tomori-divider {
+        width: 100%; height: 28px;
+        flex-direction: row;
+        padding: 0 12px;
+    }
+    .tomori-div-dash {
+        flex: 1; height: 1.5px; width: auto;
+        background: repeating-linear-gradient(
+            90deg,
+            rgba(119, 187, 221, 0.2) 0px,
+            rgba(119, 187, 221, 0.2) 6px,
+            transparent 6px,
+            transparent 11px
+        );
+    }
+    .tomori-portrait-frame { max-width: 200px; }
+    .tomori-sticker-tag { display: none; }
+    .tomori-name-hand { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+
+<div class="tomori-wrap" id="tomoriWrap">
+    <div class="tomori-sketchbook">
+
+        <!-- 纸胶带 -->
+        <div class="tomori-tape-1"></div>
+        <div class="tomori-tape-2"></div>
+
+        <!-- 飘落银杏叶 -->
+        <div class="tomori-falling-leaf"><div class="tomori-falling-leaf-shape"></div></div>
+        <div class="tomori-falling-leaf"><div class="tomori-falling-leaf-shape"></div></div>
+        <div class="tomori-falling-leaf"><div class="tomori-falling-leaf-shape"></div></div>
+        <div class="tomori-falling-leaf"><div class="tomori-falling-leaf-shape"></div></div>
+
+        <!-- 云朵 -->
+        <div class="tomori-cloud"><div class="tomori-cloud-shape"></div></div>
+        <div class="tomori-cloud"><div class="tomori-cloud-shape"></div></div>
+
+        <!-- 星星贴纸 -->
+        <div class="tomori-sticker-star"></div>
+        <div class="tomori-sticker-star"></div>
+        <div class="tomori-sticker-star"></div>
+        <div class="tomori-sticker-star"></div>
+        <div class="tomori-sticker-star"></div>
+
+        <!-- 小爱心 -->
+        <div class="tomori-tiny-heart"></div>
+        <div class="tomori-tiny-heart"></div>
+        <div class="tomori-tiny-heart"></div>
+
+        <!-- 散落西瓜虫 -->
+        <div class="tomori-loose-bug"></div>
+        <div class="tomori-loose-bug"></div>
+
+        <!-- 彩色圆点组 -->
+        <div class="tomori-dot-cluster" style="top:40px; left:50%;">
+            <div class="tomori-color-dot"></div><div class="tomori-color-dot"></div><div class="tomori-color-dot"></div>
+        </div>
+        <div class="tomori-dot-cluster" style="bottom:50px; left:28%;">
+            <div class="tomori-color-dot"></div><div class="tomori-color-dot"></div><div class="tomori-color-dot"></div>
+        </div>
+
+        <!-- 顶部蜡笔装饰条 -->
+        <div class="tomori-crayon-bar">
+            <div class="tomori-ginkgo-mini"></div>
+            <div class="tomori-crayon-line"></div>
+            <div class="tomori-penguin-icon"><div class="tomori-penguin-belly"></div></div>
+            <div class="tomori-crayon-line"></div>
+            <div class="tomori-ginkgo-mini"></div>
+            <div class="tomori-crayon-line"></div>
+            <div class="tomori-ginkgo-mini"></div>
+        </div>
+
+        <!-- 角落贴纸 -->
+        <div class="tomori-sticker-tag">
+            <span class="tomori-sticker-tag-text">under the ginkgo ☘</span>
+        </div>
+
+        <!-- ===== 主内容 ===== -->
+        <div class="tomori-inner">
+
+            <!-- 左侧：文字 -->
+            <div class="tomori-left">
+                <div class="tomori-date-label">
+                    <div class="tomori-date-leaf"></div>
+                    <span class="tomori-date-text">Sometime in 2010</span>
+                </div>
+
+                <h2 class="tomori-name-hand">Tomori Takamatsu</h2>
+                <div class="tomori-name-jp">高 松 灯</div>
+
+                <div class="tomori-text-area">
+                    <div class="tomori-text">
+                        <p>银杏树下面有好多好多叶子。金色的、圆圆的、扇子一样的。</p>
+                        <p>灯最喜欢银杏叶了。未央也喜欢。所以未央是灯的好朋友。</p>
+                        <p>灯找到了好多圆圆的虫子。灯觉得它们很可爱。送给未央的话，她一定会很开心的。</p>
+                        <p>可是，未央哭了。</p>
+                        <p>……是灯做错了吗。大概……是灯不好吧。</p>
+                    </div>
+                </div>
+
+                <div class="tomori-doodle-note">
+                    <div class="tomori-paperclip"></div>
+                    <img class="tomori-doodle-gif" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E7%81%AF%E7%9D%A1%E8%A7%89.gif" alt="灯">
+                    <div class="tomori-doodle-label">zzz ...</div>
+                </div>
+            </div>
+
+            <!-- 中间分隔 -->
+            <div class="tomori-divider">
+                <div class="tomori-div-dash"></div>
+                <div class="tomori-div-ginkgo"></div>
+                <div class="tomori-div-dash"></div>
+                <div class="tomori-bug"></div>
+                <div class="tomori-div-dash"></div>
+                <div class="tomori-div-ginkgo"></div>
+                <div class="tomori-div-dash"></div>
+                <div class="tomori-bug"></div>
+                <div class="tomori-div-dash"></div>
+            </div>
+
+            <!-- 右侧：立绘 -->
+            <div class="tomori-right">
+                <div class="tomori-portrait-frame">
+                    <!-- 胶带 -->
+                    <div class="tomori-frame-tape-top"></div>
+                    <div class="tomori-frame-tape-bot"></div>
+                    <!-- 角落蜡笔圈 -->
+                    <div class="tomori-frame-circle"></div>
+                    <div class="tomori-frame-circle"></div>
+                    <div class="tomori-frame-circle"></div>
+                    <div class="tomori-frame-circle"></div>
+                    <img class="tomori-portrait-img" src="https://cyber2051.top/img/%E9%AB%98%E6%9D%BE%E7%81%AF%2FTomori_%E5%9D%9A%E5%AE%9A.png" alt="高松灯">
+                </div>
+                <div class="tomori-caption">— Tomori T. —</div>
+            </div>
+
+        </div>
+
+        <!-- 按钮 -->
+        <div class="tomori-action">
+            <div class="tomori-btn" onclick="tomoriStart()"
+                 data-prompt="【开始】【开场白】 # 场景生成指令
+
+## 核心任务
+请根据以下提供的元素，完整叙述并扩写一段开场剧情。
+
+## 叙事要求
+- 你的任务是【场景描绘者】，而非【剧情推进者】。
+- 必须在自然的文字叙述中，将下述所有背景信息和场景要素巧妙地融合进去。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+- 必须根据年份（2010年），正确判断出<user>此时的年龄。
+
+## 场景要素
+- **时间:** 2010年的某一天，一个温暖的午后。
+- **地点:** 东京某个幼儿园的庭院角落，银杏树下。
+- **核心人物:** 6岁的高松灯。
+- **次要人物:** 她的朋友，未央（Mio）。
+- **玩家角色:** 年幼的<user>。
+
+## 背景信息（必须融入叙述）
+1. **独特的友谊:** 从小就显得有些不一样的高松灯，遇到了一个和自己一样喜欢银杏树叶子的朋友未央。
+2. **纯粹的赠礼:** 为了表达这份珍贵的友谊，灯将自己最宝贵的收藏——许多圆圆的、可爱的西瓜虫——作为礼物送给了未央。
+3. **事与愿违:** 未央完全无法理解这份独特的礼物，被吓得嚎啕大哭。
+4. **内化的归因:** 小小的灯不明白自己错在哪里，只能将一切归因为自己的不一样，认为是自己的错。
+
+## 叙事焦点
+将上述所有情感，全部聚焦于一个核心画面——在朋友响亮的哭声中，小小的、穿着罩衫的高松灯，只是安静地低下头，蹲在原地，身影显得无比孤单和无助。
+
+## 【最高优先级指令】
+在描绘完年幼的<user>被哭声吸引而来，视线却最终落在了那个沉默的、小小的身影上之后，【必须立即停止】。严禁进行任何后续的角色扮演或剧情推进，将故事的控制权完全交还给玩家。 【/开场白】">
+                开始
+            </div>
+        </div>
+
+        <!-- 底部装饰 -->
+        <div class="tomori-bottom-deco">
+            <div class="tomori-bottom-dot"></div>
+            <div class="tomori-bottom-dot"></div>
+            <div class="tomori-bottom-dot"></div>
+            <div class="tomori-bottom-dot"></div>
+            <div class="tomori-bottom-dot"></div>
+            <div class="tomori-bottom-dot"></div>
+            <div class="tomori-bottom-dot"></div>
+        </div>
+
+        <!-- 过场遮罩 -->
+        <div class="tomori-overlay" id="tomoriOverlay">
+            <div class="tomori-loader">
+                <div class="tomori-loader-dot"></div>
+                <div class="tomori-loader-dot"></div>
+                <div class="tomori-loader-dot"></div>
+            </div>
+            <div class="tomori-over-text">turning the page...</div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function tomoriStart() {
+    var btn = document.querySelector('.tomori-btn');
+    var promptText = btn.getAttribute('data-prompt');
+
+    if (typeof triggerSlash === 'function') {
+        triggerSlash('/send ' + promptText + '|/trigger');
+    } else {
+        var input = parent.document.querySelector('#send_textarea');
+        if (input) {
+            input.value = promptText;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
+
+    document.getElementById('tomoriOverlay').classList.add('active');
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,287 @@
+.cxx-settings-center {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  color: var(--cxx-text);
+  font: 16px/1.7 var(--cxx-font-ui);
+}
+
+.cxx-settings-center * {
+  box-sizing: border-box;
+}
+
+.cxx-settings-top {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cxx-settings-center h2 {
+  color: var(--cxx-heading);
+  font-size: 26px;
+  margin: 8px 0;
+}
+
+.cxx-settings-center h3 {
+  color: var(--cxx-heading);
+  font-size: 21px;
+  margin: 0 0 18px;
+}
+
+.cxx-settings-center input,
+.cxx-settings-center select {
+  background: var(--cxx-ink);
+  color: var(--cxx-text);
+  border: 1px solid var(--cxx-line);
+  padding: 10px;
+  font: inherit;
+  min-height: 44px;
+  max-width: 100%;
+}
+
+.cxx-settings-content {
+  flex:1;
+  min-height:0;
+  min-width:0;
+  overflow:auto;
+  overscroll-behavior:contain;
+  padding:4px 2px 20px;
+}
+.cxx-settings-top h2 { min-width:0; }
+.cxx-settings-top>button { flex:none; }
+.cxx-settings-work {
+  display: grid;
+  grid-template-columns: 230px minmax(0,1fr);
+  align-items:start;
+  min-height: 0;
+  gap: 24px;
+  margin-top: 18px;
+}
+
+.cxx-settings-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width:0;
+}
+
+.cxx-settings-center button {
+  font: inherit;
+  min-height: 44px;
+  background: var(--cxx-panel);
+  color: var(--cxx-text);
+  border: 1px solid var(--cxx-line);
+  white-space: normal;
+  text-align: left;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.cxx-settings-center button:hover,
+.cxx-settings-center button[aria-current=true] {
+  border-color: var(--cxx-interactive);
+  color: var(--cxx-interactive);
+}
+
+.cxx-settings-center button:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+.cxx-settings-detail {
+  min-height: 0;
+  min-width:0;
+  padding: 6px 16px 28px 0;
+}
+
+.cxx-settings-detail>label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--cxx-line);
+}
+
+.cxx-settings-detail>button {
+  display: block;
+  margin: 16px 0;
+  width: 100%;
+}
+
+/* Interface theme picker (DESIGN.md 10.5): three buttons, the current one pressed. */
+.cxx-settings-theme {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--cxx-line);
+}
+
+.cxx-settings-theme>div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cxx-settings-center .cxx-settings-theme button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 96px;
+}
+
+.cxx-settings-theme i {
+  flex: none;
+  width: 30px;
+  height: 18px;
+  border: 1px solid var(--cxx-line);
+}
+
+.cxx-settings-theme [data-theme=red] i {
+  background: var(--cxx-preview-red);
+}
+
+.cxx-settings-theme [data-theme=yellow] i {
+  background: var(--cxx-preview-yellow);
+}
+
+.cxx-settings-theme [data-theme=night] i {
+  background: var(--cxx-preview-night);
+}
+
+.cxx-settings-center .cxx-settings-theme button[aria-pressed=true] {
+  border-color: var(--cxx-interactive);
+  color: var(--cxx-interactive);
+  box-shadow: inset 0 0 0 1px var(--cxx-interactive);
+}
+
+.cxx-settings-status:empty { display:none; }
+.cxx-settings-status {
+  flex:none;
+  max-height:25%;
+  overflow:auto;
+  color: var(--cxx-text);
+  min-height: 24px;
+  white-space: pre-wrap;
+}
+
+.cxx-settings-detail p {
+  font-size: 16px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.cxx-settings-center .cxx-settings-back {
+  display: none;
+}
+
+@container (max-width:650px) {
+  .cxx-settings-work {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 10px;
+  }
+
+  .cxx-settings-center[data-detail=true] .cxx-settings-nav {
+    display: none;
+  }
+
+  .cxx-settings-center[data-detail=false] .cxx-settings-detail {
+    display: none;
+  }
+
+  .cxx-settings-center[data-detail=true] .cxx-settings-back {
+    display: block;
+  }
+
+  .cxx-settings-nav {
+    flex: 1;
+  }
+
+  .cxx-settings-nav button {
+    min-height: 60px;
+  }
+
+  .cxx-settings-detail {
+    padding: 8px 0 24px;
+    flex: 1;
+  }
+
+  .cxx-settings-detail>label,
+  .cxx-settings-theme {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .cxx-settings-detail select {
+    width: 100%;
+  }
+
+  .cxx-settings-top h2 {
+    font-size: 21px;
+  }
+}
+
+.cxx-settings-scale-page{display:flex;flex-direction:column;gap:16px;margin:4px 0 20px;max-width:720px}
+.cxx-settings-scale-page p{margin:0;overflow-wrap:anywhere;line-height:1.65}
+.cxx-settings-state{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 14px;border:1px solid var(--cxx-line);border-radius:12px}
+.cxx-settings-state span{font-weight:600}
+.cxx-settings-scale-toggle{min-height:44px;padding:0 18px}
+.cxx-settings-scale-toggle[aria-pressed=true]{border-color:var(--cxx-highlight,#ffcf6f);color:var(--cxx-highlight,#ffcf6f)}
+.cxx-settings-scale-page>label{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-weight:600}
+.cxx-settings-scale-page>label select{flex:1 1 160px;min-height:44px}
+.cxx-settings-scale-row{display:flex;flex-wrap:wrap;gap:8px;margin:0}
+.cxx-settings-scale-row button{min-height:44px;flex:1 1 120px}
+.cxx-settings-scale-row button[aria-pressed=true]{border-color:var(--cxx-highlight,#ffcf6f);color:var(--cxx-highlight,#ffcf6f)}
+
+/* Equivalent actual-width rules for hosts without CSS container queries. */
+.cxx-settings-center[data-layout=compact] .cxx-settings-work {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 10px;
+  }
+.cxx-settings-center[data-layout=compact][data-detail=true] .cxx-settings-nav {
+    display: none;
+  }
+.cxx-settings-center[data-layout=compact][data-detail=false] .cxx-settings-detail {
+    display: none;
+  }
+.cxx-settings-center[data-layout=compact][data-detail=true] .cxx-settings-back {
+    display: block;
+  }
+.cxx-settings-center[data-layout=compact] .cxx-settings-nav {
+    flex: 1;
+  }
+.cxx-settings-center[data-layout=compact] .cxx-settings-nav button {
+    min-height: 60px;
+  }
+.cxx-settings-center[data-layout=compact] .cxx-settings-detail {
+    padding: 8px 0 24px;
+    flex: 1;
+  }
+.cxx-settings-center[data-layout=compact] .cxx-settings-detail>label,
+.cxx-settings-center[data-layout=compact] .cxx-settings-theme {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+.cxx-settings-center[data-layout=compact] .cxx-settings-detail select {
+    width: 100%;
+  }
+.cxx-settings-center[data-layout=compact] .cxx-settings-top h2 {
+    font-size: 21px;
+  }
+
+.cxx-settings-center[data-layout=compact] .cxx-settings-scale-page {max-width:none;gap:14px}
+.cxx-settings-center[data-layout=compact] .cxx-settings-state {flex-direction:column;align-items:stretch}
+.cxx-settings-center[data-layout=compact] .cxx-settings-scale-toggle {width:100%}
+.cxx-settings-center[data-layout=compact] .cxx-settings-scale-row button {flex:1 1 100%;min-height:44px}
+

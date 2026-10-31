@@ -1,0 +1,372 @@
+.cxx-jy-guided {
+  width: min(1060px,calc(100vw - 32px))!important;
+  max-height: calc(100dvh - 32px)!important;
+  height: auto!important;
+  overflow: auto!important;
+  border: 1px solid var(--cxx-red)!important;
+  border-top: 3px solid var(--cxx-red)!important;
+  border-radius: 0!important;
+  background: var(--cxx-ink)!important;
+  color: var(--cxx-cyan-soft)!important;
+  font: 16px/1.7 var(--cxx-font-ui)!important;
+  color-scheme: dark;
+}
+
+.cxx-jy-guided * {
+  box-sizing: border-box;
+}
+
+.cxx-jy-guided>.jy-viewport {
+  display: none!important;
+}
+
+.cxx-jy-guided>.jy-studio {
+  display: none!important;
+}
+
+.cxx-jy-guided .jy-close {
+  z-index: 3!important;
+  color: var(--cxx-red-soft)!important;
+  min-width: 44px;
+  min-height: 44px;
+  background: var(--cxx-raised)!important;
+  border: 1px solid var(--cxx-red)!important;
+  right: 12px!important;
+  top: 12px!important;
+}
+
+.cxx-jy-guide {
+  padding: 40px!important;
+  text-align: left;
+  color: var(--cxx-text);
+  background: radial-gradient(ellipse at top right,color-mix(in srgb, var(--cxx-red) 8%, transparent),transparent 60%),var(--cxx-ink);
+}
+
+.cxx-jy-guide .cxx-jy-progress {color:var(--cxx-cyan);font-size:16px;margin:0 0 24px;font-variant-numeric:tabular-nums;}
+.cxx-jy-guide .cxx-jy-sample {background:var(--cxx-panel);padding:24px;margin:24px 0;white-space:pre-wrap;}
+.cxx-jy-guide .cxx-jy-sample-label {font-size:14px;color:var(--cxx-cyan);}
+.cxx-jy-guide .cxx-jy-sample p {font-size:22px;line-height:1.6;margin:10px 0 20px;}
+.cxx-jy-guide .cxx-jy-practice-modes {display:flex;flex-wrap:wrap;gap:8px;margin-top:24px;}
+.cxx-jy-guide .cxx-jy-practice-modes [aria-pressed=true] {background:var(--cxx-cyan);color:var(--cxx-ink);}
+.cxx-jy-guide input {caret-color:var(--cxx-cyan);}
+.cxx-jy-guide ::selection {background:var(--cxx-cyan);color:var(--cxx-ink);}
+.cxx-jy-guide [hidden] {display:none!important;}
+
+.cxx-jy-guide h2 {
+  font-size: clamp(26px,3vw,38px);
+  line-height: 1.25;
+  color: var(--cxx-red-soft);
+  margin: 14px 0;
+}
+
+.cxx-jy-guide .cxx-jy-kicker {
+  font: 13px var(--cxx-font-mono);
+  letter-spacing: .16em;
+  color: var(--cxx-cyan);
+}
+
+.cxx-jy-guide .cxx-jy-intro {
+  color: var(--cxx-muted);
+  margin-bottom: 28px;
+}
+
+.cxx-jy-guide .cxx-jy-layout {
+  display: grid;
+  grid-template-columns: 150px minmax(0,1fr);
+  gap: 32px;
+  border-top: 1px solid color-mix(in srgb, var(--cxx-red) 33.33%, transparent);
+  padding-top: 28px;
+}
+
+.cxx-jy-guide nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.cxx-jy-guide button {
+  font: inherit;
+  min-height: 44px;
+  border: 1px solid var(--cxx-red);
+  background: var(--cxx-raised);
+  color: var(--cxx-text);
+  padding: 10px 16px;
+  border-radius: 0;
+  cursor: pointer;
+  white-space: normal;
+  line-height: 1.5;
+}
+
+.cxx-jy-guide a {
+  font: inherit;
+  min-height: 44px;
+}
+
+.cxx-jy-guide input {
+  font: inherit;
+  min-height: 44px;
+  width: 100%;
+  color: var(--cxx-text);
+  background: var(--cxx-panel);
+  border: 1px solid var(--cxx-line);
+  border-radius: 0;
+  padding: 10px 12px;
+  font-size: 16px;
+}
+
+.cxx-jy-guide select {
+  font: inherit;
+  min-height: 44px;
+  width: 100%;
+  color: var(--cxx-text);
+  background: var(--cxx-panel);
+  border: 1px solid var(--cxx-line);
+  border-radius: 0;
+  padding: 10px 12px;
+  font-size: 16px;
+}
+
+.cxx-jy-guide summary {
+  font: inherit;
+  min-height: 44px;
+  color: var(--cxx-muted);
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+.cxx-jy-guide button:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.cxx-jy-guide nav button {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: var(--cxx-muted);
+  padding: 12px;
+}
+
+.cxx-jy-guide nav button small {
+  font: 13px var(--cxx-font-mono);
+  color: var(--cxx-muted);
+}
+
+.cxx-jy-guide nav button[aria-current=step] {
+  background: color-mix(in srgb, var(--cxx-cyan) 12%, transparent);
+  color: var(--cxx-cyan);
+  border-left: 1px solid var(--cxx-cyan);
+}
+
+.cxx-jy-guide .cxx-jy-form {
+  display: block;
+  min-width: 0;
+}
+
+.cxx-jy-guide h3 {
+  font-size: 24px;
+  color: var(--cxx-red);
+  margin: 0 0 12px;
+}
+
+.cxx-jy-guide p {
+  overflow-wrap: anywhere;
+}
+
+.cxx-jy-guide .cxx-jy-help {
+  font-size: 16px;
+  color: var(--cxx-muted);
+}
+
+.cxx-jy-guide .cxx-jy-form>button {
+  margin: 12px 10px 0 0;
+}
+
+.cxx-jy-guide .cxx-jy-primary {
+  color: var(--cxx-ink);
+  background: var(--cxx-cyan);
+  border-color: var(--cxx-cyan);
+  font-weight: 700;
+}
+
+.cxx-jy-guide label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--cxx-cyan);
+  margin: 20px 0;
+  min-width: 0;
+}
+
+.cxx-jy-guide label:has(input[type=checkbox]) {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  align-items: center;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.cxx-jy-guide input[type=checkbox] {
+  width: 24px;
+  height: 24px;
+  min-height: 24px;
+  accent-color: var(--cxx-cyan);
+}
+
+.cxx-jy-guide .cxx-jy-link {
+  display: inline-flex;
+  align-items: center;
+  margin: 10px 12px 6px 0;
+  padding: 8px 14px;
+  border: 1px solid color-mix(in srgb, var(--cxx-cyan) 53.33%, transparent);
+  color: var(--cxx-cyan);
+  text-decoration: none;
+  background: var(--cxx-panel);
+}
+
+.cxx-jy-guide .cxx-jy-callout {
+  padding: 15px 18px;
+  background: var(--cxx-raised);
+  border-left: 1px solid var(--cxx-cyan);
+  color: var(--cxx-text);
+}
+
+.cxx-jy-guide .cxx-jy-checklist {
+  padding-left: 24px;
+  color: var(--cxx-text);
+}
+
+.cxx-jy-guide .cxx-jy-checklist li {
+  padding: 6px 0;
+}
+
+.cxx-jy-guide .cxx-jy-trouble {
+  margin: 22px 0;
+  border-top: 1px solid color-mix(in srgb, var(--cxx-cyan) 46.67%, transparent);
+  padding: 10px 0;
+}
+
+.cxx-jy-guide details p {
+  font-size: 16px;
+  color: var(--cxx-cyan);
+}
+
+.cxx-jy-guide .cxx-jy-result {
+  margin: 20px 0;
+  padding: 22px;
+  border-left: 1px solid var(--cxx-red);
+  background: var(--cxx-raised);
+  color: var(--cxx-red-soft);
+  font-size: 20px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.cxx-jy-guide .cxx-jy-note {
+  min-height: 28px;
+  color: var(--cxx-text);
+  margin: 20px 0 0;
+}
+
+.cxx-jy-guide .cxx-jy-note.error {
+  color: var(--cxx-yellow-soft);
+}
+
+.cxx-jy-guide .cxx-jy-guide-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--cxx-line);
+  margin-top: 20px;
+  padding-top: 18px;
+}
+
+.cxx-jy-guide .cxx-jy-secondary {
+  color: var(--cxx-cyan);
+  background: transparent;
+  border-color: var(--cxx-line);
+}
+
+.cxx-jy-guide :focus-visible {
+  outline: 2px solid var(--cxx-yellow);
+  outline-offset: 3px;
+}
+
+.cxx-jy-guide[aria-busy=true] button:not(.cxx-jy-secondary) {
+  cursor: progress;
+}
+
+@media (max-width:650px) {
+  .cxx-jy-guided {
+    width: calc(100vw - 12px)!important;
+    max-height: calc(100dvh - 12px)!important;
+  }
+
+  .cxx-jy-guide {
+    padding: 55px 20px 20px!important;
+  }
+
+  .cxx-jy-guide .cxx-jy-layout {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding-top: 16px;
+  }
+
+  .cxx-jy-guide nav {
+    flex-direction: row;
+    overflow: auto;
+    scrollbar-width: thin;
+    gap: 4px;
+  }
+
+  .cxx-jy-guide nav button {
+    flex: none;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 10px;
+    font-size: 16px;
+  }
+
+  .cxx-jy-guide nav button[aria-current=step] {
+    border-left: 0;
+    border-bottom: 2px solid var(--cxx-cyan);
+  }
+
+  .cxx-jy-guide .cxx-jy-link {
+    display: flex;
+    width: 100%;
+  }
+
+  .cxx-jy-guide h3 {
+    font-size: 23px;
+  }
+
+  .cxx-jy-guide .cxx-jy-form>button {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .cxx-jy-guide .cxx-jy-guide-actions {
+    position: sticky;
+    bottom: -20px;
+    background: var(--cxx-ink);
+    padding-bottom: max(18px,env(safe-area-inset-bottom));
+    margin-bottom: -20px;
+  }
+
+  .cxx-jy-guide .cxx-jy-guide-actions button {
+    flex: 1 0 calc(50% - 12px);
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .cxx-jy-guide * {
+    animation: none!important;
+    transition: none!important;
+  }
+}

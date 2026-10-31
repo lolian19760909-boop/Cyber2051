@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+/* ===== 动画 ===== */
+@keyframes umiri-slide-in {
+    0% { opacity: 0; transform: translateX(-15px) scale(0.96); }
+    60% { transform: translateX(2px) scale(1.005); }
+    100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+@keyframes umiri-spotlight-sweep {
+    0%, 100% { opacity: 0.03; transform: translateX(-30px) skewX(-15deg); }
+    50% { opacity: 0.07; transform: translateX(30px) skewX(-15deg); }
+}
+@keyframes umiri-flicker-neon {
+    0% { opacity: 0.5; }
+    5% { opacity: 0.2; }
+    10% { opacity: 0.55; }
+    15% { opacity: 0.15; }
+    20% { opacity: 0.5; }
+    100% { opacity: 0.5; }
+}
+@keyframes umiri-crack-spread {
+    0%, 100% { opacity: 0.06; }
+    50% { opacity: 0.14; }
+}
+@keyframes umiri-note-fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0.25; }
+    100% { transform: translateY(22px) rotate(20deg); opacity: 0; }
+}
+@keyframes umiri-static-noise {
+    0% { background-position: 0 0; }
+    100% { background-position: 100px 100px; }
+}
+@keyframes umiri-pulse-dim {
+    0%, 100% { opacity: 0.08; }
+    50% { opacity: 0.18; }
+}
+@keyframes umiri-string-snap {
+    0%, 100% { transform: scaleX(1); opacity: 0.12; }
+    50% { transform: scaleX(1.02); opacity: 0.2; }
+}
+@keyframes umiri-breathe-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+}
+@keyframes umiri-dot-pulse {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.3; }
+    40% { transform: translateY(-7px); opacity: 0.6; }
+}
+@keyframes umiri-pick-spin {
+    0% { transform: rotate(0deg); opacity: 0.15; }
+    50% { transform: rotate(180deg); opacity: 0.25; }
+    100% { transform: rotate(360deg); opacity: 0.15; }
+}
+@keyframes umiri-star-die {
+    0%, 100% { opacity: 0.12; transform: scale(0.9); }
+    50% { opacity: 0.28; transform: scale(1.05); }
+}
+
+.umiri-wrap {
+    max-width: 790px;
+    margin: 30px auto;
+    font-family: 'Zen Maru Gothic', 'Noto Sans SC', sans-serif;
+    animation: umiri-slide-in 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+    position: relative;
+}
+
+/* ===== 主体：撕裂的演出海报/票根 ===== */
+.umiri-poster {
+    position: relative;
+    background:
+        radial-gradient(ellipse at 30% 20%, rgba(51, 85, 102, 0.06) 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, rgba(20, 25, 35, 0.08) 0%, transparent 55%),
+        linear-gradient(170deg, #1C2530 0%, #1A2230 20%, #18202C 45%, #151C28 70%, #121822 100%);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow:
+        0 16px 42px rgba(10, 15, 25, 0.4),
+        0 5px 14px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03),
+        inset 0 0 50px rgba(51, 85, 102, 0.02);
+    border: 1px solid rgba(51, 85, 102, 0.15);
+}
+
+/* 静电噪点覆盖 */
+.umiri-noise {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+    animation: umiri-static-noise 8s linear infinite;
+    opacity: 0.6;
+}
+
+/* 聚光灯扫光 */
+.umiri-spotlight {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(105deg, transparent 40%, rgba(200, 220, 240, 0.04) 50%, transparent 60%);
+    animation: umiri-spotlight-sweep 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* 碎裂纹路 */
+.umiri-crack {
+    position: absolute;
+    pointer-events: none;
+    z-index: 2;
+    animation: umiri-crack-spread 5s ease-in-out infinite;
+}
+.umiri-crack-line {
+    position: absolute;
+    background: rgba(200, 220, 240, 0.04);
+    transform-origin: left center;
+}
+.umiri-crack-1 .umiri-crack-line:nth-child(1) {
+    top: 0; left: 0; width: 60px; height: 1px; transform: rotate(25deg);
+}
+.umiri-crack-1 .umiri-crack-line:nth-child(2) {
+    top: 8px; left: 15px; width: 35px; height: 1px; transform: rotate(40deg);
+}
+.umiri-crack-1 .umiri-crack-line:nth-child(3) {
+    top: -5px; left: 20px; width: 25px; height: 1px; transform: rotate(-15deg);
+}
+.umiri-crack-1 { top: 25%; right: 8%; }
+.umiri-crack-2 .umiri-crack-line:nth-child(1) {
+    top: 0; left: 0; width: 45px; height: 1px; transform: rotate(-20deg);
+}
+.umiri-crack-2 .umiri-crack-line:nth-child(2) {
+    top: 6px; left: 10px; width: 30px; height: 1px; transform: rotate(-35deg);
+}
+.umiri-crack-2 { bottom: 30%; left: 5%; }
+
+/* ===== 顶部：演出信息条 ===== */
+.umiri-header-bar {
+    position: relative;
+    z-index: 5;
+    height: 36px;
+    background: linear-gradient(90deg,
+        rgba(51, 85, 102, 0.08) 0%,
+        rgba(51, 85, 102, 0.12) 50%,
+        rgba(51, 85, 102, 0.08) 100%);
+    border-bottom: 1px solid rgba(51, 85, 102, 0.1);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 12px;
+}
+/* 熄灭的小灯泡 */
+.umiri-dead-light {
+    width: 5px; height: 5px;
+    background: rgba(51, 85, 102, 0.2);
+    border-radius: 50%;
+    border: 1px solid rgba(51, 85, 102, 0.12);
+    animation: umiri-flicker-neon 4s ease-in-out infinite;
+}
+.umiri-dead-light:nth-child(2) { animation-delay: 0.8s; }
+.umiri-dead-light:nth-child(4) { animation-delay: 1.6s; }
+.umiri-dead-light:nth-child(6) { animation-delay: 2.4s; }
+/* 横线 */
+.umiri-header-line {
+    flex: 1;
+    height: 1px;
+    background: rgba(51, 85, 102, 0.08);
+}
+/* 中央文字 */
+.umiri-header-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    color: rgba(150, 190, 210, 0.45);
+    letter-spacing: 4px;
+    flex-shrink: 0;
+    animation: umiri-flicker-neon 6s ease-in-out infinite;
+    animation-delay: 0.5s;
+}
+
+/* ===== 票根撕裂边装饰 ===== */
+.umiri-tear-edge-left {
+    position: absolute;
+    top: 0; bottom: 0; left: 0; width: 10px;
+    z-index: 4;
+    background: repeating-linear-gradient(
+        180deg,
+        transparent 0px,
+        transparent 8px,
+        rgba(30, 38, 50, 0.8) 8px,
+        rgba(30, 38, 50, 0.8) 8.5px,
+        transparent 8.5px,
+        transparent 12px
+    );
+    mask-image: linear-gradient(90deg, rgba(0,0,0,0.5) 0%, transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,0.5) 0%, transparent 100%);
+}
+
+/* ===== 断弦装饰 ===== */
+.umiri-broken-string {
+    position: absolute;
+    pointer-events: none;
+    z-index: 2;
+    height: 1px;
+    animation: umiri-string-snap 4s ease-in-out infinite;
+}
+.umiri-broken-string-1 {
+    top: 38%; left: 3%; width: 12%;
+    background: linear-gradient(90deg, transparent, rgba(180, 200, 220, 0.1), rgba(180, 200, 220, 0.06));
+    transform: rotate(5deg);
+}
+.umiri-broken-string-2 {
+    bottom: 25%; right: 5%; width: 10%;
+    background: linear-gradient(90deg, rgba(180, 200, 220, 0.06), rgba(180, 200, 220, 0.1), transparent);
+    transform: rotate(-3deg);
+    animation-delay: 2s;
+}
+
+/* ===== 角落标签 ===== */
+.umiri-corner-label {
+    position: absolute;
+    top: 46px; right: -4px;
+    background: rgba(51, 85, 102, 0.18);
+    padding: 4px 16px 4px 10px;
+    border-radius: 3px 0 0 3px;
+    z-index: 8;
+    border-left: 2px solid rgba(51, 85, 102, 0.25);
+}
+.umiri-corner-label-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 10px;
+    color: rgba(180, 210, 230, 0.5);
+    letter-spacing: 2px;
+}
+
+/* ===== 主内容区 ===== */
+.umiri-inner {
+    display: flex;
+    padding: 22px 26px 16px 26px;
+    gap: 0;
+    position: relative;
+    z-index: 3;
+}
+
+/* ===== 左侧：文字区 ===== */
+.umiri-left {
+    flex: 1.1;
+    padding: 12px 18px 12px 16px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* 日期标签 - 票根风格 */
+.umiri-ticket-stub {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 14px;
+    background: rgba(51, 85, 102, 0.12);
+    border: 1px solid rgba(51, 85, 102, 0.18);
+    border-radius: 2px;
+    margin-bottom: 14px;
+    position: relative;
+}
+.umiri-ticket-stub::before, .umiri-ticket-stub::after {
+    content: '';
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    width: 6px; height: 6px;
+    background: #1A2230;
+    border-radius: 50%;
+}
+.umiri-ticket-stub::before { left: -3px; }
+.umiri-ticket-stub::after { right: -3px; }
+.umiri-ticket-dot {
+    width: 4px; height: 4px;
+    background: rgba(51, 85, 102, 0.35);
+    border-radius: 50%;
+}
+.umiri-ticket-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 12px;
+    color: rgba(180, 210, 230, 0.6);
+    letter-spacing: 2px;
+}
+
+/* 名字 */
+.umiri-name-display {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: rgba(100, 160, 190, 0.55);
+    margin: 0;
+    line-height: 1;
+    letter-spacing: 3px;
+    position: relative;
+}
+/* 名字下方的细线 */
+.umiri-name-display::after {
+    content: '';
+    display: block;
+    width: 40px; height: 1px;
+    background: linear-gradient(90deg, rgba(100, 160, 190, 0.35), transparent);
+    margin-top: 4px;
+}
+.umiri-name-jp {
+    font-size: 13px;
+    color: rgba(170, 200, 220, 0.5);
+    letter-spacing: 5px;
+    margin-bottom: 16px;
+    font-weight: 400;
+    font-family: 'Noto Sans SC', sans-serif;
+}
+
+/* 正文区 */
+.umiri-text-block {
+    position: relative;
+    padding: 14px 12px 14px 18px;
+    margin-bottom: 16px;
+    background: rgba(255, 255, 255, 0.01);
+    border-radius: 4px;
+    border: 1px solid rgba(51, 85, 102, 0.06);
+}
+/* 左边竖线 - 像音轨的波形线 */
+.umiri-text-block::before {
+    content: '';
+    position: absolute;
+    left: 6px; top: 12px; bottom: 12px;
+    width: 2px;
+    background: repeating-linear-gradient(
+        180deg,
+        rgba(51, 85, 102, 0.2) 0px,
+        rgba(51, 85, 102, 0.2) 3px,
+        rgba(51, 85, 102, 0.08) 3px,
+        rgba(51, 85, 102, 0.08) 5px,
+        rgba(51, 85, 102, 0.25) 5px,
+        rgba(51, 85, 102, 0.25) 7px,
+        rgba(51, 85, 102, 0.06) 7px,
+        rgba(51, 85, 102, 0.06) 10px
+    );
+    border-radius: 2px;
+}
+.umiri-text {
+    font-size: 13.5px;
+    line-height: 2.1;
+    color: rgba(200, 220, 235, 0.75);
+    text-align: justify;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 400;
+}
+.umiri-text p { margin: 0 0 6px 0; }
+.umiri-text p:last-child { margin: 0; }
+
+/* GIF区域 - 撕裂照片风格 */
+.umiri-torn-photo {
+    align-self: flex-start;
+    position: relative;
+    background: rgba(25, 30, 42, 0.6);
+    padding: 5px;
+    border-radius: 3px;
+    border: 1px solid rgba(51, 85, 102, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: rotate(-1.5deg);
+    transition: all 0.3s ease;
+    margin-top: auto;
+}
+.umiri-torn-photo:hover { transform: rotate(0deg) scale(1.03); border-color: rgba(51, 85, 102, 0.3); }
+.umiri-torn-photo-gif {
+    height: 80px; width: auto; display: block; border-radius: 2px;
+    filter: brightness(0.92) contrast(1.05);
+}
+.umiri-torn-photo-label {
+    position: absolute;
+    bottom: -18px; left: 0;
+    font-family: 'Caveat', cursive;
+    font-size: 12px;
+    color: rgba(170, 200, 220, 0.5);
+    letter-spacing: 1px;
+}
+/* 撕裂右边缘 */
+.umiri-torn-photo::after {
+    content: '';
+    position: absolute;
+    top: 0; right: -6px; bottom: 0; width: 6px;
+    background: repeating-linear-gradient(
+        180deg,
+        transparent 0px,
+        transparent 4px,
+        rgba(25, 30, 42, 0.4) 4px,
+        rgba(25, 30, 42, 0.4) 4.5px,
+        transparent 4.5px,
+        transparent 7px
+    );
+}
+
+/* ===== 中间分隔：断裂的音轨 ===== */
+.umiri-divider {
+    width: 38px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 0;
+    position: relative;
+}
+.umiri-div-track {
+    flex: 1;
+    width: 1px;
+    background: repeating-linear-gradient(
+        180deg,
+        rgba(51, 85, 102, 0.15) 0px,
+        rgba(51, 85, 102, 0.15) 8px,
+        transparent 8px,
+        transparent 14px
+    );
+}
+/* 音符碎片 */
+.umiri-div-note {
+    position: relative;
+    width: 10px; height: 12px;
+    flex-shrink: 0;
+}
+.umiri-div-note::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 7px; height: 5px;
+    background: rgba(51, 85, 102, 0.18);
+    border-radius: 50%;
+}
+.umiri-div-note::after {
+    content: '';
+    position: absolute;
+    bottom: 3px; right: 1px;
+    width: 1px; height: 9px;
+    background: rgba(51, 85, 102, 0.15);
+}
+/* 小拨片 */
+.umiri-div-pick {
+    width: 8px; height: 10px;
+    position: relative;
+    flex-shrink: 0;
+    animation: umiri-pick-spin 6s linear infinite;
+}
+.umiri-div-pick::before {
+    content: '';
+    position: absolute;
+    width: 8px; height: 10px;
+    background: rgba(51, 85, 102, 0.12);
+    border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+    border: 1px solid rgba(51, 85, 102, 0.08);
+}
+/* 断裂标记 */
+.umiri-div-break {
+    width: 12px; height: 2px;
+    position: relative;
+    flex-shrink: 0;
+}
+.umiri-div-break::before {
+    content: '';
+    position: absolute;
+    width: 5px; height: 1.5px;
+    background: rgba(200, 100, 100, 0.12);
+    left: 0;
+    border-radius: 1px;
+}
+.umiri-div-break::after {
+    content: '';
+    position: absolute;
+    width: 5px; height: 1.5px;
+    background: rgba(200, 100, 100, 0.12);
+    right: 0;
+    border-radius: 1px;
+}
+
+/* ===== 右侧：立绘区 ===== */
+.umiri-right {
+    flex: 0.88;
+    padding: 12px 12px 12px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* 立绘相框 - 舞台屏幕/监视器风格 */
+.umiri-monitor-frame {
+    position: relative;
+    background: rgba(18, 22, 30, 0.5);
+    padding: 8px;
+    border-radius: 4px;
+    border: 1.5px solid rgba(51, 85, 102, 0.2);
+    box-shadow:
+        0 10px 28px rgba(0, 0, 0, 0.25),
+        inset 0 0 15px rgba(51, 85, 102, 0.03),
+        0 0 1px rgba(51, 85, 102, 0.15);
+    transition: all 0.35s ease;
+    max-width: 255px;
+}
+.umiri-monitor-frame:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 14px 32px rgba(0, 0, 0, 0.3),
+        0 0 12px rgba(51, 85, 102, 0.06);
+    border-color: rgba(51, 85, 102, 0.3);
+}
+.umiri-portrait-img {
+    width: 100%; height: auto; display: block;
+    border-radius: 2px;
+    filter: brightness(0.93) contrast(1.03);
+}
+
+/* 监视器顶部指示灯 */
+.umiri-monitor-top {
+    position: absolute;
+    top: 3px; left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+    z-index: 5;
+}
+.umiri-indicator {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+}
+.umiri-indicator:nth-child(1) {
+    background: rgba(200, 80, 80, 0.25);
+    box-shadow: 0 0 4px rgba(200, 80, 80, 0.12);
+    animation: umiri-flicker-neon 3s ease-in-out infinite;
+}
+.umiri-indicator:nth-child(2) {
+    background: rgba(51, 85, 102, 0.18);
+}
+.umiri-indicator:nth-child(3) {
+    background: rgba(51, 85, 102, 0.12);
+}
+
+/* 相框角标 */
+.umiri-frame-bracket {
+    position: absolute;
+    width: 14px; height: 14px;
+    z-index: 3;
+}
+.umiri-frame-bracket::before, .umiri-frame-bracket::after {
+    content: '';
+    position: absolute;
+    background: rgba(51, 85, 102, 0.18);
+}
+.umiri-fb-tl { top: 4px; left: 4px; }
+.umiri-fb-tl::before { top: 0; left: 0; width: 14px; height: 1.5px; }
+.umiri-fb-tl::after { top: 0; left: 0; width: 1.5px; height: 14px; }
+.umiri-fb-tr { top: 4px; right: 4px; }
+.umiri-fb-tr::before { top: 0; right: 0; width: 14px; height: 1.5px; }
+.umiri-fb-tr::after { top: 0; right: 0; width: 1.5px; height: 14px; }
+.umiri-fb-bl { bottom: 4px; left: 4px; }
+.umiri-fb-bl::before { bottom: 0; left: 0; width: 14px; height: 1.5px; }
+.umiri-fb-bl::after { bottom: 0; left: 0; width: 1.5px; height: 14px; }
+.umiri-fb-br { bottom: 4px; right: 4px; }
+.umiri-fb-br::before { bottom: 0; right: 0; width: 14px; height: 1.5px; }
+.umiri-fb-br::after { bottom: 0; right: 0; width: 1.5px; height: 14px; }
+
+/* 图片下方 */
+.umiri-caption {
+    font-family: 'Bebas Neue', sans-serif;
+    text-align: center;
+    margin-top: 12px;
+    font-size: 13px;
+    color: rgba(170, 200, 220, 0.45);
+    letter-spacing: 3px;
+}
+
+/* ===== 散落装饰 ===== */
+/* 音符碎片飘落 */
+.umiri-falling-note {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    animation: umiri-note-fall 5s ease-in-out infinite;
+}
+.umiri-falling-note-shape {
+    position: relative;
+    width: 7px; height: 9px;
+}
+.umiri-falling-note-shape::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 5px; height: 4px;
+    background: rgba(51, 85, 102, 0.12);
+    border-radius: 50%;
+}
+.umiri-falling-note-shape::after {
+    content: '';
+    position: absolute;
+    bottom: 2px; right: 0;
+    width: 1px; height: 7px;
+    background: rgba(51, 85, 102, 0.1);
+}
+.umiri-falling-note:nth-child(1) { top: 10%; left: 12%; animation-delay: 0s; }
+.umiri-falling-note:nth-child(2) { top: 5%; right: 20%; animation-delay: 1.5s; }
+.umiri-falling-note:nth-child(3) { top: 15%; left: 55%; animation-delay: 3s; }
+
+/* 散落拨片 */
+.umiri-loose-pick {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    width: 7px; height: 9px;
+    animation: umiri-pick-spin 8s linear infinite;
+}
+.umiri-loose-pick::before {
+    content: '';
+    position: absolute;
+    width: 7px; height: 9px;
+    background: rgba(51, 85, 102, 0.08);
+    border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+    border: 1px solid rgba(51, 85, 102, 0.06);
+}
+.umiri-loose-pick:nth-child(1) { top: 60%; left: 8%; animation-delay: 1s; }
+.umiri-loose-pick:nth-child(2) { bottom: 20%; right: 12%; animation-delay: 3s; transform: rotate(45deg); }
+
+/* 褪色星星 */
+.umiri-dead-star {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    animation: umiri-star-die 4s ease-in-out infinite;
+}
+.umiri-dead-star::before {
+    font-size: 9px;
+}
+.umiri-dead-star:nth-child(1)::before { content: '✦'; color: rgba(100, 160, 190, 0.18); }
+.umiri-dead-star:nth-child(2)::before { content: '✧'; color: rgba(150, 110, 110, 0.12); }
+.umiri-dead-star:nth-child(3)::before { content: '⋆'; color: rgba(100, 160, 190, 0.15); }
+.umiri-dead-star:nth-child(4)::before { content: '✦'; color: rgba(120, 150, 170, 0.12); }
+.umiri-dead-star:nth-child(5)::before { content: '✧'; color: rgba(100, 160, 190, 0.14); }
+.umiri-dead-star:nth-child(1) { top: 55px; left: 40%; animation-delay: 0.5s; }
+.umiri-dead-star:nth-child(2) { bottom: 70px; right: 30px; animation-delay: 1.5s; }
+.umiri-dead-star:nth-child(3) { top: 40%; left: 15px; animation-delay: 2.5s; }
+.umiri-dead-star:nth-child(4) { bottom: 35px; left: 42%; animation-delay: 3.5s; }
+.umiri-dead-star:nth-child(5) { top: 30%; right: 45px; animation-delay: 0.8s; }
+
+/* 暗色光斑 */
+.umiri-dim-glow {
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+    border-radius: 50%;
+    animation: umiri-pulse-dim 5s ease-in-out infinite;
+}
+.umiri-dim-glow:nth-child(1) {
+    width: 80px; height: 80px;
+    top: 20%; right: 10%;
+    background: radial-gradient(circle, rgba(51, 85, 102, 0.04), transparent);
+    animation-delay: 0s;
+}
+.umiri-dim-glow:nth-child(2) {
+    width: 60px; height: 60px;
+    bottom: 25%; left: 15%;
+    background: radial-gradient(circle, rgba(51, 85, 102, 0.03), transparent);
+    animation-delay: 2.5s;
+}
+
+/* ===== 按钮区 ===== */
+.umiri-action {
+    position: relative;
+    z-index: 5;
+    text-align: center;
+    padding: 8px 28px 22px 28px;
+}
+.umiri-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 30px;
+    background: transparent;
+    color: rgba(180, 215, 235, 0.6);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    border: 1px solid rgba(51, 85, 102, 0.25);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.35s ease;
+    font-family: 'Zen Maru Gothic', 'Noto Sans SC', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+.umiri-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(51, 85, 102, 0.06), transparent);
+    transition: left 0.5s ease;
+}
+.umiri-btn:hover::before { left: 150%; }
+.umiri-btn:hover {
+    color: rgba(210, 235, 250, 0.8);
+    border-color: rgba(51, 85, 102, 0.4);
+    box-shadow:
+        0 4px 14px rgba(51, 85, 102, 0.15),
+        0 0 8px rgba(51, 85, 102, 0.06);
+    transform: translateY(-2px);
+}
+.umiri-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(51, 85, 102, 0.08);
+}
+
+/* ===== 底部装饰 ===== */
+.umiri-bottom-bar {
+    position: relative;
+    z-index: 5;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    border-top: 1px solid rgba(51, 85, 102, 0.06);
+}
+.umiri-bottom-pip {
+    width: 2.5px; height: 2.5px;
+    border-radius: 50%;
+    background: rgba(51, 85, 102, 0.12);
+}
+.umiri-bottom-pip:nth-child(3) { background: rgba(200, 80, 80, 0.08); }
+
+/* ===== 过场遮罩 ===== */
+.umiri-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(18, 22, 32, 0.9);
+    backdrop-filter: blur(6px);
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+    border-radius: 6px;
+}
+.umiri-overlay.active { opacity: 1; pointer-events: auto; }
+
+.umiri-loader {
+    display: flex;
+    gap: 10px;
+}
+.umiri-loader-pip {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    animation: umiri-dot-pulse 1.4s ease-in-out infinite;
+}
+.umiri-loader-pip:nth-child(1) { background: rgba(100, 160, 190, 0.45); animation-delay: 0s; }
+.umiri-loader-pip:nth-child(2) { background: rgba(100, 160, 190, 0.35); animation-delay: 0.2s; }
+.umiri-loader-pip:nth-child(3) { background: rgba(100, 160, 190, 0.25); animation-delay: 0.4s; }
+
+.umiri-over-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    color: rgba(130, 180, 210, 0.5);
+    letter-spacing: 5px;
+    animation: umiri-flicker-neon 3s ease-in-out infinite;
+}
+
+/* ===== 响应式 ===== */
+@media(max-width: 680px) {
+    .umiri-inner { flex-direction: column; padding: 18px 16px 12px 16px; }
+    .umiri-left { padding: 8px 5px; }
+    .umiri-right { padding: 12px 5px 8px; }
+    .umiri-divider {
+        width: 100%; height: 28px;
+        flex-direction: row;
+        padding: 0 12px;
+    }
+    .umiri-div-track {
+        flex: 1; height: 1px; width: auto;
+        background: repeating-linear-gradient(
+            90deg,
+            rgba(51, 85, 102, 0.15) 0px,
+            rgba(51, 85, 102, 0.15) 8px,
+            transparent 8px,
+            transparent 14px
+        );
+    }
+    .umiri-monitor-frame { max-width: 200px; }
+    .umiri-corner-label { display: none; }
+    .umiri-tear-edge-left { display: none; }
+    .umiri-name-display { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+
+<div class="umiri-wrap" id="umiriWrap">
+    <div class="umiri-poster">
+
+        <!-- 噪点 & 聚光灯 -->
+        <div class="umiri-noise"></div>
+        <div class="umiri-spotlight"></div>
+
+        <!-- 碎裂纹 -->
+        <div class="umiri-crack umiri-crack-1">
+            <div class="umiri-crack-line"></div>
+            <div class="umiri-crack-line"></div>
+            <div class="umiri-crack-line"></div>
+        </div>
+        <div class="umiri-crack umiri-crack-2">
+            <div class="umiri-crack-line"></div>
+            <div class="umiri-crack-line"></div>
+        </div>
+
+        <!-- 断弦 -->
+        <div class="umiri-broken-string umiri-broken-string-1"></div>
+        <div class="umiri-broken-string umiri-broken-string-2"></div>
+
+        <!-- 票根撕裂边 -->
+        <div class="umiri-tear-edge-left"></div>
+
+        <!-- 飘落音符 -->
+        <div class="umiri-falling-note"><div class="umiri-falling-note-shape"></div></div>
+        <div class="umiri-falling-note"><div class="umiri-falling-note-shape"></div></div>
+        <div class="umiri-falling-note"><div class="umiri-falling-note-shape"></div></div>
+
+        <!-- 散落拨片 -->
+        <div class="umiri-loose-pick"></div>
+        <div class="umiri-loose-pick"></div>
+
+        <!-- 褪色星星 -->
+        <div class="umiri-dead-star"></div>
+        <div class="umiri-dead-star"></div>
+        <div class="umiri-dead-star"></div>
+        <div class="umiri-dead-star"></div>
+        <div class="umiri-dead-star"></div>
+
+        <!-- 暗色光斑 -->
+        <div class="umiri-dim-glow"></div>
+        <div class="umiri-dim-glow"></div>
+
+        <!-- 顶部信息条 -->
+        <div class="umiri-header-bar">
+            <div class="umiri-dead-light"></div>
+            <div class="umiri-header-line"></div>
+            <div class="umiri-dead-light"></div>
+            <span class="umiri-header-text">LIVE HOUSE</span>
+            <div class="umiri-dead-light"></div>
+            <div class="umiri-header-line"></div>
+            <div class="umiri-dead-light"></div>
+        </div>
+
+        <!-- 角落标签 -->
+        <div class="umiri-corner-label">
+            <span class="umiri-corner-label-text">FIRST LIVE</span>
+        </div>
+
+        <!-- ===== 主内容 ===== -->
+        <div class="umiri-inner">
+
+            <!-- 左侧：文字 -->
+            <div class="umiri-left">
+                <div class="umiri-ticket-stub">
+                    <div class="umiri-ticket-dot"></div>
+                    <span class="umiri-ticket-text">SUMMER 2017</span>
+                </div>
+
+                <h2 class="umiri-name-display">UMIRI YAHATA</h2>
+                <div class="umiri-name-jp">八 幡 海 铃</div>
+
+                <div class="umiri-text-block">
+                    <div class="umiri-text">
+                        <p>后台的时钟指针一格一格地走。该集合了。可是休息室里只有自己一个人。</p>
+                        <p>给主唱发了消息，没有已读。给鼓手打了电话，无人接听。</p>
+                        <p>……大概是在路上吧。她们只是迟到了。一定是这样的。</p>
+                        <p>工作人员探进头来说——"准备好了吗？可以上台了。"</p>
+                        <p>没关系，我先上去，她们马上就会来的。我们排练了那么久，不可能不来的。</p>
+
+                        <p>——不可能的。</p>
+                    </div>
+                </div>
+
+                <div class="umiri-torn-photo">
+                    <img class="umiri-torn-photo-gif" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/UmiriE.gif" alt="海铃">
+                    <div class="umiri-torn-photo-label">that day</div>
+                </div>
+            </div>
+
+            <!-- 中间分隔 -->
+            <div class="umiri-divider">
+                <div class="umiri-div-track"></div>
+                <div class="umiri-div-note"></div>
+                <div class="umiri-div-track"></div>
+                <div class="umiri-div-break"></div>
+                <div class="umiri-div-track"></div>
+                <div class="umiri-div-pick"></div>
+                <div class="umiri-div-track"></div>
+                <div class="umiri-div-note"></div>
+                <div class="umiri-div-track"></div>
+            </div>
+
+            <!-- 右侧：立绘 -->
+            <div class="umiri-right">
+                <div class="umiri-monitor-frame">
+                    <div class="umiri-monitor-top">
+                        <div class="umiri-indicator"></div>
+                        <div class="umiri-indicator"></div>
+                        <div class="umiri-indicator"></div>
+                    </div>
+                    <div class="umiri-frame-bracket umiri-fb-tl"></div>
+                    <div class="umiri-frame-bracket umiri-fb-tr"></div>
+                    <div class="umiri-frame-bracket umiri-fb-bl"></div>
+                    <div class="umiri-frame-bracket umiri-fb-br"></div>
+                    <img class="umiri-portrait-img" src="https://cyber2051.top/img/%E5%85%AB%E5%B9%A1%E6%B5%B7%E9%93%83%2FUmiri_%E5%86%B7%E8%84%B8%E8%87%AA%E4%BF%A1.png" alt="八幡海铃">
+                </div>
+                <div class="umiri-caption">— UMIRI Y. —</div>
+            </div>
+
+        </div>
+
+        <!-- 按钮 -->
+        <div class="umiri-action">
+            <div class="umiri-btn" onclick="umiriStart()"
+                 data-prompt="【开始】【开场白】 # 场景生成指令
+
+## 核心任务
+请根据以下提供的元素，完整叙述并扩写一段开场剧情。
+
+## 叙事要求
+- 你的任务是【场景描绘者】，而非【剧情推进者】。
+- 必须在自然的文字叙述中，将下述所有背景信息和场景要素巧妙地融合进去。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+- 必须根据年份（2017年），正确判断出<user>此时的年龄。
+
+## 场景要素
+- **时间:** 2017年暑假的某一天，首次Live即将开始的时刻。
+- **地点:** 某个Live House的休息室与舞台侧方。
+- **核心人物:** 13岁，刚刚升入花咲川女子学园初中部的八幡海铃。
+
+## 背景信息（必须融入叙述）
+这是海铃人生中第一次，也是最惨痛的一次信任崩塌：
+1. **纯粹的热爱:** 她组建了自己的第一支乐队，真心实意地热爱着贝斯，并享受着与队友排练的快乐时光。
+2. **失控的掌控欲:** 因为这份热爱和一点点得意忘形，她性格中掌控欲强的一面占据了主导，在排练时无意识地将自己的意志强加于队友，引起了大家的不满。
+3. **迟钝的自我:** 她没有发现队友们日益积累的怨气，将偶尔的口角和矛盾都当作了无关紧要的小事。
+4. **最终的背叛:** 在最重要的首次Live当天，其他四名队友联合起来，用集体消失的方式对她进行了最残忍的报复。
+
+## 叙事焦点
+将上述所有情感，全部聚焦于一个核心画面——直到独自一人拿着贝斯走上舞台前，海铃都还天真地以为队友们只是迟到了。当她站在舞台，听着台下观众充满疑惑的窃窃私语，那份从茫然、困惑到最终被公开羞辱的绝望，将是整个场景的核心。
+
+## 【最高优先级指令】
+在描绘完<user>作为台下观众之一，目睹了这个孤零零的贝斯手无助地站在舞台上的瞬间之后，【必须立即停止】。严禁进行任何后续的角色扮演或剧情推进，将故事的控制权完全交还给玩家。 【/开场白】">
+                开始
+            </div>
+        </div>
+
+        <!-- 底部 -->
+        <div class="umiri-bottom-bar">
+            <div class="umiri-bottom-pip"></div>
+            <div class="umiri-bottom-pip"></div>
+            <div class="umiri-bottom-pip"></div>
+            <div class="umiri-bottom-pip"></div>
+            <div class="umiri-bottom-pip"></div>
+        </div>
+
+        <!-- 过场遮罩 -->
+        <div class="umiri-overlay" id="umiriOverlay">
+            <div class="umiri-loader">
+                <div class="umiri-loader-pip"></div>
+                <div class="umiri-loader-pip"></div>
+                <div class="umiri-loader-pip"></div>
+            </div>
+            <div class="umiri-over-text">ENTERING STAGE...</div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function umiriStart() {
+    var btn = document.querySelector('.umiri-btn');
+    var promptText = btn.getAttribute('data-prompt');
+
+    if (typeof triggerSlash === 'function') {
+        triggerSlash('/send ' + promptText + '|/trigger');
+    } else {
+        var input = parent.document.querySelector('#send_textarea');
+        if (input) {
+            input.value = promptText;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
+
+    document.getElementById('umiriOverlay').classList.add('active');
+}
+</script>
+
+</body>
+</html>

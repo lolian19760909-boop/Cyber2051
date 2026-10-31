@@ -1,0 +1,1041 @@
+(() => {
+  'use strict';
+  const Popover=typeof module==='object'&&module.exports?require('../共享/popover.js'):globalThis.CxxPopover;
+  let activeModulePage=null;
+  const $ = id => id==='page-other'&&activeModulePage?activeModulePage:document.getElementById('t2051x-' + id);
+  const rootEl = document.getElementById('t2051x-root');
+  if (!rootEl) return;
+  const motion = globalThis.CxxMotion.mount(rootEl);
+  const pageNode = id => moduleViews.get(id)?.root || $('page-' + id);
+  const legacyTaskLocations=[{"questId":"q01","mapId":"tokyo-central","placeId":"a-yang-clinic","evidenceField":"goal","source":{"title":"巴的采购单","district":"红花街","brief":"巴的诊所你总该听过——收费实在，手艺好，能扛事。她订了批皮下护甲，卖家临时放了鸽子，货现在蹲在清道夫的抛货点里落灰。你去把它端回来，巴付账，我抽一成。别问货是哪来的，你也没看见，对吧。","goal":"到抛货点清点并取回整批皮下护甲（六套），送到巴的诊所后账。"}},{"questId":"q02","mapId":"tokyo-central","placeId":"a-yang-clinic","evidenceField":"goal","source":{"title":"被盯上的壳","district":"红花街","brief":"有个机偶姑娘在红花街西口被人盯上了——清道夫那帮摘器官的把她当成行走的备件库。她弟弟在我的柜台上押了最后一枚旧币换消息，我收下了，也打算把事情办了。把人带去巴的诊所，别让她变成夜市摊上的零件。","goal":"找到她（西口夜市一带），把她完整地送到巴的诊所。"}},{"questId":"q03","mapId":"tokyo-central","placeId":"ring-live","evidenceField":"brief","source":{"title":"把吉他送过铁丝网","district":"RiNG 社区","brief":"河沿那边有支小乐队租了排练房，一把旧世代的贝斯还押在我们仓库。明晚他们要用——但这把琴比在场一半人的年纪都大，磕一下就是事故。你腿脚利索，帮我把它从 RING-Live! 后门送到荒川河沿。都是街坊的事，别让我失望。","goal":"明晚八点前，把贝斯完好送到荒川河沿的排练房，拿回签收条。"}},{"questId":"q04","mapId":"tokyo-central","placeId":"ring-community","evidenceField":"brief","source":{"title":"谁在偷我们的电","district":"RiNG 社区","brief":"RiNG 社区这礼拜跳了三次闸，全楼道的义眼都得重启。电是我管的，账是我平的，跳下去我先倒霉。社区管道图上多出一条不存在的支线——顺着它查，看看是哪路神仙在偷电。查清楚了就行，怎么处理等我发话。","goal":"查明偷电支线的源头与用途，回报玲姐。"}}];
+  function bindLegacyLocation(q){if(q.placeId)return q;const b=legacyTaskLocations.find(b=>b.questId===q.id&&Object.keys(b.source).every(k=>q[k]===b.source[k]));return b?{...q,mapId:b.mapId,placeId:b.placeId}:q;}
+  window.CxxTerminalBoot?.stage(0,'done');window.CxxTerminalBoot?.log('terminal','load','组件','已载入');window.CxxTerminalBoot?.stage(1,'now');
+  const sourceData=window.T2051_DATA;
+  const baseData={...sourceData,quests:sourceData.quests.map(bindLegacyLocation)};
+  let installedSnapshot,hasInstalledSnapshot=false;
+  const contentClient={...window.CxxContent,readHost(){if(!hasInstalledSnapshot){installedSnapshot=window.CxxContent?.readHost();hasInstalledSnapshot=true;}return installedSnapshot;}};
+  let data = baseData;
+  function refreshContent() {
+    const installed = contentClient?.readHost();
+    data = installed ? contentClient.view(baseData, installed.registry, readStatData()?.terminal?.quests || {}, {
+      subscriptions: installed.subscriptions, pins: contentClient.chatPins(), mediaPreferences: installed.mediaPreferences,
+      initialContent: installed.initialContent, initialAvatars: installed.initialAvatars,
+    }) : baseData;
+    data={...data,quests:(data.quests||[]).map(bindLegacyLocation)};
+  }
+  if (!data || !Array.isArray(data.nodes) || !Array.isArray(data.regions)) {
+    const error = document.createElement('p');
+    error.className = 'fatal';
+    error.textContent = '终端资料未载入。请收起终端后重新打开；若持续出现请向作者反馈。';
+    rootEl.append(error);
+    return;
+  }
+  function pendingButton(label){const b=button(label,'quiet cxx-pending',()=>{});b.disabled=true;b.append(element('small','cxx-pending-badge','待更新'));b.title='将在后续版本开放';return b;}
+  const QUESTS_AVAILABLE = true;
+  const modules = [
+    { id: 'city', name: '城市', en: 'CITY ATLAS' },
+    { id: 'operations', name: '委托', en: 'JOURNAL', tabs: ['主线任务', '任务委托', '历史记录'], empty: '暂无可读取的任务', description: '主线、委托与行动记录汇集于此。', customTab: 1 },
+    { id: 'network', name: '通讯', en: 'NETWORK', tabs: ['东京都新闻', '网路论坛', '广播电台'], empty: '暂无可读取的网路内容', description: '城市的新闻与街头的声音，在这里交汇。', custom: 'net' },
+    { id: 'characters', name: '人物', en: 'CHARACTERS', tabs: ['人物表', '人物', '天赋', '物品栏', '义体'], empty: '暂无可读取的角色档案', description: '人物状态与装备配置，将在同一份档案中呈现。' },
+    { id: 'media', name: '影像', en: 'MEMORY INDEX', tabs: ['插画', '事件 CG', '特殊场景 CG', '剧情插图'], empty: '暂无可读取的影像', description: '独立保存事件与场景中的记忆。', customTab: 0 },
+    { id: 'archive', name: '资料库', en: 'ARCHIVE' },
+    { id: 'settings', name: '设置', en: 'PREFERENCES' }
+  ];
+  const storageKey = 'tokyo2051-terminal-v1';
+  const mainModules=['characters','city','operations','network','archive','settings'].map(id=>modules.find(m=>m.id===id));
+  const groupOf=id=>id==='media'?'archive':id;
+  const navCount=rootEl.querySelector('.nav-heading i');if(navCount)navCount.textContent=String(mainModules.length).padStart(2,'0');
+  const viewKey='cxx-terminal-view:'+ (window.parent.Cxx233Runtime?.key()||'preview');
+  let viewState={tabs:{},scroll:{},mapViews:{},mapId:'tokyo-central'},viewTimer=null,terminalVisible=false;
+  try{const old=JSON.parse(sessionStorage.getItem(viewKey)||'null');if(old&&typeof old==='object')viewState={...viewState,...old,tabs:old.tabs||{},scroll:old.scroll||{}};}catch{}
+  const lastSignatures={},moduleViews=new Map(),appListeners=new Set(),stats={created:0,updates:0,reads:0},history=[];
+  const emitApp=event=>{for(const cb of appListeners)cb(event||{});};
+  function saveView(){if(!viewState.scroll||!viewState.tabs)return;viewState.workspace||={};viewState.workspace[state.page]=$('workspace').scrollTop;for(const [id,entry]of moduleViews)if(!entry.root.hidden)viewState.scroll[id]=(entry.root.querySelector('.module-content')||entry.root).scrollTop;viewState.player=moduleViews.get('characters')?.player?.readViewState?.()||viewState.player;viewState.archive={kind:archiveKind,index:archiveIndex,query:$('archive-search').value};viewState.tabs={...selectedModuleTabs};try{sessionStorage.setItem(viewKey,JSON.stringify(viewState));}catch{}}
+  const scheduleView=()=>{clearTimeout(viewTimer);viewTimer=setTimeout(saveView,100);};
+
+  const defaults = { motion: 'full', font: 16, texture: 35, restore: true };
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+  let stored = {};
+  try { stored = JSON.parse(localStorage.getItem(storageKey) || '{}') || {}; } catch { /* file:// or blocked storage still works in memory */ }
+  const prefs = Object.assign({}, defaults, stored.prefs);
+  if (!['full', 'reduced', 'off'].includes(prefs.motion)) prefs.motion = 'full';
+  prefs.font = clamp(Number(prefs.font) || 16, 14, 22);
+  prefs.texture = clamp(Number(prefs.texture) || 0, 0, 70);
+  prefs.restore = prefs.restore === true;
+  const regionById = new Map(data.regions.map(r => [r.id, r]));
+  const nodeById = new Map(data.nodes.map(n => [n.id, n]));
+  const locationKey = (mapId, id) => (mapId || 'tokyo-central') + ':' + id;
+  const locationRecords = (data.locationMaps || [{ id: 'tokyo-central', places: data.nodes }]).flatMap(map => map.places.map(place => {
+    const original = map.id === 'tokyo-central' ? nodeById.get(place.id) : null;
+    return { ...original, id: place.id, name: place.name, mapId: map.id, cat: original?.cat || '地点',
+      cover: original?.cover || [map.name, place.district || regionById.get(original?.group)?.name].filter(Boolean).join(' / ') };
+  }));
+  const locationById = new Map(locationRecords.map(record => [locationKey(record.mapId, record.id), record]));
+  const selectionKey = selection => selection ? selection.kind + ':' + locationKey(selection.mapId, selection.id) : '';
+  const recordCover = record => record.cover || regionById.get(record.group)?.name || '城市档案';
+  const state={page:'city',questId:null};
+  let readerRecord=null,readerOpener=null,archiveKind='city';
+  let galleryIndex = 0, galleryCat = 'standard', viewerList = [], viewerPos = 0, viewerOpener = null, viewerLabel = '';
+  let viewerScrollHost = null, viewerScrollTop = 0;
+  let netDynamicVersion = 0;
+  const selectedModuleTabs = {...viewState.tabs};
+  let netRadioView = null, netRequest = null;
+  function stopNetwork() {
+    // Page visibility only owns news requests; audio belongs to the shared radio.
+    if (netRequest) { netRequest.reason = 'leave'; netRequest.controller.abort(); }
+  }
+  const newsService=()=>window.parent?.__cxx_experience__;
+  const NET_CFG_KEY = storageKey + '-net-v1';
+  let netCfgMemory = {};
+  function netCfg() {
+    if(newsService())return newsService().config();
+    try { netCfgMemory = JSON.parse(localStorage.getItem(NET_CFG_KEY) || '{}') || {}; } catch { /* 当前会话仍可配置 */ }
+    return netCfgMemory;
+  }
+  function saveNetCfg(patch) {
+    if(newsService())return newsService().configure(patch);
+    try {
+      const merged = Object.assign(netCfg(), patch);
+      netCfgMemory = merged;
+      localStorage.setItem(NET_CFG_KEY, JSON.stringify(merged));
+      return merged;
+    } catch { return netCfg(); }
+  }
+  let netState;
+  function netDyn(){return newsService()?newsService().state({light:true}).dynamic||{}:netState?.readDynamic()||{};}
+  function saveNetDyn(dyn,ticket){return netState.commit(ticket,dyn);}
+
+  // ===== 账本存取：优先问状态统一入口 Cxx236State（数据库表），未连接时回退本机试玩存档 =====
+  const LEDGER_DEMO_KEY = storageKey + '-ledger-demo';
+  function readStatData(){stats.reads++;const live=window.parent?.Cxx236State;if(live&&typeof live.stat==='function'){try{const value=live.stat();if(value&&value.terminal)return value;}catch(error){}}return window.parent.Cxx233Runtime?.statusSnapshot?.(getLastMessageId())?.stat_data||hostBridge.readState().statData;}
+  const ledgerMvu = () => typeof getVariables === 'function' && typeof getLastMessageId === 'function';
+  // 酒馆助手 4.11.2 实装源码：getVariables / updateVariablesWith 默认是 chat，必须显式指定 message。
+  async function updateTerminal(update){return hostBridge.updateLedger(update);}
+  function demoLedger() {
+    try { return JSON.parse(localStorage.getItem(LEDGER_DEMO_KEY) || '{}') || {}; } catch { return {}; }
+  }
+  function questRecord(id) {
+    if (ledgerMvu()) {
+      const rec = readStatData()?.terminal?.quests?.[id];
+      return { state: rec?.state || '已发布', rank: rec?.rank || '', acceptedFloor: Number(rec?.acceptedFloor) || 0, definitionRef: rec?.definitionRef };
+    }
+    const rec = demoLedger().quests?.[id] || {};
+    return { state: rec.state || '已发布', rank: rec.rank || '', acceptedFloor: Number(rec.acceptedFloor) || 0, definitionRef: rec.definitionRef };
+  }
+  function walletYen() {
+    if (ledgerMvu()) {
+      const stat=readStatData(),value=(window.CxxQuests?.actor?window.CxxQuests.actor(stat).wallet:stat?.terminal?.ensemble?null:stat?.terminal?.wallet)?.yen;
+      if ((typeof value!=='number' && typeof value!=='string') || String(value).trim()==='') return null;
+      const amount=Number(value); return Number.isFinite(amount)?amount:null;
+    }
+    return Number(demoLedger().wallet) || 0;
+  }
+  function completedQuestCount(excludeId) {
+    return (data.quests || []).filter(q => q.id !== excludeId && questRecord(q.id).state === '完成').length;
+  }
+  function heistUnlocked() {
+    return completedQuestCount('q_heist') >= 2;
+  }
+  function questLocked(q) {
+    if(q.id==='q_heist'&&questRecord(q.id).state==='已发布'&&data.quests.some(q=>q.id==='q_chip_night'))return true;
+    return (q.id === 'q_heist' && !heistUnlocked()) || (q.prerequisites || []).some(id => questRecord(id).state !== '完成');
+  }
+
+  const readingPositions = new Map();
+  const reducedQuery = matchMedia('(prefers-reduced-motion: reduce)');
+  const mobileQuery = matchMedia('(max-width: 680px)');
+  function element(tag, className, text) {
+    const el = document.createElement(tag);
+    if (className) el.className = className;
+    if (text !== undefined) el.textContent = text;
+    return el;
+  }
+  function button(text, className, handler) {
+    const el = element('button', className, text);
+    el.type = 'button';
+    el.addEventListener('click', handler);
+    return el;
+  }
+
+  const iconPaths = {
+    city: 'M3 5 9 3 15 5 21 3V19L15 21 9 19 3 21ZM9 3V19M15 5V21M5 13H7M17 9H19',
+    operations: 'M4 4H10L12 2 14 4H20V21H4ZM8 9H17M8 13H17M8 17H14M9 4V6H15V4',
+    network: 'M4 12A8 8 0 0 1 20 12M7 12A5 5 0 0 1 17 12M10 12A2 2 0 0 1 14 12M12 13V21M9 21H15',
+    characters: 'M12 3 16 5V10L12 13 8 10V5ZM6 21V17L10 14H14L18 17V21M3 8V3H7M17 3H21V8M3 17V21H7M17 21H21V17',
+    media: 'M3 4H21V20H3ZM7 4V20M17 4V20M3 8H7M3 12H7M3 16H7M17 8H21M17 12H21M17 16H21M10 9 14 12 10 15Z',
+    archive: 'M4 4H20V20H4ZM4 8H20M4 12H20M4 16H20M7 6H8M7 10H8M7 14H8M7 18H8',
+    settings: 'M5 3V21M12 3V21M19 3V21M2 8H8M9 16H15M16 10H22'
+  };
+  function systemIcon(id) {
+    const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    icon.setAttribute('viewBox', '0 0 24 24'); icon.setAttribute('aria-hidden', 'true');
+    const shape = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    shape.setAttribute('d', iconPaths[id]); icon.append(shape); return icon;
+  }
+  let sectionAnimations = [];
+  function stopPageMotion() {
+    sectionAnimations.forEach(animation => animation.cancel()); sectionAnimations = [];
+  }
+  // Section pages (DESIGN.md 10.11): rows slide in from the left, the detail panel from the right,
+  // and the tab underline slides to the current tab. Yellow wipes from the left, night only fades.
+  const inkPlaces = new Map();
+  function placeInk(tabs, animate, theme) {
+    const current = tabs.querySelector('button[aria-pressed=true]');
+    if (!current || !current.offsetWidth) return;
+    let ink = tabs.querySelector('.sec-tabs-ink');
+    if (!ink) { ink = element('i', 'sec-tabs-ink'); ink.setAttribute('aria-hidden', 'true'); tabs.append(ink); }
+    const key = tabs.getAttribute('aria-label') || '', next = { left: current.offsetLeft, width: current.offsetWidth }, prev = inkPlaces.get(key);
+    const position=()=>{ink.style.left=next.left+'px';ink.style.width=next.width+'px';tabs.dataset.ink='';inkPlaces.set(key,next);};
+    if(motion.available){if(animate&&prev)void motion.layout([ink],position);else position();return;}
+    position();
+    if (animate && prev && (prev.left !== next.left || prev.width !== next.width)) ink.animate([{ transform: 'translateX(' + (prev.left - next.left) + 'px) scaleX(' + prev.width / next.width + ')' }, { transform: 'none' }], { duration: theme === 'yellow' ? 120 : 200, easing: 'cubic-bezier(.23,1,.32,1)' });
+  }
+  function sectionMotion(kind, page) {
+    if (!page || page.hidden) return;
+    const allowed = rootEl.dataset.motion === 'full' && !!page.animate, theme = document.documentElement.dataset.cxxTheme || 'red';
+    page.querySelectorAll('.sec-tabs').forEach(tabs => placeInk(tabs, allowed && kind !== 'enter' && theme !== 'night', theme));
+    if(motion.available){
+      if(!['enter','tab','select'].includes(kind)||rootEl.dataset.motion==='off')return;
+      const rows=kind==='select'?[]:[...page.querySelectorAll('.sec-list>:is(.sec-row,.sec-group)')].filter(n=>n.getClientRects().length).slice(0,rootEl.dataset.motion==='reduced'?4:8);
+      rows.forEach((node,i)=>void motion.animate(node,theme==='yellow'?[{clipPath:'inset(0 100% 0 0)'},{clipPath:'inset(0 0 0 0)'}]:theme==='night'?[{opacity:.5},{opacity:1}]:[{opacity:.2,transform:'translateX(-8px)'},{opacity:1,transform:'none'}],{channel:'row',duration:180,delay:i*16,fill:'backwards'}));
+      if(kind==='select'){const panel=[...page.querySelectorAll('.sec-detail,.sec-panel:not([hidden])')].find(n=>n.getClientRects().length);if(panel)void motion.animate(panel,[{opacity:.45,transform:'translateX(8px)'},{opacity:1,transform:'none'}],{channel:'detail',duration:180});}
+      return;
+    }
+    if (!allowed || !['enter', 'tab', 'select'].includes(kind)) return;
+    sectionAnimations.forEach(animation => animation.cancel()); sectionAnimations = [];
+    const visible = node => node.getClientRects().length > 0, ease = 'cubic-bezier(.23,1,.32,1)';
+    const panel = [...page.querySelectorAll('.sec-detail, .sec-panel:not([hidden])')].find(visible);
+    const rows = kind === 'select' ? [] : [...page.querySelectorAll('.sec-list>:is(.sec-row,.sec-group)')].filter(visible).slice(0, 14);
+    const wipe = [{ clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0 0 0)' }], fade = [{ opacity: 0 }, { opacity: 1 }];
+    const rowFrames = theme === 'yellow' ? wipe : theme === 'night' ? fade : [{ opacity: 0, transform: 'translateX(-16px)' }, { opacity: 1, transform: 'none' }];
+    const panelFrames = theme === 'yellow' ? wipe : theme === 'night' ? fade : [{ opacity: 0, transform: 'translateX(24px)' }, { opacity: 1, transform: 'none' }];
+    const time = theme === 'yellow' ? 180 : theme === 'night' ? 160 : 200;
+    rows.forEach((row, index) => sectionAnimations.push(row.animate(rowFrames, { duration: time, delay: Math.min(index * 24, 300), easing: ease, fill: 'backwards' })));
+    if (panel) sectionAnimations.push(panel.animate(panelFrames, { duration: theme === 'red' ? 240 : time, easing: ease }));
+  }
+
+  const dialogTurns=new WeakMap();
+  function openDialog(node){dialogTurns.set(node,(dialogTurns.get(node)||0)+1);node.hidden=false;node.showModal();void motion.presence(node,true,{distance:12});}
+  function closeDialog(node){const turn=(dialogTurns.get(node)||0)+1;dialogTurns.set(node,turn);void motion.presence(node,false,{distance:12}).then(()=>{if(dialogTurns.get(node)!==turn)return;node.close();node.hidden=false;});}
+  function announce(text) { $('live-message').textContent = text; }
+  function save() {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify({
+        prefs
+      }));
+      $('motion-status').textContent = reducedQuery.matches ? '系统已要求减少动态效果。' : '显示偏好已保存。';
+    } catch { $('motion-status').textContent = '浏览器未允许保存；当前页面仍可使用这些设置。'; }
+  }
+  function applyPrefs() {
+    const chosen=parent.Cxx236Preferences?.read().level||'medium';
+    prefs.motion=({high:'full',medium:'reduced',low:'off'})[chosen];
+    rootEl.dataset.motion = reducedQuery.matches?'off':prefs.motion;
+    rootEl.style.setProperty('--read-size', prefs.font + 'px');
+    emitApp({preferences:true});
+    rootEl.style.setProperty('--texture', prefs.texture / 100);
+    $('font-size').value = prefs.font;
+    $('font-value').textContent = prefs.font + ' px';
+    $('texture').value = prefs.texture;
+    $('texture-value').textContent = prefs.texture + '%';
+    $('restore-view').checked = prefs.restore;
+    rootEl.querySelectorAll('#t2051x-motion-options button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.motion === prefs.motion)));
+    $('motion-status').textContent = reducedQuery.matches ? '系统已要求减少动态效果。' : '高、中、低特效在本聊天的所有界面中共用。';
+    
+    stopPageMotion();
+  }
+  function switchPage(id,options={}) {
+    const config=modules.find(m=>m.id===id);if(!config)return false;const changedPage=state.page!==id;
+    const previous=pageNode(state.page),from=changedPage?motion.capture(previous):null,direction=options.direction||Math.sign(modules.findIndex(m=>m.id===id)-modules.findIndex(m=>m.id===state.page))||1;
+    if(state.page!==id){saveView();if(!options.replace){history.push(state.page);if(history.length>30)history.shift();}stopNetwork();stopPageMotion();}
+    state.page=id;rootEl.dataset.route=groupOf(id);$('terminal').dataset.page=id;
+    $('scene-word').textContent={city:'ATLAS',operations:'OPS',network:'NET',characters:'IDENTITY',media:'MEMORY',archive:'ARCHIVE',settings:'SYSTEM'}[id];
+    for(const name of ['city','archive','settings'])$('page-'+name).hidden=id!==name;
+    document.getElementById('t2051x-page-other').hidden=true;
+    for(const [name,entry]of moduleViews){if(name!==id)entry.hide?.();entry.root.hidden=true;entry.player?.setVisible(false);}
+    if(config.tabs){let entry=moduleViews.get(id);if(!entry){const root=element('section','page other-page cxx-module-page');root.id='terminal-module-'+id;root.dataset.module=id;$('workspace').append(root);entry={root,dirty:false,update:null,signature:lastSignatures[id]};moduleViews.set(id,entry);activeModulePage=root;stats.created++;renderModule(config);}else activeModulePage=entry.root;entry.root.hidden=false;entry.player?.setVisible(terminalVisible);if(!entry.shown){entry.shown=true;requestAnimationFrame(()=>{(entry.root.querySelector('.module-content')||entry.root).scrollTop=viewState.scroll[id]||0;});}if(entry.dirty){entry.dirty=false;entry.update?.();}if(options.tab)entry.select?.(options.tab);}
+    if(id==='archive'&&!$('archive-grid').children.length){const index=viewState.archive?.index||0;renderArchive();positionArchive(index);}
+    if(id==='archive')$('page-archive').dataset.view='list';
+    rootEl.querySelectorAll('.nav-item').forEach(b=>{if(b.dataset.page===groupOf(id))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+    if(changedPage)void motion.navigate(previous,pageNode(id),{from,direction,container:$('workspace')});
+    $('footer-name').textContent=config.en;emitApp({route:true});if(changedPage)requestAnimationFrame(()=>{if(state.page===id)$('workspace').scrollTop=viewState.workspace?.[id]||0;});
+    if(changedPage||options.replace)requestAnimationFrame(()=>{if(state.page===id)sectionMotion('enter',id==='archive'?$('page-archive'):moduleViews.get(id)?.root);});scheduleView();return true;
+  }
+  function openQuest(id) {
+    if (!QUESTS_AVAILABLE) { announce('委托功能待更新，暂不可用。'); return false; }
+    if (!data.quests?.some(q => q.id === id)) { announce('这份任务暂不可用，请查看当前行动列表。'); return false; }
+    state.questId = id;
+    switchPage('operations');
+    moduleViews.get('operations')?.journal?.select(id);
+    return true;
+  }
+  mainModules.forEach(config => {
+    const b = button('', 'nav-item', () => switchPage(config.id));
+    b.dataset.page = config.id;
+    b.setAttribute('aria-label', config.name);
+    const icon = element('span', 'nav-icon'); icon.append(systemIcon(config.id)); b.append(icon);
+    const serial = element('span', 'nav-serial', String(mainModules.indexOf(config) + 1).padStart(2, '0')); serial.setAttribute('aria-hidden', 'true'); b.append(serial);
+    const label = element('span');
+    label.append(element('strong', '', config.name), element('small', '', config.en));
+    b.append(label);
+    $('system-nav').append(b);
+  });
+  $('system-nav').addEventListener('keydown', e => {
+    const current = e.target.closest('button[data-page]');
+    if (!current || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(e.key)) return;
+    e.preventDefault();
+    const index = mainModules.findIndex(m => m.id === current.dataset.page);
+    const next = e.key === 'Home' ? 0 : e.key === 'End' ? mainModules.length - 1 : (index + (['ArrowLeft', 'ArrowUp'].includes(e.key) ? -1 : 1) + mainModules.length) % mainModules.length;
+    switchPage(mainModules[next].id);
+    $('system-nav').querySelector('[data-page=' + mainModules[next].id + ']').focus();
+  });
+  function renderModule(config) {
+    const page = $('page-other');
+    if(config.id==='characters'){renderCharacterModule(page);return;}
+    if(config.id==='operations'){renderQuestModule(page);return;}
+    if(config.id==='network'){renderNetworkModule(page);return;}
+    moduleViews.get(config.id).commsStop?.();
+    // The image collection shares the archive head: library tabs, then its own categories.
+    page.replaceChildren(); page.dataset.module = config.id; page.classList.add('sec-page', 'media-page');
+    const head = element('header', 'sec-head'), title = element('div', 'sec-title');
+    const h = element('h1', '', '资料库'); h.id = 't2051x-other-title'; title.append(element('small', 'sec-eyebrow', 'ARCHIVE / ' + config.name), h);
+    const library = element('nav', 'sec-tabs'); library.setAttribute('aria-label', '资料库');
+    for (const [id, label] of [['archive', '文字档案'], ['media', '影像收藏']]) { const b = button(label, '', () => { if (id !== config.id) switchPage(id); }); b.setAttribute('aria-pressed', String(id === config.id)); library.append(b); }
+    head.append(title, element('span', 'sec-grow'), library);
+    const body = element('div', 'module-content'), tabs = element('nav', 'sec-tabs media-tabs');
+    tabs.setAttribute('aria-label', config.name + '分类');
+    const empty = element('div', 'empty-records');
+    const stage = element('div', 'module-stage');
+    stage.append(empty);
+    const tabLabel = element('p', 'eyebrow', config.tabs[0]);
+    empty.append(tabLabel, element('h2', '', config.empty), element('p', '', config.description));
+    empty.append(button('查看城市档案 ↗', 'text-button', () => switchPage('archive')));
+    const galleryRoot = config.id === 'media' && data.gallery?.characters?.length ? buildGalleryPanel() : null;
+    const questRoot = QUESTS_AVAILABLE && config.id === 'operations' && data.quests?.some(q => q.track !== 'main') ? null : null;
+    const mainRoot = QUESTS_AVAILABLE && config.id === 'operations' && data.quests?.some(q => q.track === 'main') ? null : null;
+    let historyRoot = null;
+    let detailPanel = null;
+    const customPanel = questRoot || galleryRoot;
+    const customIndex = config.customTab ?? 0;
+    if (questRoot) { stage.classList.add('has-gallery'); stage.append(questRoot); }
+    if (mainRoot) { stage.classList.add('has-gallery'); stage.append(mainRoot); }
+    if (galleryRoot) { stage.classList.add('has-gallery'); galleryRoot.classList.add('sec-panel'); stage.append(galleryRoot); }
+    const chooseNow = (index, animate = true) => {
+      if(config.id==='operations'&&!QUESTS_AVAILABLE&&index<2)return;
+      if(config.id==='media'){moduleViews.get('media').request?.abort();moduleViews.get('media').request=null;}
+      selectedModuleTabs[config.id]=index;
+      page.dataset.category = index;
+      tabs.querySelectorAll('button').forEach((tab, i) => tab.setAttribute('aria-pressed', String(i === index)));
+      tabLabel.textContent = config.tabs[index];
+      let panelShown = false;
+      if (config.id === 'operations') {
+        if (index === 2) { historyRoot?.remove(); historyRoot = null; stage.append(historyRoot); }
+        if (questRoot) questRoot.hidden = index !== 1;
+        if (mainRoot) mainRoot.hidden = index !== 0;
+        if (historyRoot) historyRoot.hidden = index !== 2;
+        panelShown = !!((index === 0 && mainRoot) || (index === 1 && questRoot) || index === 2);
+      } else if(config.id==='media' && index>0){
+        if(galleryRoot)galleryRoot.hidden=true;
+        detailPanel?.remove();detailPanel=index===3?buildStoryAlbum():buildEventPanel(index===1?'event':'scene');
+        detailPanel.classList.add('sec-panel');stage.append(detailPanel);panelShown=true;
+      } else if (customPanel) {
+        detailPanel?.remove();detailPanel=null;
+        const showCustom = index === customIndex;
+        customPanel.hidden = !showCustom;
+        panelShown = showCustom;
+      }
+      stage.classList.toggle('has-content', panelShown);
+      empty.style.display = panelShown ? 'none' : '';
+      sectionMotion(animate ? 'tab' : 'sync', page); if (animate) announce('已选择' + config.tabs[index]);
+      if (animate&&config.tabs) body.scrollTop = 0;scheduleView();
+    };
+    const choose=(index,animate=true)=>{const previous=selectedModuleTabs[config.id]||0;return animate?motion.update(stage,()=>chooseNow(index,true),{direction:Math.sign(index-previous)||1}):chooseNow(index,false);};
+    function buildStoryAlbum(){
+      const root=element('div','event-panel'),pictures=window.parent.CxxPlot?.album?.(readStatData()||{})||[];
+      root.append(element('p','eyebrow','STORY ILLUSTRATIONS / 剧情插图'));
+      if(!pictures.length){root.append(element('h2','','这里还没有剧情插图'),element('p','','已装载的剧情暂未配置插图。'));return root;}
+      const groups=new Map();for(const picture of pictures){if(!groups.has(picture.lineId))groups.set(picture.lineId,[]);groups.get(picture.lineId).push(picture);}
+      for(const rows of groups.values()){
+        const group=element('section','story-art-group'),grid=element('div','event-grid'),unlocked=rows.filter(p=>!p.locked&&p.url);
+        group.setAttribute('aria-label',rows[0].lineTitle);group.append(element('h3','',rows[0].lineTitle),grid);
+        for(const picture of rows){
+          const code=String(pictures.indexOf(picture)+1).padStart(2,'0');
+          if(picture.locked){const item=element('div','event-card story-art-card is-locked'),lock=element('div','story-art-lock');lock.append(element('span','story-art-code',code),element('p','','未解锁'));item.append(lock);item.setAttribute('aria-label','剧情插图 '+code+'，未解锁');grid.append(item);continue;}
+          const b=button('','event-card story-art-card',()=>openViewer(picture.lineTitle,unlocked.map(p=>p.url),unlocked.indexOf(picture),b)),img=element('img');img.alt=picture.caption;img.loading='lazy';img.decoding='async';b.setAttribute('aria-label',picture.caption);
+          if(contentClient)contentClient.bindImage(img,picture.url);else img.src=picture.url;
+          img.addEventListener('error',()=>{img.hidden=true;b.append(element('p','','图片暂不可用，解锁记录仍保留。'));},{once:true});b.append(img,element('h3','',picture.caption));grid.append(b);
+        }
+        root.append(group);
+      }
+      return root;
+    }
+    function buildEventPanel(category){
+      const entry=moduleViews.get('media');entry.request?.abort();const request=entry.request=new AbortController();entry.hide=()=>{if(entry.request){entry.request.abort();entry.request=null;entry.dirty=true;}};
+      const root=element('div','event-panel'),stamp=JSON.stringify(readStatData()?.terminal?.gameplay?.events || {});
+      root.append(element('p','setting-note','正在核对已保存的影像记录…'));
+      Promise.resolve(contentClient?.savedEventMedia?.({signal:request.signal}) || []).then(all=>{
+      if(request.signal.aborted||!root.isConnected || stamp!==JSON.stringify(readStatData()?.terminal?.gameplay?.events || {}))return;
+      const media=all.filter(m=>m.category===category);root.replaceChildren();
+      root.append(element('p','eyebrow','SAVED MEMORIES / 已解锁影像'));
+      if(!media.length){root.append(element('h2','','这里还没有已解锁的影像'),element('p','','完成对应事件并保存后，可在这里重看已解锁的插画。'));return root;}
+      const grid=element('div','event-grid');media.forEach((m,i)=>{const b=button('','event-card',()=>openViewer(m.name,media.map(x=>x.url),i,b)),img=element('img');img.loading='lazy';img.alt=m.alt;contentClient.bindImage(img,m.url);img.addEventListener('error',()=>{img.hidden=true;b.append(element('p','','图片暂不可用，已保留解锁记录。'));},{once:true});b.append(img,element('h3','',m.name));grid.append(b);});root.append(grid);
+      }).catch(e=>{if(!request.signal.aborted&&root.isConnected)root.replaceChildren(element('p','setting-note',e.message));}).finally(()=>{if(entry.request===request)entry.request=null;});return root;
+    }
+    function nsfwAllowed() {
+    try {
+      const P = parent?.Cxx236Preferences || globalThis.Cxx236Preferences;
+      if (P && typeof P.read === 'function' && typeof getVariables === 'function') return P.read(getVariables({ type: 'chat' }))?.nsfw === true;
+      if (typeof getVariables === 'function') return getVariables({ type: 'chat' })?.['__cxx_ui_preferences']?.nsfw === true;
+    } catch { /* 未在酒馆内运行时按关闭处理 */ }
+    return false;
+  }
+  function buildGalleryPanel() {
+      const chars = data.gallery.characters;
+      try { if (!buildGalleryPanel.listening) { buildGalleryPanel.listening = true; parent.addEventListener('cxx-ui-preferences-changed', () => { try { renderGrid(); } catch { /* 面板已卸载 */ } }); } } catch { /* 跨域或已卸载 */ }
+      const catLabel = key => key === 'standard' ? '立绘' : key === 'daily' ? '日常' : '瑟瑟';
+      const root = element('div', 'gallery-root');
+      const head = element('div', 'gallery-head');
+      head.append(element('p', 'eyebrow', 'CHARACTER ILLUSTRATION INDEX'));
+      const deck = element('div', 'gallery-deck'); deck.setAttribute('role', 'group'); deck.setAttribute('aria-label', '角色插画档案卡流');
+      chars.forEach((ch, index) => {
+        const countsText = '立绘 ' + ch.standard.length + ' · 日常 ' + ch.daily.length + ((ch.nsfw || []).length ? ' · 瑟瑟 ' + ch.nsfw.length : '');
+        const b = button('', 'gallery-card', () => positionGalleryDeck(index, true));
+        b.setAttribute('aria-label', ch.name + '，' + countsText);
+        const cover = element('div', 'gallery-cover'); cover.setAttribute('aria-hidden', 'true');
+        cover.style.backgroundImage = 'url("' + ch.av + '")';
+        cover.append(element('span', 'gallery-cover-code', String(index + 1).padStart(2, '0')), element('span', 'gallery-cover-label', ch.en));
+        b.append(cover, element('h3', '', ch.name), element('small', '', countsText));
+        deck.append(b);
+      });
+      const controls = element('div', 'deck-controls');
+      const pos = element('span', '', ''); pos.setAttribute('role', 'status');
+      const prev = button('←', '', () => positionGalleryDeck(galleryIndex - 1, true)); prev.setAttribute('aria-label', '上一位角色');
+      const next = button('→', '', () => positionGalleryDeck(galleryIndex + 1, true)); next.setAttribute('aria-label', '下一位角色');
+      controls.append(prev, pos, next);
+      const detail = element('div', 'gallery-detail');
+      const chips = element('div', 'gallery-cats'); chips.setAttribute('role', 'group'); chips.setAttribute('aria-label', '插画分类');
+      const galleryCats = [['standard', '立绘'], ['daily', '日常']];
+      if (chars.some(ch => (ch.nsfw || []).length)) galleryCats.push(['nsfw', '瑟瑟']);
+      galleryCats.forEach(([key, label]) => {
+        const b = button(label, '', () => { galleryCat = key; renderGrid(); });
+        b.dataset.cat = key; chips.append(b);
+      });
+      const info = element('p', 'gallery-info'); info.setAttribute('role', 'status');
+      const grid = element('div', 'gallery-grid');
+      detail.append(chips, info, grid);
+      root.append(head, deck, controls, detail);
+      function positionGalleryDeck(index, focus = false) {
+        galleryIndex = (index + chars.length) % chars.length;
+        deck.querySelectorAll('.gallery-card').forEach((card, i) => {
+          let slot = i - galleryIndex;
+          if (slot > chars.length / 2) slot -= chars.length;
+          if (slot < -chars.length / 2) slot += chars.length;
+          const depth = Math.abs(slot);
+          card.hidden = depth > 3;
+          card.style.setProperty('--slot', slot); card.style.setProperty('--depth', depth);
+          card.style.zIndex = 10 - depth;
+          card.setAttribute('aria-pressed', String(slot === 0)); card.tabIndex = slot === 0 ? 0 : -1;
+        });
+        pos.textContent = String(galleryIndex + 1).padStart(2, '0') + ' / ' + String(chars.length).padStart(2, '0');
+        renderGrid();
+        if (focus) deck.querySelector('[aria-pressed=true]')?.focus({ preventScroll: true });
+      }
+      function renderGrid() {
+        const ch = chars[galleryIndex], list = ch[galleryCat] || [];
+        chips.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cat === galleryCat)));
+        info.textContent = ch.name + ' · ' + catLabel(galleryCat) + ' ' + list.length + ' 张';
+        grid.replaceChildren();
+        const locked = galleryCat === 'nsfw' && !nsfwAllowed();
+        if (locked) info.textContent = ch.name + ' · ' + catLabel(galleryCat) + ' ' + list.length + ' 张 · 未开启（在设置里打开 NSFW 内容后可见）';
+        list.forEach((url, i) => {
+          if (locked) {
+            const b = button('', 'gallery-thumb is-locked', () => { info.textContent = 'NSFW 内容未开启：请打开卡内「设置 ← 内容尺度」开启后再看。'; });
+            b.setAttribute('aria-label', ch.name + ' ' + catLabel(galleryCat) + ' ' + (i + 1) + '，未开启 NSFW 内容');
+            const shell = document.createElement('span');
+            shell.textContent = '未开启';
+            shell.style.cssText = 'display:flex;align-items:center;justify-content:center;width:100%;height:100%;min-height:96px;font-size:12px;letter-spacing:.08em;color:var(--ink-dim,#8a8a95);border:1px dashed var(--line,#3a3a44);border-radius:6px';
+            b.append(shell); grid.append(b); return;
+          }
+          const b = button('', 'gallery-thumb', () => openViewer(ch.name + ' · ' + catLabel(galleryCat), list, i, b));
+          b.setAttribute('aria-label', ch.name + ' ' + catLabel(galleryCat) + ' ' + (i + 1) + '，打开查看器');
+          const img = document.createElement('img');
+          img.loading = 'lazy'; img.decoding = 'async'; img.alt = '';
+          if (contentClient) contentClient.bindImage(img, url, data.assetMeta?.[url]); else img.src = url;
+          if (img.complete && img.naturalWidth > 0) img.classList.add('loaded');
+          else img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
+          b.append(img); grid.append(b);
+        });
+      }
+      deck.addEventListener('keydown', e => {
+        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key) || !e.target.closest('.gallery-card')) return;
+        e.preventDefault();
+        positionGalleryDeck(e.key === 'Home' ? 0 : e.key === 'End' ? chars.length - 1 : galleryIndex + (e.key === 'ArrowLeft' ? -1 : 1), true);
+      });
+      positionGalleryDeck(galleryIndex);
+      return root;
+    }
+  // ===== 网路连接（独立演算）配置：只存本机，独立于显示偏好 =====
+  async function netRefreshDynamic(statusLine) {
+    const service=newsService(),request={controller:new AbortController()};netRequest=request;
+    try{if(!service)throw Error('总结新闻服务尚未就绪，请检查本卡核心脚本。');const ok=await service.refresh({signal:request.controller.signal});if(request.controller.signal.aborted)return false;if(statusLine)statusLine.textContent=service.state({light:true}).status;return ok;}
+    catch(e){if(!request.controller.signal.aborted&&statusLine)statusLine.textContent=e.message;return false;}
+    finally{if(netRequest===request)netRequest=null;}
+  }
+  // ===== 通讯页（DESIGN.md 10.11）：联系人、邮件、城市消息，各为列表＋详情 =====
+  function renderNetworkModule(page) {
+    const entry = moduleViews.get('network');
+    entry.commsStop?.(); entry.commsStop = null;
+    netRadioView?.destroy(); netRadioView = null;
+    page.replaceChildren(); page.dataset.module = 'network';
+    const root = element('section', 'sec-page net-page'); root.dataset.view = 'list';
+    const head = element('header', 'sec-head'), title = element('div', 'sec-title'), h = element('h1', '', '通讯');
+    h.id = 't2051x-other-title'; title.append(element('small', 'sec-eyebrow', 'NETWORK / 通讯'), h);
+    const tabs = element('nav', 'sec-tabs'); tabs.setAttribute('aria-label', '通讯分区');
+    const figure = element('div', 'sec-figure'), figureLabel = element('small'), figureValue = element('strong'); figure.append(figureLabel, figureValue);
+    head.append(title, element('span', 'sec-grow'), tabs, figure);
+    const body = element('div', 'net-view'); root.append(head, body); page.append(root);
+    const views = [['contacts', '联系人'], ['mail', '邮件'], ['city', '城市消息']];
+    let current = views.some(v => v[0] === viewState.comms) ? viewState.comms : 'contacts', cityTab = Math.min(2, Number(selectedModuleTabs.network) || 0);
+    const pick = { contact: null, mail: null, news: null, thread: null };
+    const phone = () => window.parent.CxxPhone, mailbox = () => window.parent.CxxMailbox;
+    const showDetail = () => { void motion.swap(body,()=>{root.dataset.view='detail';}); sectionMotion('select', root); root.querySelector('.net-back')?.focus({ preventScroll: true }); };
+    const back = () => { void motion.swap(body,()=>{root.dataset.view='list';},{direction:-1}); root.querySelector('.sec-row[aria-pressed=true]')?.focus({ preventScroll: true }); };
+    const backButton = () => button('‹ 返回列表', 'net-back', back);
+    const press = (list, selector, id) => list.querySelectorAll(selector).forEach(row => row.setAttribute('aria-pressed', String(row.dataset.id === id)));
+    const run = async (fn, status) => { try { await fn(); } catch (e) { (status || { set textContent(v) { announce(v); } }).textContent = e.message; } };
+    function columns() { const wrap = element('div', 'sec-body'), list = element('div', 'sec-list sec-list-pane'), detail = element('article', 'sec-detail net-detail'); wrap.append(list, detail); return { wrap, list, detail }; }
+    function paintFigure() {
+      const contacts = phone()?.read().contacts || [], mail = mailbox()?.state();
+      if (current === 'mail') { figureLabel.textContent = '未读'; figureValue.textContent = String(mail?.unread ?? 0); }
+      else if (current === 'contacts') { figureLabel.textContent = '已联系'; figureValue.textContent = String(contacts.filter(c => c.active).length); }
+      else { figureLabel.textContent = '动态'; figureValue.textContent = String((netDyn().news || []).length + data.news.length); }
+      for (const b of tabs.querySelectorAll('button')) if (b.dataset.view === 'mail') b.textContent = '邮件' + (mail?.unread ? ' · ' + mail.unread : '');
+    }
+    function avatar(contact, cls = 'net-avatar') {
+      const holder = element('span', cls, contact.avatar ? '' : contact.name.slice(-1)); holder.setAttribute('aria-hidden', 'true');
+      if (contact.avatar) { const img = element('img'); img.alt = ''; img.src = contact.avatar; img.onerror = () => holder.replaceChildren(document.createTextNode(contact.name.slice(-1))); holder.append(img); }
+      return holder;
+    }
+    // Contacts: the phone keeps the conversation; this page lists who can be reached and opens the line.
+    function contactsView() {
+      const service = phone(), { wrap, list, detail } = columns(); list.setAttribute('aria-label', '联系人列表');
+      if (!service) { list.append(element('p', 'sec-empty', '通讯器尚未就绪，请稍后重试。')); detail.hidden = true; return wrap; }
+      const snap = service.read(), contacts = [...snap.contacts].sort((a, b) => Number(b.active) - Number(a.active));
+      if (!contacts.length) { list.append(element('p', 'sec-empty', '通讯录还是空的。剧情中交换联系方式后，就可以在这里联系。')); detail.hidden = true; return wrap; }
+      if (!contacts.some(c => c.id === pick.contact)) pick.contact = (contacts.find(c => c.id === snap.selected) || contacts[0]).id;
+      for (const [label, test] of [['已取得联系方式', c => c.active], ['本分支未解锁', c => !c.active]]) {
+        const members = contacts.filter(test); if (!members.length) continue;
+        list.append(element('p', 'sec-group', label + ' · ' + members.length));
+        for (const c of members) {
+          const row = button('', 'sec-row net-contact', () => { pick.contact = c.id; press(list, '.net-contact', c.id); paintContact(); showDetail(); });
+          row.dataset.id = c.id; row.classList.toggle('is-locked', !c.active);
+          row.append(avatar(c), element('strong', '', c.name), element('small', '', c.active ? '已取得联系方式' : '此分支未解锁 · 旧记录保留')); list.append(row);
+        }
+      }
+      press(list, '.net-contact', pick.contact);
+      function paintContact() {
+        const snap = service.read(), c = snap.contacts.find(x => x.id === pick.contact); detail.replaceChildren(); if (!c) return;
+        const scroll = element('div', 'sec-scroll'), person = element('div', 'net-person'), name = element('div'), status = element('p', 'net-note');
+        name.append(element('p', 'sec-eyebrow', '私人线路'), element('h2', '', c.name), element('p', 'net-state', c.active ? '已取得联系方式' : '当前分支未解锁 · 旧记录保留'));
+        person.append(avatar(c, 'net-avatar is-large'), name); scroll.append(backButton(), person);
+        const turns = snap.selected && snap.selected === c.id ? (snap.turns || []).slice(-3) : [];
+        if (!c.active) scroll.append(element('p', 'net-note', '这条线路在本分支尚未建立。'));
+        else if (!turns.length) scroll.append(element('p', 'net-note', snap.selected === c.id ? '还没有往来记录。打开私聊后可以发消息或拨打语音。' : '打开私聊后，可以查看与' + c.name + '的往来记录。'));
+        else { const log = element('div', 'net-log'); log.setAttribute('aria-label', '最近往来'); for (const t of turns) { if (t.input) log.append(element('p', 'net-msg is-mine', t.input)); const reply = element('p', 'net-msg'); reply.append(element('b', '', c.name), document.createTextNode(t.reply || t.error || '等待回复')); log.append(reply); } scroll.append(log); }
+        scroll.append(status);
+        const actions = element('div', 'sec-actions'), open = async dial => { await service.select(c.id); service.open?.('chat'); if (dial) await service.dial(); };
+        const call = button('拨打语音', 'sec-button', () => run(() => open(true), status)); call.disabled = !c.active || !snap.caps?.text || !snap.caps?.call || snap.busy; if (call.disabled && c.active) call.title = '需要先在通讯器设置中配置镜译的通话与声音。';
+        const chat = button('打开私聊', 'sec-button is-primary', () => run(() => open(false), status)); chat.disabled = !c.active;
+        actions.append(call, chat); detail.append(scroll, actions);
+      }
+      paintContact(); return wrap;
+    }
+    // Mail: official notices from the shared inbox; opening one marks it read.
+    function mailView() {
+      const inbox = mailbox(), { wrap, list, detail } = columns(); list.setAttribute('aria-label', '收件列表');
+      if (!inbox) { list.append(element('p', 'sec-empty', '收件箱尚未就绪，请稍后重试。')); detail.hidden = true; return wrap; }
+      const s = inbox.state(), items = [...(s.items || [])].sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt)), date = m => new Date(m.publishedAt).toLocaleDateString('zh-CN');
+      const tools = element('div', 'net-tools'), status = element('p', 'net-status', (s.status || '官方邮箱') + ' · ' + (s.unread || 0) + ' 封未读'); status.setAttribute('role', 'status');
+      const refresh = button('刷新', 'sec-button', () => run(() => inbox.refresh(true), status)); refresh.disabled = s.loading;
+      tools.append(status, refresh, button('全部已读', 'sec-button', () => run(() => inbox.mark(), status))); list.append(tools);
+      if (!items.length) list.append(element('p', 'sec-empty', s.loading ? '正在收取通知…' : '暂无通知。'));
+      else list.append(element('p', 'sec-group', '官方通知 · ' + items.length));
+      for (const m of items) {
+        const unread = s.read?.[m.id] !== m.revision, row = button('', 'sec-row net-mail', () => { pick.mail = m.id; inbox.mark(m.id); showDetail(); });
+        row.dataset.id = m.id; const icon = element('span', 'sec-icon' + (unread ? ' is-main' : '')); icon.setAttribute('aria-hidden', 'true');
+        row.append(icon, element('strong', '', m.title), element('span', 'sec-chip' + (unread ? ' is-attention' : ''), unread ? '未读' : '已读'), element('small', '', date(m) + ' · 官方通知')); list.append(row);
+      }
+      const m = items.find(x => x.id === pick.mail) || items[0]; press(list, '.net-mail', m?.id);
+      if (!m) { detail.hidden = true; return wrap; }
+      const scroll = element('div', 'sec-scroll'); scroll.append(backButton(), element('p', 'sec-eyebrow', 'OFFICIAL INBOX / 官方邮箱'), element('h2', '', m.title), element('p', 'net-state', '发件人 · 东京都 2051 官方  /  ' + new Date(m.publishedAt).toLocaleString('zh-CN')), element('div', 'net-mail-body', m.body));
+      detail.append(scroll); return wrap;
+    }
+    // City messages: news and forum as list and article; the radio uses the shared player.
+    function cityView() {
+      const wrap = element('div', 'net-city'), sub = element('nav', 'sec-tabs net-subtabs'); sub.setAttribute('aria-label', '城市消息分类');
+      ['东京都新闻', '网路论坛', '广播电台'].forEach((name, index) => { const b = button(name, '', () => { if (cityTab === index) return; cityTab = index; selectedModuleTabs.network = index; paint('tab'); }); b.setAttribute('aria-pressed', String(index === cityTab)); sub.append(b); });
+      const counts = netState?.capture()?.context.taskCounts || { '进行中': '未知', '完成': '未知' };
+      const status = element('p', 'net-status', newsService()?.state({ light: true }).status || '当前任务：进行中 ' + counts['进行中'] + ' · 完成 ' + counts['完成'] + '。这里展示当前故事的动态。'); status.setAttribute('role', 'status');
+      const tools = element('div', 'net-tools'), summary = button('立即总结', 'sec-button', async () => { summary.disabled = true; try { const service = newsService(); if (!service) throw Error('总结服务尚未就绪'); await service.summarizeNow(); status.textContent = service.state({ light: true }).status; summaryBoard.refresh(); } catch (e) { status.textContent = e.message; } finally { summary.disabled = false; } });
+      const refresh = button('↻ 请求新动态', 'sec-button', async () => { refresh.disabled = true; const ok = await netRefreshDynamic(status); refresh.disabled = false; if (ok) paint(); });
+      tools.append(status, summary, refresh);
+      const fold = element('details', 'net-summary'); fold.append(element('summary', '', '故事总结与新闻来源'));
+      const summaryBoard = CxxSummaryUI235.mount({ document, root: fold, service: newsService });
+      wrap.append(sub);
+      if (cityTab === 2) {
+        const radio = window.parent.CxxRadio, host = element('div', 'net-radio');
+        if (radio) netRadioView = radio.mount({ document, parent: host }); else host.append(element('p', 'sec-empty', '电台尚未就绪，请重新打开终端。'));
+        wrap.append(host); return wrap;
+      }
+      const { wrap: cols, list, detail } = columns(); list.prepend(tools); wrap.append(cols);
+      const outlet = item => item.outlet || '都营新闻';
+      if (cityTab === 0) {
+        const all = [...(netDyn().news || []), ...data.news].map((n, i) => ({ ...n, key: (n.dynamic ? 'd' : 's') + i }));
+        if (!all.length) list.append(element('p', 'sec-empty', '暂无可读取的新闻。'));
+        for (const column of ['时事', '乐队圈', '科技', '其他']) {
+          const members = all.filter(n => (n.column || '时事') === column || column === '其他' && !['时事', '乐队圈', '科技'].includes(n.column || '时事')); if (!members.length) continue;
+          list.append(element('p', 'sec-group', column + ' · ' + members.length));
+          for (const n of members) { const row = button('', 'sec-row net-news', () => { pick.news = n.key; press(list, '.net-news', n.key); paintNews(n); showDetail(); }); row.dataset.id = n.key; const icon = element('span', 'sec-icon' + (n.dynamic ? ' is-main' : '')); icon.setAttribute('aria-hidden', 'true'); row.append(icon, element('strong', '', n.title), element('span', 'sec-chip' + (outlet(n) === '街头问讯' ? ' is-attention' : ''), outlet(n)), element('small', '', [n.time, n.dynamic && '网路动态'].filter(Boolean).join(' · '))); list.append(row); }
+        }
+        list.append(fold);
+        const chosen = all.find(n => n.key === pick.news) || all[0]; if (chosen) { pick.news = chosen.key; press(list, '.net-news', chosen.key); paintNews(chosen); } else detail.hidden = true;
+        function paintNews(n) { detail.replaceChildren(); const scroll = element('div', 'sec-scroll'); scroll.append(backButton(), element('p', 'sec-eyebrow', [outlet(n), n.column || '时事', n.dynamic && '网路动态'].filter(Boolean).join(' / ')), element('h2', '', n.title), element('p', 'net-state', n.time || ''), element('p', 'net-lead', n.lead || ''), element('p', 'net-article', n.body || '')); detail.append(scroll); }
+      } else {
+        const all = [...(netDyn().threads || []), ...data.forum].map((t, i) => ({ ...t, key: (t.dynamic ? 'd' : 's') + i }));
+        if (!all.length) list.append(element('p', 'sec-empty', '该版块暂无帖子。'));
+        for (const board of [...new Set(all.map(t => t.board || '杂谈'))]) {
+          const members = all.filter(t => (t.board || '杂谈') === board);
+          list.append(element('p', 'sec-group', board + ' · ' + members.length));
+          for (const t of members) { const row = button('', 'sec-row net-thread', () => { pick.thread = t.key; press(list, '.net-thread', t.key); paintThread(t); showDetail(); }); row.dataset.id = t.key; const icon = element('span', 'sec-icon' + (t.dynamic ? ' is-main' : '')); icon.setAttribute('aria-hidden', 'true'); row.append(icon, element('strong', '', t.title), element('span', 'sec-chip', (t.posts || []).length + ' 层'), element('small', '', [t.author, t.time, t.dynamic && '网路动态'].filter(Boolean).join(' · '))); list.append(row); }
+        }
+        list.append(fold);
+        const chosen = all.find(t => t.key === pick.thread) || all[0]; if (chosen) { pick.thread = chosen.key; press(list, '.net-thread', chosen.key); paintThread(chosen); } else detail.hidden = true;
+        function paintThread(t) { detail.replaceChildren(); const scroll = element('div', 'sec-scroll'), floors = element('div', 'net-floors'); (t.posts || []).forEach((p, i) => { const floor = element('div', 'net-floor'); floor.append(element('b', '', (i + 1) + 'F ' + (p.author || '匿名')), element('span', '', p.text || '')); floors.append(floor); }); scroll.append(backButton(), element('p', 'sec-eyebrow', (t.board || '杂谈') + (t.dynamic ? ' / 网路动态' : '')), element('h2', '', t.title), element('p', 'net-state', [t.author, t.time, (t.posts || []).length + ' 层'].filter(Boolean).join(' · ')), floors); detail.append(scroll); }
+      }
+      root.refreshNews = () => { if (!newsService()) return; const next = newsService().state({ light: true }); summaryBoard.refresh(); status.textContent = next.status + (next.stale ? ' 当前旧新闻已过期。' : ''); if (next.dynamic?.generatedAt !== root.dataset.newsVersion) { root.dataset.newsVersion = next.dynamic?.generatedAt || ''; if (cityTab !== 2) paint(); } };
+      return wrap;
+    }
+    function paintNow(kind) {
+      netRadioView?.destroy(); netRadioView = null; root.refreshNews = null;
+      for (const b of tabs.querySelectorAll('button')) b.setAttribute('aria-pressed', String(b.dataset.view === current));
+      root.dataset.comms = current; root.dataset.view = 'list';
+      body.replaceChildren(current === 'contacts' ? contactsView() : current === 'mail' ? mailView() : cityView());
+      paintFigure(); if (kind) sectionMotion(kind, root); else sectionMotion('sync', root);
+    }
+    function paint(kind){return kind?motion.swap(body,()=>paintNow(kind)):paintNow();}
+    function choose(view, kind = 'tab') { if (current !== view) { current = view; viewState.comms = view; scheduleView(); if (view !== 'city') stopNetwork(); } if (view === 'mail') void mailbox()?.refresh(); paint(kind); }
+    for (const [id, label] of views) { const b = button(label, '', () => { if (current !== id) choose(id); }); b.dataset.view = id; tabs.append(b); }
+    // Phone and inbox changes repaint the open list; a running radio is left alone.
+    let phoneSignature = '';
+    const stops = [phone()?.subscribe?.(snap => { const next = JSON.stringify([snap.contacts.map(c => [c.id, c.active, c.avatar]), snap.selected, (snap.turns || []).length, snap.busy]); if (next === phoneSignature) return; phoneSignature = next; if (current === 'contacts' && !root.contains(document.activeElement?.closest?.('.net-detail'))) paint(); else paintFigure(); }), mailbox()?.subscribe?.(() => { if (current === 'mail') paint(); else paintFigure(); })].filter(Boolean);
+    entry.commsStop = () => stops.forEach(stop => stop());
+    entry.select = value => { if (typeof value === 'number') { cityTab = Math.max(0, Math.min(2, value)); selectedModuleTabs.network = cityTab; choose('city', 'enter'); return; } const view = views.find(v => v[1] === value || v[0] === value)?.[0]; if (view) choose(view, 'enter'); else { const index = ['东京都新闻', '网路论坛', '广播电台'].indexOf(value); if (index >= 0) entry.select(index); } };
+    entry.update = () => { if (entry.contentRevision !== contentStamp) { activeModulePage = entry.root; renderModule(modules.find(m => m.id === 'network')); return; } if (current === 'city') root.refreshNews?.(); else if (current !== 'contacts' || !root.contains(document.activeElement)) paint(); else paintFigure(); stats.updates++; };
+    entry.contentRevision = contentStamp;
+    paint();
+  }
+
+    config.tabs.forEach((name, index) => {
+      const b = button(name, '', () => { if (selectedModuleTabs[config.id] !== index) choose(index); });
+      b.setAttribute('aria-pressed', String(index === 0)); tabs.append(b);
+    });
+    body.append(tabs, stage); page.append(head, body);
+    const selectedQuest = config.id === 'operations' && data.quests?.find(q => q.id === state.questId);
+    moduleViews.get(config.id).select=value=>choose(typeof value==='number'?value:Math.max(0,config.tabs.indexOf(value)),false);
+    moduleViews.get(config.id).contentRevision=contentStamp;
+    moduleViews.get(config.id).update=()=>{const entry=moduleViews.get(config.id),scroll=body.scrollTop;if(entry.contentRevision!==contentStamp){activeModulePage=entry.root;renderModule(config);entry.root.querySelector('.module-content').scrollTop=scroll;stats.updates++;return;}choose(selectedModuleTabs[config.id]||0,false);body.scrollTop=scroll;stats.updates++;};
+    choose(config.id === 'operations' ? !QUESTS_AVAILABLE ? 2 : selectedQuest?.track === 'main' ? 0 : 1 : config.id==='characters'?0:selectedModuleTabs[config.id] || 0, false);
+    if (selectedQuest) [...page.querySelectorAll('.quest-row')].find(row => row.dataset.questId === selectedQuest.id)?.click();
+  }
+  function dimensions(record) {
+    const dl = element('dl', 'dimensions');
+    (record.dims || []).forEach(d => {
+      const group = element('div');
+      group.append(element('dt', '', d.k), element('dd', '', d.v));
+      if (d.d) group.append(element('p', '', d.d));
+      dl.append(group);
+    });
+    return dl;
+  }
+  const recordOf = selected => selected.kind === 'place' ? (selected.mapId ? locationById.get(locationKey(selected.mapId, selected.id)) : nodeById.get(selected.id)) : regionById.get(selected.id);
+  function openReader(selection, opener) {
+    if(selection.kind==='place'&&window.TOKYO_TERMINAL_MAP_CONTROL)return window.TOKYO_TERMINAL_MAP_CONTROL.focus(selection.mapId||'tokyo-central',selection.id);
+    const record = recordOf(selection);
+    if (!record) return false;
+    readerRecord = selection; readerOpener = opener;
+    const body = $('reader-body'); body.replaceChildren();
+    const title = element('h1', '', record.name); title.id = 't2051x-reader-title';
+    body.append(title, element('p', 'cover', recordCover(record)));
+    if (record.desc) body.append(element('p', 'description', record.desc));
+    else if (selection.kind === 'place') body.append(element('p', 'empty-result', '暂无收录该地点的正式档案。可以先在地图中查看位置与已有关联。'));
+    if (record.dims) body.append(dimensions(record));
+    body.append(element('p', 'record-code', 'ARCHIVE / ' + record.id.toUpperCase()));
+    $('reader-kind').textContent = selection.kind === 'region' ? 'SECTOR RECORD / 地区' : 'PLACE RECORD / 地点';
+    $('reader-map').hidden = selection.kind !== 'place';
+    openDialog($('reader')); body.scrollTop = readingPositions.get(selectionKey(selection)) || 0;
+    return true;
+  }
+  $('close-reader').addEventListener('click', () => closeDialog($('reader')));
+  $('reader').addEventListener('close', () => {
+    if (readerRecord) readingPositions.set(selectionKey(readerRecord), $('reader-body').scrollTop);
+    if (readerOpener?.isConnected) readerOpener.focus({ preventScroll: true });
+  });
+  $('reader-map').addEventListener('click', () => {
+    const selection = readerRecord;
+    if (!selection || selection.kind !== 'place') return;
+    const mapId = selection.mapId || 'tokyo-central', control = window.TOKYO_TERMINAL_MAP_CONTROL;
+    $('reader').close();
+    if(!control?.focus(mapId,selection.id))announce('暂时无法定位这个地点，请重新打开地图。');
+  });
+  function openViewer(label, list, pos, opener) {
+    if (!list?.length) return;
+    viewerLabel = label; viewerList = list; viewerPos = pos; viewerOpener = opener;
+    viewerScrollHost = opener?.closest?.('.module-content') || null;
+    viewerScrollTop = viewerScrollHost ? viewerScrollHost.scrollTop : 0;
+    updateViewer();
+    openDialog($('gallery-viewer'));
+    announce('已打开图片查看器');
+  }
+  function updateViewer() {
+    const pic = $('viewer-pic');
+    const feedback = $('viewer-feedback');
+    feedback.hidden = true;
+    pic.classList.remove('loaded');
+    pic.alt = viewerLabel + ' ' + (viewerPos + 1);
+    pic.onload = () => { pic.classList.add('loaded'); feedback.hidden = true; };
+    pic.onerror = () => { pic.classList.remove('loaded'); feedback.hidden = false; };
+    const resources = window.CxxResources || window.parent.CxxResources;
+    pic.src = resources?.source(viewerList[viewerPos]) || viewerList[viewerPos];
+    if (pic.complete && pic.naturalWidth > 0) pic.classList.add('loaded');
+    $('viewer-label').textContent = viewerLabel;
+    $('viewer-name').textContent = viewerLabel.split(' · ')[0];
+    $('viewer-position').textContent = String(viewerPos + 1).padStart(2, '0') + ' / ' + String(viewerList.length).padStart(2, '0');
+  }
+  $('close-viewer').addEventListener('click',()=>closeDialog($('gallery-viewer')));
+  $('viewer-retry').addEventListener('click', () => {
+    const resources = window.CxxResources || window.parent.CxxResources;
+    if (resources?.source(viewerList[viewerPos]) !== viewerList[viewerPos]) resources?.retry();
+    updateViewer();
+  });
+  $('viewer-prev').addEventListener('click', () => { viewerPos = (viewerPos - 1 + viewerList.length) % viewerList.length; updateViewer(); });
+  $('viewer-next').addEventListener('click', () => { viewerPos = (viewerPos + 1) % viewerList.length; updateViewer(); });
+  $('gallery-viewer').addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); $('viewer-prev').click(); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); $('viewer-next').click(); }
+  });
+  $('gallery-viewer').addEventListener('close', () => {
+    if (viewerScrollHost?.isConnected) viewerScrollHost.scrollTop = viewerScrollTop;
+    if (viewerOpener?.isConnected) viewerOpener.focus({ preventScroll: true });
+  });
+  function renderArchive() {
+    const list = $('archive-grid'), query = $('archive-search').value.trim().toLocaleLowerCase();
+    const previous = selectionKey(archiveItems[archiveIndex]?.selection);
+    list.replaceChildren();
+    const names = { city: '城市档案', setting: '世界设定', library: '文库' }, cityCount = data.regions.length + locationRecords.length;
+    list.setAttribute('aria-label', names[archiveKind] + '列表');
+    rootEl.querySelectorAll('[data-archive]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.archive === archiveKind)));
+    rootEl.querySelectorAll('[data-archive-count]').forEach(b => { b.textContent = b.dataset.archiveCount === 'city' ? String(cityCount) : '0'; });
+    $('archive-kind-title').textContent = names[archiveKind];
+    $('archive-description').textContent = archiveKind === 'city' ? '地区概况与地点索引。尚无正文的地点会标明，位置可在地图中查看。' : '公开的记录将在此归档。';
+    $('archive-count').textContent = archiveKind === 'city' ? String(cityCount) : '0';
+    $('archive-search-box').hidden = archiveKind !== 'city';
+    archiveItems = [];
+    if (archiveKind !== 'city') {
+      const empty = element('div', 'sec-empty');
+      empty.append(element('p', '', '暂无可读取的' + names[archiveKind] + '。'), button('返回城市档案', 'sec-link', () => { archiveKind = 'city'; renderArchive(); }));
+      list.append(empty); $('archive-selection').hidden = true; $('page-archive').dataset.view = 'list';
+      return;
+    }
+    archiveItems = [...data.regions.map(r => ({ selection: { kind: 'region', id: r.id }, record: r })),
+      ...locationRecords.map(n => ({ selection: { kind: 'place', mapId: n.mapId, id: n.id }, record: n }))].filter(item => (item.record.name + ' ' + recordCover(item.record)).toLocaleLowerCase().includes(query));
+    // Regions first, then places, each under its own group title.
+    const groups = [['地区', 'region'], ['地点', 'place']];
+    for (const [label, kind] of groups) {
+      const members = archiveItems.map((item, index) => [item, index]).filter(([item]) => item.selection.kind === kind);
+      if (!members.length) continue;
+      list.append(element('p', 'sec-group', label + ' · ' + members.length));
+      for (const [item, index] of members) {
+        const row = button('', 'sec-row archive-row', () => { void motion.swap($('archive-selection'),()=>{positionArchive(index);$('page-archive').dataset.view='detail';}); sectionMotion('select', $('page-archive')); if (mobileQuery.matches) $('archive-back').focus({ preventScroll: true }); });
+        row.dataset.index = index;
+        row.setAttribute('aria-label', item.record.name + '，' + (kind === 'region' ? '地区档案' : item.record.desc ? '地点档案' : '地点索引，暂无正式档案'));
+        const icon = element('span', 'sec-icon archive-icon'); icon.setAttribute('aria-hidden', 'true');
+        row.append(icon, element('strong', '', item.record.name), element('span', 'archive-code', String(index + 1).padStart(3, '0')),
+          element('small', '', (kind === 'region' ? (item.record.en || '地区') : item.record.cat) + ' · ' + recordCover(item.record)));
+        list.append(row);
+      }
+    }
+    if (!archiveItems.length) list.append(element('p', 'sec-empty', '没有匹配资料，请试试其他名称。'));
+    $('archive-selection').hidden = !archiveItems.length;
+    if (!archiveItems.length) $('page-archive').dataset.view = 'list';
+    positionArchive(Math.max(0, archiveItems.findIndex(item => selectionKey(item.selection) === previous)));
+  }
+  let archiveItems = [], archiveIndex = 0, archiveFigureTurn = 0;
+  const archiveMap = 'url("data:image/svg+xml,' + encodeURIComponent(data.svg) + '")';
+  // The record picture follows the story's background index by place name; the city map stands in otherwise.
+  function showArchiveFigure(record) {
+    const img = $('archive-figure'), turn = ++archiveFigureTurn, host = window.parent;
+    let url = ''; try { url = host.__cxx_gal_g1__?.background?.({ location: record.name, time: '' })?.url || ''; } catch {}
+    img.parentElement.style.backgroundImage = archiveMap; img.hidden = true; img.removeAttribute('src');
+    if (!url) return;
+    const resources = host.CxxResources;
+    Promise.resolve(resources ? resources.acquire(url) : { url, release() {} }).then(async lease => {
+      try { if (turn !== archiveFigureTurn) return; const full = new Image(); full.src = lease.url; await full.decode(); if (turn === archiveFigureTurn) { img.src = full.src; img.hidden = false; } }
+      finally { lease.release?.(); }
+    }).catch(() => {});
+  }
+  function positionArchive(index, focus = false) {
+    if (!archiveItems.length) return;
+    archiveIndex = (index + archiveItems.length) % archiveItems.length;
+    const current = archiveItems[archiveIndex], record = current.record, region = current.selection.kind === 'region';
+    $('archive-grid').querySelectorAll('.archive-row').forEach(row => {
+      const on = Number(row.dataset.index) === archiveIndex;
+      row.setAttribute('aria-pressed', String(on)); row.tabIndex = on ? 0 : -1;
+    });
+    $('archive-position').textContent = String(archiveIndex + 1).padStart(2, '0') + ' / ' + String(archiveItems.length).padStart(2, '0');
+    $('archive-prev').disabled = $('archive-next').disabled = archiveItems.length === 1;
+    $('archive-selected-kind').textContent = region ? 'SECTOR RECORD / 地区' : 'PLACE RECORD / ' + record.cat;
+    $('archive-selected-title').textContent = record.name;
+    $('archive-selected-description').textContent = recordCover(record) + (!region && !record.desc ? ' · 暂无正式档案' : '');
+    const facts = $('archive-facts'); facts.replaceChildren();
+    if (record.dims) facts.append(dimensions(record));
+    else facts.append(element('p', 'archive-summary', record.desc || '暂无收录该地点的正式档案。可以先在地图中查看位置与已有关联。'));
+    $('archive-map').hidden = region;
+    $('archive-read').textContent = region ? '阅读当前档案 ↗' : '在地图中打开 ↗';
+    showArchiveFigure(record);
+    scheduleView();
+    if (focus) $('archive-grid').querySelector('.archive-row[aria-pressed=true]')?.focus({ preventScroll: true });
+  }
+  const stepArchive = step => { void motion.swap($('archive-selection'),()=>positionArchive(archiveIndex+step),{direction:step}); $('archive-grid').querySelector('.archive-row[aria-pressed=true]')?.scrollIntoView({ block: 'nearest' }); sectionMotion('select', $('page-archive')); };
+  $('archive-prev').addEventListener('click', () => stepArchive(-1));
+  $('archive-next').addEventListener('click', () => stepArchive(1));
+  $('archive-read').addEventListener('click', () => { if (archiveItems.length) openReader(archiveItems[archiveIndex].selection, $('archive-read')); });
+  $('archive-map').addEventListener('click', () => { const current = archiveItems[archiveIndex]; if (current?.selection.kind === 'place') openReader(current.selection, $('archive-map')); });
+  $('archive-back').addEventListener('click', () => { void motion.swap($('archive-grid'),()=>{$('page-archive').dataset.view='list';},{direction:-1}); $('archive-grid').querySelector('.archive-row[aria-pressed=true]')?.focus({ preventScroll: true }); });
+  $('archive-grid').addEventListener('keydown', e => {
+    if (!['ArrowUp', 'ArrowDown', 'Home', 'End'].includes(e.key) || !e.target.closest('.archive-row')) return;
+    e.preventDefault();
+    positionArchive(e.key === 'Home' ? 0 : e.key === 'End' ? archiveItems.length - 1 : archiveIndex + (e.key === 'ArrowUp' ? -1 : 1), true);
+  });
+  $('archive-search').addEventListener('input', renderArchive);
+  rootEl.querySelectorAll('[data-library]').forEach(b => b.addEventListener('click', () => { if (b.dataset.library === 'media') switchPage('media'); }));
+  rootEl.querySelectorAll('[data-archive]').forEach(b => b.addEventListener('click', () => { archiveKind = b.dataset.archive; renderArchive(); }));
+  function closeTerminal() {terminalVisible=false;for(const e of moduleViews.values()){e.hide?.();e.player?.setVisible(false);}saveView();emitApp({route:true});
+    stopNetwork();stopPageMotion();  save(); $('terminal').hidden = true; fitHostViewport(); try { document.getElementById('t2051x-fab').focus({ preventScroll: true }); } catch (_) {}
+  }
+  $('close-terminal').addEventListener('click', closeTerminal);
+  function requestHostTerminal() {
+    try {
+      const frame = window.frameElement, host = frame?.ownerDocument;
+      if (!host || Popover.isOpen(frame)) return false;
+      return !host.dispatchEvent(new host.defaultView.CustomEvent('cxx:open-native-terminal', { cancelable: true, detail: { frame } }));
+    } catch (_) { return false; }
+  }
+  let hostChat = null, hostFrame = null, hostResize = null;
+  function fitHostViewport() {
+    try {
+      if (!hostChat || !hostFrame) return;
+      const frame = hostFrame.getBoundingClientRect(), chat = hostChat.getBoundingClientRect();
+      const full = Popover.isOpen(hostFrame);
+      const top = full ? 0 : Math.max(0, chat.top - frame.top);
+      const bottom = full ? 0 : Math.max(0, frame.bottom - chat.bottom);
+      rootEl.style.setProperty('--t2051x-visible-top', top + 'px');
+      rootEl.style.setProperty('--t2051x-visible-bottom', bottom + 'px');
+      $('terminal').style.top = top + 'px';
+      $('terminal').style.bottom = bottom + 'px';
+    } catch (_) { /* 独立页面或跨域宿主沿用 iframe 边界 */ }
+  }
+  function releaseHostViewport() {
+    hostChat?.removeEventListener('scroll', fitHostViewport);
+    hostFrame?.removeEventListener('toggle', fitHostViewport);
+    hostResize?.disconnect(); hostResize = null;
+    try { window.parent.removeEventListener('resize', fitHostViewport); } catch (_) {}
+    hostChat = null; hostFrame = null;
+    rootEl.style.removeProperty('--t2051x-visible-top'); rootEl.style.removeProperty('--t2051x-visible-bottom');
+    $('terminal').style.top = ''; $('terminal').style.bottom = '';
+  }
+  function useHostViewport(scroll = true) {
+    releaseHostViewport();
+    try {
+      hostFrame = window.frameElement;
+      // The shared terminal owns the full visible viewport. Chat clipping is
+      // only for old inline embeds, including when a WebView lacks popovers.
+      if (hostFrame?.id === 'cxx-shared-terminal-233') return;
+      hostChat = hostFrame?.ownerDocument.getElementById('chat');
+      if (!hostChat) return;
+      if (scroll && !Popover.isOpen(hostFrame)) hostFrame.scrollIntoView({ block: 'start', behavior: 'instant' });
+      hostChat.addEventListener('scroll', fitHostViewport, { passive: true });
+      hostFrame.addEventListener('toggle', fitHostViewport);
+      window.parent.addEventListener('resize', fitHostViewport);
+      hostResize = new ResizeObserver(fitHostViewport);
+      hostResize.observe(hostChat); hostResize.observe(hostFrame);
+      fitHostViewport();
+    } catch (_) { /* 不要求宿主同源 */ }
+  }
+  useHostViewport(false);
+  window.addEventListener('pageshow', () => useHostViewport(false));
+  let booted = false;
+  function boot() {
+    if (booted) return; booted = true;
+    applyPrefs();
+  }
+  document.getElementById('t2051x-fab').addEventListener('click', () => {
+    if (requestHostTerminal()) return;
+    const refresh = booted; boot();
+    $('terminal').hidden = false;
+    useHostViewport();
+    switchPage('city',{replace:true});terminalVisible=true;emitApp({route:true});
+    $('system-nav').querySelector('[data-page=' + groupOf(state.page) + ']').focus({ preventScroll: true });
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape' || $('reader').open || $('gallery-viewer').open || $('terminal').hidden) return;
+    e.preventDefault();
+    if(state.page==='city'&&window.TOKYO_TERMINAL_MAP_CONTROL?.escape())return;
+    if(document.documentElement.dataset.cxxEmbedded==='true'){closeTerminal();return;}
+    if(state.page!=='city'){switchPage('city');$('system-nav').querySelector('[data-page=city]').focus();}
+    else closeTerminal();
+  });
+  $('motion-options').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const service=parent.Cxx236Preferences;if(!service){announce('显示设置未就绪');return;}
+    service.save({level:({full:'high',reduced:'medium',off:'low'})[b.dataset.motion],gal:service.read().gal}).then(()=>applyPrefs()).catch(e=>announce('特效未保存：'+e.message));
+  });
+  // 网路连接设置
+  function netConnSummary() {
+    const c = netCfg();
+    return c.apiBase && c.model ? '已配置，模型：' + c.model : '未配置——网路页的「请求新动态」需要它。';
+  }
+  function loadNetCfgForm() {
+    const cfg = netCfg();
+    $('net-api').value = cfg.apiBase || '';
+    $('net-key').value = cfg.apiKey || '';
+    $('net-model').value = cfg.model || '';
+    $('net-sync').checked = cfg.syncStory === true;
+    $('net-status').textContent = netConnSummary();
+  }
+  const connectionTools=window.parent.CxxApiConnection||window.CxxApiConnection;
+  connectionTools?.mountModels({document,parent:$('net-model').parentElement,fields:{apiBase:$('net-api'),apiKey:$('net-key'),model:$('net-model')},service:newsService});
+  ['net-api', 'net-key', 'net-model'].forEach(id => $(id).addEventListener('change', () => {
+    saveNetCfg({ apiBase: $('net-api').value.trim(), apiKey: $('net-key').value.trim(), model: $('net-model').value.trim() });
+    $('net-status').textContent = netConnSummary();
+  }));
+  $('net-sync').addEventListener('change', e => {
+    saveNetCfg({ syncStory: e.target.checked });
+    $('net-status').textContent = netConnSummary();
+  });
+  loadNetCfgForm();
+
+
+  const summarySettings235=CxxSummaryUI235.mount({document,root:$('net-status').parentElement,service:newsService,settings:true});
+  const refreshSummarySettings235=()=>summarySettings235.refresh();
+  appListeners.add(()=>{if(terminalVisible&&state.page==='settings')refreshSummarySettings235();});
+  $('font-size').addEventListener('input', e => { prefs.font = Number(e.target.value); applyPrefs(); save(); });
+  $('texture').addEventListener('input', e => { prefs.texture = Number(e.target.value); applyPrefs(); save(); });
+  $('restore-view').addEventListener('change', e => { prefs.restore = e.target.checked; save(); });
+  $('reset-settings').addEventListener('click', () => { Object.assign(prefs, defaults); applyPrefs(); save(); announce('显示设置已恢复默认值'); });
+  reducedQuery.addEventListener('change', applyPrefs);
+  parent.addEventListener('cxx-ui-preferences-changed',applyPrefs);
+  window.addEventListener('pagehide',()=>parent.removeEventListener('cxx-ui-preferences-changed',applyPrefs),{once:true});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){stopNetwork();stopPageMotion();}});
+  let contentStamp = '';
+  function checkContent(event={}) {
+    hasInstalledSnapshot=false;const sd=readStatData()||{},revision=contentClient.readHost()?.contentRevision||'';
+    const storyArt=Object.entries(sd.terminal?.quests||{}).filter(([,record])=>record.line?.illustrations||record.graph).map(([id,record])=>[id,record.line?.illustrations,record.line?null:record.graph?.nodes,record.line?null:record.graph?.unlocked]);
+    const signatures={characters:JSON.stringify([sd.terminal?.gameplay,sd.terminal?.wallet,sd.terminal?.ensemble,window.parent.SillyTavern?.getContext?.().chatMetadata?.__cxx_story_profile]),operations:JSON.stringify([sd.terminal?.quests,sd.terminal?.questJournal,sd.terminal?.wallet,sd.terminal?.ensemble?.control,window.CxxQuests?.actor?.(sd)?.wallet]),media:revision+JSON.stringify([sd.terminal?.gameplay?.events||{},storyArt]),network:revision+JSON.stringify(sd.terminal?.net||{})};
+    if(event.topic==='news')signatures.network+=':'+String(event.revision||++netDynamicVersion);
+    if(revision!==contentStamp){contentStamp=revision;refreshContent();locationCache=null;}
+    for(const [id,entry]of moduleViews){if(entry.signature===signatures[id])continue;entry.signature=signatures[id];entry.dirty=true;if(terminalVisible&&state.page===id){entry.dirty=false;entry.update?.();}}
+    Object.assign(lastSignatures,signatures);emitApp({data:true});
+  }
+  const settingsForm = document.querySelector('.settings-form');
+  if (settingsForm) {
+    const info = element('p', 'setting-note', '基础与可选内容默认不安装；在更新面板逐版本选收。');
+    const openUpdates = button('内容更新与订阅 ↗', 'quiet', () => {
+      if (!contentClient?.request('open')) announce('更新器尚未启动，请检查卡更新脚本是否启用');
+    });
+    settingsForm.append(info, openUpdates);
+    settingsForm.append(button('换卡迁移与存档 ↗','quiet',()=>{
+      if(!contentClient?.request('migration'))announce('迁移入口需要新版角色卡；这里只读取内容，不上传存档。');
+    }));
+  }
+  window.addEventListener('pagehide', () => { clearTimeout(viewTimer);saveView();releaseHostViewport(); stopNetwork();  stopPageMotion(); save(); });
+  window.addEventListener('pageshow', () => checkContent());
+
+  const atlasLocations=[{"id":"tokyo-central","places":[{"id":"plaza","name":"新日本时代广场"},{"id":"tsurumaki-tower","name":"弦卷塔"},{"id":"tsukinomori","name":"月之森女子学园"},{"id":"hanasakigawa","name":"花咲川女子学院"},{"id":"ring-community","name":"RiNG社区"},{"id":"ring-live","name":"RING-Live!"},{"id":"space-site","name":"SPACE 旧址"},{"id":"circle","name":"CiRCLE"},{"id":"beni-street","name":"红花街"},{"id":"a-yang-clinic","name":"宇田川巴的老街诊所"},{"id":"haneoka","name":"羽丘女子学园"},{"id":"akabane","name":"赤羽街区"},{"id":"sakiko-rental","name":"祥子的赤羽出租屋"},{"id":"akabane-clinic","name":"赤羽黑诊所"},{"id":"rana-shifune-home","name":"乐奈与诗船的公寓"},{"id":"ring-instruments","name":"RING-Live! · 乐器店"},{"id":"ring-records","name":"RING-Live! · 旧唱片店"},{"id":"ring-cafe","name":"RING-Live! · 咖啡馆"},{"id":"ring-studio","name":"RING-Live! · 录音与租赁"},{"id":"ring-basement-bar","name":"Lust？Love？Live！"},{"id":"service-imperial-weapon","name":"皇核 · 武器店"},{"id":"service-imperial-implant","name":"皇核 · 义体医生"},{"id":"service-imperial-hospital","name":"皇核 · 医疗点"},{"id":"service-imperial-market","name":"皇核 · 垃圾商店"},{"id":"service-imperial-transit","name":"皇核 · 交通设施"},{"id":"service-underpool-weapon","name":"暗池 · 武器店"},{"id":"service-underpool-implant","name":"暗池 · 义体医生"},{"id":"service-underpool-hospital","name":"暗池 · 医疗点"},{"id":"service-underpool-market","name":"暗池 · 垃圾商店"},{"id":"service-underpool-transit","name":"暗池 · 交通设施"},{"id":"service-lowtown-weapon","name":"荒川下城 · 武器店"},{"id":"service-lowtown-implant","name":"荒川下城 · 义体医生"},{"id":"service-lowtown-hospital","name":"荒川下城 · 医疗点"},{"id":"service-lowtown-market","name":"荒川下城 · 垃圾商店"},{"id":"service-lowtown-transit","name":"荒川下城 · 交通设施"},{"id":"service-neonring-weapon","name":"山手霓环 · 武器店"},{"id":"service-neonring-implant","name":"山手霓环 · 义体医生"},{"id":"service-neonring-hospital","name":"山手霓环 · 医疗点"},{"id":"service-neonring-market","name":"山手霓环 · 垃圾商店"},{"id":"service-neonring-transit","name":"山手霓环 · 交通设施"},{"id":"service-tsurumaki-weapon","name":"弦卷台 · 武器店"},{"id":"service-tsurumaki-implant","name":"弦卷台 · 义体医生"},{"id":"service-tsurumaki-hospital","name":"弦卷台 · 医疗点"},{"id":"service-tsurumaki-market","name":"弦卷台 · 垃圾商店"},{"id":"service-tsurumaki-transit","name":"弦卷台 · 交通设施"},{"id":"service-keihin-weapon","name":"京滨方舟 · 武器店"},{"id":"service-keihin-implant","name":"京滨方舟 · 义体医生"},{"id":"service-keihin-hospital","name":"京滨方舟 · 医疗点"},{"id":"service-keihin-market","name":"京滨方舟 · 垃圾商店"},{"id":"service-keihin-transit","name":"京滨方舟 · 交通设施"},{"id":"service-west-weapon","name":"西郊净土 · 武器店"},{"id":"service-west-implant","name":"西郊净土 · 义体医生"},{"id":"service-west-hospital","name":"西郊净土 · 医疗点"},{"id":"service-west-market","name":"西郊净土 · 垃圾商店"},{"id":"service-west-transit","name":"西郊净土 · 交通设施"},{"id":"service-saitama-weapon","name":"埼玉 · 武器店"},{"id":"service-saitama-implant","name":"埼玉 · 义体医生"},{"id":"service-saitama-hospital","name":"埼玉 · 医疗点"},{"id":"service-saitama-market","name":"埼玉 · 垃圾商店"},{"id":"service-saitama-transit","name":"埼玉 · 交通设施"},{"id":"service-hokuen-weapon","name":"所泽 · 武器店"},{"id":"service-hokuen-implant","name":"所泽 · 义体医生"},{"id":"service-hokuen-hospital","name":"所泽 · 医疗点"},{"id":"service-hokuen-market","name":"所泽 · 垃圾商店"},{"id":"service-hokuen-transit","name":"所泽 · 交通设施"},{"id":"service-kai-weapon","name":"奥多摩 · 武器店"},{"id":"service-kai-implant","name":"奥多摩 · 义体医生"},{"id":"service-kai-hospital","name":"奥多摩 · 医疗点"},{"id":"service-kai-market","name":"奥多摩 · 垃圾商店"},{"id":"service-kai-transit","name":"奥多摩 · 交通设施"},{"id":"service-fuji-transit","name":"丹泽 · 交通设施"},{"id":"service-fuji-hospital","name":"丹泽 · 医疗点"},{"id":"service-sagami-weapon","name":"川崎 · 武器店"},{"id":"service-sagami-implant","name":"川崎 · 义体医生"},{"id":"service-sagami-hospital","name":"川崎 · 医疗点"},{"id":"service-sagami-market","name":"川崎 · 垃圾商店"},{"id":"service-sagami-transit","name":"川崎 · 交通设施"},{"id":"service-chiba-weapon","name":"千叶 · 武器店"},{"id":"service-chiba-implant","name":"千叶 · 义体医生"},{"id":"service-chiba-hospital","name":"千叶 · 医疗点"},{"id":"service-chiba-market","name":"千叶 · 垃圾商店"},{"id":"service-chiba-transit","name":"千叶 · 交通设施"},{"id":"service-docks-weapon","name":"木更津 · 武器店"},{"id":"service-docks-implant","name":"木更津 · 义体医生"},{"id":"service-docks-hospital","name":"木更津 · 医疗点"},{"id":"service-docks-market","name":"木更津 · 垃圾商店"},{"id":"service-docks-transit","name":"木更津 · 交通设施"},{"id":"west-terminal","name":"湾西货运港"},{"id":"bay-terminal","name":"湾岸客运码头"},{"id":"east-terminal","name":"木更津发射中心"},{"id":"sunken-market","name":"暗池层叠市场"},{"id":"arakawa-hospital","name":"荒川综合医院"},{"id":"neon-forum","name":"霓环中央演艺场"},{"id":"hill-estate","name":"弦卷台庭园会馆"},{"id":"ark-logistics","name":"方舟联运总站"},{"id":"west-market","name":"武藏野农产市场"},{"id":"saitama-housing","name":"埼玉连廊住区"},{"id":"tokorozawa-assembly","name":"所泽机造总装厂"},{"id":"valley-terraces","name":"多摩山前阶庭"},{"id":"fuji-observatory","name":"丹泽边境观测站"},{"id":"kawasaki-refinery","name":"川崎能源联合厂"},{"id":"chiba-waterhall","name":"千叶滨水会展馆"},{"id":"dock-ruins","name":"木更津旧港遗构"},{"id":"catalog-tsurumaki-apartment","name":"栈桥公寓"},{"id":"catalog-saitama-apartment","name":"朝班公寓"},{"id":"catalog-keihin-drop","name":"九号交接棚"},{"id":"catalog-docks-drop","name":"潮窗交货柜"},{"id":"catalog-neonring-clothing","name":"反光线改衣台"},{"id":"catalog-chiba-clothing","name":"千叶 · 服装"},{"id":"catalog-underpool-netrunner","name":"回声线缆台"},{"id":"catalog-kai-netrunner","name":"奥多摩 · 网络黑客"},{"id":"catalog-underpool-melee","name":"暗池 · 近战武器商贩"},{"id":"catalog-lowtown-melee","name":"荒川下城 · 近战武器商贩"},{"id":"catalog-west-food","name":"雨棚青菜饭"},{"id":"catalog-lowtown-food","name":"河闸食堂"},{"id":"catalog-neonring-bar","name":"山手霓环 · 酒吧"},{"id":"catalog-underpool-bar","name":"暗池 · 酒吧"},{"id":"catalog-neonring-joytoy","name":"山手霓环 · 性偶"},{"id":"catalog-underpool-fixer","name":"暗池转单台"},{"id":"catalog-keihin-fixer","name":"京滨夜班调度"},{"id":"catalog-imperial-client","name":"皇核资产事务窗口"},{"id":"catalog-chiba-client","name":"千叶试音室联络台"},{"id":"catalog-lowtown-police","name":"退水线上的白漆"},{"id":"catalog-underpool-assault","name":"走廊里的第二把锁"},{"id":"catalog-sagami-assault","name":"下班口的欠薪单"},{"id":"catalog-docks-organized","name":"空箱也要过秤"},{"id":"catalog-saitama-reported","name":"不在名册上的房间"},{"id":"catalog-hokuen-cyberpsycho","name":"别把警报当成病历"},{"id":"catalog-kai-tarot","name":"奥多摩 · 塔罗牌"},{"id":"catalog-west-tarot","name":"西郊净土 · 塔罗牌"},{"id":"catalog-chiba-sidejob","name":"给海风留一个麦克风"},{"id":"catalog-saitama-sidejob","name":"末班车前的灯"},{"id":"catalog-lowtown-recovery","name":"一只饭盒的重量"},{"id":"catalog-underpool-theft","name":"借条背面"},{"id":"catalog-keihin-escort","name":"冷链不等人"},{"id":"catalog-tsurumaki-escort","name":"体面地搬出去"},{"id":"catalog-sagami-hitman","name":"请把收据留下"},{"id":"catalog-hokuen-sabotage","name":"请勿恢复出厂"},{"id":"catalog-fuji-sos","name":"山路上的第三张床"},{"id":"catalog-docks-sos","name":"潮汐表没有名字"},{"id":"bay-mid-bridge","name":"中湾跨海大桥"},{"id":"bay-lower-bridge","name":"下湾跨海大桥"},{"id":"tokyo-skytree","name":"东京天空塔"},{"id":"m8-site-ryomo","name":"两毛制造联合厂"},{"id":"m8-site-north-gateway","name":"北门户综合站城"},{"id":"m8-site-mito-oarai","name":"水户大洗港城中心"},{"id":"m8-site-saitama-north","name":"北埼玉轨道生活组团"},{"id":"m8-site-tsukuba-north","name":"筑波研究园"},{"id":"m8-site-tone-south","name":"利根南岸换装场"},{"id":"m8-site-kashima-kamisu","name":"鹿岛港后炼化厂"},{"id":"m8-site-narita-hokuso","name":"北总航空物流组团"},{"id":"m8-site-chiba-extension","name":"千叶东部复合站城"},{"id":"m8-site-choshi","name":"銚子河港市场"},{"id":"m8-site-kujukuri","name":"九十九里滨海加工场"},{"id":"m8-site-okutama","name":"奥多摩谷口站城"},{"id":"m8-site-tanzawa","name":"丹泽山前院落中心"},{"id":"m8-site-yokohama-miura","name":"横滨湾岸复合中心"},{"id":"m8-site-boso-kisarazu","name":"木更津港城生活组团"},{"id":"m8-site-boso-kimitsu","name":"君津重件总装厂"},{"id":"m8-site-boso-futtsu","name":"富津渔港换装场"},{"id":"m8-site-boso-interior","name":"房总谷地水源园"},{"id":"m8-site-boso-pacific","name":"外房航天勤务中心"}]},{"id":"west-expansion","places":[{"id":"west-kofu-civic","name":"甲府城下综合诊疗院"},{"id":"west-katsunuma-depot","name":"胜沼农产交易所"},{"id":"west-lake-waterworks","name":"河口湖水源维护站"},{"id":"west-yoshida-textile","name":"富士吉田织物工坊"},{"id":"west-gotemba-logistics","name":"御殿场山麓物流院"},{"id":"west-fuji-peak","name":"富士山"},{"id":"west-lake-motosu","name":"本栖湖"},{"id":"west-lake-shoji","name":"精进湖"},{"id":"west-lake-saiko","name":"西湖"},{"id":"west-lake-kawaguchi","name":"河口湖"},{"id":"west-lake-yamanaka","name":"山中湖"},{"id":"west-service-kai","name":"甲斐·韮崎 · 饮食"},{"id":"west-service-kofu","name":"甲府城下 · 医疗点"},{"id":"west-service-katsunuma","name":"笛吹·胜沼 · 交货点"},{"id":"west-service-otsuki","name":"大月谷口 · 垃圾商店"},{"id":"west-service-kawaguchi","name":"河口湖南岸 · 义体医生"},{"id":"west-service-yoshida","name":"富士吉田 · 酒吧"},{"id":"west-service-narusawa","name":"鸣泽林缘 · 武器店"},{"id":"west-service-gotemba","name":"御殿场下城 · 网络黑客"}]}];
+  let locationCache=null;
+  function currentLocationContent(sd){if(locationCache)return locationCache;
+    const installed=contentClient?.readHost(),locationBase={...baseData,nodes:atlasLocations.find(m=>m.id==='tokyo-central').places};
+    const current=installed?contentClient.view(locationBase,installed.registry,sd?.terminal?.quests||{},{subscriptions:installed.subscriptions,pins:contentClient.chatPins(),mediaPreferences:installed.mediaPreferences,initialContent:installed.initialContent,initialAvatars:installed.initialAvatars}):baseData;
+    return locationCache={...current,quests:(current.quests||[]).map(bindLegacyLocation)};
+  }
+  const hostBridge=window.TOKYO_TERMINAL_HOST=CxxTerminalHost.create({
+    getContext:()=>typeof SillyTavern==='undefined'?null:(SillyTavern.getContext?.()||SillyTavern),
+    getVariables:options=>typeof getVariables==='function'?getVariables(options):null,
+    getLastMessageId:()=>typeof getLastMessageId==='function'?getLastMessageId():-1,
+    updateVariablesWith:typeof updateVariablesWith==='function'?updateVariablesWith:undefined,
+    busy:()=>window.parent?.__cxx_gal_g1__?.numericBusy?.()===true || (typeof builtin!=='undefined' && builtin.duringGenerating?.()===true),
+    revision:()=>contentClient?.readHost()?.contentRevision||'',
+    definitions:sd=>(currentLocationContent(sd).quests||[]).map(q=>({...q,locked:questLocked(q)}))
+  });
+  netState=window.TOKYO_TERMINAL_NEWS=CxxNewsState.create({read:()=>hostBridge.read(),storage:{getItem:key=>{try{return localStorage.getItem(key);}catch{return null;}},setItem:(key,value)=>{try{localStorage.setItem(key,value);}catch{}}}});
+  const placeQuestLocked=q=>questRecord(q.id).state==='已发布'&&questLocked(q);
+  window.TOKYO_TERMINAL_MAP_LINKS={openQuest:id=>{refreshContent();const q=data.quests?.find(q=>q.id===id);if(!q||placeQuestLocked(q)){announce('这份任务暂不可用，请查看当前行动列表。');return false;}return openQuest(id);},closeTerminal,
+    record:(mapId,placeId)=>recordOf({kind:'place',mapId,id:placeId}),
+    openArchive:(mapId,placeId)=>window.TOKYO_TERMINAL_MAP_CONTROL.focus(mapId,placeId),
+    placeName:(mapId,placeId)=>atlasLocations.find(m=>m.id===(mapId||'tokyo-central'))?.places.find(n=>n.id===placeId)?.name,
+    goToQuest:id=>{refreshContent();const q=currentLocationContent(readStatData()).quests?.find(q=>q.id===id);if(!q||placeQuestLocked(q)||!window.TOKYO_TERMINAL_MAP_LINKS.placeName(q.mapId,q.placeId)){announce('这份任务尚无可用的地图地点。');return false;}switchPage('city');return window.TOKYO_TERMINAL_MAP_CONTROL.focus(q.mapId||'tokyo-central',q.placeId);},
+    read:(mapId,placeId)=>{
+      if(!atlasLocations.find(m=>m.id===mapId)?.places.some(n=>n.id===placeId))return{quests:[],notes:[]};
+      const current=currentLocationContent(readStatData());
+      return{quests:(current.quests||[]).filter(q=>q.placeId===placeId&&(q.mapId||'tokyo-central')===mapId&&!placeQuestLocked(q)).map(q=>({id:q.id,title:q.title,status:questRecord(q.id).state})),notes:(current.workshopNotes||[]).filter(n=>n.mapId===mapId&&n.placeId===placeId)};
+    }
+  };
+  refreshContent();contentStamp=contentClient?.readHost()?.contentRevision||'';
+  window.CxxTerminalBoot?.stage(1,'done');window.CxxTerminalBoot?.log('terminal','read','终端资料',data.nodes.length+' 个地点');window.CxxTerminalBoot?.stage(2,'now');
+  installApplication();
+  function renderQuestModule(page){
+    page.replaceChildren();const entry=moduleViews.get('operations');
+    entry.journal=window.CxxQuestUI.mount(page,{
+      read:()=>hostBridge.readState().statData||{},definitions:()=>{refreshContent();return [...(data.quests||[])];},
+      view:viewState.journal||{},onView:v=>{viewState.journal=v;scheduleView();},
+      commit:request=>window.parent.__cxx_player__.commit(request),
+      observer:window.parent.__cxx_player__?.quests?.registerView(),
+      viewSource:()=>{const c=parent.SillyTavern.getContext(),s=hostBridge.readState();return {chatId:c.getCurrentChatId(),characterId:c.characterId,floor:s.sourceFloor,swipe:c.chat[s.sourceFloor]?.swipe_id||0};},
+      source:()=>{const quests=window.parent.__cxx_player__?.quests;if(!quests?.source)throw Error('任务保存服务尚未就绪，请等待剧情核心加载完成。');return quests.source();},
+      compose:(q,r)=>{const top=window.parent,input=top.document.querySelector('#send_textarea');if(!input)throw Error('正文输入框尚未就绪。');if(input.value.trim())throw Error('行动输入框已有草稿，已保留。请先发送或清空原草稿。');input.value='我准备继续'+(q.chapterId?'章节':'委托')+'「'+q.title+'」。当前目标：'+(r.objective||q.goal)+'\n委托人：'+(q.fixer||'原委托人')+'。简报：'+(q.brief||'按已知记录继续')+'\n请承接已保存进展与我的行动，不重复发放已经收到的款项。';input.dispatchEvent(new top.Event('input',{bubbles:true}));},
+      map:id=>window.TOKYO_TERMINAL_MAP_LINKS.goToQuest(id),
+      motion:(kind,root)=>sectionMotion(kind,root)
+    });entry.update=()=>{entry.journal.refresh();stats.updates++;};entry.select=id=>entry.journal.select(id);
+  }
+  function renderCharacterModule(page){
+    page.classList.add('terminal-player','sec-page');const head=element('header','sec-head player-head'),title=element('div','sec-title');title.append(element('small','sec-eyebrow','PLAYER / 人物档案'),element('h1','','人物'));
+    const tabs=element('nav','sec-tabs');tabs.setAttribute('aria-label','人物分类');head.append(title,element('span','sec-grow'),tabs);
+    const body=element('div','terminal-player-body');page.append(head,body);
+    const service=window.parent.__cxx_player__,entry=moduleViews.get('characters');
+    if(service)entry.player=service.mount(body,viewState.player?.tab||'人物',{navigation:false,appearanceStyle:window.CxxTerminalPlayerStyle,viewState:viewState.player,onViewChange:value=>{if(value?.tab){for(const b of tabs.querySelectorAll('button'))b.setAttribute("aria-pressed",String(b.textContent===value.tab));sectionMotion('tab',page);}scheduleView();}});
+    else body.append(element('p','setting-note','人物服务尚未就绪，请重新打开终端。'));
+    const select=async tab=>{if(tab==='行动记录'){if(await entry.player?.canLeave?.()===false)return;switchPage('operations');return;}await entry.player?.setTab(tab);const current=entry.player?.readViewState?.().tab||tab;for(const b of tabs.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.textContent===current));sectionMotion('sync',page);scheduleView();};
+    for(const tab of ['人物表','人物','天赋','物品栏','义体','行动记录'])tabs.append(button(tab,'',()=>select(tab)));
+    entry.select=select;entry.update=()=>{entry.player?.refresh();stats.updates++;};select(viewState.player?.tab||'人物');
+  }
+  function installApplication(){
+    const connection=rootEl.querySelector('.connection');if(connection){connection.textContent='STORY ARCHIVE · 当前故事';connection.setAttribute('aria-label','当前故事档案');}
+        const historyBack=button('← 人物档案','quiet',()=>switchPage('characters'));historyBack.classList.add('terminal-history-back');$('workspace').prepend(historyBack);
+    appListeners.add(()=>{historyBack.hidden=state.page!=='operations';});
+    const archived=viewState.archive;if(archived){archiveKind=['city','setting','library'].includes(archived.kind)?archived.kind:'city';archiveIndex=Number(archived.index)||0;$('archive-search').value=archived.query||'';}
+    for(const name of ['input','change'])rootEl.addEventListener(name,scheduleView);
+    rootEl.addEventListener('scroll',scheduleView,{capture:true,passive:true});
+    window.CxxTerminalApp={motion,navigate:switchPage,close:closeTerminal,saveView,state:viewState,
+      get visible(){return terminalVisible&&!$('terminal').hidden;},get page(){return state.page;},
+      subscribe(fn){appListeners.add(fn);return()=>appListeners.delete(fn);},
+      open(route={}){boot();terminalVisible=true;$('terminal').hidden=false;switchPage(route.page||'city',{replace:true,tab:route.tab});checkContent();useHostViewport(false);emitApp({route:true});},
+      invalidate(event){hostBridge.changed();locationCache=null;checkContent(event);},
+      back(){const id=history.pop();if(id)switchPage(id,{replace:true,direction:-1});else closeTerminal();},
+      read:()=>({...stats,motion:motion.diagnostics(),pages:[...moduleViews.keys()],page:state.page,visible:terminalVisible}),
+      canLeave:()=>state.page==='characters'?moduleViews.get('characters')?.player?.canLeave?.()??true:true,
+      destroy(){motion.dispose();netRadioView?.destroy();netRadioView=null;clearTimeout(viewTimer);saveView();stopNetwork();stopPageMotion();releaseHostViewport();for(const e of moduleViews.values()){e.hide?.();e.commsStop?.();e.player?.destroy();e.journal?.destroy();}moduleViews.clear();appListeners.clear();}
+    };
+    const oldOpening=button('开场设置','quiet',()=>{const opening=window.parent.Cxx236OpeningHost;if(opening?.hasUnconfirmed?.()){closeTerminal();opening.open();}else announce('开场设置位于新聊天的六步开场；已建档人物请使用人物页。');});
+    document.querySelector('.settings-form')?.append(oldOpening);
+    window.addEventListener('pagehide',()=>window.CxxTerminalApp.destroy(),{once:true});
+  }
+
+})();

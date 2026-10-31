@@ -1,0 +1,13 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const source=fs.readFileSync(path.resolve(__dirname,'../../卡片源码/通讯/entry.js'),'utf8');
+function fixture(){
+ const modules=new Map(),events=new Map(),voices=[],owners=[];const host={Cxx233Shared:{CxxGalParser:{}},dispatchEvent(){},addEventListener(){},removeEventListener(){},clearTimeout,CustomEvent:class{},console,toastr:{error:e=>{throw Error(e);}}};
+ const runtime=host.Cxx233Runtime={alive:true,watchMessages:()=>()=>{},register(name,value,dispose){modules.get(name)?.stop();let active=true;const stop=()=>{if(!active)return;active=false;dispose();if(modules.get(name)?.value===value)modules.delete(name);};modules.set(name,{value,stop});return stop;}};
+ const make=()=>({destroy(){this.closed=true;},start(){},read:()=>({settings:{}}),configure(){}});
+ function start(code=source){const pagehide=new Set(),context={parent:host,getVariables:()=>({}),window:{addEventListener:(name,fn)=>pagehide.add(fn)},eventOn:(n,f)=>{if(!events.has(n))events.set(n,new Set());events.get(n).add(f);},eventRemoveListener:(n,f)=>events.get(n)?.delete(f),getButtonEvent:n=>n,
+  CxxMirrorSetup:{create:make},CxxJingyiBridge:{create:make},CxxVoiceRuntime:{create(){const v=make();voices.push(v);return v;}},CxxReadingService:{create:make},CxxPhoneHost:{create:make},CxxPhoneUI:{mount:()=>({...make(),open(){}})},CxxPhoneCore:{},CXX_PHONE_PROFILES:{}};vm.runInNewContext(code,context);owners.push(()=>{for(const stop of pagehide)stop();});return host.CxxVoice;}
+ return {host,runtime,events,voices,owners,start};
+}
+test('replacing phone on the same runtime cannot destroy the new voice owner',()=>{const f=fixture();for(let i=0;i<20;i++){const voice=f.start();assert.equal(voice,f.voices.at(-1));assert.equal(voice.closed,undefined);assert.equal(f.events.get('手机').size,1);if(i>0){f.owners[i-1]();assert.equal(f.host.CxxVoice,voice);assert.equal(voice.closed,undefined);}}f.owners.at(-1)();assert.equal(f.host.CxxVoice,undefined);assert(f.voices.every(v=>v.closed));assert.equal(f.events.get('手机').size,0);});
+test('existing pre-fix ownership expression reproduces destruction of the replacement voice',()=>{const old=source.replace('const voice=CxxVoiceRuntime.create(parent);parent.CxxVoice=voice;','parent.CxxVoice=CxxVoiceRuntime.create(parent);').replace('voice.destroy();if(parent.CxxVoice===voice)delete parent.CxxVoice;','parent.CxxVoice?.destroy();delete parent.CxxVoice;');const f=fixture();f.start(old);f.start(old);assert.equal(f.host.CxxVoice,undefined);assert.equal(f.voices.at(-1).closed,true);f.owners.forEach(stop=>stop());});

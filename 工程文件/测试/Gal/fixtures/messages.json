@@ -1,0 +1,28 @@
+[
+  {
+    "id": "legacy-dialogue",
+    "description": "旧正文、多个明确说话者；状态数组首位不代表说话者",
+    "raw": "雨水沿着霓虹招牌落下。\n巷口传来列车驶过的声音。\n\n祥子：先到屋檐下面来。\n千早爱音：我看见终端了。\n她向街对面指了指。\n\n<ztl>\n{\"date\":\"2051年4月12日星期三\",\"time\":\"21:18\",\"location\":\"池袋旧街\",\"characters\":[{\"name\":\"千早爱音\",\"outfit\":\"雨衣\",\"thought\":\"希望设备没进水。\"},{\"name\":\"丰川祥子\",\"outfit\":\"黑色外套\",\"thought\":\"得先找个避雨的地方。\"}]}\n</ztl>\n<xuan>\n1. 走到屋檐下\n2. 递出备用雨伞\n3. 留意街边终端\n4. 等雨势变小\n5. 检查被水打湿的背包\n</xuan>",
+    "expectedSpeakers": [
+      null,
+      "丰川祥子",
+      "千早爱音",
+      null
+    ],
+    "expectedChoiceCount": 5,
+    "expectedLocation": "池袋旧街"
+  },
+  {
+    "id": "protocol-shaped-quotation",
+    "description": "代码围栏、引文和行内代码只是正文，不执行协议识别",
+    "raw": "终端显示了一段格式说明：\n\n```text\n<ztl>{\"date\":\"示例\",\"time\":\"00:00\",\"location\":\"示例\",\"characters\":[{\"name\":\"丰川祥子\",\"outfit\":\"示例\",\"thought\":\"示例\"}]}</ztl>\n祥子：这是代码样本。\n```\n\n> <xuan>\n> 1. 引用中的选项\n> </xuan>\n\n她指着 `<UpdateVariable>` 说，这是文档里的字样。",
+    "expectedSpeakers": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "expectedChoiceCount": 0,
+    "expectedLocation": null
+  }
+]

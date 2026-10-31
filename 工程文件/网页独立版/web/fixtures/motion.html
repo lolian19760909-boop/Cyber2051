@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8" />
+<title>motion 退场复显回归夹具</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; padding: 24px; font: 14px/1.5 system-ui, sans-serif; background: #08080b; color: #e8e8ea; }
+  #container { position: relative; width: 420px; height: 220px; overflow: hidden; background: #120a0d; border: 1px solid #2b2b31; }
+  .panel { padding: 16px; }
+  #upd { width: 420px; margin-top: 24px; padding: 12px; background: #120a0d; border: 1px solid #2b2b31; }
+</style>
+<div id="container">
+  <section id="pageA" class="panel">A 旧页：这一段文字应该在退场结束后彻底消失</section>
+  <section id="pageB" class="panel" hidden>B 新页：这一段是新的内容</section>
+</div>
+<div id="upd">旧文本：会在 update() 里被替换</div>
+<script type="module">
+  import { createMotion } from '/suite/tavern-runtime-suite/visual/runtime/motion.mjs';
+
+  // profile 必须报 high，否则 motion 走 instant 分支，测不到真实过渡。
+  const motion = createMotion().mount(document.body, { profile: () => ({ level: 'high' }) });
+  window.__motion = motion;
+  window.__ready = true;
+</script>
+</html>

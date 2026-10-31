@@ -1,0 +1,183 @@
+{
+  "format": "tokyo2051.website-visual-kit",
+  "version": 1,
+  "palette": {
+    "key": "#9bdce2",
+    "bounce": "#ee786b",
+    "ink": "#10171b",
+    "identity": "#f1df45"
+  },
+  "sourceRoot": "/workshop/assets/hero-20261005/",
+  "atmosphere": {
+    "desktop": "/workshop/assets/visual-kit-20261016/atmosphere-960.webp",
+    "mobile": "/workshop/assets/visual-kit-20261016/atmosphere-512.webp"
+  },
+  "layout": {
+    "desktop": {
+      "portraitWidth": "clamp(480px,42vw,650px)",
+      "right": "4%",
+      "top": "28px",
+      "safeTextWidth": "44%",
+      "focus": "79% 17%"
+    },
+    "mobile": {
+      "portraitWidth": "390px",
+      "right": "calc(50% - 205px)",
+      "top": "0px",
+      "artHeight": "330px"
+    }
+  },
+  "portraitGrade": "brightness(1.01) contrast(1.05) saturate(.84)",
+  "profiles": {
+    "night": {
+      "cityGrade": "brightness(.79) contrast(1.12) saturate(.72)",
+      "airOpacity": 0.27,
+      "keyOpacity": 0.12,
+      "rimOpacity": 0.65
+    },
+    "dawn": {
+      "cityGrade": "brightness(.76) contrast(1.05) saturate(.63)",
+      "airOpacity": 0.1,
+      "keyOpacity": 0.08,
+      "rimOpacity": 0.42
+    },
+    "sheltered": {
+      "cityGrade": "brightness(.73) contrast(1.08) saturate(.64)",
+      "airOpacity": 0.17,
+      "keyOpacity": 0.1,
+      "rimOpacity": 0.5
+    }
+  },
+  "characters": {
+    "Saki": {
+      "widthOffset": -12,
+      "topOffset": 0
+    },
+    "Anon": {
+      "widthOffset": -12,
+      "topOffset": 0
+    },
+    "Tomorin": {
+      "widthOffset": -18,
+      "topOffset": 0
+    },
+    "Rana": {
+      "widthOffset": -18,
+      "topOffset": 0
+    },
+    "Soyo": {
+      "widthOffset": -20,
+      "topOffset": -2
+    },
+    "Taki": {
+      "widthOffset": 0,
+      "topOffset": 0
+    },
+    "Uika": {
+      "widthOffset": -38,
+      "topOffset": 5
+    },
+    "Mutsumi": {
+      "widthOffset": -12,
+      "topOffset": 0
+    },
+    "Umiri": {
+      "widthOffset": 0,
+      "topOffset": 0
+    },
+    "Nyamu": {
+      "widthOffset": -12,
+      "topOffset": 0
+    }
+  },
+  "scenes": {
+    "core_midnight": {
+      "profile": "night",
+      "position": "center 56%"
+    },
+    "core_morning": {
+      "profile": "dawn",
+      "position": "center 56%"
+    },
+    "core_mujica_hideout_balcony": {
+      "profile": "sheltered",
+      "position": "60% 50%"
+    },
+    "core_soyohouse_outside_midnight": {
+      "profile": "night",
+      "position": "center 56%"
+    },
+    "core_soyohouse_swimpool_midnight": {
+      "profile": "night",
+      "position": "center 56%"
+    },
+    "core_Togawa_restroom_morning": {
+      "profile": "sheltered",
+      "position": "center 56%"
+    },
+    "darkpool_backyard_midnight": {
+      "profile": "night",
+      "position": "center 56%"
+    },
+    "darkpool_midnight": {
+      "profile": "night",
+      "position": "center 56%"
+    },
+    "darkpool_morning": {
+      "profile": "dawn",
+      "position": "center 56%"
+    },
+    "darkpool_nyamuhouse_outside_midnight": {
+      "profile": "night",
+      "position": "center 56%"
+    },
+    "lowtown_midnight": {
+      "profile": "night",
+      "position": "center 56%"
+    },
+    "lowtown_midnight2": {
+      "profile": "night",
+      "position": "center 56%"
+    },
+    "lowtown_morning": {
+      "profile": "dawn",
+      "position": "center 56%"
+    },
+    "lowtown_morning2": {
+      "profile": "dawn",
+      "position": "54% 56%"
+    },
+    "neonring_midnight": {
+      "profile": "night",
+      "position": "center 56%"
+    },
+    "neonring_midnight2": {
+      "profile": "night",
+      "position": "center 56%"
+    },
+    "neonring_morning": {
+      "profile": "dawn",
+      "position": "center 56%"
+    },
+    "neonring_morning2": {
+      "profile": "dawn",
+      "position": "center 56%"
+    },
+    "redflower_midnight": {
+      "profile": "night",
+      "position": "center 56%"
+    },
+    "redflower_morning": {
+      "profile": "dawn",
+      "position": "center 56%"
+    },
+    "RING_midnight": {
+      "profile": "night",
+      "position": "58% 50%"
+    },
+    "RING_morning": {
+      "profile": "dawn",
+      "position": "58% 50%"
+    }
+  }
+}

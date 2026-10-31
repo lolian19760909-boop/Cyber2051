@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>body {
+  font-family: var(--cxx-font-ui);
+}
+
+@keyframes mutsumi-open {
+  0% {
+    opacity: 0;
+    transform: perspective(1200px) rotateY(-8deg) scale(0.95);
+  }
+
+  100% {
+    opacity: 1;
+    transform: perspective(1200px) rotateY(0deg) scale(1);
+  }
+}
+
+@keyframes mutsumi-leaf-fall {
+  0% {
+    transform: translateY(-10px) rotate(0deg);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(8px) rotate(15deg);
+    opacity: 0.6;
+  }
+}
+
+@keyframes mutsumi-gentle-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.mutsumi-wrap {
+  max-width: 800px;
+  margin: 30px auto;
+  animation: mutsumi-open 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative;
+  --cp-ink: var(--cxx-ink);
+  --cp-panel: var(--cxx-panel);
+  --cp-panel-hi: var(--cxx-raised);
+  --cp-line: var(--cxx-line);
+  --cp-cyan: var(--cxx-cyan);
+  --cp-red: var(--cxx-red);
+  --cp-amber: var(--cxx-yellow);
+  --cp-text: var(--cxx-text);
+  --cp-muted: var(--cxx-muted);
+  font-family: var(--cxx-font-ui);
+  color: var(--cp-text);
+}
+
+.mutsumi-book {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% -18%,color-mix(in srgb, var(--cxx-narrative-panel) 50%, transparent),transparent 62%),repeating-linear-gradient(0deg,transparent 0 31px,color-mix(in srgb, var(--cxx-red) 2.20%, transparent) 31px 32px),var(--cp-ink);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  box-shadow: 0 18px 46px color-mix(in srgb, var(--cxx-shadow) 42%, transparent),-3px 0 0 var(--cxx-shadow),-6px 0 0 var(--cxx-shadow),-9px 0 0 var(--cxx-shadow);
+}
+
+.mutsumi-book::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 18px;
+  z-index: 5;
+  background: linear-gradient(90deg,color-mix(in srgb, var(--cxx-red) 20.00%, transparent),color-mix(in srgb, var(--cxx-red) 4.00%, transparent));
+  border-right: 1px solid var(--cp-line);
+}
+
+.mutsumi-page-left {
+  flex: 1;
+  padding: 45px 35px 40px 45px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-height: 480px;
+  background: transparent;
+}
+
+.mutsumi-leaf-deco {
+  position: absolute;
+  top: 20px;
+  left: 35px;
+  display: flex;
+  gap: 4px;
+  opacity: 0.5;
+}
+
+.mutsumi-leaf {
+  width: 10px;
+  height: 16px;
+  border-radius: 0 80% 0 80%;
+  transform: rotate(-30deg);
+  background: var(--cp-cyan);
+}
+
+.mutsumi-leaf:nth-child(2) {
+  transform: rotate(-10deg);
+  opacity: 0.7;
+  width: 8px;
+  height: 13px;
+}
+
+.mutsumi-leaf:nth-child(3) {
+  transform: rotate(10deg);
+  opacity: 0.5;
+  width: 6px;
+  height: 10px;
+}
+
+.mutsumi-chapter {
+  font-family: var(--cxx-font-ui);
+  font-size: 14px;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  opacity: 0.7;
+  color: var(--cp-cyan);
+}
+
+.mutsumi-title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  margin: 0 0 8px 0;
+  color: var(--cp-red);
+}
+
+.mutsumi-subtitle {
+  font-family: var(--cxx-font-ui);
+  font-style: italic;
+  font-size: 13px;
+  letter-spacing: 1px;
+  margin-bottom: 25px;
+  color: var(--cp-muted);
+}
+
+.mutsumi-text {
+  font-size: 14px;
+  line-height: 2.1;
+  text-align: justify;
+  margin-bottom: 25px;
+  position: relative;
+  padding-left: 15px;
+  color: var(--cp-text);
+}
+
+.mutsumi-text::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(180deg,var(--cp-red),color-mix(in srgb, var(--cxx-red) 10.00%, transparent));
+}
+
+.mutsumi-text p {
+  margin: 0 0 10px 0;
+}
+
+.mutsumi-text p:last-child {
+  margin: 0;
+}
+
+.mutsumi-sticker-area {
+  margin-top: auto;
+  display: flex;
+  align-items: flex-end;
+  gap: 15px;
+}
+
+.mutsumi-gif-frame {
+  position: relative;
+  padding: 5px;
+  transform: rotate(-2deg);
+  transition: transform 0.3s ease;
+  background: var(--cp-panel-hi);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.mutsumi-gif-frame:hover {
+  transform: rotate(0deg) scale(1.03);
+}
+
+.mutsumi-gif {
+  height: 88px;
+  width: auto;
+  display: block;
+  filter: saturate(.78) contrast(1.05);
+  border-radius: 1px;
+}
+
+.mutsumi-sticker-tag {
+  font-family: var(--cxx-font-ui);
+  font-size: 14px;
+  writing-mode: vertical-rl;
+  letter-spacing: 2px;
+  animation: mutsumi-gentle-float 3s ease-in-out infinite;
+  color: var(--cp-cyan);
+}
+
+.mutsumi-vine-sep {
+  width: 50px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mutsumi-vine-line {
+  width: 1px;
+  height: 85%;
+  position: relative;
+  background: linear-gradient(180deg,transparent,color-mix(in srgb, var(--cxx-cyan) 40.00%, transparent),transparent);
+}
+
+.mutsumi-vine-node {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  opacity: 0.4;
+  background: var(--cp-cyan);
+}
+
+.mutsumi-vine-node::before {
+  content: '';
+  position: absolute;
+  width: 7px;
+  height: 11px;
+  border-radius: 0 70% 0 70%;
+  top: -3px;
+  left: -10px;
+  transform: rotate(-40deg);
+  background: color-mix(in srgb, var(--cxx-cyan) 25.00%, transparent);
+}
+
+.mutsumi-vine-node::after {
+  content: '';
+  position: absolute;
+  width: 7px;
+  height: 11px;
+  border-radius: 0 70% 0 70%;
+  top: -3px;
+  right: -10px;
+  transform: rotate(40deg) scaleX(-1);
+  background: color-mix(in srgb, var(--cxx-cyan) 25.00%, transparent);
+}
+
+.mutsumi-vine-node:nth-child(1) {
+  top: 20%;
+}
+
+.mutsumi-vine-node:nth-child(2) {
+  top: 40%;
+}
+
+.mutsumi-vine-node:nth-child(3) {
+  top: 60%;
+}
+
+.mutsumi-vine-node:nth-child(4) {
+  top: 80%;
+}
+
+.mutsumi-page-right {
+  flex: 0.9;
+  padding: 40px 40px 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: transparent;
+}
+
+.mutsumi-illust-frame {
+  position: relative;
+  padding: 12px;
+  transition: all 0.4s ease;
+  max-width: 280px;
+  background: var(--cp-panel-hi);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  box-shadow: 0 8px 25px color-mix(in srgb, var(--cxx-shadow) 40%, transparent);
+}
+
+.mutsumi-illust-frame:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--cxx-cyan) 12%, transparent);
+  border-color: color-mix(in srgb, var(--cxx-cyan) 35%, transparent);
+}
+
+.mutsumi-corner {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  opacity: 0.4;
+}
+
+.mutsumi-corner::before {
+  content: '';
+  position: absolute;
+  border-radius: 1px;
+  background: var(--cp-red);
+}
+
+.mutsumi-corner::after {
+  content: '';
+  position: absolute;
+  border-radius: 1px;
+  background: var(--cp-red);
+}
+
+.mutsumi-corner--tl {
+  top: -2px;
+  left: -2px;
+}
+
+.mutsumi-corner--tl::before {
+  top: 0;
+  left: 0;
+  width: 18px;
+  height: 2px;
+}
+
+.mutsumi-corner--tl::after {
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 18px;
+}
+
+.mutsumi-corner--tr {
+  top: -2px;
+  right: -2px;
+}
+
+.mutsumi-corner--tr::before {
+  top: 0;
+  right: 0;
+  width: 18px;
+  height: 2px;
+}
+
+.mutsumi-corner--tr::after {
+  top: 0;
+  right: 0;
+  width: 2px;
+  height: 18px;
+}
+
+.mutsumi-corner--bl {
+  bottom: -2px;
+  left: -2px;
+}
+
+.mutsumi-corner--bl::before {
+  bottom: 0;
+  left: 0;
+  width: 18px;
+  height: 2px;
+}
+
+.mutsumi-corner--bl::after {
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  height: 18px;
+}
+
+.mutsumi-corner--br {
+  bottom: -2px;
+  right: -2px;
+}
+
+.mutsumi-corner--br::before {
+  bottom: 0;
+  right: 0;
+  width: 18px;
+  height: 2px;
+}
+
+.mutsumi-corner--br::after {
+  bottom: 0;
+  right: 0;
+  width: 2px;
+  height: 18px;
+}
+
+.mutsumi-illust {
+  display: block;
+  height: 360px;
+  width: 100%;
+  object-fit: cover;
+  object-position: top;
+  filter: saturate(.78) contrast(1.05);
+  border-radius: 1px;
+}
+
+.mutsumi-caption {
+  font-family: var(--cxx-font-ui);
+  text-align: center;
+  margin-top: 12px;
+  font-size: 16px;
+  letter-spacing: 2px;
+  color: var(--cp-cyan);
+}
+
+.mutsumi-page-num {
+  position: absolute;
+  bottom: 18px;
+  font-family: var(--cxx-font-ui);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--cp-muted);
+  opacity: .6;
+}
+
+.mutsumi-page-num--l {
+  left: 45px;
+}
+
+.mutsumi-page-num--r {
+  right: 40px;
+}
+
+.mutsumi-action {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.mutsumi-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 36px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--cxx-font-ui);
+  position: relative;
+  overflow: hidden;
+  color: var(--cp-ink);
+  background: var(--cp-cyan);
+  border: 1px solid var(--cp-cyan);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cxx-cyan) 22.00%, transparent);
+  text-shadow: none;
+}
+
+.mutsumi-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--cxx-raised) 8%, transparent), transparent);
+  transition: left 0.5s ease;
+}
+
+.mutsumi-btn:hover::before {
+  left: 100%;
+}
+
+.mutsumi-btn:hover {
+  transform: translateY(-2px);
+  background: var(--cxx-cyan);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--cxx-cyan) 12.00%, transparent),0 6px 20px color-mix(in srgb, var(--cxx-cyan) 15.00%, transparent);
+  color: var(--cp-ink);
+}
+
+.mutsumi-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--cxx-cyan) 15%, transparent);
+}
+
+.mutsumi-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 15px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+  overflow: hidden;
+  background: transparent;
+}
+
+.mutsumi-page-turn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(100%);
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+  background: linear-gradient(135deg,var(--cxx-ink),var(--cxx-ink));
+}
+
+.mutsumi-overlay.active .mutsumi-page-turn {
+  transform: translateX(0);
+}
+
+.mutsumi-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mutsumi-over-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  transition: opacity 0.5s ease 0.5s;
+}
+
+.mutsumi-overlay.active .mutsumi-over-content {
+  opacity: 1;
+}
+
+.mutsumi-over-leaves {
+  display: flex;
+  gap: 8px;
+}
+
+.mutsumi-over-leaf {
+  width: 8px;
+  height: 14px;
+  border-radius: 0 80% 0 80%;
+  animation: mutsumi-leaf-fall 1.5s ease-in-out infinite;
+  background: var(--cp-red);
+}
+
+.mutsumi-over-leaf:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.mutsumi-over-leaf:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+.mutsumi-over-txt {
+  font-family: var(--cxx-font-ui);
+  font-style: italic;
+  font-size: 18px;
+  letter-spacing: 6px;
+  color: var(--cp-cyan);
+}
+
+@media (max-width: 680px) {
+  .mutsumi-book {
+    flex-direction: column;
+    border-radius: 10px;
+  }
+
+  .mutsumi-book::before {
+    display: none;
+  }
+
+  .mutsumi-vine-sep {
+    width: 100%;
+    height: 35px;
+  }
+
+  .mutsumi-vine-line {
+    width: 85%;
+    height: 1px;
+  }
+
+  .mutsumi-vine-node {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .mutsumi-vine-node:nth-child(1) {
+    left: 15%;
+  }
+
+  .mutsumi-vine-node:nth-child(2) {
+    left: 38%;
+  }
+
+  .mutsumi-vine-node:nth-child(3) {
+    left: 62%;
+  }
+
+  .mutsumi-vine-node:nth-child(4) {
+    left: 85%;
+  }
+
+  .mutsumi-vine-node::before {
+    top: auto;
+    bottom: -3px;
+    left: -6px;
+    transform: rotate(40deg);
+  }
+
+  .mutsumi-vine-node::after {
+    top: -8px;
+    right: -6px;
+  }
+
+  .mutsumi-page-left {
+    padding: 35px 30px 25px 35px;
+    min-height: auto;
+  }
+
+  .mutsumi-page-right {
+    padding: 25px 30px 35px 30px;
+  }
+
+  .mutsumi-page-num--l {
+    left: 30px;
+    bottom: 10px;
+  }
+
+  .mutsumi-page-num--r {
+    right: 30px;
+    bottom: 10px;
+  }
+
+  .mutsumi-illust-frame {
+    max-width: 240px;
+  }
+}
+
+.mutsumi-card::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.mutsumi-paper::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.mutsumi-book::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.mutsumi-board::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.mutsumi-notebook::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.mutsumi-container::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.mutsumi-journal::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+@keyframes cp-alt-flow {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .mutsumi-wrap * {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .mutsumi-wrap *::before {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .mutsumi-wrap *::after {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+}
+
+.mutsumi-text strong {
+  color: var(--cp-amber);
+}
+
+button.mutsumi-btn {
+  font-family: inherit;
+  line-height: inherit;
+  appearance: none;
+  min-height: 44px;
+}
+
+.mutsumi-btn:focus-visible {
+  outline: 2px solid var(--cp-cyan,var(--cxx-line));
+  outline-offset: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="mutsumi-wrap" id="mutsumiWrap">
+    <div class="mutsumi-book">
+
+        <!-- ===== 左页：文字与GIF ===== -->
+        <div class="mutsumi-page-left">
+
+            <!-- 角落叶子装饰 -->
+            <div class="mutsumi-leaf-deco">
+                <div class="mutsumi-leaf"></div>
+                <div class="mutsumi-leaf"></div>
+                <div class="mutsumi-leaf"></div>
+            </div>
+
+            <div class="mutsumi-chapter">Scene 01</div>
+            <h2 class="mutsumi-title">若叶 睦</h2>
+            <div class="mutsumi-subtitle">Wakaba Mutsumi — a story yet untold</div>
+
+            <!-- UI界面文字 -->
+            <div class="mutsumi-text">
+                <p>园艺部的黄瓜开花了。</p>
+                <p>刚才拍了照片，已经好好保存下来了。</p>
+                <p>等结出果实的时候，带去给祥吧... 虽然她大概不会收下。那样的话，就给素世吧。</p>
+                <p>待会儿还有礼仪课。不想去。</p>
+            </div>
+
+            <!-- GIF贴纸区（不与立绘重叠） -->
+            <div class="mutsumi-sticker-area">
+                <div class="mutsumi-gif-frame">
+                    <img class="mutsumi-gif" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E7%9D%A6%E9%BB%84%E7%93%9C.gif" alt="睦">
+                </div>
+                <div class="mutsumi-sticker-tag">memo ✿</div>
+            </div>
+
+            <!-- 按钮 -->
+            <div class="mutsumi-action">
+                <button type="button" class="mutsumi-btn" onclick="mutsumiStart()"
+                     data-prompt="【开始】【开场白】
+# 场景生成指令
+
+## 核心任务
+请作为【场景描绘者】，写一段关于若叶睦的开局场景。本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+
+## 场景要素
+- **时间：** 2050年12月25日，下午三点半。
+- **地点：** 离开月之森园艺部的路上 → 祥子打工的仓库外。
+- **核心人物：** 若叶睦。
+
+## 剧情大纲与心理活动（全部必须融入描写）：
+
+1. **园艺部的黄瓜花：** 下午三点半，睦拿着自己的手提包从月之森的园艺部离开。今年的蔬菜长势还不错，特别是她精心照料的那株黄瓜，今天终于开出了一朵小小的、漂亮的黄色花朵，睦在当时用义眼拍下了照片，并且将它换成了自己的新社交账号头像。
+
+2. **笨拙的善意：** 睦边走边想：等结出了黄瓜，要带一些去给素世。半年前，因为自己的错、因为自己说出了那句“我从来没有觉得玩乐队开心过”，让CRYCHIC彻底走向了终结，素世她直到现在都还没能走出来，但为了祥子，这是没办法的事情。等结出了黄瓜，就拿它们当作赔礼吧，这是她自己亲手种出来的、为数不多不依附于父母金钱的东西。
+
+3. **疲惫的服从与停滞的脚步：** 睦等会儿她还要去上父母安排的礼仪课。她不想去，但如果逃课的话，一定又会被父亲责问吧，特别是会被怀疑自己去找了祥子。她除了顺从，不知道该如何反抗。不知不觉中，她已经顺路走到了祥子最近正在打工的仓库附近。
+
+4. **徘徊与退缩：** 睦停下了脚步。她知道祥子最近的状态很糟糕，看起来就像是“快要坏掉了”一样。她想去探望祥子，想知道她还能不能撑得住。睦还在随身的手提包里提前准备好了祥过去很爱喝的红茶茶叶。她站在离仓库门口不远的地方，准备迈开步子走近大门。引得里里外外穿着工服进出的搬运工一阵诧异，对这位穿着明显不是一个阶层的少女敬而远之。睦又想起了祥子曾经对自己说过——没有重要的事情不要靠近她，她现在的身份已经没法和睦继续待在一起了；自己如果现在走进去关心她，大概率只会再次惹怒她、被她责怪，被她担心。想到这里，她向前的脚步就这样僵硬地停在了半空中。
+
+## 最高优先级指令
+在描绘完睦在仓库门外纠结，最终脚步停滞的场景后，【立即停止输出】。严禁强行推进后续对话或代替玩家行动，将故事的控制权交给玩家。
+【/开场白】">
+                    翻开下一页 ❧
+                </button>
+            </div>
+
+            <div class="mutsumi-page-num mutsumi-page-num--l">— i —</div>
+        </div>
+
+        <!-- ===== 中缝藤蔓分隔 ===== -->
+        <div class="mutsumi-vine-sep">
+            <div class="mutsumi-vine-line">
+                <div class="mutsumi-vine-node"></div>
+                <div class="mutsumi-vine-node"></div>
+                <div class="mutsumi-vine-node"></div>
+                <div class="mutsumi-vine-node"></div>
+            </div>
+        </div>
+
+        <!-- ===== 右页：立绘 ===== -->
+        <div class="mutsumi-page-right">
+
+            <div class="mutsumi-illust-frame">
+                <div class="mutsumi-corner mutsumi-corner--tl"></div>
+                <div class="mutsumi-corner mutsumi-corner--tr"></div>
+                <div class="mutsumi-corner mutsumi-corner--bl"></div>
+                <div class="mutsumi-corner mutsumi-corner--br"></div>
+                <img class="mutsumi-illust" src="https://cyber2051.top/img/%E8%8B%A5%E5%8F%B6%E7%9D%A6%2FMutsumi_%E7%89%B9%E5%86%99%E7%AB%99%E5%A7%BF.png" alt="若叶睦">
+            </div>
+
+            <div class="mutsumi-caption">Mutsumi W.</div>
+
+            <div class="mutsumi-page-num mutsumi-page-num--r">— ii —</div>
+        </div>
+
+        <!-- ===== 翻页过场遮罩 ===== -->
+        <div class="mutsumi-overlay" id="mutsumiOverlay">
+            <div class="mutsumi-page-turn"></div>
+            <div class="mutsumi-over-content">
+                <div class="mutsumi-over-leaves">
+                    <div class="mutsumi-over-leaf"></div>
+                    <div class="mutsumi-over-leaf"></div>
+                    <div class="mutsumi-over-leaf"></div>
+                </div>
+                <div class="mutsumi-over-txt">turning page...</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function mutsumiStart() {
+    var btn = document.querySelector('.mutsumi-btn');
+    var promptText = btn.getAttribute('data-prompt');
+
+    return parent.Cxx236OpeningHost.submitPreview(window, '/send ' + promptText + '|/trigger');
+}
+</script>
+
+</body>
+</html>

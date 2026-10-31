@@ -1,0 +1,17 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),acorn=require('D:/SillyTavern/node_modules/acorn');
+const sourceRoot=path.resolve(__dirname,'../../卡片源码'),pluginRoot=path.resolve(__dirname,'../../配套扩展/cxx-motion'),read=file=>fs.readFileSync(path.join(sourceRoot,file),'utf8');
+const seen=new Set(),modules=[];
+function add(file){file=path.resolve(file);if(seen.has(file))return;seen.add(file);const code=fs.readFileSync(file,'utf8');if(file.endsWith('.json')){if(path.basename(file)!=='盗芯之夜.json')throw Error('Unexpected JSON');modules.push('globalThis.CxxChapterData='+code+';');return;}for(const match of code.matchAll(/require\(['"](\.[^'"]+)['"]\)/g))add(path.resolve(path.dirname(file),match[1]));modules.push(code);}
+for(const name of ['ensemble-ui','player-ui','player-operations','player-profile-ui','talents','talent-ui'])add(path.join(sourceRoot,'运行时',name+'.js'));
+add(path.join(sourceRoot,'长期记忆/knowledge.js'));
+add(path.join(sourceRoot,'原生/host.js'));add(path.join(sourceRoot,'原生/prose.js'));
+const theme=read('主题/tokens.css'),styles={CxxEnsembleStyle:theme+read('运行时/ensemble-ui.css'),CxxThemeCSS:theme,CxxMemoryPanelStyle:read('长期记忆/panel.css'),nativeCSS:theme+read('原生/prose.css'),carriers:read('主题/carriers.css')};
+const ensembleTest=fs.readFileSync(path.resolve(__dirname,'../上下文/ensemble-ui-browser.cjs'),'utf8');
+let setup;
+function visit(node){if(!node||typeof node!=='object')return;if(!setup&&node.type==='CallExpression'&&node.callee?.object?.name==='page'&&node.callee?.property?.name==='evaluate'&&node.arguments[0]?.type==='ArrowFunctionExpression')setup=ensembleTest.slice(node.arguments[0].start,node.arguments[0].end);for(const value of Object.values(node))if(Array.isArray(value))value.forEach(visit);else if(value&&typeof value==='object')visit(value);}
+visit(acorn.parse(ensembleTest,{ecmaVersion:'latest'}));if(!setup)throw Error('No ensemble fixture');
+const bundle='window.visualStyles='+JSON.stringify(styles)+';Object.assign(window,visualStyles);\n'+modules.join('\n;\n')+'\n'+read('长期记忆/panel.js')+'\n'+read('主题/runtime.js')+'\nwindow.setupMemory='+require('../lib/memory-visual-fixture.cjs').setup.toString()+';\nwindow.setupEnsemble='+setup+';';
+const page='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#100f14;color:#eee;font:16px system-ui}#opener{padding:12px}#fixture{margin:0}</style><button id="opener">长期记忆</button><main id="fixture"></main><script src="/visual/bundle.js"></script><script type="module" src="/visual/fixture.mjs"></script></html>';
+const files=new Map([['/visual/',path.join(__dirname,'visual-memory-harness.html')],['/visual/fixture.mjs',path.join(__dirname,'visual-memory-fixture.mjs')],...['runtime/motion.mjs','recipes/graphic.mjs'].map(name=>['/motion/'+name,path.join(pluginRoot,name)])]);
+http.createServer((request,response)=>{const url=new URL(request.url,'http://127.0.0.1'),body=url.pathname==='/visual/bundle.js'?bundle:url.pathname==='/visual/panel.html'?page:files.has(url.pathname)?fs.readFileSync(files.get(url.pathname)):null;if(body===null){response.writeHead(404).end();return;}response.writeHead(200,{'Content-Type':/\.(?:mjs|js)$/.test(url.pathname)?'text/javascript; charset=utf-8':'text/html; charset=utf-8','Cache-Control':'no-store'}).end(body);}).listen(8872,'127.0.0.1',()=>console.log('http://127.0.0.1:8872/visual/'));

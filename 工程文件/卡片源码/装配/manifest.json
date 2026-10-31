@@ -1,0 +1,126 @@
+{
+  "format": "cyber2051.assembly.v1",
+  "targetVersion": "2.3.12",
+  "role": "Current field and startup recipes; module implementations and embedded documents are assembled from module-sources.json.",
+  "provenance": {
+    "sourceSHA256": "3fa16ab36a9970096c4e30789cd64469686781e884dd4d8f78ed664958843a64",
+    "note": "Inherited field and shell fragments; no archived whole card is required by this recipe."
+  },
+  "baseFile": "卡片字段.json",
+  "parts": [
+    {
+      "pointer": [
+        "data",
+        "character_book",
+        "entries"
+      ],
+      "file": "世界书.json",
+      "type": "json",
+      "sha256": "009804c924a7d534312fc806262cccec1052d023abc72b5e5d078aa52b9e2bee"
+    },
+    {
+      "pointer": [
+        "data",
+        "alternate_greetings"
+      ],
+      "file": "备用开场.json",
+      "type": "json",
+      "sha256": "931ae3d65ecec1cffcaf725fd69b1452845fef8d81b1885f83d1fac93965dc70"
+    },
+    {
+      "pointer": [
+        "data",
+        "first_mes"
+      ],
+      "file": "首条消息.html",
+      "type": "text",
+      "sha256": "fe70bdae5246236f9fe5c261c39f0f36db972f20bb49aa4cd3a4f8b7525badba"
+    },
+    {
+      "pointer": [
+        "first_mes"
+      ],
+      "file": "首条消息-顶层.html",
+      "type": "text",
+      "sha256": "fe70bdae5246236f9fe5c261c39f0f36db972f20bb49aa4cd3a4f8b7525badba"
+    },
+    {
+      "pointer": [
+        "data",
+        "extensions",
+        "tavern_helper",
+        "scripts",
+        0,
+        "content"
+      ],
+      "file": "启动脚本/07d0d1a7-897e-4a2d-adb4-e95d360e6ba2.js",
+      "type": "text",
+      "sha256": "21fed3846470d6609de00cb7c49b30f63951da95029cc1900d3809b541225cf6"
+    },
+    {
+      "pointer": [
+        "data",
+        "extensions",
+        "tavern_helper",
+        "scripts",
+        1,
+        "content"
+      ],
+      "file": "启动脚本/cf33c692-7a41-444d-b8b7-6a70163e0104.js",
+      "type": "text",
+      "sha256": "1039dd5a92291f3526fdf5caf9c9367b0ef68ac635269220a6e0ca3d262349a5"
+    },
+    {
+      "pointer": [
+        "data",
+        "extensions",
+        "tavern_helper",
+        "scripts",
+        2,
+        "content"
+      ],
+      "file": "启动脚本/cxx-business-core-241.js",
+      "type": "text",
+      "sha256": "dc5797bdccb72f7261c3972f9d2fb1d334f9a7e832bc2cd1d6c87ee258a1172d"
+    },
+    {
+      "pointer": [
+        "data",
+        "extensions",
+        "tavern_helper",
+        "scripts",
+        3,
+        "content"
+      ],
+      "file": "启动脚本/9a9d6e73-5111-4c64-89c7-98717bbbdf3b.js",
+      "type": "text",
+      "sha256": "31d4d39098d690cf47cbf8c6157cc3e6b84b6188779b8332077ae2552dc317b7"
+    },
+    {
+      "pointer": [
+        "data",
+        "extensions",
+        "tavern_helper",
+        "scripts",
+        4,
+        "content"
+      ],
+      "file": "启动脚本/cxx-native-ui-231.js",
+      "type": "text",
+      "sha256": "f2282cd844d0cc565d2000e9a77f4b329c279d177d00b6e511971ed84579c005"
+    },
+    {
+      "pointer": [
+        "data",
+        "extensions",
+        "tavern_helper",
+        "scripts",
+        5,
+        "content"
+      ],
+      "file": "启动脚本/cxx-galgame-g1-local.js",
+      "type": "text",
+      "sha256": "e01b945476a67901df66e10fcf02ef2aa9816f443d34d48537c22930fa308eee"
+    }
+  ]
+}

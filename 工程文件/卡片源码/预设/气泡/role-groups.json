@@ -1,0 +1,235 @@
+[
+  {
+    "id": "band-08",
+    "name": "MyGO!!!!!",
+    "ids": [
+      "tomori",
+      "anon",
+      "rana",
+      "soyo",
+      "taki"
+    ]
+  },
+  {
+    "id": "band-09",
+    "name": "Ave Mujica",
+    "ids": [
+      "uika",
+      "mutsumi",
+      "umiri",
+      "nyamu",
+      "sakiko"
+    ]
+  },
+  {
+    "id": "band-01",
+    "name": "Poppin'Party",
+    "ids": [
+      "kasumi",
+      "tae",
+      "rimi",
+      "saaya",
+      "arisa"
+    ]
+  },
+  {
+    "id": "band-02",
+    "name": "Afterglow",
+    "ids": [
+      "ran",
+      "moca",
+      "himari",
+      "tomoe",
+      "tsugumi"
+    ]
+  },
+  {
+    "id": "band-03",
+    "name": "Pastel＊Palettes",
+    "ids": [
+      "aya",
+      "hina",
+      "chisato",
+      "maya",
+      "eve"
+    ]
+  },
+  {
+    "id": "band-04",
+    "name": "Roselia",
+    "ids": [
+      "yukina",
+      "sayo",
+      "lisa",
+      "ako",
+      "rinko"
+    ]
+  },
+  {
+    "id": "band-05",
+    "name": "Hello, Happy World!",
+    "ids": [
+      "kokoro",
+      "kaoru",
+      "hagumi",
+      "kanon",
+      "misaki",
+      "michelle"
+    ]
+  },
+  {
+    "id": "band-06",
+    "name": "Morfonica",
+    "ids": [
+      "mashiro",
+      "touko",
+      "nanami",
+      "tsukushi",
+      "rui"
+    ]
+  },
+  {
+    "id": "band-07",
+    "name": "RAISE A SUILEN",
+    "ids": [
+      "layer",
+      "lock",
+      "masking",
+      "pareo",
+      "chu2"
+    ]
+  },
+  {
+    "id": "band-11",
+    "name": "millsage",
+    "ids": [
+      "hotaru",
+      "natsume",
+      "nagi",
+      "mahoro",
+      "houka"
+    ]
+  },
+  {
+    "id": "band-12",
+    "name": "一家Dumb Rock!",
+    "ids": [
+      "raika",
+      "miku",
+      "yomogi",
+      "chieri",
+      "shizuku"
+    ]
+  },
+  {
+    "id": "band-13",
+    "name": "结束乐队",
+    "ids": [
+      "btr_hitori",
+      "btr_nijika",
+      "btr_ryo",
+      "btr_ikuyo"
+    ]
+  },
+  {
+    "id": "band-14",
+    "name": "孤独摇滚！周边",
+    "ids": [
+      "btr_seika",
+      "btr_pa",
+      "btr_naoki",
+      "btr_michiyo",
+      "btr_futari",
+      "btr_ginjiro",
+      "btr_poison",
+      "btr_miyako",
+      "btr_fan1",
+      "btr_fan2",
+      "btr_nene",
+      "btr_erena",
+      "btr_kyoichi",
+      "btr_kyoka",
+      "btr_kuruyo",
+      "btr_minoru"
+    ]
+  },
+  {
+    "id": "band-15",
+    "name": "SICK HACK",
+    "ids": [
+      "btr_kikuri",
+      "btr_eliza",
+      "btr_shima"
+    ]
+  },
+  {
+    "id": "band-16",
+    "name": "SIDEROS",
+    "ids": [
+      "btr_yoyoko",
+      "btr_akubi",
+      "btr_fuko",
+      "btr_yuyu"
+    ]
+  },
+  {
+    "id": "band-17",
+    "name": "刺刺乐队",
+    "ids": [
+      "gbc_nina",
+      "gbc_momoka",
+      "gbc_subaru",
+      "gbc_tomo",
+      "gbc_rupa"
+    ]
+  },
+  {
+    "id": "band-18",
+    "name": "Diamond Dust",
+    "ids": [
+      "gbc_hina",
+      "gbc_nana",
+      "gbc_rin",
+      "gbc_ai"
+    ]
+  },
+  {
+    "id": "band-19",
+    "name": "Girls Band Cry 周边",
+    "ids": [
+      "gbc_muneo",
+      "gbc_yasue",
+      "gbc_suzune",
+      "gbc_tendo",
+      "gbc_kyoko",
+      "gbc_mine",
+      "gbc_shiomi",
+      "gbc_hayashi"
+    ]
+  },
+  {
+    "id": "band-20",
+    "name": "邦多利周边（真奈、薇欧拉）",
+    "ids": [
+      "viola",
+      "mana"
+    ]
+  },
+  {
+    "id": "submitted",
+    "name": "玩家投稿角色",
+    "ids": [
+      "morikawa",
+      "linxingye",
+      "vesper"
+    ]
+  },
+  {
+    "id": "other",
+    "name": "用户与其他角色",
+    "ids": [
+      "user",
+      "cxx"
+    ]
+  }
+]

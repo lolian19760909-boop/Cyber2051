@@ -1,0 +1,13 @@
+:host { display:block; min-width:0; color:var(--cxx-text); font:16px/1.6 var(--cxx-font-ui); contain:content; }
+:host([hidden]) { display:none; }
+.card { margin:14px 0; padding:16px 20px; border:1px solid var(--cxx-line); border-left:3px solid var(--cxx-red); background:linear-gradient(110deg,var(--cxx-raised),var(--cxx-panel)); box-sizing:border-box; overflow-wrap:anywhere; }
+.head { display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 16px; color:var(--cxx-red); letter-spacing:.12em; font-size:13px; }
+.scores { display:flex; flex-wrap:wrap; gap:12px 28px; margin-top:8px; }
+.scores>div { min-width:0; max-width:100%; overflow-wrap:anywhere; }
+.value { color:var(--cxx-cyan); font-size:22px; font-variant-numeric:tabular-nums; }
+.note { color:var(--cxx-muted); font-size:13px; margin:8px 0 0; }
+@media(max-width:500px) { .card { padding:12px; } .scores { gap:8px 16px; } .value { font-size:19px; } }
+:host([data-compact=true]) .card { margin:0; padding:7px 12px; }
+:host([data-compact=true]) .scores { margin-top:3px; gap:5px 22px; }
+:host([data-compact=true]) .value { font-size:17px; }
+:host([data-compact=true]) .note { margin-top:3px; }

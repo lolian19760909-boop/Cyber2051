@@ -1,0 +1,183 @@
+'use strict';
+(function(root,factory){
+ 'use strict';
+ if(typeof module==='object'&&module.exports)module.exports={create:factory};
+ else root.CxxLongMemoryAdapter={create:factory};
+})(globalThis,function({api,host=globalThis,parser,bundle,material:M,historyFactory,knowledge:K=typeof module==='object'&&module.exports?require('./knowledge.js'):api.CxxMemoryKnowledge}){
+ const structuredClone=(typeof module==='object'&&module.exports?require('../共享/data-clone.js'):globalThis.CxxDataClone).clone;
+ const KEY='__cxx_long_memory',MARK='【CXX_LONG_MEMORY_P1】',copy=v=>structuredClone(v),same=(a,b)=>JSON.stringify(a)===JSON.stringify(b),norm=s=>String(s||'').replace(/\s+/g,' ').trim();
+ const ctx=()=>api.SillyTavern.getContext(),owner=ctx().characters?.[ctx().characterId]?.avatar;
+ const defaults={maxCandidates:12,candidateChars:12000,memoryChars:6000,residentChars:4000,recentTurns:3};
+ let disposed=false,round=null,prompt=null,writes=Promise.resolve();const stops=[],webGenerations=new Map();
+ function scope(){const c=ctx(),chat=c.getCurrentChatId?.();return !disposed&&!c.groupId&&owner&&c.characters?.[c.characterId]?.avatar===owner&&chat?[owner,chat]:null;}
+ function assertScope(expected){if(!expected||!same(scope(),expected))throw Error('故事已切换，请在当前故事重新操作长期记忆。');}
+ function settings(){const v=api.getVariables({type:'chat'})?.[KEY];return v?.schema===1?v:{schema:1,enabled:false,notes:[],controls:{},nextNote:1};}
+ function webGenerationActive(){const current=scope();return !!current&&[...webGenerations.values()].some(expected=>same(expected,current));}
+ function active(){return !!scope()&&!webGenerationActive()&&settings().enabled===true;}
+ function acquireWebGeneration({generationId}={}){if(typeof generationId!=='string'||!generationId.startsWith('cxx2051:'))throw Error('网页生成需要独立的 cxx2051 请求编号。');const expected=scope();assertScope(expected);reset();webGenerations.set(generationId,expected);let released=false;return()=>{if(!released){released=true;webGenerations.delete(generationId);}};}
+ function limits(){return {...defaults,...settings().limits};}
+ async function edit(fn){const expected=scope();const job=writes.then(()=>{const h=host.Cxx233Updater?.host,work=async()=>{assertScope(expected);await api.updateVariablesWith(vars=>{assertScope(expected);const value=copy(vars[KEY]||{schema:1,enabled:false,notes:[],controls:{},nextNote:1});if(value.schema!==1)throw Error('长期记忆记录版本不匹配。');fn(value);vars[KEY]=value;return vars;},{type:'chat'});assertScope(expected);await ctx().saveChat();if(round?.type==='preview')reset();return state();};return h?.withChatSave?h.withChatSave({characterKey:expected?.[0],chatId:expected?.[1]},work):work();});writes=job.catch(()=>{});return job;}
+ function story(raw){
+  const text=parser.prepareDialogue(parser.readingText(String(raw||''))),checked=parser.inspect(text);
+  const cuts=checked.ranges.filter(r=>r.aux||['UpdateVariable','ztl','xuan','CityPublicContext','m18-terminal'].includes(r.kind));
+  if(cuts.some(r=>!r.complete))throw Error('正文辅助标签尚未闭合，不能读取为长期记忆。');
+  const merged=[];for(const r of cuts.sort((a,b)=>a.start-b.start)){const last=merged.at(-1);if(last&&r.start<=last.end)last.end=Math.max(last.end,r.end);else merged.push({start:r.start,end:r.end});}
+  let value=text;for(const r of merged.reverse())value=value.slice(0,r.start)+'\n'+value.slice(r.end);
+  return value.replace(/<StatusPlaceHolderImpl\s*\/>/g,'').trim();
+ }
+ function liveStat236(){const api=host&&host.Cxx236State;if(!api||typeof api.stat!=='function')return null;try{const value=api.stat();return value&&value.terminal?value:null;}catch(e){return null;}}
+ function progress(){const live=liveStat236();if(live){const q=live.terminal?.quests||{};return {quests:Object.fromEntries(Object.entries(q).filter(([,v])=>v&&v.state!=='已发布').map(([id,v])=>[id,{state:v.state,objective:v.objective,knownFacts:v.knownFacts,chapter:v.chapter}])),wallet:copy(live.terminal?.wallet||{})};}for(let i=ctx().chat.length-1;i>=0;i--){const m=ctx().chat[i],s=m.variables?.[m.swipe_id||0]?.stat_data;if(s){const q=s.terminal?.quests||{};return {quests:Object.fromEntries(Object.entries(q).filter(([,v])=>v&&v.state!=='已发布').map(([id,v])=>[id,{state:v.state,objective:v.objective,knownFacts:v.knownFacts,chapter:v.chapter}])),wallet:copy(s.terminal?.wallet||{})};}}return {quests:{},wallet:{}};}
+ function control(end=ctx().chat.length-1){const live=liveStat236();const liveControl=live?.terminal?.ensemble?.control;if(liveControl)return copy(liveControl);for(let i=end;i>=0;i--){const m=ctx().chat[i],e=m.variables?.[m.swipe_id||0]?.stat_data?.terminal?.ensemble;if(e?.control)return copy(e.control);}return null;}
+ function actorRoster(){const live=liveStat236();const liveActors=live?.terminal?.ensemble?.actors;if(liveActors)return Object.values(liveActors).filter(a=>a?.actorId).map(a=>({actorId:a.actorId,name:a.name}));for(let i=ctx().chat.length-1;i>=0;i--){const m=ctx().chat[i],actors=m.variables?.[m.swipe_id||0]?.stat_data?.terminal?.ensemble?.actors;if(actors)return Object.values(actors).filter(a=>a?.actorId).map(a=>({actorId:a.actorId,name:a.name}));}return [{actorId:'player',name:ctx().chatMetadata?.__cxx_story_profile?.name||'玩家'}];}
+ function recent(){const chat=ctx().chat,out=[];let turns=0;for(let i=chat.length-1;i>=0;i--){const m=chat[i];if(m.is_system)continue;if(!m.is_user&&++turns>limits().recentTurns)break;out.push({floor:i,swipe:m.swipe_id||0,role:m.is_user?'player':'assistant',body:story(m.mes),ref:host.CxxContext?.reference?.(i)||null});}return out.reverse();}
+ function fillContext(){if(!active())throw Error('请先配置本故事长期记忆。');return history?.fillContext()||JSON.stringify({story:scope(),messages:recent(),actors:actorRoster(),savedProgress:progress(),rule:'只从对应助手有效正文摘取已发生事实；保留 cxx-say 的发言者及 kind=thought 私人心声边界。'});}
+ function parseSource(raw){try{const text=String(raw||''),m=[...text.matchAll(/<cxx-source>([\s\S]*?)<\/cxx-source>/g)].at(-1);return JSON.parse(m?m[1]:text);}catch{return null;}}
+ function validSource(source){
+  if(source?.webSource){
+   const web=source.webSource,document=ctx().chatMetadata?.cxx2051_web,record=document?.records?.memories?.find(r=>r.id===web.recordId),projection=document?.records?.tasks?.find(t=>t.taskId===web.projectionTaskId);
+   if(!record||record.deleted||document.run?.accountId!==web.accountId||document.run?.runId!==web.runId||projection?.status!=='ready'||projection.source?.sha256!==web.projectionHash||projection.source?.nodeId!==document.run.headNodeId)return false;
+   if(record.source?.semanticHash!==web.semanticHash||record.source?.ancestorHash!==web.ancestorHash||(record.createdAt||null)!==web.recordCreatedAt||(record.updatedAt||null)!==web.recordUpdatedAt)return false;
+   const control=document.records.memories.find(r=>r.id==='memory-control:'+record.id&&r.sourceHash===record.source.semanticHash&&r.ancestorHash===record.source.ancestorHash);
+   if(control?.mode==='excluded'||(control?.updatedAt||null)!==web.controlUpdatedAt)return false;
+   const settings=document.records.memories.find(r=>r.id==='memory:settings');if(settings?.settings?.enabled===false)return false;
+  }
+  if(!source||!owns(source.story)||!Number.isInteger(source.floor)||!Number.isInteger(source.swipe)||typeof source.quote!=='string'||norm(source.quote).length<8)return false;
+  const m=ctx().chat[source.floor];if(!m||m.is_user||m.is_system||(m.swipe_id||0)!==source.swipe)return false;
+  if(round&&['swipe','regenerate'].includes(round.type)&&source.floor>=round.beforeLength-1)return false;
+  if(source.ref&&(!host.CxxContext?.validSource?.(source.ref)||source.ref.messageId!==host.CxxContext.reference(source.floor)?.messageId))return false;
+  return norm(story(m.mes)).includes(norm(source.quote));
+ }
+ function sheetRows(data,name){const t=Object.values(data).find(t=>t?.name===name);if(!t?.content?.length)return [];const head=t.content[0];return t.content.slice(1).filter(Array.isArray).map(row=>Object.fromEntries(head.map((h,i)=>[h,row[i]??''])));}
+ const owns=value=>M?M.owns(settings(),value,scope()):same(value,scope());
+ function allData(){const current=copy(history?.displayData()||host.AutoCardUpdaterAPI?.exportTableAsJson()||{});return M?M.merge(M.merge(M.tables(current,validSource),settings().portable?.nativeTables,validSource),settings().portable?.tables,validSource):current;}
+ function memories(){const data=allData();return {data,rows:sheetRows(data,'纪要表').map(row=>{const source=parseSource(row.纪要);return {id:String(row.编码索引),summary:String(row.概览),time:String(row.时间跨度),body:String(row.纪要).replace(/<cxx-source>[\s\S]*?<\/cxx-source>/g,''),dialogue:String(row.重要对话),source,kind:'自动经历'};}).filter(row=>/^AM\d{4,}$/.test(row.id)&&validSource(row.source))};}
+ function narrative({actorId,mode='player'}={}){
+  const binding=control(),selected=actorId||binding?.viewpointActorId||'player';
+  if(mode==='player'&&selected!==(binding?.viewpointActorId||'player'))throw Error('当前视角不能查看其他人物的私密记忆。');
+  return narrativeFor(selected,mode);
+ }
+ function narrativeFor(selected,mode='player',roster=actorRoster()){
+  if(!roster.some(a=>a.actorId===selected))throw Error('该人物尚未登记。');
+  const records=K.collect(active()?allData():{},{validSource,actors:roster.map(a=>a.actorId)}),view=K.project(records,{mode,actorId:selected});
+  const known=new Set([selected,...view.relations.map(r=>r.toActorId),...view.knowledge.map(k=>k.informant).filter(Boolean)]);
+  return {...view,names:Object.fromEntries(roster.filter(a=>mode==='author'||known.has(a.actorId)).map(a=>[a.actorId,a.name])),enabled:active(),databaseAvailable:!!host.AutoCardUpdaterAPI,tableVersion:settings().tableVersion||1};
+ }
+ function mode(row){if(row.kind==='玩家手记')return row.mode||'auto';const c=settings().controls?.[row.id];return c&&same(c.source,row.source)?c.mode:'auto';}
+ function contextPins(actorId){
+  if(!active())return [];
+  if(actorId!==(memoryBinding()?.viewpointActorId||'player'))throw Error('不能把其他人物的未结事项交给当前视角。');
+  const records=K.collect(allData(),{validSource,actors:(round?.actors||actorRoster()).map(a=>a.actorId)}),events=new Map(records.events.map(e=>[e.id,e]));
+  return [...records.knowledge.filter(k=>k.actorId===actorId&&k.current&&!k.conflicted&&['计划','未确认'].includes(events.get(k.eventId)?.kind)).map(k=>({id:k.id,kind:'人物所知的计划或未确认信息',text:k.text,ref:k.source.ref})),...records.relations.filter(r=>r.fromActorId===actorId&&r.current&&!r.conflicted&&r.unresolved.trim()).map(r=>({id:r.id,kind:'关系中尚未解决的问题',text:r.unresolved,ref:r.source.ref}))];
+ }
+ function allRows(){const automatic=host.AutoCardUpdaterAPI?memories():{data:{},rows:[]},notes=(settings().notes||[]).filter(n=>owns(n.story)).map(n=>({...n,body:n.text,summary:n.text.slice(0,120),kind:'玩家手记',sourceType:n.sourceType||'记录'}));automatic.rows=automatic.rows.map(r=>{const c=settings().controls?.[r.id];return c&&same(c.source,r.source)&&c.correction?{...r,original:r.body,body:c.correction,summary:c.correction.slice(0,120),corrected:true}:r;});return {...automatic,notes,all:[...automatic.rows,...notes]};}
+ const forModel=({original,...row})=>row;
+ function memoryBinding(){if(round){checkRound(round);return round.binding;}return control();}
+ function modelRows(){
+  const binding=memoryBinding();if(!binding)return allRows();
+  const view=narrativeFor(binding.viewpointActorId,'player',round?.actors||actorRoster()),candidates=[...view.knowledge.filter(r=>r.current&&!r.conflicted).map(r=>({...r,kind:'人物认知',knowledgeType:r.kind,body:r.text,summary:r.text.slice(0,120)})),...view.relations.filter(r=>r.current&&!r.conflicted).map(r=>({...r,kind:'有向关系',body:r.text,summary:r.text.slice(0,120)}))];
+  const notes=allRows().notes.filter(n=>n.actorId===binding.viewpointActorId&&n.branchRef&&host.CxxContext?.validSource?.(n.branchRef)&&(!round||!['regenerate','swipe'].includes(round.type)||n.branchRef.messageId!==round.anchorRef?.messageId));
+  return {data:{},rows:candidates,notes,all:[...candidates,...notes],limited:true,binding};
+ }
+ function resident(){return modelRows().all.filter(r=>mode(r)==='permanent').map(forModel);}
+ function clearPrompt(){prompt?.uninject();prompt=null;}
+ function checkRound(token){assertScope(token.scope);if(!same(control(),token.control)||round!==token||ctx().chat!==token.chat||token.anchor&&(ctx().chat[token.anchorFloor]!==token.anchor||(token.anchor.swipe_id||0)!==token.anchorSwipe))throw Error('本轮回复来源已变化，请重新生成。');}
+ function beginRound(type){
+  const chat=ctx().chat,current=control();let binding=current;
+  if(current&&type!=='preview'){
+   if(typeof host.CxxContext?.generationBinding==='function')binding=host.CxxContext.generationBinding(type);
+   else if(['regenerate','swipe','continue'].includes(type))throw Error('原回复的人物来源服务尚未就绪，不能按当前人物重写记忆。');
+   if(!binding)throw Error('本轮回复的人物归属尚未确定。');
+  }
+  return {scope:scope(),chat,before:chat.slice(),beforeLength:chat.length,anchor:chat.at(-1),anchorText:chat.at(-1)?.mes,anchorFloor:chat.length-1,anchorSwipe:chat.at(-1)?.swipe_id||0,anchorRef:host.CxxContext?.reference?.(chat.length-1)||null,priorControl:control(chat.length-2),priorSwipe:chat.at(-2)?.swipe_id||0,control:current,binding:copy(binding),actors:actorRoster(),type};
+ }
+ async function context(){
+  if(!active())throw Error('请先配置本故事长期记忆。');
+  if(!round)round=beginRound('preview');
+  const token=round;checkRound(token);if(token.context)return token.context;
+  const records=modelRows(),book=settings().book;if(!book)throw Error('本故事尚未选择记忆世界书。');const entries=await api.getWorldbook(book);checkRound(token);
+  const index=entries.find(e=>/^((ACU-\[[^\]]+\]-)?)TavernDB-ACU-CustomExport-纪要索引$/.test(e.name||e.comment||''));
+  const nativeIds=new Set(String(index?.content||'').match(/AM\d{4,}/g)||[]),priority=records.all.filter(r=>mode(r)==='priority'),normal=records.limited?records.rows:records.rows.filter(r=>nativeIds.has(r.id)),notes=records.notes;
+  const candidates=[],seen=new Set(),budget=limits();let chars=0;
+  for(const item of [...priority,...normal,...notes]){const row=forModel(item);if(seen.has(row.id)||['excluded','permanent'].includes(mode(row)))continue;seen.add(row.id);const size=JSON.stringify(row).length;if(candidates.length>=budget.maxCandidates||chars+size>budget.candidateChars)continue;candidates.push(row);chars+=size;}
+  const ids=new Set(candidates.map(r=>r.id)),linked=name=>sheetRows(records.data,name).filter(r=>validSource(parseSource(r.来源))&&String(r.关联纪要).match(/AM\d{4,}/g)?.some(id=>ids.has(id)));
+  const relationRows=linked('人物经历'),promiseRows=linked('承诺与未结事项');let attachedChars=chars;
+  const fit=rows=>rows.filter(r=>{const size=JSON.stringify(r).length;if(attachedChars+size>budget.candidateChars)return false;attachedChars+=size;return true;});
+  token.references=records.limited?candidates.map(r=>r.branchRef||host.CxxContext?.reference?.(r.source?.floor)).filter(Boolean):[];
+  token.context={story:token.scope,candidates,people:fit(relationRows),promises:fit(promiseRows),recent:records.limited?[]:recent(),viewpoint:records.binding||null,savedProgress:records.limited&&records.binding.viewpointActorId!=='player'?{quests:{},actorId:records.binding.viewpointActorId}:progress(),applicablePlot:records.limited?'':(host.CxxPlot?.enabled()?host.CxxPlot:host.CxxChapter)?.context?.({terminal:{quests:progress().quests}},{analyzes:false})||'',budget:{candidateChars:budget.candidateChars,usedChars:attachedChars,nativeCount:nativeIds.size,selectedCandidates:candidates.length}};
+  return token.context;
+ }
+ const recallContext=async()=>JSON.stringify(await context()),advanceContext=async()=>JSON.stringify(await context());
+ function renderIds(raw){if(round?.references?.some(ref=>!host.CxxContext?.validSource?.(ref)))throw Error('本轮记忆来源已变化，请重新准备召回。');const parsed=JSON.parse(raw),candidates=round?.context?.candidates||[];if(!Array.isArray(parsed.ids))throw Error('召回结果须为包含 ids 数组的 JSON。');const wanted=new Set(parsed.ids.filter(id=>typeof id==='string').slice(0,6)),selected=candidates.filter(row=>wanted.has(row.id)&&!['excluded','permanent'].includes(mode(row)));let used=0;return JSON.stringify(selected.filter(row=>{const size=JSON.stringify(row).length;if(used+size>limits().memoryChars)return false;used+=size;return true;}));}
+ async function started(type,options,dryRun){
+  if(history?.busy()&&!dryRun&&!options?.automatic_trigger)throw Error('历史补建正在占用原插件，请暂停并等待当前楼处理结束。');
+  if(!active()||dryRun||!['normal','continue','swipe','regenerate'].includes(type)||options?.automatic_trigger)return;
+  reset();round={...beginRound(type),original:type==='normal'?String(host.document?.querySelector('#send_textarea')?.value||''):null};
+  const rows=resident(),content=JSON.stringify(rows);if(content.length>limits().residentChars)throw Error('常驻记忆超过当前输入预算，请减少常驻记录或调整预算。');if(rows.length)prompt=api.injectPrompts([{id:'cxx-long-memory-resident',position:'in_chat',depth:0,role:'system',should_scan:false,content:'【玩家选择的常驻记忆】按来源与知情范围使用，手记推测不证明事实。\n'+content}],{once:false});
+ }
+ function filterEntries(lores){if(!active())return;for(const list of Object.values(lores||{}))if(Array.isArray(list))for(let i=0;i<list.length;i++)if(/^(?:ACU-\[[^\]]+\]-)?TavernDB-ACU-/.test(list[i]?.comment||list[i]?.name||''))list[i]={...list[i],disable:true};}
+ async function finalData(data,dryRun){
+  if(!active()||dryRun||!round)return;const token=round;
+  const rewrite=text=>{if(typeof text!=='string'||!text.includes(MARK))return text;checkRound(token);let value=text.replace(MARK,'').replace(/<cxx_memory_ids>([\s\S]*?)<\/cxx_memory_ids>/g,(_,raw)=>'【相关记忆，按来源及知情范围使用】\n'+renderIds(raw)).replace(/<cxx_memory_direction>([\s\S]*?)<\/cxx_memory_direction>/g,(_,raw)=>'【本轮准备，尚未发生】\n'+raw.trim());if(value.includes('<cxx_memory_ids>'))throw Error('召回输出标签不完整。');token.rendered=true;return value;};
+  for(const messages of [data?.messages,data?.prompt,data?.chat])if(Array.isArray(messages))for(const m of messages){if(typeof m.content==='string')m.content=rewrite(m.content);else if(Array.isArray(m.content))for(const part of m.content)if(typeof part?.text==='string')part.text=rewrite(part.text);}if(typeof data?.prompt==='string')data.prompt=rewrite(data.prompt);
+  if(token.rendered&&token.original&&token.type==='normal'){const m=ctx().chat[token.beforeLength];if(m?.is_user&&m.mes.includes(MARK)){await api.setChatMessages([{message_id:token.beforeLength,message:token.original}],{refresh:'affected'});checkRound(token);}}
+ }
+ async function restoreInput(){const token=round;if(!token||token.type!=='normal'||!token.original||!same(scope(),token.scope)||ctx().chat!==token.chat)return;const m=ctx().chat[token.beforeLength];if(m?.is_user&&m.mes.includes(MARK))await api.setChatMessages([{message_id:token.beforeLength,message:token.original}],{refresh:'affected'});}
+ async function ended(){const token=round;if(!token)return;const chat=ctx().chat,prepared=chat[token.beforeLength]?.is_user&&chat[token.beforeLength].mes.includes(MARK),reply=chat[token.beforeLength-1],rewritten=['regenerate','swipe','continue'].includes(token.type)&&chat===token.chat&&reply&&!reply.is_user&&(reply!==token.before.at(-1)||(reply.swipe_id||0)!==token.anchorSwipe||reply.mes!==token.anchorText);await restoreInput();if(round===token&&(rewritten||(token.rendered||prepared)&&chat.length>token.beforeLength))reset();}
+ async function stopped(){await restoreInput();reset();}
+ function reset(){clearPrompt();round=null;}
+ function deleted(){
+  const token=round,chat=ctx().chat;
+  // Native regenerate removes only the last reply after GENERATION_STARTED.
+  if(token?.type==='regenerate'&&!token.tailRemoved&&chat===token.chat&&chat.length===token.beforeLength-1&&chat.every((m,i)=>m===token.before[i])&&same(control(),token.priorControl)){
+   token.tailRemoved=true;token.control=token.priorControl;token.anchor=token.before.at(-2);token.anchorFloor=token.beforeLength-2;token.anchorSwipe=token.priorSwipe;checkRound(token);return;
+  }
+  reset();
+ }
+ function on(name,fn){const c=ctx(),event=c.eventTypes[name];if(event){c.eventSource.on(event,fn);stops.push(()=>c.eventSource.removeListener(event,fn));}}
+ function start(){on('GENERATION_STARTED',started);on('WORLDINFO_ENTRIES_LOADED',filterEntries);on('GENERATE_AFTER_DATA',finalData);on('GENERATION_ENDED',ended);on('GENERATION_STOPPED',stopped);on('CHAT_CHANGED',reset);on('MESSAGE_DELETED',deleted);for(const name of ['MESSAGE_SWIPED','MESSAGE_EDITED'])on(name,reset);return service;}
+ function destroy(){if(disposed)return;reset();webGenerations.clear();stops.splice(0).forEach(fn=>fn());disposed=true;}
+ let installing=null;
+ function install(){if(installing)return installing;installing=installOnce().finally(()=>{installing=null;});return installing;}
+ async function installOnce(){
+  const expected=scope();assertScope(expected);const database=host.AutoCardUpdaterAPI;if(!database||!host.EjsTemplate?.evalTemplate)throw Error('请先启用原版数据库、酒馆助手和提示词模板。');
+  const current=copy(database.exportTableAsJson()),owned=new Set(['纪要表','人物经历','承诺与未结事项',...K.names]),tables=Object.values(current).filter(v=>v?.content),nonempty=tables.filter(t=>t.content.length>1);
+  if(nonempty.some(t=>!owned.has(t.name))||nonempty.length&&!settings().enabled)throw Error('当前数据库已有记录。请先在独立故事配置 P1；旧数据库接入按历史迁移处理，现有记录未更改。');
+  let template={success:true,existing:true};
+  if(!settings().enabled||settings().tableVersion!==(bundle.tableVersion||1)){
+   const hasRecords=nonempty.length>0;
+   if(hasRecords&&typeof database.exportTableSnapshotsAtMessages!=='function')throw Error('原版数据库缺少楼层读回接口，未改动记忆模板。');
+   if(!hasRecords&&typeof database.getTableTemplate!=='function')throw Error('原版数据库缺少模板读回接口，未改动记忆模板。');
+   const chat=ctx().chat,floor=chat.findLastIndex(m=>!m.is_user&&!m.is_system),anchor=chat[floor],swipe=anchor?.swipe_id||0;
+   if(!anchor)throw Error('请在已有助手回复的故事中配置记忆。');
+   template=await database.importTemplateFromData(K.upgrade(current,bundle.template),{scope:'chat',presetName:bundle.templateName,dataMode:'seed',conflictPolicy:'keep-current'});assertScope(expected);
+   if(!template.success||template.runtimeReady===false)throw Error(template.message||'记忆模板导入未完成，请重试。');
+   if(ctx().chat!==chat||chat[floor]!==anchor||(anchor.swipe_id||0)!==swipe)throw Error('记忆模板更新期间回复已变化，请重新读取当前故事。');
+   const runtime=copy(database.exportTableAsJson());K.preserved(current,runtime);
+   // A pristine database saves a chat template/guide without a history checkpoint.
+   // Existing rows still require the original floor replay; never substitute an empty template for them.
+   let readback;
+   if(hasRecords){const saved=await database.exportTableSnapshotsAtMessages([floor]);assertScope(expected);
+    if(!saved?.success||!saved.snapshots?.[0]?.data)throw Object.assign(Error('记忆记录读回未完成：'+(saved?.error||'未返回楼层快照')+'。原记录保留。'),{code:'memory-template-readback',details:{floor,code:saved?.code,failurePoint:saved?.failurePoint}});
+    readback=saved.snapshots[0].data;K.preserved(current,readback);
+   }else readback=database.getTableTemplate({scope:'chat'});
+   if(ctx().chat!==chat||chat[floor]!==anchor||(anchor.swipe_id||0)!==swipe)throw Error('记忆模板读回期间回复已变化，请重新读取当前故事。');
+   for(const data of [runtime,readback])for(const t of Object.values(bundle.template).filter(t=>t?.name)){const found=Object.values(data||{}).find(v=>v?.name===t.name);if(!found||t.content[0].some(h=>!found.content?.[0]?.includes(h)))throw Error('记忆模板尚未读回完整的表与列：'+t.name);}
+  }
+  if(!template.success)throw Error(template.message||'记忆模板导入失败。');
+  const presets=[];for(const preset of [bundle.recall,bundle.advance,bundle.combined]){const result=await database.importPlotPresetFromData(copy(preset),{overwrite:true,switchTo:preset===bundle.combined});assertScope(expected);if(!result.success)throw Error(result.message||'记忆预设导入失败。');presets.push(result);}
+  const book=await api.getOrCreateChatWorldbook('current');assertScope(expected);await edit(v=>{v.enabled=true;v.book=book;v.version=bundle.version;v.tableVersion=bundle.tableVersion||1;v.limits={...defaults,...v.limits};});
+  if(M)await edit(v=>{v.owner=scope();});return {template,presets,book,mode:'请在原版设置选择交火并开启混合检索',target:'写入目标世界书选择：'+book,embedding:'在原版设置配置 embedding；rerank 可选'};
+ }
+ async function addNote(text,{sourceType='记录',mode:choice='auto'}={}){if(typeof text!=='string'||!text.trim()||text.length>2000||!['记录','推测','已发生事实'].includes(sourceType))throw Error('手记须为 1—2000 字，类型为记录、推测或已发生事实。');checkMode(choice);let id;await edit(v=>{id='N'+String(v.nextNote||1).padStart(4,'0');v.nextNote=(v.nextNote||1)+1;(v.notes||=[]).push({id,text:text.trim(),sourceType,mode:choice,story:scope(),...(control()?{actorId:control().viewpointActorId,branchRef:host.CxxContext?.reference?.(ctx().chat.length-1)||null}:{})});});return id;}
+ function checkMode(value){if(!['auto','priority','permanent','excluded'].includes(value))throw Error('召回方式须为 auto、priority、permanent 或 excluded。');}
+ async function setMode(id,value='priority'){checkMode(value);const row=allRows().all.find(r=>r.id===id);if(!row)throw Error('当前有效分支没有这条记忆。');return edit(v=>{const note=v.notes?.find(n=>n.id===id);if(note)note.mode=value;else{if(!validSource(row.source))throw Error('记忆来源已变化。');const prior=v.controls?.[id];(v.controls||={})[id]={...(same(prior?.source,row.source)?prior:{}),mode:value,source:copy(row.source)};}});}
+ async function editNote(id,text){if(typeof text!=='string'||!text.trim()||text.length>2000)throw Error('手记须为 1—2000 字。');return edit(v=>{const note=v.notes?.find(n=>n.id===id);if(!note||!owns(note.story))throw Error('本故事没有这条手记。');note.text=text.trim();});}
+ async function configure(values){const allowed=Object.keys(defaults);for(const [name,n]of Object.entries(values))if(!allowed.includes(name)||!Number.isInteger(n)||n<1||n>50000)throw Error('预算须为正整数，最大 50000；只调整已有预算字段。');return edit(v=>{v.limits={...limits(),...values};});}
+ async function correctMemory(id,text){if(typeof text!=='string'||text.length>2000)throw Error('修订须为 1—2000 字；清空则恢复原记忆。');const row=allRows().rows.find(r=>r.id===id);if(!row)throw Error('当前有效分支没有这条自动记忆。');return edit(v=>{if(!validSource(row.source))throw Error('记忆来源已变化。');const prior=v.controls?.[id];(v.controls||={})[id]={...(same(prior?.source,row.source)?prior:{}),source:copy(row.source),correction:text.trim()};});}
+ async function deleteNote(id){let removed;await edit(v=>{const index=v.notes?.findIndex(n=>n.id===id&&owns(n.story));if(!(index>=0))throw Error('本故事没有这条手记。');removed={index,note:copy(v.notes[index])};v.notes.splice(index,1);});return removed;}
+ async function restoreNote({note,index}){return edit(v=>{if(!owns(note.story)||v.notes?.some(n=>n.id===note.id))throw Error('这条手记无法在当前故事撤销删除。');(v.notes||=[]).splice(index,0,copy(note));});}
+ function state(){const value=settings();return {version:bundle.version,tableVersion:value.tableVersion||1,story:scope(),enabled:value.enabled,plots:(value.plots??bundle.plotsDefault)===true,book:value.book,limits:limits(),notes:copy(value.notes||[]),controls:copy(value.controls||{})};}
+ function details(){const rows=allRows();return {people:sheetRows(rows.data,'人物经历').filter(r=>validSource(parseSource(r.来源))),promises:sheetRows(rows.data,'承诺与未结事项').filter(r=>validSource(parseSource(r.来源))),progress:progress(),residentChars:JSON.stringify(resident()).length};}
+ const service={start,destroy,install,state,story,fillContext,narrative,contextPins,actors:actorRoster,sourceReference:floor=>host.CxxContext?.reference?.(floor)||null,preparePrompt:data=>finalData(data,false),recallContext,advanceContext,addNote,editNote,deleteNote,restoreNote,correctMemory,setMode,configure,details,acquireWebGeneration,setPlots:enabled=>edit(v=>{v.plots=enabled===true;}),list:()=>allRows().all.map(r=>({...r,mode:mode(r)})),openSettings:()=>host.AutoCardUpdaterAPI.openSettings()};
+ const history=historyFactory?.create({api,host,memory:service,material:M,read:settings,write:edit,scope,validSource,allData,reset});if(history){service.history=history;service.prepareExport=history.capture;const original=service.destroy;service.destroy=()=>{history.destroy();original();};}return service;
+});

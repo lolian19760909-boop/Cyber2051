@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<script>
+'use strict';
+const childDiagnosticErrors = [];
+function recordChildDiagnosticError(details) {
+  childDiagnosticErrors.push({ at: new Date().toISOString(), ...details });
+  const output = document.getElementById('child-errors');
+  if (output) output.textContent = JSON.stringify(childDiagnosticErrors, null, 2);
+  if (window.parent !== window) window.parent.postMessage({ kind: 'cxx-preview-diagnostic-child-error', details }, location.origin);
+}
+window.addEventListener('error', event => recordChildDiagnosticError({
+  message: event.message, file: event.filename, line: event.lineno, column: event.colno,
+  stack: event.error?.stack || null,
+}));
+window.addEventListener('unhandledrejection', event => recordChildDiagnosticError({
+  message: String(event.reason?.message || event.reason), stack: event.reason?.stack || null,
+}));
+// Opt-in diagnostic only: keep this document in its head parsing phase for 300 ms.
+const slowBodyMode = new URLSearchParams(location.search).get('slow') === '1';
+const slowBodyStarted = performance.now();
+const bodyPresentBeforeDelay = Boolean(document.body);
+if (slowBodyMode) while (performance.now() - slowBodyStarted < 300) { /* bounded diagnostic delay */ }
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('child-mode').textContent = JSON.stringify({ slow: slowBodyMode,
+    delayMs: slowBodyMode ? 300 : 0, bodyPresentBeforeDelay });
+  document.getElementById('child-errors').textContent = JSON.stringify(childDiagnosticErrors, null, 2);
+}, { once: true });
+</script>
+<title>纯静态 iframe 子页面</title></head><body>
+<p>纯静态同源子页面，无 Gal、终端、状态栏或外部资源。</p>
+<pre id="child-mode" aria-label="子页面诊断模式"></pre>
+<pre id="child-errors" aria-label="子页面错误记录"></pre>
+</body></html>

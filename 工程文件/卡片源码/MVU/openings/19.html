@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@200;300;400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+
+/* ===== Animations ===== */
+@keyframes mygo-fadeIn {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes mygo-slideUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes mygo-lineExpand {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+}
+@keyframes mygo-float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+}
+@keyframes mygo-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.15; }
+    50% { transform: scale(1.05); opacity: 0.25; }
+}
+@keyframes mygo-marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+@keyframes mygo-barPulse {
+    0%, 100% { transform: scaleY(0.3); }
+    50% { transform: scaleY(1); }
+}
+@keyframes mygo-excl-pop {
+    0% { opacity: 0; transform: scale(0) rotate(-20deg); }
+    60% { transform: scale(1.2) rotate(5deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+/* ===== Root ===== */
+.mygo-wrap {
+    max-width: 860px;
+    margin: 30px auto;
+    font-family: 'Noto Sans SC', sans-serif;
+    animation: mygo-fadeIn 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+    position: relative;
+}
+
+/* ===== Main Card ===== */
+.mygo-card {
+    position: relative;
+    background: #F6FAFD;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow:
+        0 20px 50px rgba(51, 136, 187, 0.12),
+        0 8px 20px rgba(0, 0, 0, 0.04),
+        0 0 0 1px rgba(51, 136, 187, 0.08);
+}
+
+/* Background pulse rings */
+.mygo-bg-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(51, 136, 187, 0.06);
+    animation: mygo-pulse 6s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+.mygo-bg-ring:nth-child(1) { width: 500px; height: 500px; top: -200px; right: -150px; }
+.mygo-bg-ring:nth-child(2) { width: 350px; height: 350px; bottom: -100px; left: -80px; animation-delay: 2s; }
+.mygo-bg-ring:nth-child(3) { width: 200px; height: 200px; top: 40%; left: 60%; animation-delay: 4s; }
+
+/* ===== Marquee ticker tape ===== */
+.mygo-ticker {
+    position: relative;
+    z-index: 1;
+    background: #3388BB;
+    padding: 8px 0;
+    overflow: hidden;
+    border-radius: 20px 20px 0 0;
+}
+.mygo-ticker-track {
+    display: flex;
+    white-space: nowrap;
+    animation: mygo-marquee 25s linear infinite;
+}
+.mygo-ticker-text {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0 30px;
+    flex-shrink: 0;
+}
+.mygo-ticker-dot {
+    color: rgba(255, 255, 255, 0.35);
+    padding: 0 5px;
+    flex-shrink: 0;
+}
+
+/* ===== Hero: Banner Image ===== */
+.mygo-hero {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    overflow: hidden;
+}
+
+.mygo-banner {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    max-height: 340px;
+    object-position: center 20%;
+}
+
+/* Banner bottom fade into card bg */
+.mygo-hero-fade {
+    position: absolute;
+    bottom: 0; left: 0; right: 0; height: 100px;
+    background: linear-gradient(180deg, transparent 0%, #F6FAFD 100%);
+    pointer-events: none;
+}
+
+/* ===== Logo + Title Section ===== */
+.mygo-identity {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    margin-top: -55px;
+    padding: 0 40px;
+    animation: mygo-slideUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s both;
+}
+
+.mygo-logo {
+    height: 50px;
+    width: auto;
+    display: inline-block;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 2px 8px rgba(51, 136, 187, 0.2));
+    animation: mygo-float 4s ease-in-out infinite;
+}
+
+.mygo-scene-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    color: #2A6B8A;
+    letter-spacing: 3px;
+    line-height: 1.3;
+    margin: 0 0 4px 0;
+}
+.mygo-scene-title em {
+    font-style: italic;
+    font-weight: 600;
+    color: #3388BB;
+}
+
+.mygo-scene-sub {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: rgba(51, 136, 187, 0.5);
+    margin-bottom: 5px;
+}
+
+/* ===== Five exclamation marks decoration ===== */
+.mygo-excl-row {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 14px 0 0 0;
+}
+.mygo-excl {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    animation: mygo-excl-pop 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.mygo-excl:nth-child(1) { color: #E87B7B; animation-delay: 0.8s; }
+.mygo-excl:nth-child(2) { color: #FF8899; animation-delay: 0.95s; }
+.mygo-excl:nth-child(3) { color: #77DD77; animation-delay: 1.1s; }
+.mygo-excl:nth-child(4) { color: #FFCC44; animation-delay: 1.25s; }
+.mygo-excl:nth-child(5) { color: #7777CC; animation-delay: 1.4s; }
+
+/* ===== Body ===== */
+.mygo-body {
+    position: relative;
+    z-index: 1;
+    padding: 28px 40px 32px 40px;
+}
+
+/* Meta bar */
+.mygo-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 22px;
+    animation: mygo-slideUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s both;
+}
+
+.mygo-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(42, 107, 138, 0.5);
+    letter-spacing: 1px;
+}
+.mygo-meta-icon {
+    width: 14px; height: 14px;
+    display: flex; align-items: center; justify-content: center;
+    color: #3388BB;
+    opacity: 0.5;
+}
+.mygo-meta-sep {
+    width: 4px; height: 4px;
+    background: rgba(51, 136, 187, 0.2);
+    border-radius: 50%;
+}
+
+/* Horizontal rule */
+.mygo-hr {
+    height: 2px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(51, 136, 187, 0.08) 15%,
+        rgba(51, 136, 187, 0.2) 50%,
+        rgba(51, 136, 187, 0.08) 85%,
+        transparent 100%);
+    border: none;
+    margin: 0 0 24px 0;
+    animation: mygo-lineExpand 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.6s both;
+    transform-origin: center;
+}
+
+/* Content text */
+.mygo-content {
+    animation: mygo-slideUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.7s both;
+    margin-bottom: 24px;
+}
+.mygo-text {
+    font-size: 14px;
+    line-height: 2;
+    color: rgba(42, 80, 107, 0.65);
+    font-weight: 400;
+    text-align: justify;
+    letter-spacing: 0.3px;
+}
+.mygo-text p { margin: 0 0 12px 0; }
+.mygo-text p:last-child { margin: 0; }
+
+/* ===== Audio Player ===== */
+.mygo-player {
+    animation: mygo-slideUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.75s both;
+    margin-bottom: 26px;
+    background: rgba(51, 136, 187, 0.04);
+    border: 1px solid rgba(51, 136, 187, 0.1);
+    border-radius: 14px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.mygo-play-btn {
+    width: 40px; height: 40px;
+    background: #3388BB;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(51, 136, 187, 0.25);
+    position: relative;
+}
+.mygo-play-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 18px rgba(51, 136, 187, 0.35);
+}
+.mygo-play-btn:active { transform: scale(0.95); }
+/* Play triangle */
+.mygo-play-icon {
+    width: 0; height: 0;
+    border-style: solid;
+    border-width: 7px 0 7px 13px;
+    border-color: transparent transparent transparent #FFF;
+    margin-left: 2px;
+    transition: all 0.2s ease;
+}
+/* Pause bars */
+.mygo-pause-icon {
+    display: none;
+    gap: 3px;
+}
+.mygo-pause-bar {
+    width: 3px; height: 14px;
+    background: #FFF;
+    border-radius: 1px;
+}
+.mygo-play-btn.playing .mygo-play-icon { display: none; }
+.mygo-play-btn.playing .mygo-pause-icon { display: flex; }
+
+.mygo-player-info {
+    flex: 1;
+    min-width: 0;
+}
+.mygo-track-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #2A6B8A;
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.mygo-track-name-jp {
+    font-weight: 400;
+    font-size: 12px;
+    color: rgba(42, 107, 138, 0.45);
+}
+.mygo-track-artist {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    color: rgba(42, 107, 138, 0.4);
+    letter-spacing: 1.5px;
+}
+
+/* Mini EQ visualizer */
+.mygo-player-eq {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 20px;
+    flex-shrink: 0;
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+}
+.mygo-player-eq.active { opacity: 0.7; }
+.mygo-p-bar {
+    width: 3px;
+    background: #3388BB;
+    border-radius: 1px;
+}
+.mygo-p-bar.animated { animation: mygo-barPulse ease-in-out infinite; }
+.mygo-p-bar:nth-child(1) { height: 50%; }
+.mygo-p-bar:nth-child(2) { height: 85%; }
+.mygo-p-bar:nth-child(3) { height: 35%; }
+.mygo-p-bar:nth-child(4) { height: 70%; }
+.mygo-p-bar:nth-child(5) { height: 55%; }
+.mygo-p-bar:nth-child(6) { height: 40%; }
+.mygo-p-bar:nth-child(1).animated { animation-duration: 0.8s; }
+.mygo-p-bar:nth-child(2).animated { animation-duration: 0.55s; animation-delay: 0.1s; }
+.mygo-p-bar:nth-child(3).animated { animation-duration: 0.9s; animation-delay: 0.2s; }
+.mygo-p-bar:nth-child(4).animated { animation-duration: 0.65s; animation-delay: 0.05s; }
+.mygo-p-bar:nth-child(5).animated { animation-duration: 0.75s; animation-delay: 0.15s; }
+.mygo-p-bar:nth-child(6).animated { animation-duration: 0.85s; animation-delay: 0.25s; }
+
+/* ===== Cast ===== */
+.mygo-cast {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+    animation: mygo-slideUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.8s both;
+}
+.mygo-cast-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(51, 136, 187, 0.35);
+    width: 100%;
+    margin-bottom: 2px;
+}
+.mygo-cast-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    background: #FFF;
+    border: 1px solid rgba(51, 136, 187, 0.12);
+    border-radius: 22px;
+    font-size: 12px;
+    color: rgba(42, 80, 107, 0.65);
+    font-weight: 400;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(51, 136, 187, 0.04);
+}
+.mygo-cast-tag:hover {
+    background: rgba(51, 136, 187, 0.06);
+    border-color: rgba(51, 136, 187, 0.25);
+    color: #2A6B8A;
+    box-shadow: 0 4px 12px rgba(51, 136, 187, 0.1);
+}
+.mygo-cast-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ===== Bottom accent ===== */
+.mygo-bottom-bar {
+    height: 4px;
+    background: linear-gradient(90deg,
+        #E87B7B 0%, #E87B7B 20%,
+        #FF8899 20%, #FF8899 40%,
+        #77DD77 40%, #77DD77 60%,
+        #FFCC44 60%, #FFCC44 80%,
+        #7777CC 80%, #7777CC 100%);
+    border-radius: 0 0 20px 20px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 680px) {
+    .mygo-wrap { margin: 15px 10px; }
+    .mygo-banner { max-height: 220px; }
+    .mygo-identity { margin-top: -40px; padding: 0 24px; }
+    .mygo-scene-title { font-size: 24px; }
+    .mygo-body { padding: 22px 24px 10px 24px; }
+    .mygo-meta { flex-wrap: wrap; gap: 8px; }
+    .mygo-player { flex-wrap: wrap; gap: 12px; padding: 12px 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="mygo-wrap">
+    <div class="mygo-card">
+
+        <!-- BG decorative rings -->
+        <div class="mygo-bg-ring"></div>
+        <div class="mygo-bg-ring"></div>
+        <div class="mygo-bg-ring"></div>
+
+        <!-- Ticker tape -->
+        <div class="mygo-ticker">
+            <div class="mygo-ticker-track">
+                <span class="mygo-ticker-text">It's MyGO!!!!!</span>
+                <span class="mygo-ticker-dot">◆</span>
+                <span class="mygo-ticker-text">Live House RiNG</span>
+                <span class="mygo-ticker-dot">◆</span>
+                <span class="mygo-ticker-text">迷星叫 · 迷路日々 · 碧天伴走</span>
+                <span class="mygo-ticker-dot">◆</span>
+                <span class="mygo-ticker-text">It's MyGO!!!!!</span>
+                <span class="mygo-ticker-dot">◆</span>
+                <span class="mygo-ticker-text">Live House RiNG</span>
+                <span class="mygo-ticker-dot">◆</span>
+                <span class="mygo-ticker-text">迷星叫 · 迷路日々 · 碧天伴走</span>
+                <span class="mygo-ticker-dot">◆</span>
+                <span class="mygo-ticker-text">It's MyGO!!!!!</span>
+                <span class="mygo-ticker-dot">◆</span>
+                <span class="mygo-ticker-text">Live House RiNG</span>
+                <span class="mygo-ticker-dot">◆</span>
+                <span class="mygo-ticker-text">迷星叫 · 迷路日々 · 碧天伴走</span>
+                <span class="mygo-ticker-dot">◆</span>
+            </div>
+        </div>
+
+        <!-- Hero banner -->
+        <div class="mygo-hero">
+            <img class="mygo-banner" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/52dfe334bed4ceb8fb59280ebe53dcd5.webp" alt="MyGO!!!!!">
+            <div class="mygo-hero-fade"></div>
+        </div>
+
+        <!-- Logo + Title -->
+        <div class="mygo-identity">
+            <div class="mygo-scene-sub">Backstage — Before the Show</div>
+            <img class="mygo-logo" src="https://storage.moegirl.org.cn/moegirl/commons/d/d2/Bandori_MyGO_LOGO_01_794_384.png" alt="MyGO!!!!! Logo">
+            <h1 class="mygo-scene-title">It's My <em>GO</em></h1>
+            <div class="mygo-excl-row">
+                <span class="mygo-excl">!</span>
+                <span class="mygo-excl">!</span>
+                <span class="mygo-excl">!</span>
+                <span class="mygo-excl">!</span>
+                <span class="mygo-excl">!</span>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="mygo-body">
+
+            <div class="mygo-meta">
+                <div class="mygo-meta-item">
+                    <div class="mygo-meta-icon">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+                        </svg>
+                    </div>
+                    2020.07.01 Wed
+                </div>
+                <div class="mygo-meta-sep"></div>
+                <div class="mygo-meta-item">
+                    <div class="mygo-meta-icon">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                        </svg>
+                    </div>
+                    19:00 – 20:15
+                </div>
+                <div class="mygo-meta-sep"></div>
+                <div class="mygo-meta-item">
+                    <div class="mygo-meta-icon">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    Backstage
+                </div>
+            </div>
+
+            <hr class="mygo-hr">
+
+            <!-- Text -->
+            <div class="mygo-content">
+                <div class="mygo-text">
+                    <p>弥漫在舞台后台的空气带着一股混杂的味道。发胶的甜腻、乐器箱蒙尘的木头味、还有刚刚挥洒过的汗水蒸发后的湿热气息，全部搅和在一起，有些闷人。几盏暗淡的工作灯悬在头顶，将地面拖拽出几道被设备和人影切割得支离破碎的影子。从幕布的缝隙里，能隐约听到外面观众入场的嗡鸣声，还有暖场音乐一下一下敲击着地板的沉闷鼓点，每一次震动都像是直接传导到了心脏。</p>
+                    <p>高松灯正蹲在地上，反复确认着自己麦克风的线路，那双纯净的粉色眼瞳里，倒映着设备指示灯微弱的闪光，整个人看起来无比专注。而另一边，椎名立希正有条不紊地在练习鼓垫上进行着最后的敲击，她表情严肃，仿佛周遭的一切喧嚣都与她无关，只有手中的鼓棒和精准的节拍才是整个世界。</p>
+                    <p>「话说回来，这舞台服真的没问题吗？感觉一半都没了。」</p>
+                    <p>长崎素世的声音里带着点无奈。她拉了拉自己身上那件由牛仔服右半边和白色衬衫拼接而成的露肩连衣裙，眉头微微蹙起。在经历了那么多事情之后，她似乎也懒得再在乐队伙伴们面前维持那副温柔大小姐的样子，此刻的吐槽显得格外真实。</p>
+                    <p>「我也只有一半。」坐在角落里调试着自己那把酒红色吉他的要乐奈抬起头，指了指自己身上由同一件牛仔服左半边改造而成的马甲裙。</p>
+                    <p>「可就是被你剪成两半的。」素世轻轻叹了口气，拨弄了一下自己裙摆上被爱音精心缝上去的双层荷叶边。</p>
+                    <p>「我可是已经重新精心设计了，超时尚的好不好！」千早爱音站起身，像是在展示自己的得意作品一样转了个圈。她身上的短款牛仔夹克配上不规则的白色半裙，确实有种独特的活力感。</p>
+                    <p>「这叫解构主义，Soyorin你不懂啦。」她挺起胸膛，一副时尚教主的派头。话说出口的瞬间，脑子里好像有什么东西“啪”地一下连上线了。没错，就是那个！</p>
+                    <p>她猛地一拍手，脸上是抑制不住的兴奋，灰色的眼瞳闪闪发光。</p>
+                    <p>糟糕，我简直是天才。</p>
+                    <p>爱音在心里为自己鼓掌，然后故作神秘地压低声音，凑到大家中间。「对了对了！我们乐队叫『迷子』对吧？我想到一个超棒的点子！把Maigo写成MyGO，怎么样？It's my go！」</p>
+                    <p>「哈？你说什么胡话呢？」立希停下了手里的鼓棒，皱着眉看过来，一副“这家伙又在搞什么鬼”的表情。「马上就要上台了，别搞这些有的没的。」</p>
+                    <p>「小声点，会被外面听到啦。」素世也轻声提醒道。</p>
+                    <p>「不是啦，你们听我说嘛！」爱音有些着急，声音不自觉地又抬高了一些。不行不行，这个伟大的发现必须让大家理解才行！「It's my go呀，It's my go！糟糕！这简直是天才大发现！」</p>
+                    <p>「什么玩意儿，说清楚点。」立希一脸不耐烦地啧了一声。</p>
+                    <p>「就是……『轮到我了』的意思吗？」素世若有所思地重复了一遍。</p>
+                    <p>「对呀！对呀！」爱音像是找到了知音，兴奋地点着头，粉色的长发也跟着一甩一甩的。「『迷路的孩子』和『轮到我上场了』，这个含义多好啊！简直太适合我们了不是吗？」她满怀期待地看向一直安静听着的灯。「Tomorin，你觉得呢？」</p>
+                    <p>灯抬起了头。</p>
+                    <p>她一直在默默地听着大家的对话。当「轮到我上场了」这句话钻进耳朵里时，心中某个地方像是被轻轻触碰了一下。一直以来，她都像个迷路的孩子，在人群中找不到自己的位置，只能把那些无法言说的心情写进笔记本里。是乐队，是大家，让她有了发出声音的勇气。</p>
+                    <p>迷路的孩子们，终于找到了属于自己的舞台。轮到我们……发出自己的声音了。</p>
+                    <p>她看着大家期待的眼神，用力地点了点头。</p>
+                    <p>「嗯，很好。」</p>
+                    <p>「看吧看吧！Tomorin也同意了！」爱音得意地扬起了下巴。「而且，为了更有气势，就在后面加上五个感叹号！代表我们五个人！」</p>
+                    <p>「MyGO!!!!!」一直沉默的乐奈简洁地念出了这个新名字，嘴角微微上扬，似乎对这个充满力量感的后缀很满意。</p>
+                    <p>立希看着大家脸上重新燃起的兴奋与期待，虽然嘴上没说什么，但紧锁的眉头已经不知不觉地舒展开了。</p>
+                    <p>就在这时，通往舞台方向的幕帘后传来工作人员的声音。</p>
+                    <p>「喂！下一组，准备上场了！」</p>
+                    <p>五人对视一眼，默契地站起身，围成一个小圈，将手紧紧地叠在一起。空气中最后的一丝犹豫和不安都消散了，取而代之的是无可动摇的决心。</p>
+                    <p>「我们是——」爱音带头喊道。</p>
+                    <p>「MyGO!!!!!」五人齐声说道，然后转身，毫不犹豫地走向那片被黑暗包裹、又即将被灯光点亮的舞台。</p>
+                </div>
+            </div>
+
+            <!-- Audio Player -->
+            <div class="mygo-player" id="mygoPlayer">
+                <div class="mygo-play-btn" id="mygoPlayBtn" onclick="mygoTogglePlay()">
+                    <div class="mygo-play-icon"></div>
+                    <div class="mygo-pause-icon">
+                        <div class="mygo-pause-bar"></div>
+                        <div class="mygo-pause-bar"></div>
+                    </div>
+                </div>
+                <div class="mygo-player-info">
+                    <div class="mygo-track-name">
+                        迷星叫
+                        <span class="mygo-track-name-jp">Mayoiuta</span>
+                    </div>
+                    <div class="mygo-track-artist">MyGO!!!!!</div>
+                </div>
+                <div class="mygo-player-eq" id="mygoEq">
+                    <div class="mygo-p-bar"></div>
+                    <div class="mygo-p-bar"></div>
+                    <div class="mygo-p-bar"></div>
+                    <div class="mygo-p-bar"></div>
+                    <div class="mygo-p-bar"></div>
+                    <div class="mygo-p-bar"></div>
+                </div>
+            </div>
+
+            <audio id="mygoAudio" loop preload="none">
+                <source src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E8%BF%B7%E6%98%9F%E5%8F%AB.mp3" type="audio/mpeg">
+            </audio>
+
+            <!-- Cast -->
+            <div class="mygo-cast">
+                <div class="mygo-cast-label">Members</div>
+                <div class="mygo-cast-tag">
+                    <span class="mygo-cast-dot" style="background:#E87B7B;"></span>
+                    高松 灯
+                </div>
+                <div class="mygo-cast-tag">
+                    <span class="mygo-cast-dot" style="background:#FF8899;"></span>
+                    千早 爱音
+                </div>
+                <div class="mygo-cast-tag">
+                    <span class="mygo-cast-dot" style="background:#77DD77;"></span>
+                    要 乐奈
+                </div>
+                <div class="mygo-cast-tag">
+                    <span class="mygo-cast-dot" style="background:#FFCC44;"></span>
+                    长崎 素世
+                </div>
+                <div class="mygo-cast-tag">
+                    <span class="mygo-cast-dot" style="background:#7777CC;"></span>
+                    椎名 立希
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Five-color bottom bar -->
+        <div class="mygo-bottom-bar"></div>
+
+    </div>
+</div>
+
+<script>
+/* Audio player */
+var mygoAudio = document.getElementById('mygoAudio');
+var mygoPlayBtn = document.getElementById('mygoPlayBtn');
+var mygoEq = document.getElementById('mygoEq');
+var mygoBars = mygoEq.querySelectorAll('.mygo-p-bar');
+
+function mygoTogglePlay() {
+    if (mygoAudio.paused) {
+        mygoAudio.play();
+        mygoPlayBtn.classList.add('playing');
+        mygoEq.classList.add('active');
+        mygoBars.forEach(function(b) { b.classList.add('animated'); });
+    } else {
+        mygoAudio.pause();
+        mygoPlayBtn.classList.remove('playing');
+        mygoEq.classList.remove('active');
+        mygoBars.forEach(function(b) { b.classList.remove('animated'); });
+    }
+}
+
+mygoAudio.addEventListener('ended', function() {
+    mygoPlayBtn.classList.remove('playing');
+    mygoEq.classList.remove('active');
+    mygoBars.forEach(function(b) { b.classList.remove('animated'); });
+});
+</script>
+
+</body>
+</html>

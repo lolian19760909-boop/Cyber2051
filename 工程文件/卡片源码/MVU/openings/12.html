@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sacramento&display=swap');
+
+/* ===== 动画定义 ===== */
+@keyframes sakiko-fadein {
+    0% { opacity: 0; transform: translateY(20px) scale(0.97); filter: blur(4px); }
+    100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+@keyframes sakiko-raindrop {
+    0% { top: -8%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 0.6; }
+    100% { top: 105%; opacity: 0; }
+}
+@keyframes sakiko-glow-pulse {
+    0%, 100% { opacity: 0.3; filter: blur(12px); }
+    50% { opacity: 0.5; filter: blur(18px); }
+}
+@keyframes sakiko-shimmer {
+    0%, 100% { opacity: 0.15; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.1); }
+}
+@keyframes sakiko-pendant-swing {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+}
+@keyframes sakiko-breathe {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+@keyframes sakiko-lace-drift {
+    0%, 100% { background-position: 0 0; }
+    50% { background-position: 6px 0; }
+}
+@keyframes sakiko-tear-fall {
+    0% { transform: translateY(0) scale(1); opacity: 0.7; }
+    80% { transform: translateY(18px) scale(0.7); opacity: 0.3; }
+    100% { transform: translateY(24px) scale(0.5); opacity: 0; }
+}
+@keyframes sakiko-overlay-rain {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 800px; }
+}
+@keyframes sakiko-fog {
+    0%, 100% { opacity: 0.03; transform: translateX(-5px); }
+    50% { opacity: 0.07; transform: translateX(5px); }
+}
+@keyframes sakiko-dot-blink {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.6; }
+}
+@keyframes sakiko-ribbon-wave {
+    0%, 100% { transform: rotate(-2deg) translateY(0); }
+    50% { transform: rotate(1deg) translateY(-2px); }
+}
+
+.sakiko-wrap {
+    max-width: 800px;
+    margin: 30px auto;
+    font-family: 'Noto Serif SC', 'Georgia', serif;
+    animation: sakiko-fadein 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    position: relative;
+}
+
+/* ===== 主体：起雾的窗户 ===== */
+.sakiko-window {
+    position: relative;
+    background:
+        radial-gradient(ellipse at 30% 20%, rgba(100, 110, 140, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 80%, rgba(140, 120, 160, 0.05) 0%, transparent 60%),
+        linear-gradient(175deg, #1a1c2e 0%, #252840 30%, #2a2545 60%, #1e1a30 100%);
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow:
+        0 20px 50px rgba(10, 8, 30, 0.5),
+        0 8px 20px rgba(100, 80, 150, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        inset 0 0 60px rgba(100, 100, 160, 0.03);
+    border: 1px solid rgba(150, 140, 180, 0.15);
+}
+
+/* 雨滴遮罩层 */
+.sakiko-rain-layer {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+.sakiko-raindrop {
+    position: absolute;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, rgba(180, 190, 220, 0.3), transparent);
+    animation: sakiko-raindrop linear infinite;
+    opacity: 0;
+}
+.sakiko-raindrop:nth-child(1) { left: 8%; height: 30px; animation-duration: 2.5s; animation-delay: 0s; }
+.sakiko-raindrop:nth-child(2) { left: 15%; height: 22px; animation-duration: 2s; animation-delay: 0.4s; }
+.sakiko-raindrop:nth-child(3) { left: 23%; height: 35px; animation-duration: 2.8s; animation-delay: 0.8s; }
+.sakiko-raindrop:nth-child(4) { left: 35%; height: 25px; animation-duration: 2.2s; animation-delay: 1.2s; }
+.sakiko-raindrop:nth-child(5) { left: 42%; height: 28px; animation-duration: 2.6s; animation-delay: 0.2s; }
+.sakiko-raindrop:nth-child(6) { left: 55%; height: 20px; animation-duration: 1.9s; animation-delay: 1.5s; }
+.sakiko-raindrop:nth-child(7) { left: 63%; height: 32px; animation-duration: 2.4s; animation-delay: 0.6s; }
+.sakiko-raindrop:nth-child(8) { left: 72%; height: 18px; animation-duration: 2.1s; animation-delay: 1.0s; }
+.sakiko-raindrop:nth-child(9) { left: 80%; height: 27px; animation-duration: 2.7s; animation-delay: 1.8s; }
+.sakiko-raindrop:nth-child(10) { left: 91%; height: 24px; animation-duration: 2.3s; animation-delay: 0.3s; }
+.sakiko-raindrop:nth-child(11) { left: 48%; height: 15px; animation-duration: 1.8s; animation-delay: 2.0s; }
+.sakiko-raindrop:nth-child(12) { left: 5%; height: 20px; animation-duration: 2.0s; animation-delay: 1.3s; }
+
+/* 玻璃上的水珠 (静态) */
+.sakiko-water-bead {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, rgba(200, 210, 240, 0.2), rgba(150, 160, 200, 0.08));
+    border: 1px solid rgba(200, 210, 240, 0.1);
+    z-index: 2;
+    pointer-events: none;
+}
+.sakiko-water-bead:nth-child(1) { width: 6px; height: 7px; top: 12%; left: 18%; }
+.sakiko-water-bead:nth-child(2) { width: 4px; height: 5px; top: 25%; right: 12%; }
+.sakiko-water-bead:nth-child(3) { width: 8px; height: 9px; top: 45%; left: 8%; }
+.sakiko-water-bead:nth-child(4) { width: 5px; height: 5px; top: 68%; right: 22%; }
+.sakiko-water-bead:nth-child(5) { width: 3px; height: 4px; top: 78%; left: 35%; }
+.sakiko-water-bead:nth-child(6) { width: 7px; height: 7px; top: 33%; left: 52%; }
+
+/* 雾气效果 */
+.sakiko-fog-layer {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 50% 100%, rgba(200, 200, 220, 0.04) 0%, transparent 70%);
+    animation: sakiko-fog 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ===== 顶部蕾丝装饰条 ===== */
+.sakiko-lace-top {
+    position: relative;
+    z-index: 5;
+    height: 28px;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 8px,
+            rgba(180, 170, 200, 0.08) 8px,
+            rgba(180, 170, 200, 0.08) 9px
+        );
+    border-bottom: 1px solid rgba(150, 140, 180, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    animation: sakiko-lace-drift 6s ease-in-out infinite;
+}
+/* 蕾丝花纹小元素 */
+.sakiko-lace-dot {
+    width: 5px; height: 5px;
+    background: rgba(180, 170, 210, 0.2);
+    border-radius: 50%;
+    position: relative;
+}
+.sakiko-lace-dot::before, .sakiko-lace-dot::after {
+    content: '';
+    position: absolute;
+    width: 3px; height: 3px;
+    background: rgba(180, 170, 210, 0.12);
+    border-radius: 50%;
+}
+.sakiko-lace-dot::before { top: -5px; left: 1px; }
+.sakiko-lace-dot::after { top: 5px; left: 1px; }
+.sakiko-lace-diamond {
+    width: 6px; height: 6px;
+    background: rgba(160, 150, 200, 0.15);
+    transform: rotate(45deg);
+}
+
+/* ===== 缎带装饰 ===== */
+.sakiko-ribbon-left {
+    position: absolute;
+    top: 40px; left: -8px;
+    width: 90px; height: 22px;
+    background: linear-gradient(135deg, rgba(120, 100, 160, 0.3) 0%, rgba(140, 120, 180, 0.2) 100%);
+    z-index: 10;
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: sakiko-ribbon-wave 4s ease-in-out infinite;
+}
+.sakiko-ribbon-left::before {
+    content: '';
+    position: absolute;
+    left: 0; bottom: -6px;
+    border-style: solid;
+    border-width: 3px 0 3px 8px;
+    border-color: transparent transparent transparent rgba(90, 75, 120, 0.3);
+}
+.sakiko-ribbon-text {
+    font-family: 'Caveat', cursive;
+    font-size: 11px;
+    color: rgba(220, 210, 240, 0.7);
+    letter-spacing: 2px;
+}
+
+/* ===== 主内容区域 ===== */
+.sakiko-content {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    padding: 30px 30px 20px 30px;
+    gap: 0;
+}
+
+/* ===== 左侧：文字区 ===== */
+.sakiko-left {
+    flex: 1.1;
+    padding: 15px 20px 15px 20px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* 日期标签 - 水滴宝石风格 */
+.sakiko-date-gem {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 16px 5px 12px;
+    background: linear-gradient(135deg, rgba(100, 90, 140, 0.3) 0%, rgba(120, 110, 160, 0.2) 100%);
+    border: 1px solid rgba(150, 140, 190, 0.2);
+    border-radius: 20px;
+    margin-bottom: 16px;
+    position: relative;
+}
+.sakiko-gem-icon {
+    width: 8px; height: 11px;
+    background: linear-gradient(180deg, rgba(180, 170, 220, 0.5), rgba(140, 130, 190, 0.3));
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    border: 1px solid rgba(200, 190, 240, 0.3);
+}
+.sakiko-date-text {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: rgba(200, 195, 220, 0.7);
+    letter-spacing: 2px;
+}
+
+/* 名字区域 */
+.sakiko-name-en {
+    font-family: 'Sacramento', cursive;
+    font-size: 38px;
+    color: rgba(200, 190, 230, 0.6);
+    margin: 0;
+    line-height: 1.1;
+    letter-spacing: 2px;
+}
+.sakiko-name-jp {
+    font-size: 14px;
+    color: rgba(180, 175, 210, 0.5);
+    letter-spacing: 6px;
+    margin-bottom: 20px;
+    font-weight: 300;
+}
+
+/* 正文区域 - 起雾玻璃上的手写字效果 */
+.sakiko-text-area {
+    position: relative;
+    padding: 18px 15px;
+    background: rgba(255, 255, 255, 0.015);
+    border-radius: 12px;
+    border: 1px solid rgba(150, 145, 180, 0.08);
+    margin-bottom: 20px;
+}
+/* 左侧装饰线 - 断续的泪痕 */
+.sakiko-text-area::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 15px; bottom: 15px; width: 2px;
+    background: repeating-linear-gradient(
+        180deg,
+        rgba(140, 130, 180, 0.3) 0px,
+        rgba(140, 130, 180, 0.3) 8px,
+        transparent 8px,
+        transparent 14px
+    );
+    border-radius: 2px;
+}
+.sakiko-text {
+    font-size: 13.5px;
+    line-height: 2.2;
+    color: rgba(210, 205, 230, 0.65);
+    text-align: justify;
+}
+.sakiko-text p { margin: 0 0 8px 0; }
+.sakiko-text p:last-child { margin: 0; }
+
+/* GIF 区域 - 坠饰相框 */
+.sakiko-pendant-area {
+    margin-top: auto;
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+}
+.sakiko-pendant-frame {
+    position: relative;
+    background: rgba(30, 28, 50, 0.6);
+    padding: 5px;
+    border-radius: 12px;
+    border: 1.5px solid rgba(160, 150, 200, 0.2);
+    box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.2),
+        inset 0 0 10px rgba(100, 90, 150, 0.05);
+    transform: rotate(2deg);
+    transition: all 0.3s ease;
+    animation: sakiko-pendant-swing 4s ease-in-out infinite;
+}
+.sakiko-pendant-frame:hover {
+    transform: rotate(0deg) scale(1.04);
+    border-color: rgba(180, 170, 220, 0.35);
+}
+/* 坠饰链 */
+.sakiko-pendant-frame::before {
+    content: '';
+    position: absolute;
+    top: -15px; left: 50%;
+    transform: translateX(-50%);
+    width: 1px; height: 15px;
+    background: linear-gradient(180deg, transparent, rgba(160, 150, 200, 0.3));
+}
+.sakiko-pendant-frame::after {
+    content: '';
+    position: absolute;
+    top: -18px; left: 50%;
+    transform: translateX(-50%);
+    width: 5px; height: 5px;
+    background: rgba(160, 150, 200, 0.2);
+    border-radius: 50%;
+    border: 1px solid rgba(180, 170, 220, 0.3);
+}
+.sakiko-gif {
+    height: 85px; width: auto; display: block; border-radius: 9px;
+}
+
+/* 坠饰旁的标签 */
+.sakiko-pendant-tag {
+    font-family: 'Caveat', cursive;
+    font-size: 13px;
+    color: rgba(180, 175, 210, 0.4);
+    writing-mode: vertical-rl;
+    letter-spacing: 3px;
+    animation: sakiko-breathe 3.5s ease-in-out infinite;
+}
+
+/* ===== 中间分隔：雨丝帘 ===== */
+.sakiko-divider {
+    width: 40px;
+    flex-shrink: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.sakiko-div-line {
+    width: 1px;
+    height: 80%;
+    background: repeating-linear-gradient(
+        180deg,
+        rgba(150, 145, 190, 0.2) 0px,
+        rgba(150, 145, 190, 0.2) 12px,
+        transparent 12px,
+        transparent 18px
+    );
+    position: relative;
+}
+/* 分隔线上的小花装饰 */
+.sakiko-div-flower {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px; height: 10px;
+}
+.sakiko-div-flower::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(160, 140, 200, 0.25);
+    border-radius: 50%;
+    box-shadow:
+        0 -6px 0 -2px rgba(160, 140, 200, 0.15),
+        0 6px 0 -2px rgba(160, 140, 200, 0.15),
+        -6px 0 0 -2px rgba(160, 140, 200, 0.15),
+        6px 0 0 -2px rgba(160, 140, 200, 0.15);
+}
+.sakiko-div-flower::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px; right: 3px; bottom: 3px;
+    background: rgba(200, 190, 240, 0.2);
+    border-radius: 50%;
+}
+.sakiko-div-flower:nth-child(2) { top: 25%; }
+.sakiko-div-flower:nth-child(3) { top: 50%; }
+.sakiko-div-flower:nth-child(4) { top: 75%; }
+/* 小水滴装饰 */
+.sakiko-div-drop {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px; height: 6px;
+    background: rgba(170, 165, 210, 0.15);
+    border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+    animation: sakiko-tear-fall 3s ease-in infinite;
+}
+.sakiko-div-drop:nth-child(5) { top: 15%; animation-delay: 0s; }
+.sakiko-div-drop:nth-child(6) { top: 40%; animation-delay: 1s; }
+.sakiko-div-drop:nth-child(7) { top: 65%; animation-delay: 2s; }
+
+/* ===== 右侧：立绘区 ===== */
+.sakiko-right {
+    flex: 0.85;
+    padding: 15px 15px 15px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* 立绘相框 - 镜框 / 窗中窗 */
+.sakiko-portrait-frame {
+    position: relative;
+    background: rgba(25, 23, 45, 0.5);
+    padding: 10px;
+    border-radius: 14px;
+    border: 1.5px solid rgba(150, 140, 190, 0.2);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.25),
+        inset 0 0 20px rgba(100, 90, 150, 0.05);
+    transition: all 0.4s ease;
+    max-width: 260px;
+}
+.sakiko-portrait-frame:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(140, 120, 180, 0.08);
+    border-color: rgba(180, 170, 220, 0.3);
+}
+.sakiko-portrait {
+    width: 100%; height: auto; display: block;
+    border-radius: 10px;
+    filter: brightness(0.95) contrast(1.02);
+}
+
+/* 相框四角的蕾丝花纹 */
+.sakiko-frame-corner {
+    position: absolute;
+    width: 20px; height: 20px;
+    opacity: 0.3;
+}
+.sakiko-frame-corner::before {
+    content: '';
+    position: absolute;
+    width: 14px; height: 14px;
+    border: 1.5px solid rgba(180, 170, 220, 0.5);
+    border-radius: 50%;
+}
+.sakiko-fc-tl { top: 2px; left: 2px; }
+.sakiko-fc-tl::before { top: 0; left: 0; border-right: none; border-bottom: none; border-radius: 50% 0 0 0; }
+.sakiko-fc-tr { top: 2px; right: 2px; }
+.sakiko-fc-tr::before { top: 0; right: 0; border-left: none; border-bottom: none; border-radius: 0 50% 0 0; }
+.sakiko-fc-bl { bottom: 2px; left: 2px; }
+.sakiko-fc-bl::before { bottom: 0; left: 0; border-right: none; border-top: none; border-radius: 0 0 0 50%; }
+.sakiko-fc-br { bottom: 2px; right: 2px; }
+.sakiko-fc-br::before { bottom: 0; right: 0; border-left: none; border-top: none; border-radius: 0 0 50% 0; }
+
+/* 相框顶部缎带 */
+.sakiko-frame-ribbon {
+    position: absolute;
+    top: -6px; left: 50%;
+    transform: translateX(-50%);
+    width: 60px; height: 14px;
+    background: linear-gradient(90deg, transparent, rgba(120, 100, 170, 0.25), rgba(140, 120, 190, 0.2), transparent);
+    border-radius: 0 0 6px 6px;
+    z-index: 5;
+}
+.sakiko-frame-ribbon::before, .sakiko-frame-ribbon::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    width: 8px; height: 8px;
+    background: rgba(120, 100, 170, 0.15);
+    border-radius: 0 0 4px 4px;
+}
+.sakiko-frame-ribbon::before { left: 8px; transform: rotate(-5deg); }
+.sakiko-frame-ribbon::after { right: 8px; transform: rotate(5deg); }
+
+/* 图片说明 */
+.sakiko-caption {
+    font-family: 'Caveat', cursive;
+    text-align: center;
+    margin-top: 14px;
+    font-size: 15px;
+    color: rgba(200, 195, 230, 0.4);
+    letter-spacing: 2px;
+}
+
+/* ===== 散落装饰元素 ===== */
+/* 小星星/钻石 */
+.sakiko-sparkle {
+    position: absolute;
+    z-index: 4;
+    pointer-events: none;
+    animation: sakiko-shimmer 3s ease-in-out infinite;
+}
+.sakiko-sparkle::before {
+    content: '✧';
+    color: rgba(180, 175, 220, 0.3);
+    font-size: 12px;
+}
+.sakiko-sparkle:nth-child(1) { top: 50px; right: 35px; animation-delay: 0s; }
+.sakiko-sparkle:nth-child(2) { bottom: 90px; left: 25px; animation-delay: 1s; }
+.sakiko-sparkle:nth-child(3) { top: 80px; left: 48%; animation-delay: 0.5s; font-size: 10px; }
+.sakiko-sparkle:nth-child(4) { bottom: 40px; right: 70px; animation-delay: 1.5s; }
+.sakiko-sparkle:nth-child(5) { top: 35%; right: 20px; animation-delay: 2s; }
+
+/* 小花 */
+.sakiko-tiny-flower {
+    position: absolute;
+    z-index: 4;
+    pointer-events: none;
+    opacity: 0.2;
+}
+.sakiko-tiny-flower::before {
+    content: '✿';
+    color: rgba(170, 150, 210, 0.5);
+    font-size: 11px;
+}
+.sakiko-tiny-flower:nth-child(1) { top: 55px; left: 55%; }
+.sakiko-tiny-flower:nth-child(2) { bottom: 65px; right: 45%; }
+
+/* 水滴宝石装饰 */
+.sakiko-gem-deco {
+    position: absolute;
+    z-index: 4;
+    pointer-events: none;
+    width: 6px; height: 9px;
+    background: linear-gradient(180deg, rgba(180, 170, 230, 0.2), rgba(140, 130, 200, 0.1));
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    border: 1px solid rgba(200, 190, 240, 0.15);
+    animation: sakiko-dot-blink 4s ease-in-out infinite;
+}
+.sakiko-gem-deco:nth-child(1) { top: 100px; left: 30px; animation-delay: 0.5s; }
+.sakiko-gem-deco:nth-child(2) { bottom: 120px; right: 30px; animation-delay: 1.5s; transform: rotate(15deg); }
+.sakiko-gem-deco:nth-child(3) { top: 50%; left: 15px; animation-delay: 2.5s; transform: rotate(-10deg); }
+
+/* ===== 按钮区 ===== */
+.sakiko-action {
+    position: relative;
+    z-index: 5;
+    text-align: center;
+    padding: 8px 30px 28px 30px;
+}
+.sakiko-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 40px;
+    background: transparent;
+    color: rgba(200, 190, 230, 0.6);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 4px;
+    border: 1.5px solid rgba(150, 140, 190, 0.25);
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    font-family: 'Noto Serif SC', serif;
+    position: relative;
+    overflow: hidden;
+}
+.sakiko-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 0; height: 0;
+    background: radial-gradient(circle, rgba(140, 120, 180, 0.15), transparent);
+    border-radius: 50%;
+    transition: all 0.5s ease;
+    transform: translate(-50%, -50%);
+}
+.sakiko-btn:hover::before { width: 200px; height: 200px; }
+.sakiko-btn:hover {
+    color: rgba(230, 220, 255, 0.8);
+    border-color: rgba(180, 170, 220, 0.4);
+    box-shadow:
+        0 6px 20px rgba(100, 80, 160, 0.2),
+        0 0 15px rgba(140, 120, 180, 0.08);
+    transform: translateY(-2px);
+}
+.sakiko-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(100, 80, 160, 0.1);
+}
+
+/* ===== 底部蕾丝装饰条 ===== */
+.sakiko-lace-bottom {
+    position: relative;
+    z-index: 5;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    border-top: 1px solid rgba(150, 140, 180, 0.08);
+}
+.sakiko-lace-bottom-dot {
+    width: 3px; height: 3px;
+    background: rgba(160, 150, 200, 0.15);
+    border-radius: 50%;
+}
+
+/* ===== 过场遮罩 ===== */
+.sakiko-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(20, 18, 35, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+    border-radius: 22px;
+}
+.sakiko-overlay.active { opacity: 1; pointer-events: auto; }
+
+/* 雨滴加载动画 */
+.sakiko-loader {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+}
+.sakiko-loader-drop {
+    width: 6px; height: 10px;
+    background: linear-gradient(180deg, rgba(180, 170, 230, 0.5), rgba(140, 130, 200, 0.2));
+    border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+    animation: sakiko-tear-fall 1.5s ease-in-out infinite;
+}
+.sakiko-loader-drop:nth-child(2) { animation-delay: 0.3s; height: 12px; }
+.sakiko-loader-drop:nth-child(3) { animation-delay: 0.6s; height: 8px; }
+
+.sakiko-over-text {
+    font-family: 'Sacramento', cursive;
+    font-size: 24px;
+    color: rgba(200, 195, 230, 0.5);
+    letter-spacing: 4px;
+}
+
+/* ===== 响应式 ===== */
+@media(max-width: 680px) {
+    .sakiko-content { flex-direction: column; padding: 25px 20px 15px 20px; }
+    .sakiko-left { padding: 10px 5px; }
+    .sakiko-right { padding: 15px 5px 10px; }
+    .sakiko-divider {
+        width: 100%; height: 30px;
+        flex-direction: row;
+    }
+    .sakiko-div-line {
+        width: 80%; height: 1px;
+        background: repeating-linear-gradient(
+            90deg,
+            rgba(150, 145, 190, 0.2) 0px,
+            rgba(150, 145, 190, 0.2) 12px,
+            transparent 12px,
+            transparent 18px
+        );
+    }
+    .sakiko-div-flower:nth-child(2) { top: auto; left: 20%; top: 50%; }
+    .sakiko-div-flower:nth-child(3) { top: auto; left: 50%; top: 50%; }
+    .sakiko-div-flower:nth-child(4) { top: auto; left: 80%; top: 50%; }
+    .sakiko-div-drop { display: none; }
+    .sakiko-portrait-frame { max-width: 210px; }
+    .sakiko-ribbon-left { display: none; }
+    .sakiko-name-en { font-size: 30px; }
+}
+</style>
+</head>
+<body>
+
+<div class="sakiko-wrap" id="sakikoWrap">
+    <div class="sakiko-window">
+
+        <!-- 雨滴动画层 -->
+        <div class="sakiko-rain-layer">
+            <div class="sakiko-raindrop"></div>
+            <div class="sakiko-raindrop"></div>
+            <div class="sakiko-raindrop"></div>
+            <div class="sakiko-raindrop"></div>
+            <div class="sakiko-raindrop"></div>
+            <div class="sakiko-raindrop"></div>
+            <div class="sakiko-raindrop"></div>
+            <div class="sakiko-raindrop"></div>
+            <div class="sakiko-raindrop"></div>
+            <div class="sakiko-raindrop"></div>
+            <div class="sakiko-raindrop"></div>
+            <div class="sakiko-raindrop"></div>
+        </div>
+
+        <!-- 玻璃水珠 -->
+        <div class="sakiko-water-bead"></div>
+        <div class="sakiko-water-bead"></div>
+        <div class="sakiko-water-bead"></div>
+        <div class="sakiko-water-bead"></div>
+        <div class="sakiko-water-bead"></div>
+        <div class="sakiko-water-bead"></div>
+
+        <!-- 雾气层 -->
+        <div class="sakiko-fog-layer"></div>
+
+        <!-- 散落装饰 -->
+        <div class="sakiko-sparkle"></div>
+        <div class="sakiko-sparkle"></div>
+        <div class="sakiko-sparkle"></div>
+        <div class="sakiko-sparkle"></div>
+        <div class="sakiko-sparkle"></div>
+        <div class="sakiko-tiny-flower"></div>
+        <div class="sakiko-tiny-flower"></div>
+        <div class="sakiko-gem-deco"></div>
+        <div class="sakiko-gem-deco"></div>
+        <div class="sakiko-gem-deco"></div>
+
+        <!-- 顶部蕾丝 -->
+        <div class="sakiko-lace-top">
+            <div class="sakiko-lace-dot"></div>
+            <div class="sakiko-lace-diamond"></div>
+            <div class="sakiko-lace-dot"></div>
+            <div class="sakiko-lace-diamond"></div>
+            <div class="sakiko-lace-dot"></div>
+            <div class="sakiko-lace-diamond"></div>
+            <div class="sakiko-lace-dot"></div>
+            <div class="sakiko-lace-diamond"></div>
+            <div class="sakiko-lace-dot"></div>
+        </div>
+
+        <!-- 缎带 -->
+        <div class="sakiko-ribbon-left">
+            <span class="sakiko-ribbon-text">rainy day</span>
+        </div>
+
+        <!-- ===== 主内容 ===== -->
+        <div class="sakiko-content">
+
+            <!-- 左：文字区 -->
+            <div class="sakiko-left">
+
+                <div class="sakiko-date-gem">
+                    <div class="sakiko-gem-icon"></div>
+                    <span class="sakiko-date-text">June. 2019</span>
+                </div>
+
+                <h2 class="sakiko-name-en">Sakiko Togawa</h2>
+                <div class="sakiko-name-jp">丰 川 祥 子</div>
+
+                <div class="sakiko-text-area">
+                    <div class="sakiko-text">
+                        <p>排练室的门在身后关上了。</p>
+                    <p>走出CiRCLE的时候，外面不知道什么时候开始下雨了。衣服很快就湿透了，但已经没有力气去在意这些了。</p>
+                    <p>这样就好了。</p>
+                    <p>把她们推开，把所有人都推开。这样就没有人会看到现在这个样子的自己了。这样就好了。</p>
+                    <p>……这样就好了吗。</p>
+                    </div>
+                </div>
+
+                <!-- GIF 坠饰 -->
+                <div class="sakiko-pendant-area">
+                    <div class="sakiko-pendant-frame">
+                        <img class="sakiko-gif" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E7%A5%A5%E5%AD%90%E6%8D%8F%E8%84%B8.gif" alt="祥子">
+                    </div>
+                    <div class="sakiko-pendant-tag">regret ✧</div>
+                </div>
+            </div>
+
+            <!-- 中间分隔 -->
+            <div class="sakiko-divider">
+                <div class="sakiko-div-line">
+                    <div class="sakiko-div-flower"></div>
+                    <div class="sakiko-div-flower"></div>
+                    <div class="sakiko-div-flower"></div>
+                    <div class="sakiko-div-flower"></div>
+                    <div class="sakiko-div-drop"></div>
+                    <div class="sakiko-div-drop"></div>
+                    <div class="sakiko-div-drop"></div>
+                </div>
+            </div>
+
+            <!-- 右：立绘区 -->
+            <div class="sakiko-right">
+                <div class="sakiko-portrait-frame">
+                    <div class="sakiko-frame-corner sakiko-fc-tl"></div>
+                    <div class="sakiko-frame-corner sakiko-fc-tr"></div>
+                    <div class="sakiko-frame-corner sakiko-fc-bl"></div>
+                    <div class="sakiko-frame-corner sakiko-fc-br"></div>
+                    <div class="sakiko-frame-ribbon"></div>
+                    <img class="sakiko-portrait" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E8%AD%A6%E6%83%953__2_.png" alt="丰川祥子">
+                </div>
+                <div class="sakiko-caption">— Sakiko T. —</div>
+            </div>
+
+        </div>
+
+        <!-- 按钮 -->
+        <div class="sakiko-action">
+            <div class="sakiko-btn" onclick="sakikoStart()"
+                 data-prompt="【开始】【开场白】 # 场景生成指令
+
+## 核心任务
+请根据以下提供的元素，完整叙述并扩写一段开场剧情。
+
+## 叙事要求
+- 你的任务是【场景描绘者】，而非【剧情推进者】。
+- 必须在自然的文字叙述中，将下述所有背景信息和场景要素巧妙地融合进去。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+
+## 场景要素
+- **时间:** 2019年6月，一个冰冷的雨夜。
+- **地点:** LIVE HOUSE CiRCLE附近的一个十字路口。
+- **核心人物:** 丰川祥子。
+
+## 背景信息（必须融入叙述）
+祥子的崩溃并非一时冲动，而是无数重压下的最终爆发。在短短一年内，她的人生连续遭遇剧变：
+1. **家庭破碎:** 母亲病逝，家庭破产，父亲堕落。
+2. **生活困窘:** 与终日酗酒的父亲挤在廉价公寓，为了生计，她不得不舍弃尊严，辗转于多份卑微的兼职。
+3. **斩断过去:** 为了保护自己最后的尊严，不让昔日好友看见自己如今的不堪，她选择用最伤人的方式退队，与自己最珍视的过去划清界限。
+
+## 叙事焦点
+将上述所有痛苦与无奈，全部聚焦于一个核心画面——当在排练室中和CRYCHIC其他成员们单方面宣布退队并离开后，丰川祥子独自一人，在冰冷的街头雨幕中，终于卸下所有强撑的伪装，仰头痛哭。
+
+## 【最高优先级指令】
+在描绘完<user>恰好路过，目睹了这一幕之后，【必须立即停止】。严禁进行任何后续的角色扮演或剧情推进，将故事的控制权完全交还给玩家。 【/开场白】">
+                开始
+            </div>
+        </div>
+
+        <!-- 底部蕾丝 -->
+        <div class="sakiko-lace-bottom">
+            <div class="sakiko-lace-bottom-dot"></div>
+            <div class="sakiko-lace-bottom-dot"></div>
+            <div class="sakiko-lace-bottom-dot"></div>
+            <div class="sakiko-lace-bottom-dot"></div>
+            <div class="sakiko-lace-bottom-dot"></div>
+        </div>
+
+        <!-- 过场遮罩 -->
+        <div class="sakiko-overlay" id="sakikoOverlay">
+            <div class="sakiko-loader">
+                <div class="sakiko-loader-drop"></div>
+                <div class="sakiko-loader-drop"></div>
+                <div class="sakiko-loader-drop"></div>
+            </div>
+            <div class="sakiko-over-text">the rain falls...</div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function sakikoStart() {
+    var btn = document.querySelector('.sakiko-btn');
+    var promptText = btn.getAttribute('data-prompt');
+
+    if (typeof triggerSlash === 'function') {
+        triggerSlash('/send ' + promptText + '|/trigger');
+    } else {
+        var input = parent.document.querySelector('#send_textarea');
+        if (input) {
+            input.value = promptText;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
+
+    document.getElementById('sakikoOverlay').classList.add('active');
+}
+</script>
+
+</body>
+</html>

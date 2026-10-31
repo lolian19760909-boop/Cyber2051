@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>body {
+  font-family: var(--cxx-font-ui);
+}
+
+@keyframes soyo-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(15px);
+  }
+
+  60% {
+    transform: scale(1.01) translateY(-2px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes soyo-sparkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8) rotate(0deg);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(15deg);
+  }
+}
+
+@keyframes soyo-float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-5px) rotate(2deg);
+  }
+}
+
+@keyframes soyo-wave {
+  0%, 100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(3px);
+  }
+}
+
+@keyframes soyo-heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+.soyo-wrap {
+  max-width: 780px;
+  margin: 30px auto;
+  animation: soyo-pop 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative;
+  --cp-ink: var(--cxx-ink);
+  --cp-panel: var(--cxx-panel);
+  --cp-panel-hi: var(--cxx-raised);
+  --cp-line: var(--cxx-line);
+  --cp-cyan: var(--cxx-cyan);
+  --cp-red: var(--cxx-red);
+  --cp-amber: var(--cxx-yellow);
+  --cp-text: var(--cxx-text);
+  --cp-muted: var(--cxx-muted);
+  font-family: var(--cxx-font-ui);
+  color: var(--cp-text);
+}
+
+.soyo-journal {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% -18%,color-mix(in srgb, var(--cxx-narrative-panel) 50%, transparent),transparent 62%),repeating-linear-gradient(0deg,transparent 0 31px,color-mix(in srgb, var(--cxx-red) 2.20%, transparent) 31px 32px),var(--cp-ink);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  box-shadow: 0 18px 46px color-mix(in srgb, var(--cxx-shadow) 42%, transparent);
+}
+
+.soyo-tape-top {
+  position: absolute;
+  top: -6px;
+  left: 40px;
+  width: 80px;
+  height: 24px;
+  transform: rotate(-2deg);
+  z-index: 15;
+  background: repeating-linear-gradient(45deg,color-mix(in srgb, var(--cxx-yellow) 50.00%, transparent),color-mix(in srgb, var(--cxx-yellow) 50.00%, transparent) 4px,color-mix(in srgb, var(--cxx-yellow) 25.00%, transparent) 4px,color-mix(in srgb, var(--cxx-yellow) 25.00%, transparent) 8px);
+  border-radius: 0 0 2px 2px;
+  box-shadow: none;
+}
+
+.soyo-tape-top2 {
+  position: absolute;
+  top: -4px;
+  right: 60px;
+  width: 65px;
+  transform: rotate(3deg);
+  z-index: 15;
+  background: var(--cp-red);
+  height: 2px;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.soyo-inner {
+  display: flex;
+  gap: 0;
+  padding: 35px 30px 30px 30px;
+  position: relative;
+  background: transparent;
+}
+
+.soyo-left {
+  flex: 1.1;
+  padding: 15px 25px 15px 15px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 2;
+  background: transparent;
+}
+
+.soyo-date-sticker {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 18px;
+  box-shadow: 0 3px 8px color-mix(in srgb, var(--cxx-yellow-soft) 30.00%, transparent);
+  position: relative;
+  background: color-mix(in srgb, var(--cxx-yellow) 8.00%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--cxx-yellow) 45.00%, transparent);
+  color: var(--cp-amber);
+  border-radius: 2px;
+}
+
+.soyo-date-sticker::after {
+  content: '☀';
+  font-size: 14px;
+}
+
+.soyo-name {
+  font-family: var(--cxx-font-ui);
+  font-size: 34px;
+  font-weight: 700;
+  margin: 0 0 2px 0;
+  letter-spacing: 2px;
+  color: var(--cp-red);
+}
+
+.soyo-name-jp {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 22px;
+  letter-spacing: 4px;
+  color: var(--cp-muted);
+}
+
+.soyo-text-area {
+  padding: 8px 5px;
+  margin-bottom: 20px;
+  background: color-mix(in srgb, var(--cxx-ink) 75%, transparent);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+}
+
+.soyo-text {
+  font-size: 14px;
+  line-height: 30px;
+  text-align: justify;
+  color: var(--cp-text);
+}
+
+.soyo-text p {
+  margin: 0;
+}
+
+.soyo-memo {
+  align-self: flex-start;
+  position: relative;
+  padding: 8px 8px 25px 8px;
+  box-shadow: 2px 3px 8px color-mix(in srgb, var(--cxx-shadow) 6%, transparent),
+        0 0 0 1px color-mix(in srgb, var(--cxx-yellow-soft) 20.00%, transparent);
+  transform: rotate(-1.5deg);
+  transition: transform 0.3s ease;
+  margin-top: auto;
+  background: color-mix(in srgb, var(--cxx-cyan) 5.00%, transparent);
+  border-left: 2px solid var(--cp-cyan);
+  border-radius: 0 2px 2px 0;
+}
+
+.soyo-memo:hover {
+  transform: rotate(0deg) scale(1.03);
+}
+
+.soyo-gif {
+  height: 88px;
+  width: auto;
+  display: block;
+  filter: saturate(.78) contrast(1.05);
+  border-radius: 1px;
+}
+
+.soyo-memo-label {
+  position: absolute;
+  bottom: 5px;
+  right: 8px;
+  font-family: var(--cxx-font-ui);
+  font-size: 13px;
+  color: var(--cp-cyan);
+}
+
+.soyo-memo::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, var(--cxx-yellow-soft) 45%, var(--cxx-yellow) 50%, var(--cxx-yellow) 100%);
+  box-shadow: -1px -1px 2px color-mix(in srgb, var(--cxx-shadow) 3%, transparent);
+}
+
+.soyo-divider {
+  width: 35px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-shrink: 0;
+  padding: 20px 0;
+}
+
+.soyo-flower {
+  width: 14px;
+  height: 14px;
+  position: relative;
+  color: var(--cp-red);
+}
+
+.soyo-flower::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--cxx-yellow-soft);
+  border-radius: 50%;
+  box-shadow: 0 -8px 0 -2px var(--cxx-yellow-soft),
+        0 8px 0 -2px var(--cxx-yellow-soft),
+        -8px 0 0 -2px var(--cxx-yellow-soft),
+        8px 0 0 -2px var(--cxx-yellow-soft),
+        -5px -5px 0 -2px var(--cxx-yellow-soft),
+        5px -5px 0 -2px var(--cxx-yellow-soft),
+        -5px 5px 0 -2px var(--cxx-yellow-soft),
+        5px 5px 0 -2px var(--cxx-yellow-soft);
+}
+
+.soyo-flower::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  right: 3px;
+  bottom: 3px;
+  background: var(--cxx-yellow-soft);
+  border-radius: 50%;
+}
+
+.soyo-dash-line {
+  width: 1px;
+  flex: 1;
+  background: repeating-linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--cxx-yellow-soft) 40.00%, transparent) 0px,
+        color-mix(in srgb, var(--cxx-yellow-soft) 40.00%, transparent) 5px,
+        transparent 5px,
+        transparent 10px
+    );
+  border-color: var(--cp-line);
+}
+
+.soyo-right {
+  flex: 0.9;
+  padding: 15px 15px 15px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  background: transparent;
+}
+
+.soyo-portrait-card {
+  position: relative;
+  padding: 10px;
+  transition: all 0.3s ease;
+  max-width: 260px;
+  background: var(--cp-panel-hi);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--cxx-shadow) 35%, transparent);
+}
+
+.soyo-portrait-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--cxx-yellow-soft) 25.00%, transparent);
+}
+
+.soyo-portrait {
+  display: block;
+  height: 360px;
+  width: 100%;
+  object-fit: cover;
+  object-position: top;
+  filter: saturate(.78) contrast(1.05);
+  border-radius: 1px;
+}
+
+.soyo-photo-tape {
+  position: absolute;
+  top: -8px;
+  left: 30px;
+  width: 55px;
+  transform: rotate(-5deg);
+  z-index: 5;
+  background: var(--cp-cyan);
+  height: 2px;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.soyo-photo-tape2 {
+  position: absolute;
+  bottom: -6px;
+  right: 25px;
+  width: 50px;
+  transform: rotate(3deg);
+  z-index: 5;
+  background: var(--cp-red);
+  height: 2px;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.soyo-photo-caption {
+  font-family: var(--cxx-font-ui);
+  text-align: center;
+  margin-top: 12px;
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: var(--cp-cyan);
+}
+
+.soyo-deco-star {
+  position: absolute;
+  font-size: 16px;
+  opacity: 0.5;
+  animation: soyo-sparkle 3s ease-in-out infinite;
+  z-index: 1;
+  pointer-events: none;
+  color: var(--cp-amber);
+}
+
+.soyo-deco-star:nth-child(1) {
+  top: 25px;
+  right: 30px;
+  font-size: 14px;
+  animation-delay: 0s;
+}
+
+.soyo-deco-star:nth-child(2) {
+  bottom: 80px;
+  left: 20px;
+  font-size: 18px;
+  animation-delay: 1s;
+}
+
+.soyo-deco-star:nth-child(3) {
+  top: 60px;
+  left: 50%;
+  font-size: 12px;
+  animation-delay: 0.5s;
+}
+
+.soyo-deco-star:nth-child(4) {
+  bottom: 30px;
+  right: 80px;
+  font-size: 15px;
+  animation-delay: 1.5s;
+}
+
+.soyo-deco-star:nth-child(5) {
+  top: 45%;
+  right: 15px;
+  font-size: 10px;
+  animation-delay: 2s;
+}
+
+.soyo-deco-heart {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.3;
+  animation: soyo-heartbeat 2.5s ease-in-out infinite;
+  color: var(--cp-red);
+}
+
+.soyo-deco-heart::before {
+  content: '♥';
+  color: var(--cxx-red-soft);
+  font-size: 14px;
+}
+
+.soyo-deco-heart:nth-of-type(1) {
+  bottom: 50px;
+  left: 50%;
+  animation-delay: 0.5s;
+}
+
+.soyo-deco-heart:nth-of-type(2) {
+  top: 35px;
+  left: 45%;
+  animation-delay: 1.2s;
+}
+
+.soyo-dot-cluster {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  display: flex;
+  gap: 3px;
+}
+
+.soyo-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  opacity: 0.5;
+  background: var(--cp-line);
+}
+
+.soyo-dot:nth-child(2) {
+  background: var(--cxx-red-soft);
+  width: 3px;
+  height: 3px;
+}
+
+.soyo-dot:nth-child(3) {
+  background: var(--cxx-cyan-soft);
+  width: 5px;
+  height: 5px;
+}
+
+.soyo-action {
+  text-align: center;
+  padding: 0 30px 28px 30px;
+  position: relative;
+  z-index: 5;
+}
+
+.soyo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 36px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  font-family: var(--cxx-font-ui);
+  color: var(--cp-ink);
+  background: var(--cp-cyan);
+  border: 1px solid var(--cp-cyan);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cxx-cyan) 22.00%, transparent);
+  text-shadow: none;
+}
+
+.soyo-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  background: var(--cxx-cyan);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--cxx-cyan) 12.00%, transparent),0 6px 20px color-mix(in srgb, var(--cxx-cyan) 15.00%, transparent);
+  color: var(--cp-ink);
+}
+
+.soyo-btn:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--cxx-yellow-soft) 20.00%, transparent);
+}
+
+.soyo-btn-icon {
+  font-size: 16px;
+  animation: soyo-wave 1.5s ease-in-out infinite;
+}
+
+.soyo-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--cxx-ink) 93%, transparent);
+  backdrop-filter: blur(3px);
+}
+
+.soyo-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.soyo-loader {
+  display: flex;
+  gap: 8px;
+}
+
+.soyo-loader-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  animation: soyo-bounce 1.2s ease-in-out infinite;
+  background: var(--cp-red);
+}
+
+.soyo-loader-dot:nth-child(2) {
+  animation-delay: 0.15s;
+  background: var(--cxx-red-soft);
+}
+
+.soyo-loader-dot:nth-child(3) {
+  animation-delay: 0.3s;
+  background: var(--cxx-cyan-soft);
+}
+
+@keyframes soyo-bounce {
+  0%, 80%, 100% {
+    transform: translateY(0);
+  }
+
+  40% {
+    transform: translateY(-12px);
+  }
+}
+
+.soyo-over-txt {
+  font-family: var(--cxx-font-ui);
+  font-size: 22px;
+  letter-spacing: 4px;
+  color: var(--cp-cyan);
+  text-shadow: none;
+}
+
+.soyo-wave-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  overflow: hidden;
+  z-index: 0;
+  opacity: .15;
+}
+
+.soyo-wave-bottom::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -10%;
+  right: -10%;
+  height: 50px;
+  background: color-mix(in srgb, var(--cxx-yellow-soft) 6.00%, transparent);
+  border-radius: 50% 50% 0 0;
+}
+
+@media (max-width: 680px) {
+  .soyo-inner {
+    flex-direction: column;
+    padding: 30px 20px 20px 20px;
+  }
+
+  .soyo-divider {
+    width: 100%;
+    height: 30px;
+    flex-direction: row;
+    padding: 0 20px;
+  }
+
+  .soyo-dash-line {
+    width: auto;
+    height: 1px;
+    flex: 1;
+    background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--cxx-yellow-soft) 40.00%, transparent) 0px, color-mix(in srgb, var(--cxx-yellow-soft) 40.00%, transparent) 5px, transparent 5px, transparent 10px);
+  }
+
+  .soyo-left {
+    padding: 10px 5px;
+  }
+
+  .soyo-right {
+    padding: 10px 5px;
+  }
+
+  .soyo-portrait-card {
+    max-width: 200px;
+  }
+
+  .soyo-action {
+    padding: 0 20px 25px;
+  }
+}
+
+.soyo-card::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.soyo-paper::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.soyo-book::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.soyo-board::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.soyo-notebook::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.soyo-container::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.soyo-journal::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+@keyframes cp-alt-flow {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .soyo-wrap * {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .soyo-wrap *::before {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .soyo-wrap *::after {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+}
+
+.soyo-text strong {
+  color: var(--cp-amber);
+}
+
+button.soyo-btn {
+  font-family: inherit;
+  line-height: inherit;
+  appearance: none;
+  min-height: 44px;
+}
+
+.soyo-btn:focus-visible {
+  outline: 2px solid var(--cp-cyan,var(--cxx-line));
+  outline-offset: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="soyo-wrap" id="soyoWrap">
+    <div class="soyo-journal">
+
+        <!-- 顶部胶带装饰 -->
+        <div class="soyo-tape-top"></div>
+        <div class="soyo-tape-top2"></div>
+
+        <!-- 散落的装饰贴纸 -->
+        <div class="soyo-deco-star">✦</div>
+        <div class="soyo-deco-star">✧</div>
+        <div class="soyo-deco-star">✦</div>
+        <div class="soyo-deco-star">✧</div>
+        <div class="soyo-deco-star">✦</div>
+        <div class="soyo-deco-heart"></div>
+        <div class="soyo-deco-heart"></div>
+        <div class="soyo-dot-cluster" style="top:15px;left:55%;">
+            <div class="soyo-dot"></div><div class="soyo-dot"></div><div class="soyo-dot"></div>
+        </div>
+        <div class="soyo-dot-cluster" style="bottom:45px;left:30%;">
+            <div class="soyo-dot"></div><div class="soyo-dot"></div><div class="soyo-dot"></div>
+        </div>
+
+        <!-- ===== 主内容区 ===== -->
+        <div class="soyo-inner">
+
+            <!-- 左侧：日记文字 -->
+            <div class="soyo-left">
+                <div class="soyo-date-sticker">2051 / 03 / 25</div>
+
+                <div class="soyo-name">Soyo Nagasaki</div>
+                <div class="soyo-name-jp">長崎 素世</div>
+
+                <!-- UI界面文字 -->
+                <div class="soyo-text-area">
+                    <div class="soyo-text">
+                        <p>回到家把包放好，先烧一壶热水泡红茶。落地窗外的天色已经暗下来了，客厅里只有自己一个人。</p>
+                <p>打开终端看了一眼，没有新消息。嗯，今天也没有。习惯了，没关系的。</p>
+                <p>晚饭做了蔬菜通心粉，够两个人吃的分量。不过妈妈今天大概也不会回来吧。</p>
+                    </div>
+                </div>
+
+                <!-- 便利贴风格GIF -->
+                <div class="soyo-memo">
+                    <img class="soyo-gif" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E7%B4%A0%E4%B8%96%E6%8A%93%E7%8B%82.gif" alt="素世">
+                    <div class="soyo-memo-label">mood ♪</div>
+                </div>
+            </div>
+
+            <!-- 中间装饰分隔 -->
+            <div class="soyo-divider">
+                <div class="soyo-dash-line"></div>
+                <div class="soyo-flower"></div>
+                <div class="soyo-dash-line"></div>
+                <div class="soyo-flower"></div>
+                <div class="soyo-dash-line"></div>
+            </div>
+
+            <!-- 右侧：立绘 -->
+            <div class="soyo-right">
+                <div class="soyo-portrait-card">
+                    <div class="soyo-photo-tape"></div>
+                    <div class="soyo-photo-tape2"></div>
+                    <img class="soyo-portrait" src="https://cyber2051.top/img/%E9%95%BF%E5%B4%8E%E7%B4%A0%E4%B8%96%2FSoyo_%E8%87%AA%E4%BF%A1.png" alt="长崎素世">
+                </div>
+                <div class="soyo-photo-caption">today's me ✿</div>
+            </div>
+        </div>
+
+        <!-- 底部波浪装饰 -->
+        <div class="soyo-wave-bottom"></div>
+
+        <!-- 按钮区 -->
+        <div class="soyo-action">
+            <button type="button" class="soyo-btn" onclick="soyoStart()"
+                 data-prompt="【开始】【开场白】
+# 场景生成指令
+
+## 核心任务
+请作为【场景描绘者】，写一段关于长崎素世的开局场景。本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+
+## 场景要素
+- **时间：** 2051年3月25日，从下午延续到夜晚。
+- **地点：** 六本木的豪华公寓。
+- **核心人物：** 长崎素世。
+
+## 剧情大纲与心理活动（全部必须融入描写）：
+
+
+1. **一个人的家务与晚餐：** 下午，秘书的工作结束后，素世独自离开公司，回到六本木那间宽敞得有些过分的豪华公寓。她熟练地完成了整间屋子的日常打扫，然后走进厨房用冰箱里采购好的高级食材认认真真地做好了两人份的晚饭，在餐桌上摆好了碗筷。
+
+2. **母亲的电话与压抑的懂事：** 饭菜端上桌已经很久了，素世等到的只有母亲的来电。素世接起电话，听到的是又一次“素世今天也很棒哦。不过妈妈今天又要加班，不能回来吃饭了”。母亲在电话那头不停地说着抱歉。素世真的很想告诉母亲“我不要月之森、不要这间大房子，也不要母亲一直加班了，我只想要一个有人在的、温暖的家。”但这些话最终一个字也没能说出口。因为她知道母亲这么拼命工作也都是为了自己，她不能、也不允许自己成为母亲的负担。公司里不少人觊觎着母亲的位置，如果她不这样提升自己的绩效，现在的生活可能都保不住。于是她像往常一样，用那副大方懂事的语气告诉母亲：“没关系的哦，妈妈要注意休息，注意身体。”挂断电话后，桌上精心准备的饭菜已经凉透了。素世坐在偌大的餐桌旁，又是独自一人吃完了这顿晚饭。
+
+3. **深夜的执念：** 夜深了。素世躺在床上，义眼投影着通讯页面。她伸出手在半空中滑动，一遍又一遍地翻看着CRYCHIC过去的动态——那些合照（素世、睦、立希、祥子、灯）、那些排练的花絮、那场唯一的Live的录像截图。每一张都看过了无数次，但她还是忍不住反复地刷新、反复地回看。CRYCHIC，对她而言是一个美好到让人不想醒来的梦，一个她没有抓牢、亲眼看着它从指缝间溜走的梦。如果CRYCHIC真的不在了……自己还能再找到另一个“家”吗？
+
+## 最高优先级指令
+在描绘完素世深夜躺在床上查看CRYCHIC动态、内心涌起对未来迷茫的场景后，【立即停止输出】。严禁强行推进后续对话或代替玩家行动，将故事的控制权交给玩家。
+【/开场白】">
+                <span class="soyo-btn-icon">📖</span>
+                开  始
+            </button>
+        </div>
+
+        <!-- 过场遮罩 -->
+        <div class="soyo-overlay" id="soyoOverlay">
+            <div class="soyo-loader">
+                <div class="soyo-loader-dot"></div>
+                <div class="soyo-loader-dot"></div>
+                <div class="soyo-loader-dot"></div>
+            </div>
+            <div class="soyo-over-txt">opening diary...</div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function soyoStart() {
+    var btn = document.querySelector('.soyo-btn');
+    var promptText = btn.getAttribute('data-prompt');
+
+    return parent.Cxx236OpeningHost.submitPreview(window, '/send ' + promptText + '|/trigger');
+}
+</script>
+
+</body>
+</html>

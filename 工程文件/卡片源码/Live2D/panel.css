@@ -1,0 +1,24 @@
+.cxx-live2d-panel {
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+  padding: 20px;
+  border: 1px solid var(--cxx-line);
+  border-top: 2px solid var(--cxx-red);
+  background: var(--cxx-panel);
+  color: var(--cxx-text);
+  font: 16px/1.7 var(--cxx-font-ui);
+  color-scheme: dark;
+}
+.cxx-live2d-panel h3 { color: var(--cxx-red); font: 600 20px/1.4 var(--cxx-font-ui); margin: 0 0 12px; }
+.cxx-live2d-panel [role=status] { color: var(--cxx-muted); white-space: pre-wrap; overflow-wrap: anywhere; margin: 0 0 16px; }
+.cxx-live2d-panel .live2d-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.cxx-live2d-panel button { box-sizing: border-box; min-height: 44px; max-width: 100%; padding: 8px 12px; margin: 0; border: 1px solid var(--cxx-line); border-radius: 0; background: var(--cxx-raised); color: var(--cxx-text); font: inherit; cursor: pointer; }
+.cxx-live2d-panel button:hover { border-color: var(--cxx-cyan); }
+.cxx-live2d-panel button[aria-pressed=true] { color: var(--cxx-ink); background: var(--cxx-cyan); border-color: var(--cxx-cyan); }
+.cxx-live2d-panel button:disabled { opacity: .45; cursor: not-allowed; }
+.cxx-live2d-panel button:focus-visible { outline: 2px solid var(--cxx-cyan); outline-offset: 3px; }
+@media(max-width:480px) {
+  .cxx-live2d-panel { padding: 16px; }
+  .cxx-live2d-panel button { flex: 1 1 135px; }
+}

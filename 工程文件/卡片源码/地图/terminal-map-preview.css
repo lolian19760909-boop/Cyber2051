@@ -1,0 +1,3 @@
+#page-city>.atlas,#page-city>.page-head{display:none}
+#page-city{padding:0;min-height:0;overflow:hidden}
+#metropolitan-atlas{display:block;border:0;width:100%;height:100%;min-height:0;flex:1;background:#09080b}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>详情 · 创意工坊 · 东京都2051</title><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/workshop/theme.css?v=motion20261027"><script src="/workshop/theme-runtime.js?v=motion20261027"></script><script>CxxThemeRuntime.install(window);</script><link rel="stylesheet" href="/site.css?v=motion20261027"><link rel="stylesheet" href="/workshop/poster-system.css?v=motion20261027"><script src="/i18n.js?v=site-accounts-20261031"></script><script src="/user.js?v=account-ui-20261031"></script><script src="/workshop/site-ui.js?v=motion20261027" defer></script><link rel="stylesheet" href="/workshop/submission-format.css?v=submission20261006"><script src="/workshop/submission-view.js?v=submission20261006"></script></head>
+<body class="site detail-page poster-theme">
+<a class="skip-link" href="#main" data-ui-zh="跳到内容" data-ui-en="Skip to content" data-ui-ja="本文へ移動">跳到内容</a>
+<header class="site-header"><div class="bar"><a class="logo" href="/"><span class="cube"></span>TOKYO 2051</a><nav class="nav"><a href="/" data-i18n="nav.home">首页</a><a href="/recent.html" data-ui-zh="近期详情" data-ui-en="Latest details" data-ui-ja="最近の情報">近期详情</a><a href="/play/" data-ui-zh="开始游玩" data-ui-en="Play now" data-ui-ja="プレイする">开始游玩</a><a class="on" href="/workshop.html" data-i18n="nav.ws">创意工坊</a><a href="/workshop/" data-i18n="nav.fb">留言墙</a><a href="/recent.html#download" data-i18n="nav.dl">卡下载</a></nav></div></header>
+<main id="main" class="wrap narrow">
+<div class="page-register" aria-hidden="true"><span>05 / CREATION FILE</span><span>TOKYO 2051</span></div>
+<a id="back" href="/workshop.html" class="btn ghost" data-ui-zh="← 返回目录" data-ui-en="← Back to creations" data-ui-ja="← 作品一覧に戻る">← 返回目录</a>
+<div class="detail-header"><div><span id="type" class="badge red"></span><span id="filebadge" class="badge amber" hidden></span></div><h1 id="title" class="page-title" style="margin-top:16px"></h1><div id="meta" class="meta" style="margin-top:12px"></div><div id="tags" style="margin-top:12px"></div></div>
+<p id="detail-state" class="msg" role="status" aria-live="polite"></p><button id="retry" class="btn ghost" type="button" hidden data-ui-zh="重试" data-ui-en="Try again" data-ui-ja="再試行">重试</button>
+<div id="content" hidden>
+<section class="detail-section"><h2 data-ui-zh="简介与用途" data-ui-en="Summary and purpose" data-ui-ja="紹介と用途">简介与用途</h2><div id="summary" class="panel detail-content"></div></section>
+<section class="detail-section"><h2 data-ui-zh="如何使用" data-ui-en="How to use" data-ui-ja="使い方">如何使用</h2><div id="howto" class="panel detail-content"></div></section>
+<div id="dlbox" class="panel" hidden><a id="dlbtn" class="btn">下载附件</a><span id="dlmeta" class="meta" style="margin-left:12px"></span></div>
+<section id="readable-content" class="detail-section panel"></section><details class="detail-section panel"><summary data-ui-zh="查看原始内容 JSON" data-ui-en="View source JSON" data-ui-ja="元の JSON を表示">查看原始内容 JSON</summary><pre id="payload" class="jsonbox"></pre></details>
+</div></main><footer class="site-footer"><div class="fline"><span>CYBER2051.TOP</span><span data-ui-zh="粉丝二创作品，与官方无关" data-ui-en="Fan creation, unaffiliated with the originals" data-ui-ja="非公式のファン作品です">粉丝二创作品，与官方无关</span></div></footer>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+'use strict';
+const {t,element:el}=CXXUI,node=id=>document.getElementById(id);
+let status='loading', item=null;
+try {const ref=new URL(document.referrer);if(ref.origin===location.origin&&ref.pathname==='/workshop.html'){node('back').href=ref.pathname+ref.search;if(history.length>1)node('back').addEventListener('click',event=>{if(event.button===0&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&!event.altKey){event.preventDefault();history.back();}});}} catch{}
+const labels={character:['NPC / 人物资料','NPC / Characters','NPC / 人物資料'],world_factor:['世界 / 地点资料','World / Places','世界 / 場所の資料'],user_identity:['玩家出身资料','Player backgrounds','プレイヤーの出自'],contract:['委托 / 侧剧情','Quests / Side stories','依頼 / サイドストーリー'],shop_item:['商店物品','Shop items','商品'],blueprint:['蓝图','Blueprints','設計図'],recipe:['配方','Recipes','レシピ'],skill:['技能','Skills','スキル'],function:['功能','Functions','機能'],code_component:['代码集成提案','Code integration proposal','コード統合提案']};
+function render(){
+ node('content').hidden=status!=='ready';node('retry').hidden=status!=='failed';
+ if(status!=='ready'){node('title').textContent=status==='notfound'?t('投稿不存在或未公开','This creation is unavailable','作品が存在しないか非公開です'):status==='failed'?t('详情读取失败','Could not load the details','詳細を読み込めません'):t('读取中…','Loading…','読み込み中…');node('detail-state').textContent=status==='failed'?t('请检查连接后重试。','Check your connection and try again.','接続を確認して再試行してください。'):'';return;}
+ const it=item;document.title=it.title+' · '+t('创意工坊','Workshop','工房');node('title').textContent=it.title;node('type').textContent=labels[it.type]?t(...labels[it.type]):it.type;node('detail-state').textContent='';
+ node('meta').textContent=(it.authorName||t('匿名','Anonymous','匿名'))+' · '+t('修订 ','Revision ','改訂 ')+it.revision+' · '+t('更新于 ','Updated ','更新日 ')+String(it.updatedAt||'').slice(0,10);
+ const tags=node('tags');tags.replaceChildren();for(const value of it.tags||[])tags.append(el('span','tag',value));
+ node('summary').textContent=it.summary||t('暂无简介。','No summary provided.','紹介文はありません。');node('payload').textContent=JSON.stringify(it.payload,null,2);CxxSubmissionView.render(node('readable-content'),it.presentation);
+ const how=node('howto');how.replaceChildren();
+ if(it.type==='code_component'){
+   how.append(el('p','',t('这是新版角色卡的代码集成提案。审核通过只表示可交主工程继续审查与集成，不代表已执行或已发行。源码附件供人工检查；玩家等待包含该功能的新版卡并迁移存档。','A code integration proposal for a future card. Approval does not execute or release it. Attachments are for review; players wait for the new card and migrate their save.','次版カードへのコード統合提案です。承認だけでは実行・公開されません。添付は確認用で、プレイヤーは新カードへセーブを移行します。')));
+ }else
+ if(it.packageRef){
+   how.append(el('p','',t('这份内容已有审核通过的兼容包，但审核通过不等于已经正式签名发行。','This creation has an approved compatible package. Approval does not mean it has been officially signed and released.','審査済みの互換パッケージがありますが、審査通過は正式な署名公開を意味しません。')));
+   const steps=el('ol','');for(const step of [t('在 SillyTavern 中打开本卡「创意工坊」，前往更新面板。','Open this card’s Workshop in SillyTavern, then go to Card Updates.','SillyTavern でこのカードの工房から更新画面を開きます。'),t('检查官方清单，订阅对应包，再选择版本安装。','Check the official manifest, subscribe to the package, then choose a version to install.','公式一覧を確認し、対象パッケージを購読して導入するバージョンを選びます。'),t('在当前聊天启用内容。清单没有该包时，请等待正式发行。','Enable it in the current chat. If the package is absent from the manifest, wait for its release.','現在の会話で有効化します。一覧にない場合は正式公開をお待ちください。')])steps.append(el('li','',step));how.append(steps);
+   how.append(el('p','hint',it.packageRef.questId?t('任务还需在地点或任务页单独接取；安装不会自动接单或发奖励。','Accept quests separately in a location or quest page. Installation does not accept quests or grant rewards.','依頼は場所や依頼画面で別途受けてください。導入だけでは受注や報酬付与は行われません。'):t('安装不改变玩家资产。启用后，在卡内对应页面查看资料、选择新聊天出身，或提交购买、学习、制作和服务请求；结果以 AI 与 MVU 保存为准。旧版文字资料仍只作资料使用。','Installation does not change player assets. Enable the content, then use its information, new-chat origin, purchase, learning, crafting or service entry. AI and MVU save the result. Legacy notes remain reference text.','導入で資産は変わりません。有効化後に資料、出自、購入、習得、製作、サービスを利用し、AI と MVU の保存結果を確認します。旧資料は文章資料のままです。')));
+ }else if(['character','world_factor','user_identity'].includes(it.type)){
+   how.append(el('p','',t('这是旧 JSON 资料。打开卡内「创意工坊」，找到本投稿，点「旧 JSON 预览装载」，确认后作为当前聊天的世界书文本，可从工坊卸载。','This is legacy JSON content. Find it in the card’s Workshop and choose Legacy JSON Preview/Load to add reference text to the current chat. It can be removed from the Workshop.','旧 JSON 資料です。カード内の工房でこの投稿を見つけ、旧 JSON のプレビュー導入で確認後、現在の会話のワールドブック文章として使えます。工房から削除できます。')));
+   how.append(el('p','hint',t('它不接入签名更新、任务或地图资料，也不会自动创建 persona、立绘或变量。','It does not use signed updates, quest or location packages, and does not automatically create a persona, portrait or variables.','署名更新、依頼、地図パッケージには接続されず、persona、立ち絵、変数も自動作成されません。')));
+ }else how.append(el('p','',t('此投稿尚无兼容内容包。有附件时可下载查看；附件不能代替签名内容包。','This creation has no compatible package yet. Download any attachment for inspection; it is not a signed package.','互換パッケージはまだありません。添付があれば確認用にダウンロードできますが、署名パッケージの代わりにはなりません。')));
+ node('filebadge').hidden=!it.attachment;node('dlbox').hidden=!it.attachment;node('filebadge').textContent=t('含附件','Attachment','添付あり');
+ if(it.attachment){const url=new URL(it.attachment.downloadUrl,location.href);if(['https:','http:'].includes(url.protocol)){node('dlbtn').href=url.href;node('dlbtn').textContent=t('下载附件：','Download: ','添付をダウンロード：')+(it.attachment.fileName||'file.'+it.attachment.fileExt);node('dlmeta').textContent=Math.round(it.attachment.fileSize/1024)+' KB';}else node('dlbox').hidden=true;}
+}
+async function load(){status='loading';render();const id=new URLSearchParams(location.search).get('id');if(!id||!/^\d+$/.test(id)){status='notfound';render();return;}try{const r=await fetch('/api/workshop/submissions/'+encodeURIComponent(id),{cache:'no-store'});if(r.status===404){status='notfound';}else{const j=await r.json();if(!r.ok||!j.ok||!j.item)throw Error('failed');item=j.item;status='ready';}}catch{status='failed';}render();}
+node('retry').addEventListener('click',load);document.addEventListener('cxx-lang-changed',render);load();
+});
+</script></body></html>

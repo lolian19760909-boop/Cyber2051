@@ -1,0 +1,12 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>整卡新增页面检查</title><style>body{margin:16px;background:#14151b;color:#eee;font:16px system-ui}button,select{font:inherit;padding:10px;margin:3px}iframe{display:block;border:1px solid #777;height:900px}pre{white-space:pre-wrap;max-height:260px;overflow:auto}</style>
+<h1>记忆／上下文与人物表</h1><p>实际维护组件和动效模块，合成存档；未连接玩家数据或模型。</p>
+<select id="page" aria-label="检查页面"><option value="memory">记忆与压缩</option><option value="ensemble">人物表</option><option value="native">正文插图</option></select><select id="width" aria-label="页面宽度"><option>1180</option><option>390</option><option>320</option></select><select id="theme" aria-label="页面主题"><option value="red">红</option><option value="yellow">黄</option><option value="night">夜间</option></select>
+<button data-action="open">打开页面</button><button data-action="compression">打开压缩</button><button data-action="check">检查切页与生命周期</button><button data-action="fallback">检查无插件</button><button data-action="close">关闭页面</button><output id="status">准备中</output><details><summary>检查记录</summary><pre id="report"></pre></details><iframe id="panel" title="真实组件检查"></iframe>
+<script type="module">
+const panel=document.getElementById('panel'),page=document.getElementById('page'),width=document.getElementById('width'),theme=document.getElementById('theme'),status=document.getElementById('status'),report=document.getElementById('report');
+const send=action=>panel.contentWindow.postMessage({action,theme:theme.value},location.origin);
+function load(){panel.style.width=width.value+'px';panel.src='/visual/panel.html?page='+page.value+'&theme='+theme.value;status.textContent='准备中';report.textContent='';}
+page.onchange=load;width.onchange=()=>{panel.style.width=width.value+'px';};theme.onchange=()=>send('theme');
+document.querySelectorAll('[data-action]').forEach(button=>button.onclick=()=>send(button.dataset.action));
+window.addEventListener('message',event=>{if(event.source!==panel.contentWindow||event.origin!==location.origin||!event.data.report)return;status.textContent=event.data.report.status;report.textContent=JSON.stringify(event.data.report,null,2);});load();
+</script></html>

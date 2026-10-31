@@ -1,0 +1,39 @@
+/* Native 2.x screenshot borders; source coordinates are in 2.x/panel-crops.json. */
+.phone[data-cp2]{--phone-art-filter:none;--phone-in:url("cxx-phone-asset:message-in.png");--phone-out:url("cxx-phone-asset:message-out.png");position:relative;width:min(760px,calc(100vw - 24px));display:flex;flex-direction:column;clip-path:none;border:0;box-shadow:none;background:var(--cxx-ink);font:18px/1.5 CxxCP2,"Noto Sans CJK SC",sans-serif;color:var(--cxx-interactive);isolation:isolate}
+.phone[data-cp2][hidden],:host([data-cxx-theme]) .mini[hidden]{display:none!important}
+:host([data-cxx-theme=night]) .phone[data-cp2]{--phone-art-filter:grayscale(1)}
+.phone[data-cp2]::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:url("cxx-phone-asset:backdrop.png") center/100% 100% no-repeat;filter:var(--phone-art-filter)}
+.phone[data-cp2] .head{padding:10px 22px 0;background:none;border:0}
+.phone[data-cp2] .brand,.phone[data-cp2] .title h2{display:none}
+.phone[data-cp2] .title{height:0}
+.phone[data-cp2] .title>button{position:absolute;right:16px;bottom:8px;z-index:4;padding:5px 0 5px 34px;background:none;border:0;color:var(--cxx-structure);font:18px CxxCP2,"Noto Sans CJK SC",sans-serif}
+.phone[data-cp2] .title>button::before{content:"Esc";position:absolute;left:0;top:12px;border:1px solid currentColor;padding:0 2px;font:14px CxxCP2,sans-serif;color:var(--cxx-interactive)}
+.phone[data-cp2] .tabs{gap:6px;flex-wrap:nowrap;border-bottom:1px solid var(--cxx-line);margin:0}
+.phone[data-cp2] .tabs button{flex:1;min-height:44px;border:0;border-radius:0;padding:8px 12px;background:none;color:var(--cxx-structure);font:20px CxxCP2,"Noto Sans CJK SC",sans-serif}
+.phone[data-cp2] .tabs button[aria-current=page]{color:var(--cxx-interactive);background:url("cxx-phone-asset:nav-active.png") bottom/100% 3px no-repeat}
+.phone[data-cp2] .body{display:flex;flex-direction:column;gap:10px;padding:18px 22px;min-height:0;overflow:auto;scrollbar-color:var(--cxx-structure) transparent;scrollbar-width:thin}
+.phone[data-cp2] .contacts-grid{display:flex;flex-direction:column;gap:0}
+.phone[data-cp2] .contact{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--cxx-line);background:none;color:var(--cxx-interactive);padding:10px 14px;min-height:48px}
+.phone[data-cp2] .contact>.avatar{display:none}
+.phone[data-cp2] .contact:hover:not(:disabled),.phone[data-cp2] .contact:focus-visible{background:color-mix(in srgb,var(--cxx-attention) 12%,transparent);color:var(--cxx-attention);outline:1px solid var(--cxx-attention);outline-offset:-1px}
+.phone[data-cp2] .contact .name{font:20px CxxCP2,"Noto Sans CJK SC",sans-serif}
+.phone[data-cp2] .contact small{font-size:12px;color:var(--cxx-muted)}
+.phone[data-cp2] .chat-person{border:0;padding:0;min-height:44px;background:none;flex:none}
+.phone[data-cp2] .chat-person h3{font:24px CxxCP2,"Noto Sans CJK SC",sans-serif;margin:0;color:var(--cxx-interactive)}
+.phone[data-cp2] .chat-person small{font-size:12px;color:var(--cxx-muted)}
+.phone[data-cp2] .log{min-height:100px;max-height:none;flex:1;overflow:auto;padding:0 10px 12px 0;scrollbar-color:var(--cxx-structure) transparent}
+.phone[data-cp2] .bubble,.t2051x[data-cp2] .net-msg{position:relative;isolation:isolate;max-width:90%;width:fit-content;margin:10px 40px 12px 0;border:0;background:none;padding:14px 22px 18px;color:var(--cxx-interactive);font:18px/1.5 CxxCP2,"Noto Sans CJK SC",sans-serif;white-space:pre-wrap;overflow-wrap:anywhere}
+.phone[data-cp2] .bubble::before,.t2051x[data-cp2] .net-msg::before{content:"";position:absolute;inset:0;z-index:-1;border:18px solid transparent;border-image:url("cxx-phone-asset:message-in.png") 18 stretch;background:var(--cxx-panel);background-clip:padding-box;filter:var(--phone-art-filter,var(--cp2-art-filter));pointer-events:none}
+.phone[data-cp2] .bubble.mine,.t2051x[data-cp2] .net-msg.is-mine{margin-left:auto;margin-right:0;color:var(--cxx-attention)}
+.phone[data-cp2] .bubble.mine::before,.t2051x[data-cp2] .net-msg.is-mine::before{border-image-source:url("cxx-phone-asset:message-out.png")}
+.phone[data-cp2] .bubble small{color:var(--cxx-muted);font-size:12px;display:block;margin-bottom:6px}
+.phone[data-cp2] .bubble button{border:0;min-height:36px;padding:4px 0;margin:6px 0 0;color:var(--cxx-interactive);font:14px CxxCP2,"Noto Sans CJK SC",sans-serif;background:none}
+.phone[data-cp2] .composer{margin:0;padding:10px 0 0;flex:none;border-top:1px solid var(--cxx-line)}
+.phone[data-cp2] .composer textarea{max-height:100px;min-height:62px;background:var(--cxx-panel);border:1px solid var(--cxx-line);font:16px/1.5 var(--cxx-font-ui);color:var(--cxx-text)}
+.phone[data-cp2] .actions button,.phone[data-cp2] form>button{min-height:44px;border:0;padding:8px 18px;background:url("cxx-phone-asset:frame-action.png") center/100% 100% no-repeat;color:var(--cxx-interactive);font:16px CxxCP2,"Noto Sans CJK SC",sans-serif}
+.phone[data-cp2] .foot{border:0;padding:0 120px 14px 22px;min-height:52px;max-height:20dvh;font-size:13px;background:none}
+.phone[data-cp2] .foot>div:empty{display:none}
+.phone[data-cp2] .error{color:var(--cxx-structure)}
+.phone[data-cp2] input,.phone[data-cp2] textarea{caret-color:var(--cxx-interactive)}
+.phone[data-cp2] ::selection{background:var(--cxx-interactive);color:var(--cxx-ink)}
+@media(max-width:680px){.phone[data-cp2] .head{padding-inline:12px}.phone[data-cp2] .body{padding:12px;gap:8px}.phone[data-cp2] .tabs button{font-size:17px;padding-inline:6px}.phone[data-cp2] .bubble{max-width:94%;font-size:16px;margin-right:12px;padding:12px 18px 16px}.phone[data-cp2] .bubble.mine{margin-right:0;margin-left:auto}.phone[data-cp2] .chat-person h3{font-size:20px}.phone[data-cp2] .foot{padding-left:12px}.phone[data-cp2] .composer textarea{max-height:72px}}

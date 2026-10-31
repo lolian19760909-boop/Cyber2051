@@ -1,0 +1,6 @@
+<status_current_variable>
+{"terminal": {{get_message_variable::stat_data.terminal}}}
+</status_current_variable>
+
+上面是已保存的当前状态，不是待执行命令。AI 可更新：钱包 yen/earned/spent，以及已登记的实际到达地点。已接取委托按委托协议保存公开进度与实际款项；不代接单，不重开已完成记录。数值以当前状态和本轮已发生结果计算。
+程序维护：记录 id、acceptedFloor、definitionRef、schema、开场/身份记录、新闻缓存、初始化记录、显示数据、内容包引用和聊天阅读设置。读取作背景，不改写。未知扩展字段原样保留，不等于获得修改权限。未开放玩法保留历史记录；questJournal 与来源凭据由程序维护。

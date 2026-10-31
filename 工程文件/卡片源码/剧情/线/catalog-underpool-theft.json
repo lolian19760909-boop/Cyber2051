@@ -1,0 +1,103 @@
+{
+ "schema": 1,
+ "id": "catalog-underpool-theft",
+ "title": "借条背面",
+ "track": "commission",
+ "summary": "暗池转单台收到一份取回借条的活。纸张很薄，上面却压着一整层住户的设备押金。",
+ "mapId": "tokyo-central",
+ "placeId": "catalog-underpool-theft",
+ "pay": 25000,
+ "nodes": [
+  {
+   "id": "P1",
+   "title": "确认委托范围",
+   "lore": 171,
+   "locations": [
+    {
+     "mapId": "tokyo-central",
+     "placeId": "catalog-underpool-theft"
+    }
+   ],
+   "conditions": {
+    "agreed": "当前人物与住户代表或暗池转单员实际确认取回完整借条、对账条件和报酬范围"
+   },
+   "outcomes": {
+    "wait": {
+     "label": "当事人或当前人物明确暂缓处理",
+     "effect": "pause"
+    },
+    "decline": {
+     "label": "当前人物实际拒绝介入或终止本次委托",
+     "effect": "jump",
+     "target": "P3"
+    }
+   }
+  },
+  {
+   "id": "P2",
+   "title": "核对线索与实际处置",
+   "lore": 172,
+   "requires": [
+    "P1"
+   ],
+   "conditions": {
+    "original": "实际核对完整原件或查明其持有人与保管地点",
+    "rights": "实际核查背面条款、设备或押金凭据，区分委托人的要求与原件权属"
+   },
+   "outcomes": {
+    "wait": {
+     "label": "实际暂缓调查或等待当事人补充依据",
+     "effect": "pause"
+    },
+    "stop": {
+     "label": "当事人实际终止调查或目标已无法继续",
+     "effect": "jump",
+     "target": "P3"
+    }
+   }
+  },
+  {
+   "id": "P3",
+   "title": "结果与交接",
+   "lore": 173,
+   "requires": [
+    "P2"
+   ],
+   "conditions": {
+    "reported": "当前人物已向相关当事人说明实际结果、物品或通路状态及未解决事项"
+   },
+   "choices": {
+    "resolution": {
+     "delivered": "完整原件已交给经实际确认的接收人，证据足供双方对账",
+     "reconciled": "各方认可赎回或公开对账的替代解决办法，并实际完成约定交接",
+     "refused": "查明权属或风险后明确拒绝取件，已向委托方交代",
+     "failed": "原件已毁坏、丢失或本次取回失败，已说明事实与未解决债务",
+     "withdrawn": "尚未完成调查即明确退出，并向当事人说明没有完成的工作"
+    }
+   },
+   "endingChoice": "resolution",
+   "endings": {
+    "delivered": {
+     "id": "delivered",
+     "title": "原件与对账依据交付"
+    },
+    "reconciled": {
+     "id": "reconciled",
+     "title": "替代方案完成"
+    },
+    "refused": {
+     "id": "refused",
+     "title": "核实后退出"
+    },
+    "failed": {
+     "id": "failed",
+     "title": "原件未能交付"
+    },
+    "withdrawn": {
+     "id": "withdrawn",
+     "title": "本次协助已退出"
+    }
+   }
+  }
+ ]
+}

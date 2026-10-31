@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>body {
+  font-family: var(--cxx-font-ui);
+}
+
+@keyframes rana-fade {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) rotate(-1deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes rana-float-slow {
+  0% {
+    transform: translateY(0px) rotate(2deg);
+  }
+
+  50% {
+    transform: translateY(-4px) rotate(2deg);
+  }
+
+  100% {
+    transform: translateY(0px) rotate(2deg);
+  }
+}
+
+.rana-wrap {
+  position: relative;
+  max-width: 760px;
+  margin: 30px auto;
+  animation: rana-fade 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  --cp-ink: var(--cxx-ink);
+  --cp-panel: var(--cxx-panel);
+  --cp-panel-hi: var(--cxx-raised);
+  --cp-line: var(--cxx-line);
+  --cp-cyan: var(--cxx-cyan);
+  --cp-red: var(--cxx-red);
+  --cp-amber: var(--cxx-yellow);
+  --cp-text: var(--cxx-text);
+  --cp-muted: var(--cxx-muted);
+  font-family: var(--cxx-font-ui);
+  color: var(--cp-text);
+}
+
+.rana-board {
+  position: relative;
+  padding: 40px;
+  overflow: hidden;
+  min-height: 420px;
+  background: radial-gradient(ellipse at 50% -18%,color-mix(in srgb, var(--cxx-narrative-panel) 50%, transparent),transparent 62%),repeating-linear-gradient(0deg,transparent 0 31px,color-mix(in srgb, var(--cxx-red) 2.20%, transparent) 31px 32px),var(--cp-ink);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  box-shadow: 0 18px 46px color-mix(in srgb, var(--cxx-shadow) 42%, transparent);
+}
+
+.rana-staff {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image: repeating-linear-gradient(to bottom,transparent,transparent 8px,color-mix(in srgb, var(--cxx-cyan) 35.00%, transparent) 9px,transparent 10px,transparent 40px);
+  opacity: .12;
+}
+
+.rana-tape {
+  position: absolute;
+  width: 80px;
+  backdrop-filter: blur(2px);
+  z-index: 10;
+  background: var(--cp-red);
+  border: none;
+  height: 2px;
+  box-shadow: none;
+}
+
+.rana-tape-1 {
+  top: -10px;
+  left: -20px;
+  transform: rotate(-45deg);
+}
+
+.rana-tape-2 {
+  bottom: -10px;
+  right: -20px;
+  transform: rotate(-30deg);
+}
+
+.rana-tape-3 {
+  top: 15px;
+  right: 30%;
+  transform: rotate(15deg);
+  width: 60px;
+  height: 20px;
+  background: var(--cp-cyan);
+}
+
+.rana-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.rana-left {
+  width: 45%;
+  position: relative;
+}
+
+.rana-photo {
+  padding: 10px 10px 45px 10px;
+  transform: rotate(-3deg);
+  position: relative;
+  z-index: 3;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: var(--cp-panel-hi);
+  border: 1px solid var(--cp-line);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--cxx-shadow) 35%, transparent);
+  border-radius: 2px;
+}
+
+.rana-photo:hover {
+  transform: rotate(0deg) scale(1.02);
+  z-index: 5;
+}
+
+.rana-photo img {
+  display: block;
+  width: 100%;
+  height: 340px;
+  object-fit: cover;
+  object-position: top;
+  filter: saturate(.78) contrast(1.05);
+  border-radius: 1px;
+}
+
+.rana-photo-caption {
+  position: absolute;
+  bottom: 15px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: var(--cp-cyan);
+  font-family: var(--cxx-font-mono);
+}
+
+.rana-right {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.rana-note {
+  align-self: flex-end;
+  padding: 6px;
+  border-radius: 2px;
+  transform: rotate(2deg);
+  animation: rana-float-slow 6s ease-in-out infinite;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  z-index: 4;
+  background: var(--cp-panel-hi);
+  border: 1px solid var(--cp-line);
+  box-shadow: none;
+}
+
+.rana-note-tape {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%) rotate(2deg);
+  background: var(--cp-red);
+  height: 2px;
+  width: 24px;
+  border: none;
+  box-shadow: none;
+}
+
+.rana-note img {
+  height: 75px;
+  width: auto;
+  display: block;
+  filter: saturate(.78) contrast(1.05);
+  border-radius: 1px;
+}
+
+.rana-text-box {
+  padding: 25px;
+  margin-top: 40px;
+  margin-bottom: 25px;
+  background: color-mix(in srgb, var(--cxx-ink) 75%, transparent);
+  border: 1px dashed var(--cp-line);
+  border-radius: 2px;
+  backdrop-filter: none;
+}
+
+.rana-title {
+  font-family: var(--cxx-font-ui);
+  font-size: 24px;
+  margin: 0 0 15px 0;
+  letter-spacing: 1px;
+  color: var(--cp-red);
+}
+
+.rana-desc {
+  font-size: 14px;
+  line-height: 2;
+  text-align: justify;
+  color: var(--cp-text);
+}
+
+.rana-desc p {
+  margin: 0 0 10px 0;
+}
+
+.rana-desc p:last-child {
+  margin: 0;
+}
+
+.rana-btn-wrap {
+  text-align: right;
+  margin-top: auto;
+}
+
+.rana-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 36px;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 4px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  user-select: none;
+  color: var(--cp-ink);
+  background: var(--cp-cyan);
+  border: 1px solid var(--cp-cyan);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cxx-cyan) 22.00%, transparent);
+  text-shadow: none;
+}
+
+.rana-btn:hover {
+  transform: translateY(-2px);
+  border-radius: 24px 8px 24px 8px;
+  background: var(--cxx-cyan);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--cxx-cyan) 12.00%, transparent),0 6px 20px color-mix(in srgb, var(--cxx-cyan) 15.00%, transparent);
+  color: var(--cp-ink);
+}
+
+.rana-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--cxx-cyan) 20%, transparent);
+}
+
+.rana-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+  background: color-mix(in srgb, var(--cxx-ink) 93%, transparent);
+  backdrop-filter: blur(3px);
+}
+
+.rana-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.rana-over-title {
+  font-family: var(--cxx-font-ui);
+  font-size: 28px;
+  letter-spacing: 6px;
+  transform: translateY(15px);
+  transition: transform 0.6s ease;
+  color: var(--cp-cyan);
+  text-shadow: none;
+}
+
+.rana-overlay.active .rana-over-title {
+  transform: translateY(0);
+}
+
+.rana-paw {
+  position: absolute;
+  opacity: 0.15;
+  z-index: 1;
+  font-size: 24px;
+  color: var(--cp-red);
+}
+
+.rana-paw-1 {
+  bottom: 30px;
+  left: 40%;
+  transform: rotate(-20deg);
+}
+
+.rana-paw-2 {
+  bottom: 60px;
+  left: 48%;
+  transform: rotate(10deg);
+}
+
+@media (max-width: 650px) {
+  .rana-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .rana-left {
+    width: 80%;
+    margin-bottom: 30px;
+  }
+
+  .rana-right {
+    width: 100%;
+  }
+
+  .rana-note {
+    top: -60px;
+    right: 10px;
+  }
+
+  .rana-board {
+    padding: 30px 20px;
+  }
+}
+
+.rana-card::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.rana-paper::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.rana-book::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.rana-board::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.rana-notebook::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.rana-container::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.rana-journal::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+@keyframes cp-alt-flow {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .rana-wrap * {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .rana-wrap *::before {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .rana-wrap *::after {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+}
+
+.rana-desc strong {
+  color: var(--cp-amber);
+}
+
+button.rana-btn {
+  font-family: inherit;
+  line-height: inherit;
+  appearance: none;
+  min-height: 44px;
+}
+
+.rana-btn:focus-visible {
+  outline: 2px solid var(--cp-cyan,var(--cxx-line));
+  outline-offset: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="rana-wrap">
+    <div class="rana-board">
+        <div class="rana-staff"></div>
+        <div class="rana-tape rana-tape-1"></div>
+        <div class="rana-tape rana-tape-2"></div>
+        <div class="rana-tape rana-tape-3"></div>
+
+        <div class="rana-paw rana-paw-1">🐾</div>
+        <div class="rana-paw rana-paw-2">🐾</div>
+
+        <div class="rana-content">
+            <!-- 左侧大图：随性贴上的拍立得 -->
+            <div class="rana-left">
+                <div class="rana-photo">
+                    <img src="https://cyber2051.top/img/%E8%A6%81%E4%B9%90%E5%A5%88%2FRana_RING%E8%A1%97%E9%81%931.png" alt="要乐奈">
+                    <div class="rana-photo-caption">RANA</div>
+                </div>
+            </div>
+
+            <!-- 右侧信息与交互 -->
+            <div class="rana-right">
+                <!-- 右上角小Gif便利贴 -->
+                <div class="rana-note">
+                    <div class="rana-note-tape"></div>
+                    <img src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E4%B9%90%E5%A5%88%E7%9D%A1%E8%A7%89.gif" alt="乐奈睡觉">
+                </div>
+
+                <div class="rana-text-box">
+                    <h3 class="rana-title">"The Stray Cat"</h3>
+                    <div class="rana-desc">
+                                                <p>SPACE旧址的门前台阶，被东京都正午的阳光晒得暖烘烘的。</p>
+                        <p>她慵懒地蜷缩在台阶上，异色瞳半闭着，像是一只正在午睡的猫，享受着片刻的安宁。</p>
+                    </div>
+                </div>
+
+                <div class="rana-btn-wrap">
+                    <button type="button" class="rana-btn" onclick="ranaStart()"
+                         data-prompt="【开始】【开场白】
+# 场景生成指令
+
+## 核心任务
+- 请作为【场景描绘者】，写一段关于要乐奈的开局场景。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+
+## 场景要素
+- **时间：** 2051年3月25日，中午12点半。
+- **地点：** 原Live House SPACE的旧址门外（如今这里已改建成停车场）。
+- **核心人物：** 要乐奈。
+
+## 剧情大纲与必须包含的要素：
+1. **阳光与错位的回忆：** 天气很好，太阳暖洋洋的，是个午睡的好时候。乐奈一个人坐在SPACE旧址的台阶上，旁边是她用来装吉他和设备的小拖车。她嘴里含着一颗抹茶味硬糖，眼神失焦地看着面前马路上来往的车辆和行人。然而，她的瞳孔中映射出来的却是三年前的景象——人群进进出出，满是中学女生的欢声笑语与乐器和鸣的声音，那是像家一样温暖的地方。
+2. **两年前的幻灭：** 随后，回忆跨越到两年前。家没有了。当时那些高中女子乐队的前辈们放学后像往常一样来到这里，却失望而归。自己当时应该也是这样傻傻地坐在这里看着，明明在看着，瞳孔里却什么也没有。外婆都筑诗船告诉自己这里不能是自己的归宿，却没有告诉她为什么。这也导致她曾像失去灵魂一样浑浑噩噩度过了两年。
+3. **寻找归宿的执念：** 到底在哪里呢？能让自己开心弹一辈子吉他、永远不会消失的归宿和乐队。不过，乐奈嫌弃这种复杂的思考，干脆不去想了。等会儿去RiNG-Live!弹一弹吉他吧，万一真的能找到一辈子的归宿呢？她心中这么期待着。
+4. **不擅长应付“麻烦”：** 就在这时，义眼显示出了新的讯息，是凛凛子发来的，大概是外婆叫自己回去吃饭。正好她也要去RiNG-Live!。想起凛凛子曾教过她“终端的消息一定要看，不然很容易出事情”，但乐奈对于回消息这件事觉得麻烦，心里嘟囔着“不喜欢，不想学，就这样吧”，于是随意地挥挥手关掉后便不再理会。
+
+## 最高优先级指令
+在描绘完乐奈因为嫌麻烦而不去回复，然后准备拖着小车前往RiNG的动作之后，【立即停止输出】。严禁强行推进后续对话或代替玩家行动，将故事的控制权交给玩家。
+【/开场白】">
+                        🎵 开始
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 交互遮罩 -->
+        <div class="rana-overlay" id="ranaOverlay">
+            <div class="rana-over-title">  迷  い  猫  </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function ranaStart() {
+    var btn = document.querySelector('.rana-btn');
+    var promptText = btn.getAttribute('data-prompt');
+
+    return parent.Cxx236OpeningHost.submitPreview(window, '/send ' + promptText + '|/trigger');
+}
+</script>
+
+</body>
+</html>

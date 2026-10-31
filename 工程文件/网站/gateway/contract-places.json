@@ -1,0 +1,1007 @@
+{
+  "format": 1,
+  "mapId": "tokyo-central",
+  "sourceSha256": "c2f920216bb6f1eb5bf24900bb8b8a99b0a5334212f1ce15e0eddcb57124c33f",
+  "places": [
+    {
+      "id": "plaza",
+      "name": "新日本时代广场",
+      "district": "皇核"
+    },
+    {
+      "id": "tsurumaki-tower",
+      "name": "弦卷塔",
+      "district": "皇核"
+    },
+    {
+      "id": "tsukinomori",
+      "name": "月之森女子学园",
+      "district": "皇核"
+    },
+    {
+      "id": "hanasakigawa",
+      "name": "花咲川女子学院",
+      "district": "皇核"
+    },
+    {
+      "id": "ring-community",
+      "name": "RiNG社区",
+      "district": "暗池"
+    },
+    {
+      "id": "ring-live",
+      "name": "RING-Live!",
+      "district": "暗池"
+    },
+    {
+      "id": "space-site",
+      "name": "SPACE 旧址",
+      "district": "暗池"
+    },
+    {
+      "id": "circle",
+      "name": "CiRCLE",
+      "district": "暗池"
+    },
+    {
+      "id": "beni-street",
+      "name": "红花街",
+      "district": "暗池"
+    },
+    {
+      "id": "a-yang-clinic",
+      "name": "宇田川巴的老街诊所",
+      "district": "暗池"
+    },
+    {
+      "id": "haneoka",
+      "name": "羽丘女子学园",
+      "district": "暗池"
+    },
+    {
+      "id": "akabane",
+      "name": "赤羽街区",
+      "district": "荒川下城"
+    }
+  ],
+  "catalogVersion": 1,
+  "maps": [
+    {
+      "id": "tokyo-central",
+      "name": "东京都 · 中心大区",
+      "version": "full-4",
+      "places": [
+        {
+          "id": "plaza",
+          "name": "新日本时代广场",
+          "district": "皇核"
+        },
+        {
+          "id": "tsurumaki-tower",
+          "name": "弦卷塔",
+          "district": "皇核"
+        },
+        {
+          "id": "tsukinomori",
+          "name": "月之森女子学园",
+          "district": "皇核"
+        },
+        {
+          "id": "hanasakigawa",
+          "name": "花咲川女子学院",
+          "district": "皇核"
+        },
+        {
+          "id": "ring-community",
+          "name": "RiNG社区",
+          "district": "暗池"
+        },
+        {
+          "id": "ring-live",
+          "name": "RING-Live!",
+          "district": "暗池"
+        },
+        {
+          "id": "space-site",
+          "name": "SPACE 旧址",
+          "district": "暗池"
+        },
+        {
+          "id": "circle",
+          "name": "CiRCLE",
+          "district": "暗池"
+        },
+        {
+          "id": "beni-street",
+          "name": "红花街",
+          "district": "暗池"
+        },
+        {
+          "id": "a-yang-clinic",
+          "name": "宇田川巴的老街诊所",
+          "district": "暗池"
+        },
+        {
+          "id": "haneoka",
+          "name": "羽丘女子学园",
+          "district": "暗池"
+        },
+        {
+          "id": "akabane",
+          "name": "赤羽街区",
+          "district": "荒川下城"
+        },
+        {
+          "id": "sakiko-rental",
+          "name": "祥子的赤羽出租屋",
+          "district": "荒川下城"
+        },
+        {
+          "id": "akabane-clinic",
+          "name": "赤羽黑诊所",
+          "district": "荒川下城"
+        },
+        {
+          "id": "rana-shifune-home",
+          "name": "乐奈与诗船的公寓",
+          "district": "暗池"
+        },
+        {
+          "id": "ring-instruments",
+          "name": "RING-Live! · 乐器店",
+          "district": "暗池"
+        },
+        {
+          "id": "ring-records",
+          "name": "RING-Live! · 旧唱片店",
+          "district": "暗池"
+        },
+        {
+          "id": "ring-cafe",
+          "name": "RING-Live! · 咖啡馆",
+          "district": "暗池"
+        },
+        {
+          "id": "ring-studio",
+          "name": "RING-Live! · 录音与租赁",
+          "district": "暗池"
+        },
+        {
+          "id": "ring-basement-bar",
+          "name": "Lust？Love？Live！",
+          "district": "暗池"
+        },
+        {
+          "id": "service-imperial-weapon",
+          "name": "皇核 · 武器店",
+          "district": "皇核"
+        },
+        {
+          "id": "service-imperial-implant",
+          "name": "皇核 · 义体医生",
+          "district": "皇核"
+        },
+        {
+          "id": "service-imperial-hospital",
+          "name": "皇核 · 医疗点",
+          "district": "皇核"
+        },
+        {
+          "id": "service-imperial-market",
+          "name": "皇核 · 垃圾商店",
+          "district": "皇核"
+        },
+        {
+          "id": "service-imperial-transit",
+          "name": "皇核 · 交通设施",
+          "district": "皇核"
+        },
+        {
+          "id": "service-underpool-weapon",
+          "name": "暗池 · 武器店",
+          "district": "暗池"
+        },
+        {
+          "id": "service-underpool-implant",
+          "name": "暗池 · 义体医生",
+          "district": "暗池"
+        },
+        {
+          "id": "service-underpool-hospital",
+          "name": "暗池 · 医疗点",
+          "district": "暗池"
+        },
+        {
+          "id": "service-underpool-market",
+          "name": "暗池 · 垃圾商店",
+          "district": "暗池"
+        },
+        {
+          "id": "service-underpool-transit",
+          "name": "暗池 · 交通设施",
+          "district": "暗池"
+        },
+        {
+          "id": "service-lowtown-weapon",
+          "name": "荒川下城 · 武器店",
+          "district": "荒川下城"
+        },
+        {
+          "id": "service-lowtown-implant",
+          "name": "荒川下城 · 义体医生",
+          "district": "荒川下城"
+        },
+        {
+          "id": "service-lowtown-hospital",
+          "name": "荒川下城 · 医疗点",
+          "district": "荒川下城"
+        },
+        {
+          "id": "service-lowtown-market",
+          "name": "荒川下城 · 垃圾商店",
+          "district": "荒川下城"
+        },
+        {
+          "id": "service-lowtown-transit",
+          "name": "荒川下城 · 交通设施",
+          "district": "荒川下城"
+        },
+        {
+          "id": "service-neonring-weapon",
+          "name": "山手霓环 · 武器店",
+          "district": "山手霓环"
+        },
+        {
+          "id": "service-neonring-implant",
+          "name": "山手霓环 · 义体医生",
+          "district": "山手霓环"
+        },
+        {
+          "id": "service-neonring-hospital",
+          "name": "山手霓环 · 医疗点",
+          "district": "山手霓环"
+        },
+        {
+          "id": "service-neonring-market",
+          "name": "山手霓环 · 垃圾商店",
+          "district": "山手霓环"
+        },
+        {
+          "id": "service-neonring-transit",
+          "name": "山手霓环 · 交通设施",
+          "district": "山手霓环"
+        },
+        {
+          "id": "service-tsurumaki-weapon",
+          "name": "弦卷台 · 武器店",
+          "district": "弦卷台"
+        },
+        {
+          "id": "service-tsurumaki-implant",
+          "name": "弦卷台 · 义体医生",
+          "district": "弦卷台"
+        },
+        {
+          "id": "service-tsurumaki-hospital",
+          "name": "弦卷台 · 医疗点",
+          "district": "弦卷台"
+        },
+        {
+          "id": "service-tsurumaki-market",
+          "name": "弦卷台 · 垃圾商店",
+          "district": "弦卷台"
+        },
+        {
+          "id": "service-tsurumaki-transit",
+          "name": "弦卷台 · 交通设施",
+          "district": "弦卷台"
+        },
+        {
+          "id": "service-keihin-weapon",
+          "name": "京滨方舟 · 武器店",
+          "district": "京滨方舟"
+        },
+        {
+          "id": "service-keihin-implant",
+          "name": "京滨方舟 · 义体医生",
+          "district": "京滨方舟"
+        },
+        {
+          "id": "service-keihin-hospital",
+          "name": "京滨方舟 · 医疗点",
+          "district": "京滨方舟"
+        },
+        {
+          "id": "service-keihin-market",
+          "name": "京滨方舟 · 垃圾商店",
+          "district": "京滨方舟"
+        },
+        {
+          "id": "service-keihin-transit",
+          "name": "京滨方舟 · 交通设施",
+          "district": "京滨方舟"
+        },
+        {
+          "id": "service-west-weapon",
+          "name": "西郊净土 · 武器店",
+          "district": "西郊净土"
+        },
+        {
+          "id": "service-west-implant",
+          "name": "西郊净土 · 义体医生",
+          "district": "西郊净土"
+        },
+        {
+          "id": "service-west-hospital",
+          "name": "西郊净土 · 医疗点",
+          "district": "西郊净土"
+        },
+        {
+          "id": "service-west-market",
+          "name": "西郊净土 · 垃圾商店",
+          "district": "西郊净土"
+        },
+        {
+          "id": "service-west-transit",
+          "name": "西郊净土 · 交通设施",
+          "district": "西郊净土"
+        },
+        {
+          "id": "service-saitama-weapon",
+          "name": "埼玉 · 武器店",
+          "district": "埼玉"
+        },
+        {
+          "id": "service-saitama-implant",
+          "name": "埼玉 · 义体医生",
+          "district": "埼玉"
+        },
+        {
+          "id": "service-saitama-hospital",
+          "name": "埼玉 · 医疗点",
+          "district": "埼玉"
+        },
+        {
+          "id": "service-saitama-market",
+          "name": "埼玉 · 垃圾商店",
+          "district": "埼玉"
+        },
+        {
+          "id": "service-saitama-transit",
+          "name": "埼玉 · 交通设施",
+          "district": "埼玉"
+        },
+        {
+          "id": "service-hokuen-weapon",
+          "name": "所泽 · 武器店",
+          "district": "所泽"
+        },
+        {
+          "id": "service-hokuen-implant",
+          "name": "所泽 · 义体医生",
+          "district": "所泽"
+        },
+        {
+          "id": "service-hokuen-hospital",
+          "name": "所泽 · 医疗点",
+          "district": "所泽"
+        },
+        {
+          "id": "service-hokuen-market",
+          "name": "所泽 · 垃圾商店",
+          "district": "所泽"
+        },
+        {
+          "id": "service-hokuen-transit",
+          "name": "所泽 · 交通设施",
+          "district": "所泽"
+        },
+        {
+          "id": "service-kai-weapon",
+          "name": "奥多摩 · 武器店",
+          "district": "奥多摩山地"
+        },
+        {
+          "id": "service-kai-implant",
+          "name": "奥多摩 · 义体医生",
+          "district": "奥多摩山地"
+        },
+        {
+          "id": "service-kai-hospital",
+          "name": "奥多摩 · 医疗点",
+          "district": "奥多摩山地"
+        },
+        {
+          "id": "service-kai-market",
+          "name": "奥多摩 · 垃圾商店",
+          "district": "奥多摩山地"
+        },
+        {
+          "id": "service-kai-transit",
+          "name": "奥多摩 · 交通设施",
+          "district": "奥多摩山地"
+        },
+        {
+          "id": "service-fuji-transit",
+          "name": "丹泽 · 交通设施",
+          "district": "丹泽山地"
+        },
+        {
+          "id": "service-fuji-hospital",
+          "name": "丹泽 · 医疗点",
+          "district": "丹泽山地"
+        },
+        {
+          "id": "service-sagami-weapon",
+          "name": "川崎 · 武器店",
+          "district": "川崎"
+        },
+        {
+          "id": "service-sagami-implant",
+          "name": "川崎 · 义体医生",
+          "district": "川崎"
+        },
+        {
+          "id": "service-sagami-hospital",
+          "name": "川崎 · 医疗点",
+          "district": "川崎"
+        },
+        {
+          "id": "service-sagami-market",
+          "name": "川崎 · 垃圾商店",
+          "district": "川崎"
+        },
+        {
+          "id": "service-sagami-transit",
+          "name": "川崎 · 交通设施",
+          "district": "川崎"
+        },
+        {
+          "id": "service-chiba-weapon",
+          "name": "千叶 · 武器店",
+          "district": "千叶"
+        },
+        {
+          "id": "service-chiba-implant",
+          "name": "千叶 · 义体医生",
+          "district": "千叶"
+        },
+        {
+          "id": "service-chiba-hospital",
+          "name": "千叶 · 医疗点",
+          "district": "千叶"
+        },
+        {
+          "id": "service-chiba-market",
+          "name": "千叶 · 垃圾商店",
+          "district": "千叶"
+        },
+        {
+          "id": "service-chiba-transit",
+          "name": "千叶 · 交通设施",
+          "district": "千叶"
+        },
+        {
+          "id": "service-docks-weapon",
+          "name": "木更津 · 武器店",
+          "district": "房总"
+        },
+        {
+          "id": "service-docks-implant",
+          "name": "木更津 · 义体医生",
+          "district": "房总"
+        },
+        {
+          "id": "service-docks-hospital",
+          "name": "木更津 · 医疗点",
+          "district": "房总"
+        },
+        {
+          "id": "service-docks-market",
+          "name": "木更津 · 垃圾商店",
+          "district": "房总"
+        },
+        {
+          "id": "service-docks-transit",
+          "name": "木更津 · 交通设施",
+          "district": "房总"
+        },
+        {
+          "id": "west-terminal",
+          "name": "湾西货运港",
+          "district": "环湾港区"
+        },
+        {
+          "id": "bay-terminal",
+          "name": "湾岸客运码头",
+          "district": "环湾港区"
+        },
+        {
+          "id": "east-terminal",
+          "name": "木更津发射中心",
+          "district": "房总"
+        },
+        {
+          "id": "sunken-market",
+          "name": "暗池层叠市场",
+          "district": "暗池"
+        },
+        {
+          "id": "arakawa-hospital",
+          "name": "荒川综合医院",
+          "district": "荒川下城"
+        },
+        {
+          "id": "neon-forum",
+          "name": "霓环中央演艺场",
+          "district": "山手霓环"
+        },
+        {
+          "id": "hill-estate",
+          "name": "弦卷台庭园会馆",
+          "district": "弦卷台"
+        },
+        {
+          "id": "ark-logistics",
+          "name": "方舟联运总站",
+          "district": "京滨方舟"
+        },
+        {
+          "id": "west-market",
+          "name": "武藏野农产市场",
+          "district": "西郊净土"
+        },
+        {
+          "id": "saitama-housing",
+          "name": "埼玉连廊住区",
+          "district": "埼玉"
+        },
+        {
+          "id": "tokorozawa-assembly",
+          "name": "所泽机造总装厂",
+          "district": "所泽"
+        },
+        {
+          "id": "valley-terraces",
+          "name": "多摩山前阶庭",
+          "district": "奥多摩山地"
+        },
+        {
+          "id": "fuji-observatory",
+          "name": "丹泽边境观测站",
+          "district": "丹泽山地"
+        },
+        {
+          "id": "kawasaki-refinery",
+          "name": "川崎能源联合厂",
+          "district": "川崎"
+        },
+        {
+          "id": "chiba-waterhall",
+          "name": "千叶滨水会展馆",
+          "district": "千叶"
+        },
+        {
+          "id": "dock-ruins",
+          "name": "木更津旧港遗构",
+          "district": "房总"
+        },
+        {
+          "id": "catalog-tsurumaki-apartment",
+          "name": "栈桥公寓",
+          "district": "弦卷台"
+        },
+        {
+          "id": "catalog-saitama-apartment",
+          "name": "朝班公寓",
+          "district": "埼玉"
+        },
+        {
+          "id": "catalog-keihin-drop",
+          "name": "九号交接棚",
+          "district": "京滨方舟"
+        },
+        {
+          "id": "catalog-docks-drop",
+          "name": "潮窗交货柜",
+          "district": "房总"
+        },
+        {
+          "id": "catalog-neonring-clothing",
+          "name": "反光线改衣台",
+          "district": "山手霓环"
+        },
+        {
+          "id": "catalog-chiba-clothing",
+          "name": "千叶 · 服装",
+          "district": "千叶"
+        },
+        {
+          "id": "catalog-underpool-netrunner",
+          "name": "回声线缆台",
+          "district": "暗池"
+        },
+        {
+          "id": "catalog-kai-netrunner",
+          "name": "奥多摩 · 网络黑客",
+          "district": "奥多摩山地"
+        },
+        {
+          "id": "catalog-underpool-melee",
+          "name": "暗池 · 近战武器商贩",
+          "district": "暗池"
+        },
+        {
+          "id": "catalog-lowtown-melee",
+          "name": "荒川下城 · 近战武器商贩",
+          "district": "荒川下城"
+        },
+        {
+          "id": "catalog-west-food",
+          "name": "雨棚青菜饭",
+          "district": "西郊净土"
+        },
+        {
+          "id": "catalog-lowtown-food",
+          "name": "河闸食堂",
+          "district": "荒川下城"
+        },
+        {
+          "id": "catalog-neonring-bar",
+          "name": "山手霓环 · 酒吧",
+          "district": "山手霓环"
+        },
+        {
+          "id": "catalog-underpool-bar",
+          "name": "暗池 · 酒吧",
+          "district": "暗池"
+        },
+        {
+          "id": "catalog-neonring-joytoy",
+          "name": "山手霓环 · 性偶",
+          "district": "山手霓环"
+        },
+        {
+          "id": "catalog-underpool-fixer",
+          "name": "暗池转单台",
+          "district": "暗池"
+        },
+        {
+          "id": "catalog-keihin-fixer",
+          "name": "京滨夜班调度",
+          "district": "京滨方舟"
+        },
+        {
+          "id": "catalog-imperial-client",
+          "name": "皇核资产事务窗口",
+          "district": "皇核"
+        },
+        {
+          "id": "catalog-chiba-client",
+          "name": "千叶试音室联络台",
+          "district": "千叶"
+        },
+        {
+          "id": "catalog-lowtown-police",
+          "name": "退水线上的白漆",
+          "district": "荒川下城"
+        },
+        {
+          "id": "catalog-underpool-assault",
+          "name": "走廊里的第二把锁",
+          "district": "暗池"
+        },
+        {
+          "id": "catalog-sagami-assault",
+          "name": "下班口的欠薪单",
+          "district": "川崎"
+        },
+        {
+          "id": "catalog-docks-organized",
+          "name": "空箱也要过秤",
+          "district": "房总"
+        },
+        {
+          "id": "catalog-saitama-reported",
+          "name": "不在名册上的房间",
+          "district": "埼玉"
+        },
+        {
+          "id": "catalog-hokuen-cyberpsycho",
+          "name": "别把警报当成病历",
+          "district": "所泽"
+        },
+        {
+          "id": "catalog-kai-tarot",
+          "name": "奥多摩 · 塔罗牌",
+          "district": "奥多摩山地"
+        },
+        {
+          "id": "catalog-west-tarot",
+          "name": "西郊净土 · 塔罗牌",
+          "district": "西郊净土"
+        },
+        {
+          "id": "catalog-chiba-sidejob",
+          "name": "给海风留一个麦克风",
+          "district": "千叶"
+        },
+        {
+          "id": "catalog-saitama-sidejob",
+          "name": "末班车前的灯",
+          "district": "埼玉"
+        },
+        {
+          "id": "catalog-lowtown-recovery",
+          "name": "一只饭盒的重量",
+          "district": "荒川下城"
+        },
+        {
+          "id": "catalog-underpool-theft",
+          "name": "借条背面",
+          "district": "暗池"
+        },
+        {
+          "id": "catalog-keihin-escort",
+          "name": "冷链不等人",
+          "district": "京滨方舟"
+        },
+        {
+          "id": "catalog-tsurumaki-escort",
+          "name": "体面地搬出去",
+          "district": "弦卷台"
+        },
+        {
+          "id": "catalog-sagami-hitman",
+          "name": "请把收据留下",
+          "district": "川崎"
+        },
+        {
+          "id": "catalog-hokuen-sabotage",
+          "name": "请勿恢复出厂",
+          "district": "所泽"
+        },
+        {
+          "id": "catalog-fuji-sos",
+          "name": "山路上的第三张床",
+          "district": "丹泽山地"
+        },
+        {
+          "id": "catalog-docks-sos",
+          "name": "潮汐表没有名字",
+          "district": "房总"
+        },
+        {
+          "id": "bay-mid-bridge",
+          "name": "中湾跨海大桥",
+          "district": "环湾港区"
+        },
+        {
+          "id": "bay-lower-bridge",
+          "name": "下湾跨海大桥",
+          "district": "环湾港区"
+        },
+        {
+          "id": "tokyo-skytree",
+          "name": "东京天空塔",
+          "district": "荒川下城"
+        },
+        {
+          "id": "m8-site-ryomo",
+          "name": "两毛制造联合厂",
+          "district": "两毛产业带"
+        },
+        {
+          "id": "m8-site-north-gateway",
+          "name": "北门户综合站城",
+          "district": "小山—宇都宫南缘"
+        },
+        {
+          "id": "m8-site-mito-oarai",
+          "name": "水户大洗港城中心",
+          "district": "水户—大洗"
+        },
+        {
+          "id": "m8-site-saitama-north",
+          "name": "北埼玉轨道生活组团",
+          "district": "埼玉"
+        },
+        {
+          "id": "m8-site-tsukuba-north",
+          "name": "筑波研究园",
+          "district": "筑波—土浦"
+        },
+        {
+          "id": "m8-site-tone-south",
+          "name": "利根南岸换装场",
+          "district": "千叶"
+        },
+        {
+          "id": "m8-site-kashima-kamisu",
+          "name": "鹿岛港后炼化厂",
+          "district": "鹿岛—神栖"
+        },
+        {
+          "id": "m8-site-narita-hokuso",
+          "name": "北总航空物流组团",
+          "district": "千叶"
+        },
+        {
+          "id": "m8-site-chiba-extension",
+          "name": "千叶东部复合站城",
+          "district": "千叶"
+        },
+        {
+          "id": "m8-site-choshi",
+          "name": "銚子河港市场",
+          "district": "銚子河口"
+        },
+        {
+          "id": "m8-site-kujukuri",
+          "name": "九十九里滨海加工场",
+          "district": "九十九里"
+        },
+        {
+          "id": "m8-site-okutama",
+          "name": "奥多摩谷口站城",
+          "district": "奥多摩山地"
+        },
+        {
+          "id": "m8-site-tanzawa",
+          "name": "丹泽山前院落中心",
+          "district": "丹泽山地"
+        },
+        {
+          "id": "m8-site-yokohama-miura",
+          "name": "横滨湾岸复合中心",
+          "district": "横滨—三浦"
+        },
+        {
+          "id": "m8-site-boso-kisarazu",
+          "name": "木更津港城生活组团",
+          "district": "房总"
+        },
+        {
+          "id": "m8-site-boso-kimitsu",
+          "name": "君津重件总装厂",
+          "district": "房总"
+        },
+        {
+          "id": "m8-site-boso-futtsu",
+          "name": "富津渔港换装场",
+          "district": "房总"
+        },
+        {
+          "id": "m8-site-boso-interior",
+          "name": "房总谷地水源园",
+          "district": "房总"
+        },
+        {
+          "id": "m8-site-boso-pacific",
+          "name": "外房航天勤务中心",
+          "district": "房总"
+        }
+      ]
+    },
+    {
+      "id": "west-expansion",
+      "name": "西部大区 · 山梨与富士",
+      "version": "west-1",
+      "places": [
+        {
+          "id": "west-kofu-civic",
+          "name": "甲府城下综合诊疗院",
+          "district": "山梨盆地"
+        },
+        {
+          "id": "west-katsunuma-depot",
+          "name": "胜沼农产交易所",
+          "district": "山梨盆地"
+        },
+        {
+          "id": "west-lake-waterworks",
+          "name": "河口湖水源维护站",
+          "district": "富士五湖"
+        },
+        {
+          "id": "west-yoshida-textile",
+          "name": "富士吉田织物工坊",
+          "district": "富士五湖"
+        },
+        {
+          "id": "west-gotemba-logistics",
+          "name": "御殿场山麓物流院",
+          "district": "御殿场"
+        },
+        {
+          "id": "west-fuji-peak",
+          "name": "富士山",
+          "district": "富士五湖"
+        },
+        {
+          "id": "west-lake-motosu",
+          "name": "本栖湖",
+          "district": "富士五湖"
+        },
+        {
+          "id": "west-lake-shoji",
+          "name": "精进湖",
+          "district": "富士五湖"
+        },
+        {
+          "id": "west-lake-saiko",
+          "name": "西湖",
+          "district": "富士五湖"
+        },
+        {
+          "id": "west-lake-kawaguchi",
+          "name": "河口湖",
+          "district": "富士五湖"
+        },
+        {
+          "id": "west-lake-yamanaka",
+          "name": "山中湖",
+          "district": "富士五湖"
+        },
+        {
+          "id": "west-service-kai",
+          "name": "甲斐·韮崎 · 饮食",
+          "district": "山梨盆地"
+        },
+        {
+          "id": "west-service-kofu",
+          "name": "甲府城下 · 医疗点",
+          "district": "山梨盆地"
+        },
+        {
+          "id": "west-service-katsunuma",
+          "name": "笛吹·胜沼 · 交货点",
+          "district": "山梨盆地"
+        },
+        {
+          "id": "west-service-otsuki",
+          "name": "大月谷口 · 垃圾商店",
+          "district": "山梨盆地"
+        },
+        {
+          "id": "west-service-kawaguchi",
+          "name": "河口湖南岸 · 义体医生",
+          "district": "富士五湖"
+        },
+        {
+          "id": "west-service-yoshida",
+          "name": "富士吉田 · 酒吧",
+          "district": "富士五湖"
+        },
+        {
+          "id": "west-service-narusawa",
+          "name": "鸣泽林缘 · 武器店",
+          "district": "富士五湖"
+        },
+        {
+          "id": "west-service-gotemba",
+          "name": "御殿场下城 · 网络黑客",
+          "district": "御殿场"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "file": "卡片源码/地图/数据/legacy-nodes.json",
+      "sha256": "c2f920216bb6f1eb5bf24900bb8b8a99b0a5334212f1ce15e0eddcb57124c33f"
+    },
+    {
+      "file": "卡片源码/地图/数据/legacy-regions.json",
+      "sha256": "69fe5ccc25ee1a9a9f8deb0816b8a8f5b5da88021348e1d5101e9244c81a75c9"
+    },
+    {
+      "file": "卡片源码/地图/central-data.js",
+      "sha256": "34f7a18346659fb5fae8426e3615421d361102574c9276ef313e2ddd41a72162"
+    },
+    {
+      "file": "卡片源码/地图/western-data.js",
+      "sha256": "0484d46d38c16bcbd7488d84feda9506e02ceaf24b2774bf724465adaefabb6c"
+    }
+  ]
+}

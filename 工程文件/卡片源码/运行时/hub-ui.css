@@ -1,0 +1,813 @@
+/* Game hub: pause-menu layout (DESIGN.md 10.7). Shared roles come from 主题/tokens.css. */
+
+.cxx-hub-boundary {
+  container: cxx-hub / size;
+}
+
+.cxx-hub {
+  display: grid;
+  grid-template-columns: 420px minmax(0,1fr);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: var(--cxx-canvas);
+  color: var(--cxx-on-canvas);
+  font: 16px/1.6 var(--cxx-font-ui);
+  color-scheme: dark;
+}
+
+.cxx-hub * {
+  box-sizing: border-box;
+}
+
+.cxx-hub [hidden] {
+  display: none!important;
+}
+
+.cxx-hub button {
+  font: inherit;
+  color: var(--cxx-text);
+  cursor: pointer;
+  min-height: 44px;
+  border: 1px solid var(--cxx-line);
+  border-radius: 0;
+  background: var(--cxx-panel);
+  padding: 8px 14px;
+  text-align: left;
+}
+
+.cxx-hub button:disabled {
+  opacity: .5;
+  cursor: default;
+}
+
+.cxx-hub button:focus-visible {
+  outline: 2px solid var(--cxx-interactive);
+  outline-offset: 2px;
+}
+
+.cxx-hub button:not(:focus-visible) {
+  transition: background-color 160ms ease,border-color 160ms ease,color 160ms ease;
+}
+
+.cxx-hub button:active:not(:disabled):not(:focus-visible) {
+  transform: scale(.98);
+  transition-duration: 0s;
+}
+
+/* Diagonal cuts follow the theme (10.3); browsers without corner-shape keep square corners. */
+@supports (corner-shape: bevel) {
+  .cxx-hub :is(.hub-footer button, .hub-quest button, .hub-dossier-card, .hub-quest, .hub-record-dialog button) {
+    border-radius: var(--cxx-cut-s) 0;
+    corner-shape: bevel;
+  }
+}
+
+/* ---------- Rail ---------- */
+.hub-rail {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 26px 30px 18px;
+  overflow: auto;
+  scrollbar-width: thin;
+  background: var(--cxx-panel);
+  border-right: 1px solid var(--cxx-line-strong);
+  color: var(--cxx-text);
+}
+
+.hub-brand {
+  flex: none;
+}
+
+/* The wordmark sits straight on the solid rail in every theme; it never gets its own plate. */
+.hub-logo {
+  display: block;
+  width: auto;
+  height: 46px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.hub-brand-text {
+  font: var(--cxx-weight-heading) 26px/1.2 var(--cxx-font-latin);
+  color: var(--cxx-heading);
+}
+
+.hub-who {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex: none;
+  margin: 18px 0 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--cxx-line);
+}
+
+.hub-name {
+  font-size: 20px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.hub-role {
+  font-size: 14px;
+  color: var(--cxx-muted);
+}
+
+.hub-level {
+  margin-left: auto;
+  font: var(--cxx-weight-latin) 22px/1 var(--cxx-font-latin);
+  font-variant-numeric: tabular-nums;
+  color: var(--cxx-heading);
+  white-space: nowrap;
+}
+
+.cxx-hub .hub-continue {
+  display: grid;
+  flex: none;
+  width: 100%;
+  min-height: 70px;
+  margin-bottom: 10px;
+  padding: 8px 14px 8px 16px;
+  border: 0;
+  border-left: 3px solid var(--cxx-interactive);
+  background: color-mix(in srgb, var(--cxx-interactive) 10%, transparent);
+  color: var(--cxx-interactive);
+}
+
+.hub-continue strong {
+  font: var(--cxx-weight-heading) 30px/1.2 var(--cxx-font-ui);
+}
+
+.hub-continue small {
+  font-size: 13px;
+  color: var(--cxx-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (hover:hover) and (pointer:fine) {
+  .cxx-hub .hub-continue:hover {
+    background: color-mix(in srgb, var(--cxx-interactive) 18%, transparent);
+  }
+}
+
+.hub-entry-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cxx-hub .hub-entry-grid button {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  min-height: 56px;
+  padding: 6px 14px 6px 16px;
+  border: 0;
+  border-left: 3px solid transparent;
+  background: transparent;
+  color: var(--cxx-heading);
+}
+
+/* Section icons only show in the compact rail; the full rail reads by name. */
+.hub-entry-grid img {
+  display: none;
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+[data-cxx-theme="night"] .cxx-hub .hub-entry-grid img {
+  filter: grayscale(1) brightness(1.9);
+}
+
+.hub-entry-grid strong {
+  font: var(--cxx-weight-heading) 26px/1.25 var(--cxx-font-ui);
+}
+
+.hub-entry-grid small {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--cxx-muted);
+  overflow-wrap: anywhere;
+}
+
+.cxx-hub .hub-entry-grid button:is(:hover, :focus-visible),
+.cxx-hub .hub-entry-grid button[aria-current=page] {
+  border-left-color: var(--cxx-structure);
+  background: color-mix(in srgb, var(--cxx-structure) 14%, transparent);
+}
+
+.hub-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--cxx-line);
+}
+
+.cxx-hub .hub-footer button {
+  font-size: 16px;
+}
+
+.cxx-hub .hub-footer .hub-title {
+  margin-left: auto;
+  border-color: transparent;
+  background: transparent;
+  color: var(--cxx-muted);
+}
+
+@media (hover:hover) and (pointer:fine) {
+  .cxx-hub .hub-footer .hub-title:hover {
+    color: var(--cxx-text);
+  }
+
+  .cxx-hub .hub-footer button:not(.hub-title):hover {
+    border-color: var(--cxx-interactive);
+  }
+}
+
+.hub-save-status {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 14px;
+  color: var(--cxx-text);
+}
+
+.hub-save-status:empty {
+  display: none;
+}
+
+/* ---------- Scene side ---------- */
+.hub-content {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.hub-home {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  height: 100%;
+  padding: 26px 34px 28px;
+  color: var(--cxx-on-canvas);
+}
+
+.hub-scene {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(.7) brightness(.5);
+}
+
+/* Yellow lives in the picture: a yellow-black duotone that fades into the rail (10.8). */
+[data-cxx-theme="yellow"] .cxx-hub .hub-scene {
+  filter: url(#cxx-scene-yellow);
+  -webkit-mask: linear-gradient(90deg, transparent, #000 26%);
+  mask: linear-gradient(90deg, transparent, #000 26%);
+}
+
+[data-cxx-theme="night"] .cxx-hub .hub-scene {
+  filter: grayscale(1) brightness(.42);
+}
+
+/* Keeps the place name and the cards readable over any scene. */
+.hub-home::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--cxx-canvas) 55%, transparent), transparent 30%, transparent 55%, color-mix(in srgb, var(--cxx-canvas) 80%, transparent));
+}
+
+.hub-scene-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.hub-place {
+  display: grid;
+  margin: 0;
+  min-width: 0;
+  font-size: 15px;
+}
+
+.hub-place strong {
+  font: var(--cxx-weight-heading) 30px/1.25 var(--cxx-font-ui);
+  overflow-wrap: anywhere;
+}
+
+.hub-place-time {
+  color: var(--cxx-on-canvas-muted);
+}
+
+.hub-status {
+  display: flex;
+  flex: none;
+  gap: 24px;
+  margin-left: auto;
+}
+
+.hub-stat-line {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.hub-stat-line strong {
+  font: var(--cxx-weight-latin) 22px/1.3 var(--cxx-font-latin);
+  font-variant-numeric: tabular-nums;
+}
+
+.hub-stat-line span {
+  font-size: 13px;
+  color: var(--cxx-on-canvas-muted);
+}
+
+.hub-stat-icon {
+  width: 24px;
+  height: 20px;
+  object-fit: contain;
+  align-self: center;
+}
+
+.hub-scene-bottom {
+  display: grid;
+  grid-template-columns: minmax(0,auto) minmax(0,480px);
+  align-items: end;
+  justify-content: end;
+  gap: 18px;
+}
+
+.hub-dossiers {
+  display: flex;
+  gap: 10px;
+}
+
+.cxx-hub .hub-dossier-card {
+  display: grid;
+  grid-template-rows: 112px auto auto;
+  align-content: start;
+  gap: 2px;
+  width: 132px;
+  min-height: 0;
+  padding: 8px;
+  border: 0;
+  border-top: 2px solid var(--cxx-structure);
+  background: color-mix(in srgb, var(--cxx-panel) 90%, transparent);
+}
+
+.hub-dossier-illustration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.hub-dossier-illustration img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* The red illustrations are re-coloured to the theme's accent (10.8). */
+[data-cxx-theme="yellow"] .cxx-hub .hub-dossier-illustration img {
+  filter: url(#cxx-art-yellow);
+}
+
+[data-cxx-theme="night"] .cxx-hub .hub-dossier-illustration img {
+  filter: url(#cxx-art-night);
+}
+
+.hub-dossier-label {
+  font-size: 13px;
+  color: var(--cxx-muted);
+}
+
+.hub-dossier-name {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (hover:hover) and (pointer:fine) {
+  .cxx-hub .hub-dossier-card:hover {
+    background: var(--cxx-raised);
+  }
+}
+
+.hub-quest {
+  padding: 16px 20px 18px;
+  background: color-mix(in srgb, var(--cxx-panel) 92%, transparent);
+  border-left: 3px solid var(--cxx-structure);
+  color: var(--cxx-text);
+}
+
+.hub-eyebrow {
+  margin: 0;
+  font-size: 13px;
+  color: var(--cxx-muted);
+}
+
+.hub-quest h3 {
+  margin: 2px 0 4px;
+  font: var(--cxx-weight-heading) 28px/1.25 var(--cxx-font-ui);
+  color: var(--cxx-heading);
+  overflow-wrap: anywhere;
+}
+
+.hub-quest-stage {
+  margin: 0;
+  font-size: 14px;
+  color: var(--cxx-muted);
+}
+
+.hub-quest-goal {
+  margin: 8px 0 14px;
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+
+.cxx-hub .hub-quest button {
+  color: var(--cxx-text);
+}
+
+@media (hover:hover) and (pointer:fine) {
+  .cxx-hub .hub-quest button:hover {
+    border-color: var(--cxx-interactive);
+  }
+}
+
+/* ---------- Section pages: the rail folds to an icon column ---------- */
+.cxx-hub:not([data-section=hub]) {
+  grid-template-columns: 96px minmax(0,1fr);
+}
+
+.cxx-hub:not([data-section=hub]) .hub-rail {
+  align-items: stretch;
+  padding: 14px 8px;
+  gap: 4px;
+}
+
+.cxx-hub:not([data-section=hub]) :is(.hub-who, .hub-entry-grid small, .hub-continue small, .hub-save-status) {
+  display: none;
+}
+
+.cxx-hub:not([data-section=hub]) .hub-logo {
+  height: 26px;
+  margin: 0 auto 10px;
+}
+
+.cxx-hub:not([data-section=hub]) .hub-continue {
+  align-content: center;
+  min-height: 56px;
+  padding: 6px 4px;
+  margin-bottom: 6px;
+  border-left-width: 2px;
+  text-align: center;
+}
+
+.cxx-hub:not([data-section=hub]) .hub-continue strong {
+  font-size: 13px;
+}
+
+.cxx-hub:not([data-section=hub]) .hub-entry-grid button {
+  justify-items: center;
+  min-height: 60px;
+  padding: 6px 2px;
+  text-align: center;
+}
+
+.cxx-hub:not([data-section=hub]) .hub-entry-grid img {
+  display: block;
+}
+
+.cxx-hub:not([data-section=hub]) .hub-entry-grid strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cxx-hub:not([data-section=hub]) .hub-footer {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+
+.cxx-hub:not([data-section=hub]) .hub-footer button {
+  min-height: 44px;
+  padding: 4px 2px;
+  white-space: nowrap;
+  font-size: 13px;
+  text-align: center;
+}
+
+.cxx-hub:not([data-section=hub]) .hub-footer .hub-title {
+  margin-left: 0;
+}
+
+.hub-pane {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+.hub-content>.hub-pane {
+  padding: 8px 16px 12px;
+  background: var(--cxx-canvas);
+}
+
+.hub-pane>.hub-pane {
+  flex: 1;
+  padding: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.hub-pane iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border: 0;
+  flex: 1;
+}
+
+.hub-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: none;
+  min-height: 44px;
+  font-size: 14px;
+  color: var(--cxx-on-canvas-muted);
+}
+
+.cxx-hub .hub-breadcrumb button {
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  padding: 4px 8px 4px 0;
+  color: var(--cxx-interactive);
+}
+
+/* ---------- Record dialog ---------- */
+.hub-record-dialog {
+  color: var(--cxx-text);
+  background: var(--cxx-panel);
+  border: 1px solid var(--cxx-structure);
+  padding: 28px;
+  max-width: min(560px,90vw);
+  max-height: 80dvh;
+  overflow: auto;
+  font: 16px/1.7 var(--cxx-font-ui);
+}
+
+.hub-record-dialog::backdrop {
+  background: color-mix(in srgb, var(--cxx-scrim) 72%, transparent);
+}
+
+.hub-record-dialog h2 {
+  color: var(--cxx-heading);
+}
+
+.hub-record-dialog p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.hub-record-dialog button {
+  margin: 8px 12px 0 0;
+}
+
+/* ---------- Narrow containers ---------- */
+@container cxx-hub (max-width:1059px) {
+  .cxx-hub {
+    grid-template-columns: 340px minmax(0,1fr);
+  }
+
+  .hub-home {
+    padding: 22px 24px;
+  }
+
+  .hub-scene-top {
+    flex-wrap: wrap;
+    gap: 6px 16px;
+  }
+
+  .hub-place {
+    flex-basis: 100%;
+  }
+
+  .hub-scene-bottom {
+    grid-template-columns: minmax(0,1fr);
+  }
+}
+
+@container cxx-hub (max-height:560px) and (min-width:601px) {
+  .hub-rail {
+    padding: 14px 22px 12px;
+  }
+
+  /* Short landscape screens: the scene side scrolls instead of clipping the quest card. */
+  .cxx-hub[data-section=hub] .hub-content {
+    overflow: auto;
+    scrollbar-width: thin;
+  }
+
+  .hub-home {
+    height: auto;
+    min-height: 100%;
+    padding: 14px 20px 16px;
+  }
+
+  .hub-place strong {
+    font-size: 24px;
+  }
+
+  .hub-who {
+    margin: 10px 0 10px;
+    padding-bottom: 10px;
+  }
+
+  .cxx-hub .hub-continue {
+    min-height: 56px;
+  }
+
+  .hub-continue strong {
+    font-size: 24px;
+  }
+
+  .cxx-hub .hub-entry-grid button {
+    min-height: 44px;
+    padding-block: 2px;
+  }
+
+  .hub-entry-grid strong {
+    font-size: 20px;
+  }
+
+  .hub-entry-grid small {
+    display: none;
+  }
+
+  .cxx-hub .hub-dossier-card {
+    grid-template-rows: 64px auto;
+    width: 112px;
+  }
+
+  .hub-dossier-name {
+    display: none;
+  }
+}
+
+/* Phone: the rail content comes first, then the scene with the tracked quest. */
+@container cxx-hub (max-width:600px) {
+  .cxx-hub {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    scrollbar-width: none;
+  }
+
+  .hub-rail {
+    flex: none;
+    overflow: visible;
+    padding: 16px 16px 14px;
+    border-right: 0;
+    border-bottom: 1px solid var(--cxx-line-strong);
+  }
+
+  .hub-logo {
+    height: 32px;
+  }
+
+  .hub-who {
+    margin: 12px 0 12px;
+  }
+
+  .hub-continue strong {
+    font-size: 24px;
+  }
+
+  .hub-entry-grid strong {
+    font-size: 22px;
+  }
+
+  .hub-content {
+    flex: none;
+    overflow: visible;
+  }
+
+  .hub-home {
+    height: auto;
+    min-height: 420px;
+    padding: 16px 16px 18px;
+  }
+
+  [data-cxx-theme="yellow"] .cxx-hub .hub-scene {
+    -webkit-mask: linear-gradient(transparent, #000 30%);
+    mask: linear-gradient(transparent, #000 30%);
+  }
+
+  .hub-scene-top {
+    flex-wrap: wrap;
+    gap: 6px 16px;
+  }
+
+  .hub-place {
+    flex-basis: 100%;
+  }
+
+  .hub-place strong {
+    font-size: 24px;
+  }
+
+  .hub-scene-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 110px;
+  }
+
+  .hub-dossiers {
+    order: 2;
+    display: grid;
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    gap: 8px;
+  }
+
+  .cxx-hub .hub-dossier-card {
+    width: auto;
+    grid-template-rows: 92px auto auto;
+  }
+
+  .hub-quest h3 {
+    font-size: 24px;
+  }
+
+  /* Section pages on a phone: the menu folds into a strip of icons above the content. */
+  .cxx-hub:not([data-section=hub]) {
+    overflow: hidden;
+  }
+
+  .cxx-hub:not([data-section=hub]) .hub-rail {
+    display: grid;
+    grid-template-columns: repeat(6,minmax(0,1fr));
+    padding: 4px;
+    gap: 2px;
+  }
+
+  .cxx-hub:not([data-section=hub]) :is(.hub-brand, .hub-footer) {
+    display: none;
+  }
+
+  .cxx-hub:not([data-section=hub]) .hub-entry-grid {
+    display: contents;
+  }
+
+  .cxx-hub:not([data-section=hub]) .hub-continue {
+    margin: 0;
+  }
+
+  .cxx-hub:not([data-section=hub]) .hub-content {
+    flex: 1;
+    min-height: 0;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .cxx-hub button {
+    transition: none!important;
+  }
+
+  .cxx-hub button:active {
+    transform: none!important;
+  }
+}

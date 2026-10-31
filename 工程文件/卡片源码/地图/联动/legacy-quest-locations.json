@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "source": "前端升级/原型/content/quests.json",
+  "bindings": [
+    {
+      "questId": "q01",
+      "mapId": "tokyo-central",
+      "placeId": "a-yang-clinic",
+      "evidenceField": "goal",
+      "source": {
+        "title": "巴的采购单",
+        "district": "红花街",
+        "brief": "巴的诊所你总该听过——收费实在，手艺好，能扛事。她订了批皮下护甲，卖家临时放了鸽子，货现在蹲在清道夫的抛货点里落灰。你去把它端回来，巴付账，我抽一成。别问货是哪来的，你也没看见，对吧。",
+        "goal": "到抛货点清点并取回整批皮下护甲（六套），送到巴的诊所后账。"
+      }
+    },
+    {
+      "questId": "q02",
+      "mapId": "tokyo-central",
+      "placeId": "a-yang-clinic",
+      "evidenceField": "goal",
+      "source": {
+        "title": "被盯上的壳",
+        "district": "红花街",
+        "brief": "有个机偶姑娘在红花街西口被人盯上了——清道夫那帮摘器官的把她当成行走的备件库。她弟弟在我的柜台上押了最后一枚旧币换消息，我收下了，也打算把事情办了。把人带去巴的诊所，别让她变成夜市摊上的零件。",
+        "goal": "找到她（西口夜市一带），把她完整地送到巴的诊所。"
+      }
+    },
+    {
+      "questId": "q03",
+      "mapId": "tokyo-central",
+      "placeId": "ring-live",
+      "evidenceField": "brief",
+      "source": {
+        "title": "把吉他送过铁丝网",
+        "district": "RiNG 社区",
+        "brief": "河沿那边有支小乐队租了排练房，一把旧世代的贝斯还押在我们仓库。明晚他们要用——但这把琴比在场一半人的年纪都大，磕一下就是事故。你腿脚利索，帮我把它从 RING-Live! 后门送到荒川河沿。都是街坊的事，别让我失望。",
+        "goal": "明晚八点前，把贝斯完好送到荒川河沿的排练房，拿回签收条。"
+      }
+    },
+    {
+      "questId": "q04",
+      "mapId": "tokyo-central",
+      "placeId": "ring-community",
+      "evidenceField": "brief",
+      "source": {
+        "title": "谁在偷我们的电",
+        "district": "RiNG 社区",
+        "brief": "RiNG 社区这礼拜跳了三次闸，全楼道的义眼都得重启。电是我管的，账是我平的，跳下去我先倒霉。社区管道图上多出一条不存在的支线——顺着它查，看看是哪路神仙在偷电。查清楚了就行，怎么处理等我发话。",
+        "goal": "查明偷电支线的源头与用途，回报玲姐。"
+      }
+    }
+  ]
+}

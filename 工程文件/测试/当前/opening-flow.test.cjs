@@ -1,0 +1,70 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict');
+const Flow=require('../../卡片源码/运行时/opening-flow.js'),I=require('../../卡片源码/运行时/identity.js'),L=require('../../卡片源码/运行时/loadout.js'),H=require('../../卡片源码/运行时/player-host.js'),O=require('../../卡片源码/运行时/player-operations.js');
+const copy=structuredClone,deferred=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return {promise,resolve,reject};};
+function fixture({storage=new Map(),key='A',existing=null}={}){
+ let id=key,delay=null,fail=false,sends=[],mutations=0,saves=0,reads=0;
+ const initial={stat_data:{terminal:{wallet:{yen:500},unknown:{keep:1}},人物:{好感度:100}},unknown:{keep:2}};
+ const row={mes:'<OpeningForm/>',swipe_id:0,swipes:Array.from({length:26},(_,i)=>i?'<OpeningPage id="'+i+'"/>':'<OpeningForm/>'),variables:Array.from({length:26},()=>copy(initial))};
+ const ctx={chat:[row],characters:[{avatar:'fixture.png'}],characterId:0,getCurrentChatId:()=>id,chatMetadata:{variables:{external:{keep:3},...(existing?{__cxx_identity:existing}:{})}},async saveChat(){saves++;const snapshot=copy([{chat_metadata:ctx.chatMetadata},...ctx.chat]);if(delay)await delay.promise;if(!fail)disk=snapshot;}};
+ let disk=copy([{chat_metadata:ctx.chatMetadata},...ctx.chat]);
+ const api={SillyTavern:{getContext:()=>ctx},getVariables:()=>copy(ctx.chatMetadata.variables),builtin:{duringGenerating:()=>false},async updateVariablesWith(fn){ctx.chatMetadata.variables=fn(copy(ctx.chatMetadata.variables));mutations++;},async setChatMessages([{swipe_id,swipes_data,swipes}]){if(swipes)row.swipes=swipes;row.swipe_id=swipe_id;row.mes=row.swipes[swipe_id];row.variables=swipes_data;mutations++;}};
+ const read=H.createReader({api,readDisk:async()=>{reads++;return copy(disk);}});
+ global.Cxx236VariableGuard={validateProgram:(a,b,o)=>O.validate(a,b,o.engineOperation)};
+ const player=H.create({api,host:{assertPlayerWritable:async()=>{}},read,operations:O,identities:I,ui:{},saveTimeout:100});
+ const flow=Flow.create({key,identity:I,loadout:L,storage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},readIdentity:()=>ctx.chatMetadata.variables.__cxx_identity,readPreferences:()=>({level:'medium',device:'desktop',gal:false}),readOpening:id=>require('../../卡片源码/开场/groups.json').beginnings.find(x=>x.id===id)?.text,prepare:()=>player.prepareOpening(),submit:o=>player.completeOpening(o),verify:()=>player.waitForSaved({timeout:2000}),send:async command=>sends.push(command)});
+ return {flow,player,row,ctx,storage,stats:()=>({mutations,saves,reads,sends}),delay(d){delay=d;},fail(v){fail=v;},switch(){id='B';flow.destroy();},read};
+}
+function ready(f,origin='street',scenario=2){f.flow.chooseOrigin(origin);if(origin==='custom')f.flow.patch({custom:'自定义背景',growth:{...I.initialSetup('custom'),level:30,attributes:{body:40,reflexes:20,intelligence:30,technical:25,cool:35}}});f.flow.next();f.flow.next();f.flow.next();f.flow.patch({loadout:origin==='custom'?{items:[]}:{weapon:'pistol'}});f.flow.next();f.flow.selectScenario(scenario);}
+test('discard removes only an unsubmitted local draft',()=>{const f=fixture();f.flow.chooseOrigin('custom');f.flow.patch({custom:'待放弃的草稿'});assert.equal(f.storage.size,1);f.flow.discard();assert.equal(f.storage.size,0);assert.equal(f.stats().mutations,0);assert.throws(()=>f.flow.next(),/已停止/);const locked=fixture({existing:{...I.snapshot('street','',I.initialSetup('street'),{weapon:'pistol'}),setupToken:'keep'}});assert.throws(()=>locked.flow.discard(),/已开始创建/);assert.equal(locked.ctx.chatMetadata.variables.__cxx_identity.setupToken,'keep');});
+test('all origins: browsing and backward edits do not write; final commit preserves data',async t=>{
+ for(const origin of ['street','corpo','student','custom'])await t.test(origin,async()=>{const f=fixture();ready(f,origin);f.flow.selectScenario(3);f.flow.selectScenario(11);f.flow.selectScenario(2);assert.deepEqual(f.stats(),{mutations:0,saves:0,reads:0,sends:[]});assert.equal(f.row.swipe_id,0);const promise=(f.flow.state().draft.step==='scenario'&&f.flow.review(),f.flow.commit)('/send test|/trigger');assert.equal(promise,(f.flow.state().draft.step==='scenario'&&f.flow.review(),f.flow.commit)('/send test|/trigger'));await promise;assert.equal(f.row.swipe_id,2);assert.equal(f.stats().mutations,2);assert.equal(f.stats().saves,1);assert.equal(f.stats().sends.length,1);assert.deepEqual(f.row.variables[2].unknown,{keep:2});assert.deepEqual(f.row.variables[2].stat_data.terminal.wallet,{yen:500});assert.deepEqual(f.ctx.chatMetadata.variables.external,{keep:3});assert.equal(f.ctx.chatMetadata.variables.__cxx_ui_preferences.completed,true);assert.equal(f.flow.state().status,'saved');assert.equal(f.storage.size,0);await (f.flow.state().draft.step==='scenario'&&f.flow.review(),f.flow.commit)('/send test|/trigger');assert.equal(f.stats().sends.length,1);f.player.stop();});
+});
+test('origin drafts and scenario controls restore by chat, with no writes',()=>{const store=new Map(),a=fixture({storage:store});ready(a);const value=I.initialSetup('street');value.attributes.body++;value.attributePoints--;a.flow.go('growth');a.flow.patch({growth:value});a.flow.chooseOrigin('corpo');a.flow.chooseOrigin('street');assert.deepEqual(a.flow.choice().growthSetup,value);a.flow.rememberScenario(20,{controls:[{selected:true}]});a.flow.destroy();const restored=fixture({storage:store});assert.deepEqual(restored.flow.choice().growthSetup,value);assert.deepEqual(restored.flow.restoreScenario(20),{controls:[{selected:true}]});const other=fixture({storage:store,key:'B'});assert.equal(other.flow.state().draft.step,'origin');assert.equal(other.flow.choice().growthSetup.attributes.body,4);});
+test('new-story Mirror choice stays in its draft and commits with the opening preferences',async()=>{const f=fixture();assert.equal(f.flow.state().draft.preferences.mirror,false);ready(f);f.flow.patch({preferences:{mirror:true}});assert.equal(f.ctx.chatMetadata.variables.__cxx_ui_preferences,undefined);f.flow.review();await f.flow.commit();assert.equal(f.ctx.chatMetadata.variables.__cxx_ui_preferences.mirror,true);f.player.stop();});
+test('slow save coalesces confirmation and waits before sending',async()=>{const f=fixture(),d=deferred();ready(f);f.delay(d);const a=(f.flow.state().draft.step==='scenario'&&f.flow.review(),f.flow.commit)('/send once|/trigger');await new Promise(r=>setTimeout(r,20));assert.equal(f.flow.state().status,'saving');assert.equal(f.stats().sends.length,0);assert.equal(a,(f.flow.state().draft.step==='scenario'&&f.flow.review(),f.flow.commit)('/send duplicate|/trigger'));assert.throws(()=>f.flow.selectScenario(3));d.resolve();await a;assert.equal(f.stats().saves,1);assert.deepEqual(f.stats().sends,['/send once|/trigger']);});
+test('failed save retries same character without repeated grants',async()=>{const f=fixture();ready(f);f.fail(true);await assert.rejects((f.flow.state().draft.step==='scenario'&&f.flow.review(),f.flow.commit)('/send once|/trigger'),/读回/);const before=copy(f.row.variables),token=f.ctx.chatMetadata.variables.__cxx_identity.setupToken;assert.equal(f.stats().sends.length,0);f.fail(false);await f.flow.retry();assert.deepEqual(f.row.variables,before);assert.equal(f.ctx.chatMetadata.variables.__cxx_identity.setupToken,token);assert.deepEqual(f.stats().sends,['/send once|/trigger']);});
+test('chat switch invalidates completion and does not dispatch',async()=>{const f=fixture(),d=deferred();ready(f);f.delay(d);const promise=(f.flow.state().draft.step==='scenario'&&f.flow.review(),f.flow.commit)('/send stale|/trigger');await new Promise(r=>setTimeout(r,10));f.switch();d.resolve();await assert.rejects(promise,/切换/);assert.equal(f.stats().sends.length,0);});
+test('authored initial values and unselected branches are preserved',async()=>{for(const [scenario,affection]of [[10,1000],[11,600]]){const f=fixture();f.row.variables[scenario].stat_data.人物.好感度=affection;const untouched=copy(f.row.variables[1]);ready(f,'street',scenario);await (f.flow.state().draft.step==='scenario'&&f.flow.review(),f.flow.commit)();assert.equal(f.row.variables[scenario].stat_data.人物.好感度,affection);assert.deepEqual(f.row.variables[1],untouched);assert.equal(f.stats().sends.length,0);}});
+test('existing identity retains token and cannot reset origin',async()=>{const identity={...I.snapshot('street','',I.initialSetup('street'),{weapon:'pistol'}),setupToken:'old-token'},f=fixture({existing:identity});assert.equal(f.flow.state().draft.step,'scenario');assert.throws(()=>f.flow.chooseOrigin('corpo'));f.flow.selectScenario(11);await (f.flow.state().draft.step==='scenario'&&f.flow.review(),f.flow.commit)();assert.equal(f.ctx.chatMetadata.variables.__cxx_identity.setupToken,'old-token');assert.equal(f.row.variables[11].stat_data.terminal.gameplay.loadoutStart.token,'old-token');});
+test('old populated chat retains growth, consumed equipment, receipts and identity extensions',async()=>{
+ const identity={...I.snapshot('street','',I.initialSetup('street'),{weapon:'pistol'}),setupToken:'existing',external:{keep:7}},f=fixture({existing:identity});
+ f.row.swipe_id=2;f.row.mes=f.row.swipes[2];const stat=O.plan(f.row.variables[2].stat_data,{action:'initialize'},{identity,newChat:true});f.row.variables[2].stat_data=stat;
+ stat.terminal.gameplay.numeric.vitals.hp=20;stat.terminal.gameplay.itemReceipts['already-claimed']={token:'keep'};
+ const saved=copy(stat.terminal.gameplay);f.flow.selectScenario(11);await (f.flow.state().draft.step==='scenario'&&f.flow.review(),f.flow.commit)();assert.deepEqual(f.row.variables[11].stat_data.terminal.gameplay,saved);assert.deepEqual(f.ctx.chatMetadata.variables.__cxx_identity.external,{keep:7});
+});
+test('instant save does not run a second background save',async()=>{const f=fixture();ready(f);await (f.flow.state().draft.step==='scenario'&&f.flow.review(),f.flow.commit)();await new Promise(r=>setTimeout(r,30));assert.equal(f.stats().saves,1);assert.equal(f.stats().reads,1);});
+test('unconfirmed dispatch is never automatically repeated',async()=>{let sends=0;const f=Flow.create({key:'send-error',storage:{getItem:()=>null,setItem(){},removeItem(){}},identity:I,loadout:L,readIdentity:()=>null,readPreferences:()=>({level:'medium',device:'desktop',gal:false}),prepare:async()=>{},submit:async()=>{},verify:async()=>{},send:async()=>{sends++;throw Error('lost response');}});f.next();f.next();f.next();f.next();f.selectScenario(2);f.review();await assert.rejects(f.commit('/send test|/trigger'));await f.retry();assert.equal(sends,1);assert.equal(f.state().status,'saved');});
+test('steps unlock only after saving; revisiting and editing invalidates later completion',()=>{
+ const f=fixture();assert.throws(()=>f.flow.go('growth'),/前面/);assert.throws(()=>f.flow.commit(),/逐步/);
+ f.flow.next();assert.deepEqual(f.flow.state().draft.completed,['origin']);assert.equal(f.flow.state().draft.step,'profile');
+ f.flow.next();f.flow.next();f.flow.next();f.flow.selectScenario(2);f.flow.review();f.flow.go('origin');f.flow.chooseOrigin('corpo');
+ assert.deepEqual(f.flow.state().draft.completed,[]);assert.throws(()=>f.flow.go('review'),/前面/);assert.equal(f.stats().mutations,0);
+});
+test('storage failure keeps the current step and typed draft; retry then reload resumes it',()=>{
+ const memory=new Map();let broken=true;const options={key:'storage',identity:I,readIdentity:()=>null,readPreferences:()=>({}),storage:{getItem:k=>memory.get(k),setItem:(k,v)=>{if(broken)throw Error('空间不足');memory.set(k,v);}},prepare:()=>{},submit:()=>{},verify:()=>{}};
+ const f=Flow.create(options);f.chooseOrigin('custom');f.patch({custom:'保留这份输入'});assert.throws(()=>f.next(),/草稿保存失败/);assert.equal(f.state().draft.step,'origin');assert.equal(f.state().draft.custom,'保留这份输入');
+ broken=false;f.next();f.destroy();const restored=Flow.create(options);assert.equal(restored.state().draft.step,'profile');assert.deepEqual(restored.state().draft.completed,['origin']);assert.equal(restored.state().draft.custom,'保留这份输入');
+});
+
+test('three origin openings save a real first scene without generating or touching other branches',async t=>{
+ for(const scene of require('../../卡片源码/开场/groups.json').beginnings)await t.test(scene.origin,async()=>{
+  const f=fixture();ready(f,scene.origin,scene.id);const untouched=copy(f.row.variables[2]),other=f.row.swipes[2];
+  assert.equal(f.stats().mutations,0);f.flow.review();await f.flow.commit('/send must not run|/trigger');
+  assert.equal(f.row.swipe_id,1);assert.equal(f.row.mes,scene.text);assert.equal(f.row.swipes[1],scene.text);assert.equal(f.ctx.chatMetadata.variables.__cxx_identity.openingKind,'written');assert.equal(f.ctx.chatMetadata.variables.__cxx_identity.openingScenario,1);
+  assert.deepEqual(f.row.variables[2],untouched);assert.equal(f.row.swipes[2],other);assert.deepEqual(f.stats().sends,[]);f.player.stop();
+ });
+});
+
+test('player-written first scene survives draft reload, final save and retry verbatim',async()=>{
+ const memory=new Map(),text='  第一幕：门外有人。\n\n“留在这里。”\n/send 原样文字 |/trigger\n尾行保留空格  ';
+ let f=fixture({storage:memory});ready(f,'custom','custom-opening');f.flow.patch({openingText:text});f.flow.review();f.flow.destroy();
+ f=fixture({storage:memory});assert.equal(f.flow.state().draft.step,'review');assert.equal(f.flow.state().draft.openingText,text);
+ f.fail(true);await assert.rejects(f.flow.commit(),/读回/);const token=f.ctx.chatMetadata.variables.__cxx_identity.setupToken,game=copy(f.row.variables[1]);
+ f.fail(false);await f.flow.retry();assert.equal(f.row.mes,text);assert.deepEqual(f.row.variables[1],game);assert.equal(f.ctx.chatMetadata.variables.__cxx_identity.setupToken,token);assert.deepEqual(f.stats().sends,[]);f.player.stop();
+});
+
+test('blank self-written scene and mismatched origin are rejected before game writes',()=>{
+ const f=fixture();ready(f,'street','custom-opening');f.flow.patch({openingText:' \n '});assert.throws(()=>f.flow.review(),e=>e.code==='opening-input');assert.equal(f.stats().mutations,0);
+ assert.throws(()=>f.flow.selectScenario('origin-corpo'),/出身/);f.player.stop();
+});

@@ -1,0 +1,881 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-06T12:53:14.902Z",
+  "sourceDirectory": "图片/2051_backgroundCG",
+  "remoteVerified": false,
+  "uploadRoot": "/opt/cyber2051/images/galgame/backgrounds",
+  "preload": "on-demand",
+  "fallback": "dark-red-black-svg",
+  "count": 62,
+  "totalBytes": 144164363,
+  "files": [
+    {
+      "file": "2051CG_RING_midnight.png",
+      "bytes": 2136008,
+      "sha256": "548653075070d75607a4ca881ed8c27be5de73a7743caf6321d3ae1e7d871f86",
+      "width": 1717,
+      "height": 916,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/548653075070d756/2051CG_RING_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_RING_morning.png",
+      "bytes": 2973835,
+      "sha256": "346a4961cedb2dd902935fbbf4dec581127cd6cf269f142ecf859a1106f52b9d",
+      "width": 1600,
+      "height": 896,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/346a4961cedb2dd9/2051CG_RING_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 6,
+        "alphaChannel": true,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_T1_morning.png",
+      "bytes": 2316489,
+      "sha256": "240758b16a18b4117854a255d567c1b61b145b5bf001491a88363f425b15aa19",
+      "width": 1927,
+      "height": 816,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/240758b16a18b411/2051CG_T1_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_T2_morning.png",
+      "bytes": 2361612,
+      "sha256": "45a73c3799867bbcadd2d644f972bcb77e0252a1a446901a4e7f2d14815d2e80",
+      "width": 1935,
+      "height": 813,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/45a73c3799867bbc/2051CG_T2_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_T3_morning.png",
+      "bytes": 2288615,
+      "sha256": "106b95de78218f82e1d3994efcc409de706367896598f5f2b4912999ea4cc40c",
+      "width": 1918,
+      "height": 820,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/106b95de78218f82/2051CG_T3_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_T4_morning.png",
+      "bytes": 2452918,
+      "sha256": "01cbe5533fe398fd4390f769643e947105576b04e2e80d51c05434053bfd5126",
+      "width": 1938,
+      "height": 811,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/01cbe5533fe398fd/2051CG_T4_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_T5_morning.png",
+      "bytes": 1871330,
+      "sha256": "a00b4db86bf6b93f2469b21a729635a3c8009726a9bdc52a1be2c52bdc843656",
+      "width": 1938,
+      "height": 812,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/a00b4db86bf6b93f/2051CG_T5_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_T6_morning.png",
+      "bytes": 1923295,
+      "sha256": "afbf119b255b3b26de101842a5db13f0b09a1e3bc5445f74c744a1d27bc523ec",
+      "width": 1937,
+      "height": 812,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/afbf119b255b3b26/2051CG_T6_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_T7_morning.png",
+      "bytes": 1844077,
+      "sha256": "14d19225a0d536f62e9c35839e1a92ef20600a96cce85c5bc0fff2f5865ca9ca",
+      "width": 1915,
+      "height": 821,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/14d19225a0d536f6/2051CG_T7_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_T8_midnight.png",
+      "bytes": 1989312,
+      "sha256": "b64369732e75d5a48d8dc4ab4ba1ebe743708f44ad8e6d8a360ba0b368dc9051",
+      "width": 1927,
+      "height": 816,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/b64369732e75d5a4/2051CG_T8_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_T9_midnight.png",
+      "bytes": 2016616,
+      "sha256": "26b551cb591a2be82d69dff20dbbb238301a8e655bda54e2d069abd517904fec",
+      "width": 1933,
+      "height": 813,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/26b551cb591a2be8/2051CG_T9_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_ark_Mutsumihouse_bedroom_morning.png",
+      "bytes": 1882244,
+      "sha256": "9f3c7a305f386156df694897de70b2ee414d7e6d57be24b6075b18c9d67db958",
+      "width": 1673,
+      "height": 940,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/9f3c7a305f386156/2051CG_ark_Mutsumihouse_bedroom_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_ark_Mutsumihouse_room_morning.png",
+      "bytes": 2533978,
+      "sha256": "8a54eba75152b11060c398f89b04d335490b9711ff44213ed4ca0b4ac3e79032",
+      "width": 1672,
+      "height": 941,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/8a54eba75152b110/2051CG_ark_Mutsumihouse_room_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_ark_Mutsumihouse_yard_morning.png",
+      "bytes": 3067728,
+      "sha256": "f6fa42c36d357724a63c5507f59371092e801a40ad88a93c489f3285b9decc99",
+      "width": 1671,
+      "height": 941,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/f6fa42c36d357724/2051CG_ark_Mutsumihouse_yard_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_ark_restaurant_morning.png",
+      "bytes": 2149858,
+      "sha256": "9e79118386d63f3b844289e626d9966d02c26d98cc714a268782be00dede2855",
+      "width": 1749,
+      "height": 899,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/9e79118386d63f3b/2051CG_ark_restaurant_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_core_Togawa Aisle.png",
+      "bytes": 2014623,
+      "sha256": "08390d23e3be90469a735adeeedc1d17e7f0213e31ea43074230d2367076cb07",
+      "width": 1667,
+      "height": 943,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/08390d23e3be9046/2051CG_core_Togawa%20Aisle.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_core_Togawa Entrance.png",
+      "bytes": 2194890,
+      "sha256": "6fe4e2a923221d2ac7966ab3c48ed02eb3dce0a2f60e3a1d68a855a9c9747a99",
+      "width": 1683,
+      "height": 935,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/6fe4e2a923221d2a/2051CG_core_Togawa%20Entrance.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_core_Togawa restroom_morning.png",
+      "bytes": 2472705,
+      "sha256": "5f6e8d803aec53c9c00766364c3ff66c5795f63642d4f22bc396fd1c2b4990a6",
+      "width": 1672,
+      "height": 941,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/5f6e8d803aec53c9/2051CG_core_Togawa%20restroom_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_core_midnight.png",
+      "bytes": 6018836,
+      "sha256": "af5a688a059d4b2194d04084c0f632dc0b2284f388d08f7f1dda858992a4f51c",
+      "width": 2370,
+      "height": 1327,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/af5a688a059d4b21/2051CG_core_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 6,
+        "alphaChannel": true,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_core_morning.png",
+      "bytes": 2708826,
+      "sha256": "49304315c92bb762022cbc14304f5d8a69ad4f2636b768d15636fba2a224139c",
+      "width": 1676,
+      "height": 939,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/49304315c92bb762/2051CG_core_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_core_mujica hideout_armory.png",
+      "bytes": 1792972,
+      "sha256": "280e798e3bf74e4a1f9c90b67c4e54e451f5f5cc01f0ee32340c8c453ecad696",
+      "width": 1675,
+      "height": 939,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/280e798e3bf74e4a/2051CG_core_mujica%20hideout_armory.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_core_mujica hideout_balcony.png",
+      "bytes": 2036273,
+      "sha256": "4a8d17968f602f6f7a602e50bfcf5aa8d03aa13adbc7b4b039cfe223ff5377ee",
+      "width": 1672,
+      "height": 941,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/4a8d17968f602f6f/2051CG_core_mujica%20hideout_balcony.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_core_mujica hideout_baseroom_morning.png",
+      "bytes": 1841420,
+      "sha256": "4c04e894546c57bc565adfcffba5c9fcbea8d76e6cae6ceba48457291887bcef",
+      "width": 1665,
+      "height": 944,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/4c04e894546c57bc/2051CG_core_mujica%20hideout_baseroom_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_core_mujica hideout_bedroom_morning.png",
+      "bytes": 1821399,
+      "sha256": "dd9684c16914dd1d315032191c13f5f6e77349559c58cbe401d93f0493cbe444",
+      "width": 1670,
+      "height": 942,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/dd9684c16914dd1d/2051CG_core_mujica%20hideout_bedroom_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_core_mujica hideout_missionnary room_morning.png",
+      "bytes": 1610230,
+      "sha256": "b9c730afe09786f536a5c788ff564d5853d59fb8c0a87b8f239994a3d55bca47",
+      "width": 1672,
+      "height": 941,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/b9c730afe09786f5/2051CG_core_mujica%20hideout_missionnary%20room_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_core_soyohouse_bathroom.png",
+      "bytes": 1807756,
+      "sha256": "f6080616517246c6adf81bf9c2ab6cc0201ff5b1a777acf2031af3dd66dd9725",
+      "width": 1672,
+      "height": 940,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/f6080616517246c6/2051CG_core_soyohouse_bathroom.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_core_soyohouse_bedroom_midnight.png",
+      "bytes": 2127681,
+      "sha256": "8503cece7d2ecd4ace327afdc634daea7f793975ee91ec499362259db29686a6",
+      "width": 1672,
+      "height": 940,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/8503cece7d2ecd4a/2051CG_core_soyohouse_bedroom_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_core_soyohouse_outside_midnight.png",
+      "bytes": 2220274,
+      "sha256": "3320afdb4399cd4727b878816d469200d3f12cb3c614849555fc4bab07f94ee4",
+      "width": 1672,
+      "height": 941,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/3320afdb4399cd47/2051CG_core_soyohouse_outside_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_core_soyohouse_room_midnight.png",
+      "bytes": 2141425,
+      "sha256": "3551be7231ff8a057f203949983bfeabeee62f9ef5839482fef890995f9bdfd3",
+      "width": 1672,
+      "height": 940,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/3551be7231ff8a05/2051CG_core_soyohouse_room_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_core_soyohouse_swimpool_midnight.png",
+      "bytes": 2249854,
+      "sha256": "14a28a0b3625fc9a56e9ba0e978421a2347919a6f6608c473e63394624d0a035",
+      "width": 1672,
+      "height": 940,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/14a28a0b3625fc9a/2051CG_core_soyohouse_swimpool_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_darkpool_Ranahouse.png",
+      "bytes": 1922081,
+      "sha256": "647a4a69ecd2ae1615f137e3ac03ac6f2fc3ffd59862f53a01b9f9a3694aabc7",
+      "width": 1670,
+      "height": 942,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/647a4a69ecd2ae16/2051CG_darkpool_Ranahouse.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_darkpool_Ranahouse_bedroom.png",
+      "bytes": 2091500,
+      "sha256": "7d5f3123f41b02a5fd6727e77cc55e7a74b66b70a69f469a1e4d1b9b761fe595",
+      "width": 1673,
+      "height": 940,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/7d5f3123f41b02a5/2051CG_darkpool_Ranahouse_bedroom.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_darkpool_backyard_midnight.png",
+      "bytes": 2064303,
+      "sha256": "3f7c31905d9058536f0cbde76c1127c2c5323f313ba28e3bca36658c1a41027f",
+      "width": 1677,
+      "height": 938,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/3f7c31905d905853/2051CG_darkpool_backyard_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_darkpool_midnight.png",
+      "bytes": 2790960,
+      "sha256": "5e1ea777de6667ddf42cd56720879211865f1dbd93a0f5092516c434d2cb15aa",
+      "width": 1536,
+      "height": 1024,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/5e1ea777de6667dd/2051CG_darkpool_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 6,
+        "alphaChannel": true,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_darkpool_midnight2.png",
+      "bytes": 2446980,
+      "sha256": "1486a33f96209c037cd450bce2d4b4a2b3dc50dead28e2b69459e79d3c98503a",
+      "width": 1672,
+      "height": 940,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/1486a33f96209c03/2051CG_darkpool_midnight2.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_darkpool_morning.png",
+      "bytes": 3029848,
+      "sha256": "5f2a47b1d9e277ed7a88db48b06659b41ea9da76dacd404f5b4bf432d753a14e",
+      "width": 1536,
+      "height": 1024,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/5f2a47b1d9e277ed/2051CG_darkpool_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 6,
+        "alphaChannel": true,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_darkpool_nyamuhouse_bedroom.png",
+      "bytes": 1632856,
+      "sha256": "61e9240a8964eec25f9ec67c79848c9913bae705c1238091d9eebe171fc89377",
+      "width": 1670,
+      "height": 942,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/61e9240a8964eec2/2051CG_darkpool_nyamuhouse_bedroom.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_darkpool_nyamuhouse_diningroom.png",
+      "bytes": 1856995,
+      "sha256": "0521d269c2939d3c84adf45518431b5a8c16ed91ea843034b11d25d31d490022",
+      "width": 1668,
+      "height": 943,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/0521d269c2939d3c/2051CG_darkpool_nyamuhouse_diningroom.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_darkpool_nyamuhouse_outside_midnight.png",
+      "bytes": 1979334,
+      "sha256": "832299196ea398b40def19823f9f6dad66c98ebf7058494a863a4e2a4184e3d0",
+      "width": 1668,
+      "height": 943,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/832299196ea398b4/2051CG_darkpool_nyamuhouse_outside_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_darkpool_nyamuhouse_room_midnight.png",
+      "bytes": 1729746,
+      "sha256": "e0f92c5a639346a7d8a19fd6f754abc053820b10a9cbc24eb5b9a68d90b5ba54",
+      "width": 1673,
+      "height": 940,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/e0f92c5a639346a7/2051CG_darkpool_nyamuhouse_room_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_darkpool_takihouse_bedroom_midnight.png",
+      "bytes": 1955528,
+      "sha256": "0648166f661c613cefa2bb54bc3ded350f9208e9d6adc7b95bdf96de1fd9210f",
+      "width": 1672,
+      "height": 941,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/0648166f661c613c/2051CG_darkpool_takihouse_bedroom_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_darkpool_takihouse_out_midnight.png",
+      "bytes": 2513176,
+      "sha256": "97f3e498a8f83b419a2b8459a31c503871963a1c9e52258d2ee631d778a8e0c5",
+      "width": 1672,
+      "height": 941,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/97f3e498a8f83b41/2051CG_darkpool_takihouse_out_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_darkpool_takihouse_room_midnight.png",
+      "bytes": 2106840,
+      "sha256": "ec00a6baec3c97243933d2cb418cb8dc18f9e69d4134c0054bb55349d5c74d21",
+      "width": 1672,
+      "height": 941,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/ec00a6baec3c9724/2051CG_darkpool_takihouse_room_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_lowtown_midnight.png",
+      "bytes": 2811851,
+      "sha256": "0b49c2eb2038acbc558adf466facc5dd0b9ed9dcf7bf01e95b67e80737a205e7",
+      "width": 1536,
+      "height": 1024,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/0b49c2eb2038acbc/2051CG_lowtown_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_lowtown_midnight2.png",
+      "bytes": 2148967,
+      "sha256": "22962e483a207bd8dd5d197430b606ede2f5e2f948134fd4fd9e93f5e7812e21",
+      "width": 1676,
+      "height": 939,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/22962e483a207bd8/2051CG_lowtown_midnight2.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_lowtown_morning.png",
+      "bytes": 3313960,
+      "sha256": "d167b5dcb3dd4b739cc73ed0e7b27bc7db1a680f3b546cde7a0229b0ce43dee3",
+      "width": 1536,
+      "height": 1024,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/d167b5dcb3dd4b73/2051CG_lowtown_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 6,
+        "alphaChannel": true,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_lowtown_morning2.png",
+      "bytes": 2456630,
+      "sha256": "c703bd8d007d651179cdd8e7369498fcfda45f22b4de873f6e55016ae15562a0",
+      "width": 1600,
+      "height": 896,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/c703bd8d007d6511/2051CG_lowtown_morning2.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 6,
+        "alphaChannel": true,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_lowtown_morning3.png",
+      "bytes": 2327989,
+      "sha256": "555117b61a06d5afbf44754896c2f84633777218bd770fb1b6b533bb822f0b45",
+      "width": 1678,
+      "height": 937,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/555117b61a06d5af/2051CG_lowtown_morning3.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_lowtown_sakihouse_balcony.png",
+      "bytes": 2598627,
+      "sha256": "c81a491d5882122934591f52db663ccdfa685fb4c646b49a617ef71af9e5e7e5",
+      "width": 1672,
+      "height": 940,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/c81a491d58821229/2051CG_lowtown_sakihouse_balcony.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_lowtown_sakihouse_balcony_morning.png",
+      "bytes": 2287681,
+      "sha256": "81e0445e3ae26af293b0af9d8490cff3f680b162dc28cb0242840c289ea81378",
+      "width": 1670,
+      "height": 941,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/81e0445e3ae26af2/2051CG_lowtown_sakihouse_balcony_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_lowtown_sakihouse_bathroom_morning.png",
+      "bytes": 2400190,
+      "sha256": "acf99e7fca9c42c5fbb5c0c6667732b63a19ecb118a5b7e3a4903ecd2f286954",
+      "width": 1673,
+      "height": 940,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/acf99e7fca9c42c5/2051CG_lowtown_sakihouse_bathroom_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_lowtown_sakihouse_morning.png",
+      "bytes": 2460326,
+      "sha256": "12b19eedbd8cff194ea78bb8c7707b43dd19cb8d614251a4af7b748700a29788",
+      "width": 1672,
+      "height": 941,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/12b19eedbd8cff19/2051CG_lowtown_sakihouse_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_neonring_Umirihouse_midnight.png",
+      "bytes": 2368785,
+      "sha256": "3d6147a5dd18322ee51d04f693bb6185b31bc4eaac6d7fca5fd9f4d964bd4d8c",
+      "width": 1672,
+      "height": 941,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/3d6147a5dd18322e/2051CG_neonring_Umirihouse_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_neonring_alley_midnight.png",
+      "bytes": 1945756,
+      "sha256": "f2a003c8355b66602eef8117e3477e0aa9bab9c063099d95559e98d005565d5c",
+      "width": 1672,
+      "height": 941,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/f2a003c8355b6660/2051CG_neonring_alley_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_neonring_midnight.png",
+      "bytes": 2724129,
+      "sha256": "59e4a3573477fadacbc2db3c6c004af278f18c30b0dfc6b5b052053064931852",
+      "width": 1792,
+      "height": 896,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/59e4a3573477fada/2051CG_neonring_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 6,
+        "alphaChannel": true,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_neonring_midnight2.png",
+      "bytes": 2906069,
+      "sha256": "df784c14a878c934191c8aade52980af22d42cb0bcd6cebee2dd9957908670c4",
+      "width": 1536,
+      "height": 1024,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/df784c14a878c934/2051CG_neonring_midnight2.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 6,
+        "alphaChannel": true,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_neonring_morning.png",
+      "bytes": 2682791,
+      "sha256": "a2377ba26270484fe2376360c6fb5ec480f32a6eb7898936886613a0b9e622d7",
+      "width": 1774,
+      "height": 887,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/a2377ba26270484f/2051CG_neonring_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_neonring_morning2.png",
+      "bytes": 3005287,
+      "sha256": "78ee50c24b84db0f8b96c5cc3ab26fbc4540fb43fb73e16411ea6bad600c0896",
+      "width": 1536,
+      "height": 1024,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/78ee50c24b84db0f/2051CG_neonring_morning2.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_neonring_uikahouse_bedroom_midnight.png",
+      "bytes": 1935414,
+      "sha256": "a93b84b2cba1e5e1cf2641433b2387ee0514a7ba4800384fbfb7a5d0b1dd3cdd",
+      "width": 1699,
+      "height": 926,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/a93b84b2cba1e5e1/2051CG_neonring_uikahouse_bedroom_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_neonring_uikahouse_midnight.png",
+      "bytes": 2264290,
+      "sha256": "ea48f369a6ca283be93249686af3fa30613fe702f830f68f2066206b27018d0f",
+      "width": 1672,
+      "height": 941,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/ea48f369a6ca283b/2051CG_neonring_uikahouse_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_redflower_midnight.png",
+      "bytes": 2028393,
+      "sha256": "112a36f54fbe5acbb46e7959039019af30b07112442a939157cccfd024aa66b3",
+      "width": 1536,
+      "height": 1024,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/112a36f54fbe5acb/2051CG_redflower_midnight.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    },
+    {
+      "file": "2051CG_redflower_morning.png",
+      "bytes": 2510002,
+      "sha256": "4fae06cd125412f281925cd61eadac32e88733d9464efec79814bdbb8242abaf",
+      "width": 1536,
+      "height": 1024,
+      "url": "https://cyber2051.top/img/galgame/backgrounds/4fae06cd125412f2/2051CG_redflower_morning.png",
+      "transparency": {
+        "bitDepth": 8,
+        "colorType": 2,
+        "alphaChannel": false,
+        "transparencyChunk": false
+      }
+    }
+  ]
+}

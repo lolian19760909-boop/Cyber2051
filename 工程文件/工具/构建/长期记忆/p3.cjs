@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict'),P2=require('./p2.cjs'),{extract}=require('../../lib/script-modules.cjs');
+const root=P2.root,out=path.join(root,'交付/组件/2.3.0-长期记忆-P3'),read=p=>fs.readFileSync(path.join(root,'卡片源码',p),'utf8');
+function replace(script,modules){script=structuredClone(script);const found=extract(script.content,Object.keys(modules));assert.equal(found.length,Object.keys(modules).length);for(const m of found.sort((a,b)=>b.start-a.start)){const next=extract(read(modules[m.name]),[m.name]);assert.equal(next.length,1);script.content=script.content.slice(0,m.start)+next[0].source+script.content.slice(m.end);}new vm.Script(script.content);return script;}
+function files(){const parts=P2.files(),base=require(path.join(root,'交付/基线/2.3.0-整理前.json'));
+ const core=replace(parts['剧情与玩法核心-P2.json'],{CxxPlayerOperations:'运行时/player-operations.js',CxxPlayerHost:'运行时/player-host.js',CxxUpdateBackup:'运行时/backup.js'});core.info+='\nP3：历史校准走现有保存链，存档携带记忆文字及续玩归属。';
+ const updater=replace(base.data.extensions.tavern_helper.scripts.find(s=>s.name==='更新与存档'),{CxxUpdateBackup:'运行时/backup.js'});updater.info+='\nP3：导出附带记忆文字材料，续玩副本登记来源故事。';
+ const adapter=structuredClone(parts['长期记忆外部适配-P2.json']);adapter.name='东京都2051·长期记忆 P3';adapter.info='P3：历史范围补建、一次进度校准、文字材料恢复与记忆面板。配合 P3 核心及更新与存档使用。';adapter.content=adapter.content.replace('const host=parent||globalThis;',read('长期记忆/material.js')+'\n;\n'+read('长期记忆/history.js')+'\n;\nconst host=parent||globalThis;').replace('parser:CxxGalParser,bundle:', 'parser:CxxGalParser,material:CxxMemoryMaterial,historyFactory:CxxMemoryHistory,bundle:').replaceAll('2.3.0-P2','2.3.0-P3');new vm.Script(adapter.content);
+ const result={'剧情与玩法核心-P3.json':core,'更新与存档-P3.json':updater,'长期记忆外部适配-P3.json':adapter};for(const[k,v]of Object.entries(parts))if(!k.includes('-P2'))result[k]=v;return result;
+}
+if(require.main===module){const all=files();if(process.argv.includes('--write')){fs.mkdirSync(out,{recursive:true});for(const[name,value]of Object.entries(all))fs.writeFileSync(path.join(out,name),JSON.stringify(value,null,2)+'\n');const doc=path.join(root,'卡片源码/长期记忆/P3.md');if(fs.existsSync(doc))fs.copyFileSync(doc,path.join(out,'使用说明.md'));}console.log(JSON.stringify({output:out,files:Object.keys(all),written:process.argv.includes('--write')}));}
+module.exports={...P2,root,out,files};

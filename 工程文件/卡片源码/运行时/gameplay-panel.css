@@ -1,0 +1,108 @@
+.cxx-game-panel {
+  position: fixed;
+  inset: 5% max(12px,calc((100vw - 900px)/2));
+  z-index: 2147483002;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: auto;
+  padding: 20px;
+  background: linear-gradient(135deg,var(--cxx-raised),var(--cxx-ink));
+  color: var(--cxx-text);
+  border: 1px solid var(--cxx-line);
+  border-top: 3px solid var(--cxx-red);
+  box-shadow: 0 22px 80px color-mix(in srgb, var(--cxx-shadow) 80%, transparent);
+  font: 16px/1.5 var(--cxx-font-ui);
+}
+
+.cxx-game-panel * {
+  box-sizing: border-box;
+}
+
+.cxx-game-panel button {
+  color: inherit;
+  background: var(--cxx-panel);
+  border: 1px solid var(--cxx-line);
+  padding: 10px 14px;
+  min-height: 44px;
+  margin: 3px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.cxx-game-panel button:focus-visible {
+  outline: 2px solid var(--cxx-cyan);
+}
+
+.cxx-game-panel input {
+  width: 75px;
+  background: var(--cxx-ink);
+  color: var(--cxx-text);
+  padding: 8px;
+  border: 1px solid var(--cxx-line);
+  font: inherit;
+  min-height: 44px;
+}
+
+.cxx-game-panel p,
+.cxx-game-panel dd {
+  overflow-wrap: anywhere;
+}
+
+.cxx-game-panel dd {
+  margin: 0 0 12px;
+}
+
+.cxx-game-row {
+  border: 1px solid var(--cxx-line);
+  border-left: 3px solid var(--cxx-red);
+  background: var(--cxx-panel);
+  padding: 18px;
+  margin: 14px 0;
+}
+
+.cxx-game-panel nav {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.cxx-game-panel h2,
+.cxx-game-panel h3 {
+  margin: 0;
+}
+
+.cxx-game-panel[data-talents=true] {
+  inset: 5% 12px;
+  max-width: 1460px!important;
+  padding: 12px;
+  gap: 8px;
+}
+
+.cxx-game-panel[data-talents=true]>nav button:disabled {
+  display: none;
+}
+
+.cxx-game-panel[data-talents=true]>header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cxx-game-panel[data-talents=true]>header h2 {
+  font-size: 18px;
+}
+
+.cxx-game-panel[data-talents=true]>p {
+  font-size: 14px;
+  margin: 0 6px;
+  color: var(--cxx-muted);
+}
+
+.cxx-game-panel[data-talents=true]>nav button {
+  font-size: 16px;
+  min-height: 44px;
+  padding: 5px 12px;
+}
+.cxx-game-panel h2,.cxx-game-panel h3 { color: var(--cxx-red-soft); }
+.cxx-game-panel .cxx-game-pending { margin-left: 6px; color: var(--cxx-muted); border: 1px solid var(--cxx-line); padding: 1px 4px; font-size: 13px; }
+.cxx-game-panel nav button[aria-pressed=true] { color: var(--cxx-cyan); border-color: var(--cxx-cyan); background: var(--cxx-panel); }

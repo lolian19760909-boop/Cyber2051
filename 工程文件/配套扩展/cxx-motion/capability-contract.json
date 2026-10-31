@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "minimum": {
+    "sillytavern": "1.18.0",
+    "tavernHelper": null
+  },
+  "requirements": [
+    {
+      "id": "host-context",
+      "owner": "sillytavern",
+      "symbol": "SillyTavern.getContext",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "id": "settings",
+      "owner": "sillytavern",
+      "symbol": "context.extensionSettings",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "id": "save-settings",
+      "owner": "sillytavern",
+      "symbol": "context.saveSettingsDebounced",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "id": "chat-events",
+      "owner": "sillytavern",
+      "symbol": "context.eventSource.on",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "id": "remove-chat-events",
+      "owner": "sillytavern",
+      "symbol": "context.eventSource.removeListener",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "id": "chat-changed",
+      "owner": "sillytavern",
+      "symbol": "context.eventTypes.CHAT_CHANGED",
+      "required": true,
+      "fallback": null
+    }
+  ]
+}

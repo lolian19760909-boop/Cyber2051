@@ -1,0 +1,15 @@
+{
+  "display_name": "Tavern Visual · 视觉运行环境",
+  "loading_order": 40,
+  "dependencies": [],
+  "js": "index.js",
+  "css": "style.css",
+  "author": "Cyber2051 engineering",
+  "version": "0.1.0",
+  "auto_update": false,
+  "hooks": {
+    "activate": "onActivate",
+    "clean": "clean"
+  },
+  "minimum_client_version": "1.18.0"
+}

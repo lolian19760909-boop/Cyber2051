@@ -1,0 +1,98 @@
+import {CARD_LOAD_ORDER} from '../src/reuse/card-load-order.mjs';
+import {buildOpeningUI,OPENING_SOURCE} from './opening-ui-build.mjs';
+/** Derived UI copies keep maintained layouts; substitutions remove host-window coupling only. */
+import fs from 'node:fs';import path from 'node:path';import {createHash} from 'node:crypto';import {fileURLToPath} from 'node:url';
+const WEB=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),ROOT=path.resolve(WEB,'..');
+const viewFiles=['通讯/reading-guard.js','运行时/entry-experience.js','运行时/boot-loader.js','预设/气泡/runtime.js','Live2D/runtime.js','运行时/resources.js','Gal/landscape.js','Gal/controller.js','Gal/ui.js','运行时/player-ui.js','运行时/player-profile-ui.js','运行时/talent-ui.js','运行时/ensemble-ui.js','运行时/tactical-ui.js','运行时/battle-ui.js','通讯/phone-ui.js','运行时/opening-ui.js','运行时/creator-ui.js','运行时/civic-ui.js','地图/map-service.js','终端/terminal.js','终端/city-entry.js'];
+const views=[...new Set([...CARD_LOAD_ORDER,...viewFiles])];
+export function adaptViews({only}={}){if(only&&only.some(name=>!views.includes(name)))throw Error('Unknown adapted UI source');if(!only)buildOpeningUI();const records=[];for(const name of (only||views)){const source=path.join(ROOT,'卡片源码',name),raw=fs.readFileSync(source,'utf8');let text=raw.replaceAll('globalThis.parent','globalThis').replaceAll('doc.defaultView.parent||doc.defaultView','doc.defaultView').replaceAll('doc.defaultView.parent || doc.defaultView','doc.defaultView').replaceAll('(root.parent||root)','root').replaceAll('root.parent','root').replaceAll('win.parent||win','win').replaceAll('window.parent','window');
+ text=text.replace(/\bparent\.(Cxx\w+|SillyTavern|addEventListener|removeEventListener|document|Event)/g,'window.$1').replaceAll('win.__cxx_player__','win.CxxWebPlayer').replaceAll('window.__cxx_player__','window.CxxWebPlayer').replaceAll('top.__cxx_player__','top.CxxWebPlayer').replaceAll('top.__cxx_battle__','top.CxxWebBattle').replaceAll('doc.defaultView.parent?.CxxResources','doc.defaultView.CxxResources');
+ if(name==='运行时/creator-ui.js'){const from=text.indexOf(' function collectGenerators('),to=text.indexOf(' function resolveGenerator(',from);if(from<0||to<0)throw Error('Creator port slot drift');text=text.slice(0,from)+' function collectGenerators(){const gen=root.CxxWebModels?.creator;return typeof gen==="function"?[gen]:[];}\n'+text.slice(to);}
+ if(name==='Gal/ui.js'){
+   text=text.replace("button('返回原生', function ()","button('正文', function ()")
+    .replace("const menuButton=button('游戏菜单',()=>{const w=doc.defaultView;if(w.__cxx_stories__)void w.__cxx_stories__.menu('hub');else call('onError','存档服务正在准备，请稍后重试。');});","const menuButton=button('主菜单',()=>call('onMainMenu'));")
+    .replace("const settingsButton=button('设置',()=>{if(mailWindow.__cxx_stories__)void mailWindow.__cxx_stories__.menu('home');else call('onError','设置服务正在准备，请稍后重试。');});","const settingsButton=button('设置',()=>call('onSettings'));")
+    .replace('tools.replaceChildren(closeButton,backgroundButton,settingsButton,menuButton);',"const backupButton=button('备份',()=>call('onBackup'));tools.replaceChildren(closeButton,backgroundButton,terminalButton,backupButton,settingsButton,menuButton);");
+   text=text.replace('else if(!mailWindow.__JINGYI__)r.setup?.();','else if(!r.read().capabilities?.tts)r.setup?.();').replace('if (!landscape.isMobile(doc.defaultView) && typeof root.showPopover', 'if (!globalThis.__cxxStandaloneUI && !landscape.isMobile(doc.defaultView) && typeof root.showPopover');
+   text=text.replace('    const readingBody = element',`    const auxiliaryMenu=element('details','cxx-gal-audio-tools'),auxiliaryToggle=element('summary','cxx-gal-button','附属内容'),auxiliaryBody=element('div','cxx-gal-audio-panel');auxiliaryMenu.append(auxiliaryToggle,auxiliaryBody);tools.prepend(auxiliaryMenu);let auxiliarySignature='';\n    const readingBody = element`);
+   text=text.replace('      model = nextModel || {};',`      model = nextModel || {};const auxiliary=JSON.stringify(model.auxiliary||[]);if(auxiliary!==auxiliarySignature){auxiliarySignature=auxiliary;auxiliaryBody.replaceChildren();for(const item of model.auxiliary||[]){const fold=element('details'),heading=element('summary','',item.label||'更多'),body=element('pre','',item.text||item.body||'');fold.append(heading,body);auxiliaryBody.append(fold);}auxiliaryMenu.hidden=!auxiliaryBody.children.length;} `);
+   const bar='    readBar.append(speakerLabel, history, statsToggle);',render='      history.hidden = !model.history;';
+   if(!text.includes(bar)||!text.includes(render))throw Error('Gal floor version controls slot drift');
+   text=text.replace(bar,bar+`
+    const versionPrevious=button('上一版',()=>call('onSelectVersion',model.versions?.ids[model.versions.index-1]),'cxx-gal-button'),versionLabel=element('span','cxx-gal-counter'),versionNext=button('下一版',()=>call('onSelectVersion',model.versions?.ids[model.versions.index+1]),'cxx-gal-button');
+    for(const control of [versionPrevious,versionLabel,versionNext]){control.hidden=true;control.title='切换后从所选版本续写，原路线后续保留';readBar.append(control);}
+    versionLabel.setAttribute('aria-live','polite');`);
+   text=text.replace(render,render+`
+      const versionIds=model.versions?.ids||[],versionIndex=model.versions?.index??-1;
+      for(const control of [versionPrevious,versionLabel,versionNext])control.hidden=versionIds.length<2;
+      setText(versionLabel,'版本 '+(versionIndex+1)+' / '+versionIds.length);versionPrevious.disabled=model.busy||versionIndex<=0;versionNext.disabled=model.busy||versionIndex>=versionIds.length-1;`);
+ }
+ if(name==='Gal/ui.js')text=text.replace('    setFont(fontSize,false);',"    listen(doc.defaultView,'cxx-web-gal-font',event=>setFont(event.detail,false));\n    setFont(fontSize,false);");
+ if(name==='Gal/controller.js')text=text.replace('let parsedRaw, parsed, parsedMessage, parsedSwipe,','let parsedDisplayRevision,parsedRaw, parsed, parsedMessage, parsedSwipe,').replace('if (parsedMessage !== selected || parsedRaw !== raw || parsedSwipe !== selected?.swipe_id) {','if (parsedDisplayRevision !== snapshot.displayRevision || parsedMessage !== selected || parsedRaw !== raw || parsedSwipe !== selected?.swipe_id) {').replace('parsedRaw = raw; parsedMessage = selected;', 'parsedDisplayRevision=snapshot.displayRevision;parsedRaw = raw; parsedMessage = selected;').replace('      open, close, refresh,',"      open, close, refresh,\n      get position(){return {floor:adapter.read().messages.indexOf(selected),index:paragraphIndex,follow};},")
+   .replace('function open({ remember = true } = {})', 'function open({ remember = true, floor:requestedFloor, paragraph:requestedParagraph } = {})')
+   .replace("      error = '';\n      const openingKey","      if(Number.isInteger(requestedFloor)&&snapshot.messages[requestedFloor]){selected=snapshot.messages[requestedFloor];follow=selected===snapshot.messages.at(-1);paragraphIndex=requestedParagraph||0;parsed=parser.parseMessage(selected.mes);parsedRaw=selected.mes;parsedMessage=selected;parsedSwipe=selected.swipe_id;}\n      error = '';\n      const openingKey");
+ if(name==='Gal/controller.js')text=text.replace("parser.parseMessage(raw,{key:","parser.parseMessage(raw,{nodeId:selected?.nodeId,key:").replace('parser.parseMessage(selected.mes)','parser.parseMessage(selected.mes,{nodeId:selected.nodeId})').replace('          opening: Boolean(snapshot.opening),','          auxiliary:parsed.auxiliary||[],\n          opening: Boolean(snapshot.opening),');
+ if(name==='Gal/controller.js'){
+   text=text.replace('        if (snapshot.busy) resetPending();',"        if(snapshot.generating&&labels.length)labels[labels.length-1].excerpt=parser.firstLine?.(snapshot.messages.at(-1)?.mes||'')||'';\n        if (snapshot.busy) resetPending();");
+   const render='          messages: labels,',action='          onSelectParagraph: index =>';
+   if(!text.includes(render)||!text.includes(action))throw Error('Gal floor version adapter slot drift');
+   text=text.replace(render,render+'\n          versions: selected ? adapter.readVersions?.(floorNumbers.get(selected)) : null,');
+   text=text.replace(action,`          onSelectVersion: async targetId => {
+            if(disposed||!view||!selected||adapter.read().busy||adapter.read().key!==chatKey)return;
+            try{await adapter.selectVersion?.(selected.nodeId,targetId);}catch(e){error=e.message;refresh();}
+          },
+`+action);
+ }
+ if(name==='运行时/player-ui.js')text=text.replace("if(!top.CxxContext?.status?.().connected)","if(!global.CxxWebTerminal?.contextConnected())").replace('await top.CxxContext.capture();','await global.CxxWebTerminal.captureContext();');
+ if(name==='运行时/player-ui.js')text=text.replace("else if(activeTab==='战斗'&&global.CxxBattleUI)","else if(activeTab==='战斗'&&global.CxxWebTactical&&!savedGame().numeric?.combat?.active)subview=global.CxxWebTactical.mount(body);else if(activeTab==='战斗'&&global.CxxBattleUI)");
+ if(name==='Gal/landscape.js')text=text.replace('function restoreLayer(){','function restoreLayer(){\n      if(win.__cxxStandaloneUI){viewport.removeAttribute("popover");return;}').replace('const vv=win?.visualViewport,width=vv?.width||win.innerWidth,height=win.innerHeight;','const vv=win?.visualViewport,width=vv?.width||win.innerWidth,appHeader=0,height=win.innerHeight-appHeader;').replace('const visibleHeight=vv?.height||height;','const visibleHeight=vv?.height?Math.max(1,vv.height-appHeader):height;').replace('const offset=vv?.offsetTop||0;','const offset=(vv?.offsetTop||0)+appHeader;');
+ if(name==='运行时/resources.js')text=text.replace('if(root.parent)root.parent.CxxResourceRuntime=api;','');
+ if(name==='通讯/reading-guard.js')text=text.replace('return {create};','return {create,validSnapshot};');
+ if(name==='运行时/opening-ui.js')text=fs.readFileSync(path.join(OPENING_SOURCE,'build/opening-ui.web.js'),'utf8');
+ if(name==='运行时/entry-experience.js')text=text.replace("const placed=placement(win,el,{left:vv?.offsetLeft||0,top:vv?.offsetTop||0,width:vv?.width||win.innerWidth,height:vv?.height||win.innerHeight});","const appHeader=win.__cxxStandaloneUI&&el.classList.contains('cxx-opening-flow')?(win.document.querySelector('.topbar')?.getBoundingClientRect().height||0):0;const placed=placement(win,el,{left:vv?.offsetLeft||0,top:(vv?.offsetTop||0)+appHeader,width:vv?.width||win.innerWidth,height:Math.max(1,(vv?.height||win.innerHeight)-appHeader)});");
+ if(name==='通讯/phone-ui.js')text=text.replaceAll('镜译 · 安装与声音配置','翻译与声音设置').replaceAll('连接与音色在镜译设置；这里调整本卡的阅读习惯。','在翻译与声音设置中选择可用的声音；这里调整本故事的阅读习惯。').replaceAll('正文支持原文／译文／对照与手动分角色朗读。镜译提取标签请设置 cxx-story；翻译、润色和自动朗读开关仍由镜译管理。','正文支持原文、译文、对照与分角色朗读。连接酒馆时可使用已配置的镜译声音和语音输入。');
+ if(name==='Gal/controller.js')text=text.replace('selected&&!selected.is_user&&mirrorSource?mirrorSource.sync(floor):hostRaw','selected&&!snapshot.generating&&!selected.is_user&&mirrorSource?mirrorSource.sync(floor):hostRaw');
+ if(name==='预设/气泡/runtime.js'){
+   text=text.replace("  'use strict';","  'use strict';\n  const native=window.CxxWebUIData.native,BDA_META=native.meta,CXX_BDA_NAMES=native.names,CXX_BDA_MEDIA=native.media,BDA_CSS=native.controlsCSS,CXX_BDA_GROUPS=native.groups,CXX_BDA_CROPS=native.crops;");
+   text=text.replace("doc.querySelector('#chat')","doc.querySelector('#stage-lines')").replace("doc.querySelector('#tavern_helper')","doc.querySelector('#session-settings')").replace('const context=()=>host.SillyTavern?.getContext?.();','const context=()=>host.CxxWebReadingContext();').replace('const scopeOf=ctx=>JSON.stringify([ctx?.characterId,ctx?.groupId,ctx?.getCurrentChatId?.()??ctx?.chatId]);','const scopeOf=ctx=>ctx?.scope;');
+   const start=text.indexOf('  function userProfile(){'),end=text.indexOf('  function decorate(el){',start);if(start<0||end<0)throw Error('Bubble persona port drift');text=text.slice(0,start)+'  function userProfile(){const current=host.CxxWebReadingContext();return {name:current.userName,avatar:current.userAvatar||""};}\n'+text.slice(end);
+ }
+ if(name==='Live2D/runtime.js'){
+   const start=text.indexOf('  async function download(){'),end=text.indexOf('  function collect(){',start);if(start<0||end<0)throw Error('Live2D download slot drift');
+   text=text.slice(0,start)+'  async function download(){active();if(busy)return;const controller=downloadController=new win.AbortController();error="";busy=true;downloaded=0;downloadTotal=manifest.entries.reduce((n,e)=>n+e.bytes,0);phase="按文件载入模型";emit();try{for(const entry of manifest.entries){active();if(cached.has(entry.id))continue;const blob=await win.CxxResources.load("live2d/"+entry.file,{signal:controller.signal,type:"blob"});await transaction("readwrite",s=>s.put({id:entry.id,blob}));cached.add(entry.id);completed=cached.size;downloaded+=entry.bytes;emit();}await refresh();for(const b of bindings.values())void mount(b);}catch(e){error=e.message;throw e;}finally{if(downloadController===controller)downloadController=null;busy=false;phase="";emit();}}\n'+text.slice(end);
+ }
+ if(name==='地图/map-service.js')text=text.replace('const context=()=>api.SillyTavern.getContext();','').replace('const events=context().eventTypes||{};','const events={};').replace("event('mag_variable_update_ended',relevant);",'').replace('function relevant(){records?.refresh();','function relevant(){refreshScope();records?.refresh();');
+ if(name==='终端/city-entry.js'){
+   text=text.replace(" 'use strict';"," 'use strict';\n const document=window.CxxWebTerminal.document;");
+   text=text.replace(' function openMap(location){'," function openMap(location){\n  if(!tool()){const page=app.page;note.textContent='正在准备地图…';void window.CxxWebTerminal.prepareMap().then(()=>{if(!disposed&&app.visible&&(app.page===page||app.page==='city'))openMap(location);}).catch(error=>{if(!disposed)note.textContent=error.message;});return true;}");
+ }
+ if(name==='终端/terminal.js'){
+   text=text.replace('  function switchPage(id,options={}) {',"  let mapNavigation=0;\n  function switchPage(id,options={}) {\n    const request=++mapNavigation;if(['city','archive'].includes(id)&&!window.CxxAtlasTool){announce('正在准备地图…');void window.CxxWebTerminal.prepareMap().then(()=>{if(request===mapNavigation&&rootEl.isConnected)switchPage(id,options);}).catch(error=>announce(error.message));return false;}");
+   text=text.replace('  function closeTerminal() {','  function closeTerminal() {mapNavigation++;');
+   text=text.replace("  'use strict';","  'use strict';\n  const document=window.CxxWebTerminal.document;");
+   const from=text.indexOf('  const hostBridge=window.TOKYO_TERMINAL_HOST=CxxTerminalHost.create({'),to=text.indexOf('  netState=',from);if(from<0||to<0)throw new Error('Terminal host slot drift');text=text.slice(0,from)+'  const hostBridge=window.TOKYO_TERMINAL_HOST=window.CxxWebTerminal.bridge;\n'+text.slice(to);
+   const readStart=text.indexOf('  function readStatDataUncached(){'),readEnd=text.indexOf('  function readStatData(){',readStart);text=text.slice(0,readStart)+'  function readStatDataUncached(){return window.CxxWebTerminal.readState().statData;}\n'+text.slice(readEnd);
+   text=text.replace("const ledgerMvu = () => typeof getVariables === 'function' && typeof getLastMessageId === 'function';","const ledgerMvu = () => true;");
+   text=text.replace("if (typeof getVariables === 'function') return getVariables({ type: 'chat' })?.['__cxx_ui_preferences']?.nsfw === true;","return window.CxxWebTerminal.preferences().nsfw===true;");
+   text=text.replaceAll("window.SillyTavern?.getContext?.().chatMetadata?.__cxx_story_profile","window.CxxWebTerminal.profile()");
+   text=text.replace(/viewSource:\(\)=>\{const c=window.SillyTavern.getContext\(\),s=hostBridge.readState\(\);return \{chatId:c.getCurrentChatId\(\),characterId:c.characterId,floor:s.sourceFloor,swipe:c.chat\[s.sourceFloor\]\?\.swipe_id\|\|0\};\},/,"viewSource:()=>window.CxxWebTerminal.viewSource(),");
+   text=text.replaceAll('#send_textarea','#input').replace("['人物表','人物','天赋','物品栏','义体','行动记录']","['人物表','人物','天赋','物品栏','义体','战斗','行动记录']");
+   text=text.replaceAll('window.__cxx_experience__','window.CxxWebExperience').replaceAll('window?.__cxx_experience__','window.CxxWebExperience');
+   const hostStart=text.indexOf('  function requestHostTerminal() {'),hostEnd=text.indexOf('  let hostChat',hostStart);text=text.slice(0,hostStart)+'  function requestHostTerminal(){return false;}\n'+text.slice(hostEnd);
+   const viewportStart=text.indexOf('  function useHostViewport(scroll = true) {'),viewportEnd=text.indexOf('  useHostViewport(false);',viewportStart);text=text.slice(0,viewportStart)+'  function useHostViewport(){releaseHostViewport();}\n'+text.slice(viewportEnd);
+   const restrictedStart=text.indexOf('    function nsfwAllowed() {'),restrictedEnd=text.indexOf('  function buildGalleryPanel() {',restrictedStart);if(restrictedStart<0||restrictedEnd<0)throw Error('Gallery preference port slot drift');text=text.slice(0,restrictedStart)+'    function nsfwAllowed(){return window.CxxWebTerminal.preferences().nsfw===true;}\n'+text.slice(restrictedEnd);
+ }
+ if(name==='Gal/ui.js'){
+   text=text.replaceAll('默认阅读原文；翻译和声音设置由镜译控制。','').replaceAll('镜译处理中，暂用原文','翻译中…').replaceAll('镜译处理失败，保留原文','翻译失败，显示原文');
+   text=text.replace('audioPanel.append(readInfo);','audioPanel.append(readInfo);readInfo.hidden=true;');
+   text=text.replace(/(      readInfo.textContent=[^\n]+;)/,'$1\n      readInfo.hidden=!readInfo.textContent;');
+   text=text.replaceAll('当前没有已保存的事件插画。事件完成、结果保存且有正式素材后，才会在此解锁。','暂无插画。').replaceAll('仅调整本楼当前回复的画面；正文重写后重新按场景识别。','仅用于当前回复。').replaceAll('本楼正在展示剧情插图，场景背景在插图结束后显示。','剧情插图结束后显示背景。').replaceAll('正在载入场景图片，正文可继续阅读。','载入背景…');
+   const fade="else old.animate([{opacity:1},{opacity:0}],{duration:140,easing:'ease'}).finished.then(()=>old.remove(),()=>old.remove());";
+   if(!text.includes(fade))throw Error('Gal CG exit slot drift');
+   text=text.replace(fade,"else{const exit=old.animate([{opacity:1},{opacity:0}],{duration:140,easing:'ease'});visualAnimations.add(exit);const remove=()=>{visualAnimations.delete(exit);old.remove();};exit.finished.then(remove,remove);}");
+ }
+ if(name==='运行时/creator-ui.js')text=text.replace("  node('p','creator-hint','左右切换选项，也可以直接填写。自定义内容默认为无；留空的细项不会写入人物档案。',panel);",'');
+ if(name==='通讯/phone-ui.js')text=text.replace("body.append(el('p','在翻译与声音设置中选择可用的声音；这里调整本故事的阅读习惯。','muted'));",'').replace("body.append(form,el('p','正文支持原文、译文、对照与分角色朗读。连接酒馆时可使用已配置的镜译声音和语音输入。','muted'));",'body.append(form);');
+ const sha256=createHash('sha256').update(raw).digest('hex'),target=path.join(WEB,'src/ui/card',name);fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,'/* Derived from 卡片源码/'+name+'; source SHA256 '+sha256+'. Rebuild with tools/p3a-adapt-views.mjs. */\n'+text);records.push({source:'卡片源码/'+name,sha256,target:'src/ui/card/'+name,adaptation:'parent-window access becomes this application window; maintained layout and behavior retained'});}
+ const index=path.join(WEB,'src/ui/card/sources.json');let indexed=records;if(only&&fs.existsSync(index)){const previous=JSON.parse(fs.readFileSync(index,'utf8')),updates=new Map(records.map(r=>[r.source,r]));indexed=previous.map(r=>updates.get(r.source)||r);for(const r of records)if(!indexed.some(v=>v.source===r.source))indexed.push(r);}fs.writeFileSync(index,JSON.stringify(indexed,null,2)+'\n');return records;}
+if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))console.log('UI adapters: '+adaptViews(process.argv.includes('--only')?{only:[process.argv[process.argv.indexOf('--only')+1]]}:{}).length);

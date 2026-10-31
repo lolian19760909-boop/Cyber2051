@@ -1,0 +1,1236 @@
+{
+  "version": "2.2.5",
+  "items": {
+    "cp_c_adrenaline_booster": {
+      "name": "肾上腺素增强器",
+      "ability": "使用近战武器击倒敌人后恢复耐力。"
+    },
+    "cp_c_adrenaline_converter": {
+      "name": "肾上腺素转换器",
+      "ability": "进入战斗时短暂提高移动速度。"
+    },
+    "cp_c_adreno_trigger": {
+      "name": "肾上腺素触发器",
+      "ability": "进入战斗时提高移动速度。"
+    },
+    "cp_c_atomic_sensors": {
+      "name": "原子传感器",
+      "ability": "在战斗外随敌人察觉程度提高移动速度。"
+    },
+    "cp_c_axolotl": {
+      "name": "美西螈",
+      "ability": "击倒敌人后缩短其他义体冷却。"
+    },
+    "cp_c_behavioral_imprint_synced_faceplate": {
+      "name": "行为印记同步面板",
+      "ability": "根据已有身份印记改变外貌与可识别特征。"
+    },
+    "cp_c_bioconductor": {
+      "name": "生物导体",
+      "ability": "使快速破解具备暴击能力。"
+    },
+    "cp_c_black_mamba": {
+      "name": "黑曼巴",
+      "ability": "对中毒目标增加其他伤害，牺牲部分毒素伤害。"
+    },
+    "cp_c_camillo_ram_manager": {
+      "name": "卡米洛内存管理器",
+      "ability": "可用RAM很低时恢复RAM。"
+    },
+    "cp_c_carapace": {
+      "name": "背甲",
+      "ability": "抵挡侧后方攻击时提高防护。"
+    },
+    "cp_c_cellular_adapter": {
+      "name": "细胞适配器",
+      "ability": "加强皮肤防护。"
+    },
+    "cp_c_chrome_compressor": {
+      "name": "铬压缩器",
+      "ability": "提高义体容量。"
+    },
+    "cp_c_clutch_padding": {
+      "name": "离合衬垫",
+      "ability": "减轻射击的耐力负担。"
+    },
+    "cp_c_cogito_lattice": {
+      "name": "思维网格",
+      "ability": "可用RAM低时加强防护。"
+    },
+    "cp_c_countershell": {
+      "name": "反制外壳",
+      "ability": "受到伤害后强化防护。"
+    },
+    "cp_c_cox_2_cybersomatic_optimizer": {
+      "name": "COX-2 赛博躯体优化器",
+      "ability": "使快速破解稳定触发暴击，带来RAM取舍。"
+    },
+    "cp_c_deep_field_visual_interface": {
+      "name": "深域视觉接口",
+      "ability": "远距离攻击时提升暴击机会。"
+    },
+    "cp_c_defenzikov": {
+      "name": "防御齐科夫",
+      "ability": "克伦齐科夫结束后提供短暂防护。"
+    },
+    "cp_c_electrifying_gorilla_arms": {
+      "name": "电击大猩猩手臂",
+      "ability": "臂部钝击附加电击伤害。"
+    },
+    "cp_c_electrifying_mantis_blades": {
+      "name": "电击螳螂刀",
+      "ability": "臂部刀刃附加电击伤害。"
+    },
+    "cp_c_electrifying_monowire": {
+      "name": "电击单分子线",
+      "ability": "线刃挥击附加电击伤害。"
+    },
+    "cp_c_electrifying_projectile_launch_system": {
+      "name": "电击弹射系统",
+      "ability": "弹射攻击附加电击伤害。"
+    },
+    "cp_c_electromag_recycler": {
+      "name": "电磁回收器",
+      "ability": "技术武器充能命中后恢复生命与耐力。"
+    },
+    "cp_c_feedback_circuit": {
+      "name": "反馈电路",
+      "ability": "技术武器充能命中后恢复生命。"
+    },
+    "cp_c_feen_x": {
+      "name": "菲恩-X",
+      "ability": "低RAM时加快恢复。"
+    },
+    "cp_c_handle_wrap": {
+      "name": "握柄包覆",
+      "ability": "装备或投掷投掷武器后提高其暴击机会。"
+    },
+    "cp_c_heal_on_kill": {
+      "name": "击杀治疗",
+      "ability": "击倒敌人后恢复生命。"
+    },
+    "cp_c_higurashi_20_13_mantis_blades": {
+      "name": "日暮 20-13 螳螂刀",
+      "ability": "臂部武器；按其刀刃、钝击、线刃或发射器类型使用。"
+    },
+    "cp_c_immovable_force": {
+      "name": "不动之力",
+      "ability": "减少射击后坐力及散布。"
+    },
+    "cp_c_isometric_stabilizer": {
+      "name": "等距稳定器",
+      "ability": "降低攻击的耐力消耗。"
+    },
+    "cp_c_jenkins_tendons": {
+      "name": "詹金斯肌腱",
+      "ability": "开始冲刺时更快，持续冲刺后速度回落。"
+    },
+    "cp_c_kerenzikov_boost_system": {
+      "name": "克伦齐科夫增强系统",
+      "ability": "配合克伦齐科夫增强反应。"
+    },
+    "cp_c_kinetic_frame": {
+      "name": "动能框架",
+      "ability": "耐力充足时加强防护。"
+    },
+    "cp_c_kiroshi_clairvoyant_optics": {
+      "name": "歧路司“千里眼”义眼",
+      "ability": "扫描时突出掩体附近可扫描的人形目标，受扫描范围限制。"
+    },
+    "cp_c_kiroshi_cockatrice_optics": {
+      "name": "歧路司“鸡蛇”义眼",
+      "ability": "提高暴击机会。"
+    },
+    "cp_c_kiroshi_doomsayer_optics": {
+      "name": "歧路司“末日预言者”义眼",
+      "ability": "扫描并标记爆炸物与陷阱。"
+    },
+    "cp_c_kiroshi_sentry_optics": {
+      "name": "歧路司“哨兵”义眼",
+      "ability": "扫描并标记摄像头与炮塔。"
+    },
+    "cp_c_kiroshi_stalker_optics": {
+      "name": "歧路司“潜行者”义眼",
+      "ability": "连接技术武器，辅助识别掩体后的可扫描目标。"
+    },
+    "cp_c_kiroshi_the_oracle_optics": {
+      "name": "歧路司“神谕”义眼",
+      "ability": "结合多种扫描能力标记目标。"
+    },
+    "cp_c_leeroy_ligament_system": {
+      "name": "利罗伊韧带系统",
+      "ability": "提高移动速度。"
+    },
+    "cp_c_lynx_paws": {
+      "name": "猞猁爪",
+      "ability": "降低脚步声并改善蹲行。"
+    },
+    "cp_c_maxtac_mantis_blades": {
+      "name": "暴恐机动队螳螂刀",
+      "ability": "臂部武器；按其刀刃、钝击、线刃或发射器类型使用。"
+    },
+    "cp_c_mechatronic_core": {
+      "name": "机电核心",
+      "ability": "强化对无人机、机器人、机甲与炮塔的攻击。"
+    },
+    "cp_c_microgenerator": {
+      "name": "微型发电机",
+      "ability": "空仓换弹后的下一发释放电击。"
+    },
+    "cp_c_microrotors": {
+      "name": "微型转子",
+      "ability": "提高近战动作速度。"
+    },
+    "cp_c_moore_technologies_hausstock_w": {
+      "name": "摩尔科技“豪斯托克-W”",
+      "ability": "臂部武器；按其刀刃、钝击、线刃或发射器类型使用。"
+    },
+    "cp_c_nano_plating": {
+      "name": "纳米镀层",
+      "ability": "辅助阻挡射入的弹丸。"
+    },
+    "cp_c_neofiber": {
+      "name": "新纤维",
+      "ability": "改善减伤与抗冲击。"
+    },
+    "cp_c_newton_module": {
+      "name": "牛顿模块",
+      "ability": "击倒敌人后略微缩短义体冷却。"
+    },
+    "cp_c_pain_editor": {
+      "name": "疼痛编辑器",
+      "ability": "减少受到的伤害。"
+    },
+    "cp_c_painducer": {
+      "name": "痛觉诱导器",
+      "ability": "将部分伤害延后。"
+    },
+    "cp_c_para_bellum": {
+      "name": "备战护甲",
+      "ability": "提高护甲防护。"
+    },
+    "cp_c_peripheral_inverse": {
+      "name": "周边逆转",
+      "ability": "对近距离来袭的攻击提供更强防护。"
+    },
+    "cp_c_proxishield": {
+      "name": "近距护盾",
+      "ability": "改善近距离防护。"
+    },
+    "cp_c_quantum_tuner": {
+      "name": "量子调谐器",
+      "ability": "恢复其他义体冷却。"
+    },
+    "cp_c_ram_reallocator": {
+      "name": "内存重分配器",
+      "ability": "RAM耗竭时恢复一部分RAM。"
+    },
+    "cp_c_ram_recoup": {
+      "name": "内存回收器",
+      "ability": "承受伤害后恢复少量RAM。"
+    },
+    "cp_c_ram_upgrade": {
+      "name": "内存升级",
+      "ability": "提高RAM容量及恢复能力。"
+    },
+    "cp_c_rangeguard": {
+      "name": "远距守卫",
+      "ability": "与敌人保持距离时加强防护。"
+    },
+    "cp_c_reflex_tuner": {
+      "name": "反射调谐器",
+      "ability": "生命危险时短暂加快感知。"
+    },
+    "cp_c_revulsor": {
+      "name": "反冲器",
+      "ability": "生命危险时短暂加快感知。"
+    },
+    "cp_c_scar_coalescer": {
+      "name": "创伤凝合器",
+      "ability": "受重伤时加强防护。"
+    },
+    "cp_c_scarab": {
+      "name": "圣甲虫",
+      "ability": "蹲伏时提高护甲，移动受到限制。"
+    },
+    "cp_c_self_ice": {
+      "name": "自体 ICE",
+      "ability": "拦截敌方快速破解。"
+    },
+    "cp_c_shock_absorber": {
+      "name": "减震器",
+      "ability": "减少枪械后坐力。"
+    },
+    "cp_c_shock_n_awe": {
+      "name": "震慑电击",
+      "ability": "受到攻击时向近处敌人释放电击。"
+    },
+    "cp_c_spring_joints": {
+      "name": "弹簧关节",
+      "ability": "提高抗冲击与减伤。"
+    },
+    "cp_c_stabber": {
+      "name": "刺击者",
+      "ability": "提高刀剑与投掷武器暴击率。"
+    },
+    "cp_c_synaptic_accelerator": {
+      "name": "突触加速器",
+      "ability": "被察觉时短暂加快感知。"
+    },
+    "cp_c_tattoo_johnny_s_special": {
+      "name": "纹身：强尼特供",
+      "ability": "智能武器连接纹身。"
+    },
+    "cp_c_tattoo_together_forever": {
+      "name": "纹身：永远在一起",
+      "ability": "智能武器连接纹身。"
+    },
+    "cp_c_tattoo_tyger_claws_dermal_imprint": {
+      "name": "纹身：虎爪帮皮肤印记",
+      "ability": "智能武器连接纹身。"
+    },
+    "cp_c_thermal_gorilla_arms": {
+      "name": "热能大猩猩手臂",
+      "ability": "臂部钝击附加热能伤害。"
+    },
+    "cp_c_thermal_mantis_blades": {
+      "name": "热能螳螂刀",
+      "ability": "臂部刀刃附加热能伤害。"
+    },
+    "cp_c_thermal_monowire": {
+      "name": "热能单分子线",
+      "ability": "线刃挥击附加热能伤害。"
+    },
+    "cp_c_thermal_projectile_launch_system": {
+      "name": "热能弹射系统",
+      "ability": "弹射攻击附加热能伤害。"
+    },
+    "cp_c_threatevac": {
+      "name": "威胁撤离",
+      "ability": "生命危险时提高移动速度，便于撤离。"
+    },
+    "cp_c_titanium_bones": {
+      "name": "钛金骨骼",
+      "ability": "增强骨骼承重能力。"
+    },
+    "cp_c_toxic_gorilla_arms": {
+      "name": "毒素大猩猩手臂",
+      "ability": "臂部钝击附加毒素伤害。"
+    },
+    "cp_c_toxic_mantis_blades": {
+      "name": "毒素螳螂刀",
+      "ability": "臂部刀刃附加毒素伤害。"
+    },
+    "cp_c_toxic_monowire": {
+      "name": "毒素单分子线",
+      "ability": "线刃挥击附加毒素伤害。"
+    },
+    "cp_c_toxic_projectile_launch_system": {
+      "name": "毒素弹射系统",
+      "ability": "弹射攻击附加毒素伤害。"
+    },
+    "cp_c_tyrosine_injector": {
+      "name": "酪氨酸注射器",
+      "ability": "成功制服目标后短暂改善爆头与移动。"
+    },
+    "cp_c_universal_booster": {
+      "name": "通用增强器",
+      "ability": "使用医疗物品后暂时改善防护和耐力。"
+    },
+    "cp_c_visual_cortex_support": {
+      "name": "视觉皮层支援",
+      "ability": "远距离攻击时提高暴击率。"
+    },
+    "cp_w_achilles_x_mod2": {
+      "name": "阿喀琉斯 X-MOD2",
+      "ability": "精准步枪，技术充能射击；增加改装空间并改善操控。"
+    },
+    "cp_w_agaou": {
+      "name": "阿高",
+      "ability": "近战武器，使用对应武器动作；投掷暴击释放冲击波，可伤害多个目标。"
+    },
+    "cp_w_alabai": {
+      "name": "阿拉拜",
+      "ability": "霰弹枪，动能射击；命中有概率施加特殊燃烧，对受此燃烧影响的目标必定暴击。同时燃烧的目标越多，暴击伤害越高，精度越低。"
+    },
+    "cp_w_ambition": {
+      "name": "野心",
+      "ability": "手枪，技术充能射击；配备泽塔科技瞄准镜。命中有概率致盲，致盲期间爆头伤害提高。"
+    },
+    "cp_w_amnesty": {
+      "name": "大赦",
+      "ability": "左轮，动能射击；拔枪后立即腰射爆头必定暴击，暴击伤害提高50%。"
+    },
+    "cp_w_amstaff": {
+      "name": "阿姆斯塔夫",
+      "ability": "霰弹枪，动能射击；击倒或肢解敌人后提高移动速度；移动越快，伤害越高。增强穿甲。"
+    },
+    "cp_w_apparition": {
+      "name": "幻影",
+      "ability": "手枪，技术充能射击；生命危急时提高射速、装填速度和伤害；充能射击造成双倍伤害。"
+    },
+    "cp_w_arasaka_hjke_11_yukimura": {
+      "name": "HJKE-11 幸村",
+      "ability": "手枪，智能追踪，需要兼容连接"
+    },
+    "cp_w_arasaka_hjsh_18_masamune": {
+      "name": "HJSH-18 正宗",
+      "ability": "突击步枪，动能射击"
+    },
+    "cp_w_arasaka_jke_x2_kenshin": {
+      "name": "JKE-X2 谦信",
+      "ability": "手枪，技术充能射击"
+    },
+    "cp_w_arasaka_nowaki": {
+      "name": "野分",
+      "ability": "突击步枪，动能射击"
+    },
+    "cp_w_arasaka_senkoh_lx": {
+      "name": "闪光 LX",
+      "ability": "冲锋枪，技术充能射击；完全充能后全自动射击。"
+    },
+    "cp_w_arasaka_shigure": {
+      "name": "时雨",
+      "ability": "冲锋枪，动能射击"
+    },
+    "cp_w_arasaka_tamayura": {
+      "name": "玉响",
+      "ability": "手枪，动能射击"
+    },
+    "cp_w_arasaka_tki_20_shingen": {
+      "name": "TKI-20 信玄",
+      "ability": "冲锋枪，智能追踪，需要兼容连接"
+    },
+    "cp_w_archangel": {
+      "name": "大天使",
+      "ability": "左轮，动能射击；全自动射击，连续短间隔命中可将敌人击倒。电击概率提高20%。"
+    },
+    "cp_w_baby_boomer": {
+      "name": "婴儿潮",
+      "ability": "近战武器，钝击；连击中的每次连续攻击提高暴击率。"
+    },
+    "cp_w_bald_eagle": {
+      "name": "白头鹰",
+      "ability": "左轮，动能射击；发射爆炸弹药。将“獠牙”投向敌人腿部后射击同一部位，可将刀收回；适合攻击移动目标。"
+    },
+    "cp_w_baseball_bat_x_mod2": {
+      "name": "棒球棍 X-MOD2",
+      "ability": "近战武器，钝击；增加改装空间并改善操控。"
+    },
+    "cp_w_baseball_bat": {
+      "name": "棒球棍",
+      "ability": "近战武器，钝击"
+    },
+    "cp_w_bfc_9000": {
+      "name": "巨炮 BFC 9000",
+      "ability": "近战武器，钝击；耐力充足时大幅提高暴击率；攻击距离较长，重攻击伤害更高。"
+    },
+    "cp_w_black_unicorn": {
+      "name": "黑独角兽",
+      "ability": "近战武器，刀刃攻击；攻击速度不受耐力影响。"
+    },
+    "cp_w_bloody_maria": {
+      "name": "血腥玛利亚",
+      "ability": "霰弹枪，动能射击；提高击倒、流血和肢解概率。肢解敌人后加快装填并提高暴击率。"
+    },
+    "cp_w_blue_fang": {
+      "name": "蓝牙",
+      "ability": "近战武器，使用对应武器动作；命中后使目标眩晕，爆头更快生效；对战斗外的目标立即生效。"
+    },
+    "cp_w_borzaya": {
+      "name": "猎狼犬",
+      "ability": "狙击步枪，动能射击；命中有概率施加特殊燃烧，对受此燃烧影响的目标必定暴击。同时燃烧的目标越多，暴击伤害越高，精度越低。发射爆炸弹药，燃烧概率提高40%。"
+    },
+    "cp_w_breakthrough": {
+      "name": "突破",
+      "ability": "狙击步枪，技术充能射击；无须充能即可穿透墙体，穿透后可多次跳弹；支持腰射充能。"
+    },
+    "cp_w_budget_arms_carnage": {
+      "name": "屠夫",
+      "ability": "霰弹枪，动能射击；重量较大，略微降低移动速度与跳跃高度。"
+    },
+    "cp_w_budget_arms_cut_o_matic": {
+      "name": "切割机",
+      "ability": "近战武器，刀刃攻击；运行噪声会惊动敌人和附近人群。"
+    },
+    "cp_w_budget_arms_guillotine": {
+      "name": "断头台",
+      "ability": "冲锋枪，动能射击"
+    },
+    "cp_w_budget_arms_slaught_o_matic": {
+      "name": "自动屠戮",
+      "ability": "手枪，动能射击"
+    },
+    "cp_w_butcher_s_cleaver": {
+      "name": "屠夫的切肉刀",
+      "ability": "近战武器，刀刃攻击；攻击流血目标时加快攻速并降低耐力消耗。"
+    },
+    "cp_w_buzzsaw": {
+      "name": "电锯",
+      "ability": "冲锋枪，动能射击；发射高穿透弹药，攻击四肢时伤害更高。"
+    },
+    "cp_w_byakko": {
+      "name": "白虎",
+      "ability": "近战武器，刀刃攻击；可向目标跃击；击杀后短暂解锁快速连击。"
+    },
+    "cp_w_caretaker_s_spade": {
+      "name": "看门人的铲子",
+      "ability": "近战武器，钝击；重量较大，略微降低移动速度与跳跃高度。"
+    },
+    "cp_w_carmen": {
+      "name": "卡门",
+      "ability": "突击步枪，动能射击；攻击四肢时提高暴击率。奔跑、跳跃或滑铲时改善操控，提高伤害与流血概率。"
+    },
+    "cp_w_catahoula": {
+      "name": "卡塔胡拉",
+      "ability": "手枪，技术充能射击；击倒或肢解敌人后提高移动速度；移动越快，伤害越高。增强穿甲。完全充能后全自动射击。"
+    },
+    "cp_w_chaos": {
+      "name": "混乱",
+      "ability": "手枪，技术充能射击；每次装填后，暴击率、伤害类型和附加状态重新随机。"
+    },
+    "cp_w_cheetah": {
+      "name": "猎豹",
+      "ability": "手枪，动能射击；距离越近，暴击与流血概率越高。攻击躯干造成额外伤害。"
+    },
+    "cp_w_chef_s_knife": {
+      "name": "厨刀",
+      "ability": "近战武器，使用对应武器动作"
+    },
+    "cp_w_chesapeake": {
+      "name": "切萨皮克",
+      "ability": "冲锋枪，智能追踪，需要兼容连接；击倒或肢解敌人后提高移动速度；移动越快，伤害越高。增强穿甲。连续射击逐渐提高射速。"
+    },
+    "cp_w_chinook": {
+      "name": "奇努克",
+      "ability": "突击步枪，动能射击；击倒或肢解敌人后提高移动速度；移动越快，伤害越高。增强穿甲。"
+    },
+    "cp_w_claw_x_mod2": {
+      "name": "爪刀 X-MOD2",
+      "ability": "近战武器，使用对应武器动作；增加改装空间并改善操控。"
+    },
+    "cp_w_claw": {
+      "name": "爪刀",
+      "ability": "近战武器，使用对应武器动作"
+    },
+    "cp_w_cocktail_stick": {
+      "name": "鸡尾酒签",
+      "ability": "近战武器，刀刃攻击；光学迷彩启用时，命中使目标流血，持续时间延长。"
+    },
+    "cp_w_constitutional_arms_liberty": {
+      "name": "自由",
+      "ability": "手枪，动能射击"
+    },
+    "cp_w_constitutional_arms_m2038_tactician": {
+      "name": "M2038 战术家",
+      "ability": "霰弹枪，动能射击"
+    },
+    "cp_w_constitutional_arms_m2067_defender": {
+      "name": "M2067 防御者",
+      "ability": "机枪，动能射击；重量较大，略微降低移动速度与跳跃高度。"
+    },
+    "cp_w_constitutional_arms_unity": {
+      "name": "统一",
+      "ability": "手枪，动能射击"
+    },
+    "cp_w_cottonmouth": {
+      "name": "棉口蛇",
+      "ability": "近战武器，钝击；造成电击与化学伤害，有概率附加中毒或电击。"
+    },
+    "cp_w_crash": {
+      "name": "坠落",
+      "ability": "左轮，动能射击；瞄准并短暂蓄力后进入全自动模式，降低后坐力与散布，射速较低。"
+    },
+    "cp_w_crimestopper": {
+      "name": "止罪",
+      "ability": "手枪，智能追踪，需要兼容连接；命中有概率使义肢失效，令目标无法移动并提高暴击伤害。切换到此枪后短暂提高暴击率；瞄准时额外锁定一个目标。"
+    },
+    "cp_w_crowbar_iconic": {
+      "name": "撬棍（不朽）",
+      "ability": "近战武器，钝击；结实耐用的撬棍。"
+    },
+    "cp_w_crowbar": {
+      "name": "撬棍",
+      "ability": "近战武器，钝击"
+    },
+    "cp_w_cut_o_matic_x_mod2": {
+      "name": "切割机 X-MOD2",
+      "ability": "近战武器，刀刃攻击；增加改装空间并改善操控。运行噪声会惊动敌人与附近人群。"
+    },
+    "cp_w_darra_polytechnic_da8_umbra": {
+      "name": "DA8 暗影",
+      "ability": "突击步枪，动能射击"
+    },
+    "cp_w_darra_polytechnic_dr_12_quasar": {
+      "name": "DR-12 类星体",
+      "ability": "左轮，技术充能射击；完全充能后全自动射击。"
+    },
+    "cp_w_darra_polytechnic_dr_5_nova": {
+      "name": "DR-5 新星",
+      "ability": "左轮，动能射击"
+    },
+    "cp_w_darra_polytechnic_ds1_pulsar": {
+      "name": "DS1 脉冲星",
+      "ability": "冲锋枪，动能射击"
+    },
+    "cp_w_death_and_taxes": {
+      "name": "死亡和税收",
+      "ability": "手枪，动能射击；强力命中消耗少量自身生命；生命较低时，弹药使目标中毒。"
+    },
+    "cp_w_dezerter": {
+      "name": "逃兵",
+      "ability": "霰弹枪，动能射击；发射爆炸弹药。击倒敌人时使自身燃烧，提高移动速度和减伤概率；生命较低时不触发自身燃烧。"
+    },
+    "cp_w_divided_we_stand": {
+      "name": "分则能成",
+      "ability": "突击步枪，智能追踪，需要兼容连接；最多同时锁定五个目标，精度降低。子弹有概率产生化学爆炸并施加剧毒；弹药伤害提高，但可能丢失锁定。中毒概率提高20%。"
+    },
+    "cp_w_doom_doom": {
+      "name": "咚咚",
+      "ability": "左轮，动能射击；每次射击发射三发爆炸弹，提高肢解概率，同时增加散布和后坐力。"
+    },
+    "cp_w_dying_night": {
+      "name": "终夜",
+      "ability": "手枪，动能射击；移动时提高伤害；快速连续命中必定施加电击。"
+    },
+    "cp_w_electric_baton_alpha": {
+      "name": "电警棍·阿尔法",
+      "ability": "近战武器，钝击；一次挥击可命中多个目标。"
+    },
+    "cp_w_electric_baton_beta": {
+      "name": "电警棍·贝塔",
+      "ability": "近战武器，钝击；一次挥击可命中多个目标。"
+    },
+    "cp_w_electric_baton_gamma": {
+      "name": "电警棍·伽马",
+      "ability": "近战武器，钝击；一次挥击可命中多个目标。"
+    },
+    "cp_w_erebus": {
+      "name": "厄瑞玻斯",
+      "ability": "冲锋枪，动能射击；弹药携带黑墙之外的能量，对低生命目标效果更强。"
+    },
+    "cp_w_fenrir": {
+      "name": "芬里尔",
+      "ability": "冲锋枪，动能射击；造成电击伤害，有概率使敌方义体失效。电击概率提高20%。"
+    },
+    "cp_w_foxhound": {
+      "name": "猎狐犬",
+      "ability": "狙击步枪，技术充能射击；击倒或肢解敌人后提高移动速度；移动越快，伤害越高。增强穿甲。支持腰射充能。"
+    },
+    "cp_w_genjiroh": {
+      "name": "源次郎",
+      "ability": "手枪，智能追踪，需要兼容连接；四连发，弹匣与弹速增大。瞄准时最多锁定四个目标，弹药附加电击伤害并提高电击概率。"
+    },
+    "cp_w_gold_plated_baseball_bat": {
+      "name": "镀金棒球棍",
+      "ability": "近战武器，钝击；较高概率施加流血，较低概率使目标眩晕。"
+    },
+    "cp_w_gris_gris": {
+      "name": "护符",
+      "ability": "左轮，技术充能射击；命中有概率上传随机快速破解，强力破解的触发概率较低。完全充能后全自动射击。"
+    },
+    "cp_w_guillotine_x_mod2": {
+      "name": "断头台 X-MOD2",
+      "ability": "冲锋枪，动能射击；增加改装空间并改善操控。"
+    },
+    "cp_w_guts": {
+      "name": "铁胆",
+      "ability": "霰弹枪，动能射击；提高射速和伤害，精度较低。重量较大，略微降低移动速度与跳跃高度。"
+    },
+    "cp_w_gwynbleidd": {
+      "name": "白狼",
+      "ability": "近战武器，刀刃攻击；对首领造成额外伤害。快速连续击杀后短暂获得必定暴击，再次快速击杀可刷新效果；生命危急时攻击必定暴击。"
+    },
+    "cp_w_ha_4_grit": {
+      "name": "HA-4 坚毅",
+      "ability": "手枪，技术充能射击；完全充能后全自动射击。"
+    },
+    "cp_w_ha_7_warden": {
+      "name": "HA-7 狱卒",
+      "ability": "冲锋枪，智能追踪，需要兼容连接；连续射击逐渐提高射速。"
+    },
+    "cp_w_hammer": {
+      "name": "锤子",
+      "ability": "近战武器，钝击；重量较大，略微降低移动速度与跳跃高度。"
+    },
+    "cp_w_hawk": {
+      "name": "鹰",
+      "ability": "突击步枪，动能射击；爆头短暂标记并削弱目标，使其移动减慢、无法使用能力、伤害降低且更容易失衡。"
+    },
+    "cp_w_headhunter": {
+      "name": "猎头者",
+      "ability": "近战武器，使用对应武器动作；命中标记目标。随后用任意武器攻击其头部造成200%伤害，收回此刀并清除标记。"
+    },
+    "cp_w_hypercritical": {
+      "name": "万应",
+      "ability": "精准步枪，动能射击；子弹爆炸并击倒目标，弹匣最后一发必定暴击。暴击伤害提高100%。"
+    },
+    "cp_w_jinchu_maru": {
+      "name": "尽忠丸",
+      "ability": "近战武器，刀刃攻击；连击最后一击必定暴击。光学迷彩启用时所有攻击必定暴击，并可向目标跃击。对精英敌人伤害提高。"
+    },
+    "cp_w_kaiken": {
+      "name": "怀剑",
+      "ability": "近战武器，使用对应武器动作；近战攻击造成额外伤害。"
+    },
+    "cp_w_kanabo": {
+      "name": "金碎棒",
+      "ability": "近战武器，钝击"
+    },
+    "cp_w_kang_tao_a_22b_chao": {
+      "name": "A-22B 超",
+      "ability": "手枪，智能追踪，需要兼容连接",
+      "manufacturer": "太平洋防务",
+      "aliases": [
+        "太平洋防务 A-22B 超"
+      ]
+    },
+    "cp_w_kang_tao_g_58_dian": {
+      "name": "G-58 典",
+      "ability": "冲锋枪，智能追踪，需要兼容连接",
+      "manufacturer": "太平洋防务",
+      "aliases": [
+        "太平洋防务 G-58 典"
+      ]
+    },
+    "cp_w_kang_tao_l_69_zhuo": {
+      "name": "L-69 卓",
+      "ability": "霰弹枪，智能追踪，需要兼容连接；重量较大，略微降低移动速度与跳跃高度。",
+      "manufacturer": "太平洋防务",
+      "aliases": [
+        "太平洋防务 L-69 卓"
+      ]
+    },
+    "cp_w_kappa_x_mod2": {
+      "name": "河童 X-MOD2",
+      "ability": "手枪，智能追踪，需要兼容连接；增加改装空间并改善操控。"
+    },
+    "cp_w_katana": {
+      "name": "武士刀",
+      "ability": "近战武器，刀刃攻击"
+    },
+    "cp_w_knife": {
+      "name": "小刀",
+      "ability": "近战武器，使用对应武器动作"
+    },
+    "cp_w_kongou": {
+      "name": "金刚",
+      "ability": "手枪，动能射击；无须跳弹义体即可跳弹。降低后坐力并提高射速，弹匣容量较小。"
+    },
+    "cp_w_kukri": {
+      "name": "廓尔喀弯刀",
+      "ability": "近战武器，刀刃攻击"
+    },
+    "cp_w_kyubi_x_mod2": {
+      "name": "九尾 X-MOD2",
+      "ability": "突击步枪，动能射击；增加改装空间并改善操控。"
+    },
+    "cp_w_la_chingona_dorada": {
+      "name": "金色狠婆娘",
+      "ability": "手枪，动能射击；每次爆头短暂提高暴击伤害与燃烧概率。再次装备时获得与爆头次数相同的额外弹药。"
+    },
+    "cp_w_laika": {
+      "name": "莱卡",
+      "ability": "左轮，技术充能射击；命中有概率施加特殊燃烧，对受此燃烧影响的目标必定暴击。同时燃烧的目标越多，暴击伤害越高，精度越低。发射无法穿透掩体的爆炸弹药，燃烧概率提高66%。"
+    },
+    "cp_w_lexington_x_mod2": {
+      "name": "莱克星顿 X-MOD2",
+      "ability": "手枪，动能射击；增加改装空间并改善操控。"
+    },
+    "cp_w_lizzie": {
+      "name": "丽姿",
+      "ability": "手枪，技术充能射击；每次射击发射额外弹丸；完全充能后增加弹丸数量，并以连发形式射击。"
+    },
+    "cp_w_ma70_hb_x_mod2": {
+      "name": "MA70 HB 机枪 X-MOD2",
+      "ability": "机枪，动能射击；增加改装空间并改善操控。重量较大，略微降低移动速度与跳跃高度。发射爆炸弹药。"
+    },
+    "cp_w_machete": {
+      "name": "大砍刀",
+      "ability": "近战武器，刀刃攻击"
+    },
+    "cp_w_malorian_arms_3516_2077": {
+      "name": "马洛里安武器公司 3516",
+      "ability": "手枪，动能射击；快速近战攻击引燃敌人并造成大量伤害，消耗当前弹匣中的全部剩余弹药。"
+    },
+    "cp_w_malorian_overture": {
+      "name": "序曲",
+      "ability": "左轮，动能射击"
+    },
+    "cp_w_mancinella": {
+      "name": "毒树",
+      "ability": "左轮，动能射击；配备专用消音器。爆头有概率使目标中毒；进入战斗后短暂保留潜行伤害加成。"
+    },
+    "cp_w_midnight_arms_ma70_hb": {
+      "name": "MA70 HB 机枪",
+      "ability": "机枪，动能射击；重量较大，略微降低移动速度与跳跃高度。发射爆炸弹药。"
+    },
+    "cp_w_midnight_arms_sor_22": {
+      "name": "SOR-22 精准步枪",
+      "ability": "精准步枪，动能射击"
+    },
+    "cp_w_militech_crusher_2077": {
+      "name": "碾碎者",
+      "ability": "霰弹枪，动能射击"
+    },
+    "cp_w_militech_hercules_3ax": {
+      "name": "海格力斯 3AX",
+      "ability": "突击步枪，智能追踪，需要兼容连接；命中有概率使敌人严重中毒，中毒目标受到的暴击伤害提高。击倒目标引发爆炸并留下酸液。腰射弹道弯曲，瞄准时追踪目标，无须智能连接。"
+    },
+    "cp_w_militech_m_10af_lexington": {
+      "name": "M-10AF 莱克星顿",
+      "ability": "手枪，动能射击"
+    },
+    "cp_w_militech_m_179_achilles": {
+      "name": "M-179 阿喀琉斯",
+      "ability": "精准步枪，技术充能射击"
+    },
+    "cp_w_militech_m_76e_omaha": {
+      "name": "M-76e 奥马哈",
+      "ability": "手枪，技术充能射击；完全充能后连发射击。"
+    },
+    "cp_w_militech_m221_saratoga": {
+      "name": "M221 萨拉托加",
+      "ability": "冲锋枪，动能射击"
+    },
+    "cp_w_militech_m251s_ajax": {
+      "name": "M251s 阿贾克斯",
+      "ability": "突击步枪，动能射击"
+    },
+    "cp_w_militech_mk_31_hmg": {
+      "name": "Mk.31 重机枪",
+      "ability": "机枪，动能射击"
+    },
+    "cp_w_militech_ticon": {
+      "name": "提康",
+      "ability": "手枪，技术充能射击；充能射击同时发射三发弹药，每发造成完整伤害。"
+    },
+    "cp_w_moron_labe": {
+      "name": "你要战便来拿",
+      "ability": "突击步枪，动能射击；肢解敌人后，提高对其暴击率。射速不均匀，瞄准更困难。"
+    },
+    "cp_w_mox": {
+      "name": "莫克斯",
+      "ability": "霰弹枪，动能射击；改进重量和散布，对贴近的目标更易造成电击或击倒。"
+    },
+    "cp_w_murphy_s_law": {
+      "name": "墨菲定律",
+      "ability": "近战武器，钝击；攻击倒地目标时提高攻速。重攻击伤害更高，一次挥击可命中多个目标。"
+    },
+    "cp_w_nehan": {
+      "name": "涅槃",
+      "ability": "近战武器，使用对应武器动作；投掷命中使目标流血。若目标已因“觉”流血，则转为大出血，持续吸取目标生命并恢复自身生命。近战伤害提高。"
+    },
+    "cp_w_neurotoxin_knife": {
+      "name": "神经毒素小刀",
+      "ability": "近战武器，使用对应武器动作"
+    },
+    "cp_w_nokota_d5_copperhead": {
+      "name": "D5 铜斑蛇",
+      "ability": "突击步枪，动能射击"
+    },
+    "cp_w_nokota_d5_sidewinder": {
+      "name": "D5 响尾蛇",
+      "ability": "突击步枪，智能追踪，需要兼容连接；弹药伤害提高，但有概率丢失锁定。"
+    },
+    "cp_w_nokota_osprey": {
+      "name": "鱼鹰",
+      "ability": "狙击步枪，动能射击；连续发射爆炸弹药。爆头提高腰射伤害，连续击倒多个目标后提高装填速度与燃烧概率。腰射可全自动射击。重量较大，略微降低移动速度与跳跃高度。"
+    },
+    "cp_w_o_five": {
+      "name": "零五",
+      "ability": "狙击步枪，动能射击；发射爆炸弹药。燃烧目标越多，装填越快、暴击率越高。重量极大，显著降低移动与跳跃能力，持枪时无法冲刺、闪避或突进。暴击伤害提高50%，燃烧概率提高30%。"
+    },
+    "cp_w_ogou": {
+      "name": "奥古",
+      "ability": "手枪，智能追踪，需要兼容连接；两连发爆炸弹，提高肢解概率；每次肢解提高暴击率与流血概率。"
+    },
+    "cp_w_ol_reliable": {
+      "name": "老可靠",
+      "ability": "左轮，动能射击；切换到此枪后大幅提高爆头伤害与有效射程；目标越远，爆头暴击率越高。暴击伤害提高50%。"
+    },
+    "cp_w_order": {
+      "name": "秩序",
+      "ability": "霰弹枪，技术充能射击；充能超过66%后释放强力贯穿攻击，并留下电磁脉冲轨迹。支持腰射充能。"
+    },
+    "cp_w_overwatch": {
+      "name": "守望",
+      "ability": "狙击步枪，动能射击；提高装填速度，配备专用消音器。"
+    },
+    "cp_w_pariah": {
+      "name": "弃子",
+      "ability": "技术手枪，静音充能射击；爆头缩短充能并加快装填，充能射击连发三发。"
+    },
+    "cp_w_pit_bull": {
+      "name": "斗牛犬",
+      "ability": "突击步枪，动能射击；击倒或肢解敌人后提高移动速度；移动越快，伤害越高。增强穿甲。"
+    },
+    "cp_w_pizdets": {
+      "name": "完蛋",
+      "ability": "冲锋枪，智能追踪，需要兼容连接；连续射击逐渐提高暴击率和射速，配备专用消音器。"
+    },
+    "cp_w_plan_b": {
+      "name": "备用计划",
+      "ability": "手枪，动能射击；弹药更容易使目标流血，每次射击消耗金钱。"
+    },
+    "cp_w_pozhar_x_mod2": {
+      "name": "烈火 X-MOD2",
+      "ability": "霰弹枪，动能射击；增加改装空间并改善操控。弹丸散布更均匀，便于控制落点。"
+    },
+    "cp_w_prejudice": {
+      "name": "偏见",
+      "ability": "突击步枪，动能射击；用“傲慢”击倒敌人后，此枪短暂免消耗弹药。首发必定暴击，低生命时大幅提高射速。对精英伤害提高，暴击伤害提高100%。"
+    },
+    "cp_w_pride": {
+      "name": "傲慢",
+      "ability": "手枪，动能射击；用“偏见”击倒敌人后，此枪短暂免消耗弹药。首发必定暴击，高生命时提高爆头伤害，对精英的爆头伤害提高。"
+    },
+    "cp_w_problem_solver": {
+      "name": "问题解决者",
+      "ability": "冲锋枪，动能射击；射速接近每分钟一千发。"
+    },
+    "cp_w_prototype_shingen_mark_v": {
+      "name": "原型：信玄 V 型",
+      "ability": "冲锋枪，智能追踪，需要兼容连接；发射爆炸弹药，瞄准时最多锁定三个目标。燃烧概率提高30%。"
+    },
+    "cp_w_psalm_11_6": {
+      "name": "诗篇 11:6",
+      "ability": "突击步枪，动能射击；弹药可使目标燃烧，燃烧概率提高30%。"
+    },
+    "cp_w_punknife": {
+      "name": "朋克刀",
+      "ability": "近战武器，使用对应武器动作"
+    },
+    "cp_w_raiju": {
+      "name": "雷兽",
+      "ability": "冲锋枪，技术充能射击；无须充能即可穿透障碍，爆头暴击率提高。完全充能后全自动射击。"
+    },
+    "cp_w_riskit": {
+      "name": "冒险",
+      "ability": "手枪，动能射击；生命极低时改善操控，所有命中必定暴击。"
+    },
+    "cp_w_rook": {
+      "name": "堡垒",
+      "ability": "手枪，动能射击；配备瞄准镜与消音器。快速连续命中提高暴击率并降低精度，未命中时清除效果。"
+    },
+    "cp_w_rosco": {
+      "name": "罗斯科",
+      "ability": "左轮，动能射击；射击腿部更容易击倒目标；对倒地目标爆头必定暴击。暴击伤害提高50%。"
+    },
+    "cp_w_rostovi_db_2_satara": {
+      "name": "DB-2 萨达拉",
+      "ability": "霰弹枪，技术充能射击；支持腰射充能。"
+    },
+    "cp_w_rostovi_db_2_testera": {
+      "name": "DB-2 特斯泰拉",
+      "ability": "霰弹枪，动能射击"
+    },
+    "cp_w_rostovi_db_4_igla": {
+      "name": "DB-4 穿刺",
+      "ability": "霰弹枪，动能射击"
+    },
+    "cp_w_rostovi_db_4_palica": {
+      "name": "DB-4 棍棒",
+      "ability": "霰弹枪，智能追踪，需要兼容连接；弹药伤害提高，但有概率丢失锁定。"
+    },
+    "cp_w_rostovi_kolac": {
+      "name": "科拉克",
+      "ability": "精准步枪，动能射击"
+    },
+    "cp_w_sasquatch_s_hammer": {
+      "name": "野人的铁锤",
+      "ability": "近战武器，钝击；重击造成大量伤害并消耗较多耐力。持有时显著降低移动与跳跃能力，无法冲刺、闪避或突进。"
+    },
+    "cp_w_satori": {
+      "name": "觉",
+      "ability": "近战武器，刀刃攻击；可向远处目标跃击。收刀后施展拔刀攻击，必定造成流血。若目标已因“涅槃”流血，则转为大出血，吸取其生命并恢复自身生命。"
+    },
+    "cp_w_scalpel": {
+      "name": "手术刀",
+      "ability": "近战武器，刀刃攻击；斯安威斯坦启用时暴击率提高50%，命中施加流血。"
+    },
+    "cp_w_scorch": {
+      "name": "灼烧",
+      "ability": "手枪，技术充能射击；充能射击命中燃烧目标时自动补回弹匣中的弹药。充能射击同时发射三发，每发造成完整伤害。"
+    },
+    "cp_w_seraph": {
+      "name": "炽天使",
+      "ability": "手枪，动能射击；连续命中逐渐提高燃烧概率，对燃烧目标伤害提高。发射爆炸弹药。"
+    },
+    "cp_w_sir_john_phallustiff": {
+      "name": "藤津伪器",
+      "ability": "近战武器，钝击；攻击头部提高暴击率，重攻击有概率击晕目标。"
+    },
+    "cp_w_sovereign": {
+      "name": "君主",
+      "ability": "霰弹枪，动能射击；贴身射击必定暴击。命中躯干后提高装填与移动速度。"
+    },
+    "cp_w_sparky": {
+      "name": "电火花",
+      "ability": "狙击步枪，动能射击；爆头时释放电弧。"
+    },
+    "cp_w_steel_pipe": {
+      "name": "钢管",
+      "ability": "近战武器，钝击"
+    },
+    "cp_w_stinger": {
+      "name": "毒刺",
+      "ability": "近战武器，使用对应武器动作；攻击中毒目标必定使其流血，攻击流血目标必定使其中毒。"
+    },
+    "cp_w_taigan": {
+      "name": "泰干",
+      "ability": "左轮，动能射击；命中有概率施加特殊燃烧，对受此燃烧影响的目标必定暴击。同时燃烧的目标越多，暴击伤害越高，精度越低。发射爆炸弹药，燃烧概率提高40%。"
+    },
+    "cp_w_techtronika_metel": {
+      "name": "暴雪",
+      "ability": "左轮，动能射击；发射爆炸弹药。"
+    },
+    "cp_w_techtronika_razor": {
+      "name": "剃刀",
+      "ability": "近战武器，刀刃攻击"
+    },
+    "cp_w_techtronika_rt_46_burya": {
+      "name": "RT-46 风暴",
+      "ability": "左轮，技术充能射击"
+    },
+    "cp_w_techtronika_spt32_grad": {
+      "name": "SPT32 冰雹",
+      "ability": "狙击步枪，动能射击；重量较大，略微降低移动速度与跳跃高度。"
+    },
+    "cp_w_techtronika_vst_37_pozhar": {
+      "name": "VST-37 烈火",
+      "ability": "霰弹枪，动能射击"
+    },
+    "cp_w_the_headsman": {
+      "name": "刽子手",
+      "ability": "霰弹枪，动能射击；发射独头弹，配备专用瞄准镜，远距离精度较高。爆头短暂提高装填速度与精度，随后再次爆头必定暴击。"
+    },
+    "cp_w_tinker_bell": {
+      "name": "叮当",
+      "ability": "近战武器，钝击；伤害较低，重攻击有概率直接击晕目标。"
+    },
+    "cp_w_tire_iron": {
+      "name": "轮胎撬棍",
+      "ability": "近战武器，钝击"
+    },
+    "cp_w_tomahawk": {
+      "name": "战斧",
+      "ability": "近战武器，使用对应武器动作"
+    },
+    "cp_w_tsumetogi": {
+      "name": "爪磨",
+      "ability": "近战武器，刀刃攻击；增加电击伤害，有概率施加电击。特殊攻击伤害提高，电击抗性提高10。"
+    },
+    "cp_w_tsunami_ashura": {
+      "name": "阿修罗",
+      "ability": "狙击步枪，智能追踪，需要兼容连接；每次锁定一个目标。"
+    },
+    "cp_w_tsunami_kappa": {
+      "name": "河童",
+      "ability": "手枪，智能追踪，需要兼容连接；瞄准时额外锁定一个目标。"
+    },
+    "cp_w_tsunami_kyubi": {
+      "name": "九尾",
+      "ability": "突击步枪，动能射击"
+    },
+    "cp_w_tsunami_nekomata": {
+      "name": "猫又",
+      "ability": "狙击步枪，技术充能射击；支持腰射充能。"
+    },
+    "cp_w_tsunami_nue": {
+      "name": "鵺",
+      "ability": "手枪，动能射击"
+    },
+    "cp_w_tsunami_rasetsu": {
+      "name": "罗刹",
+      "ability": "狙击步枪，技术充能射击；充能弹可穿透敌人并弯曲弹道，同时命中多个目标。"
+    },
+    "cp_w_umbra_x_mod2": {
+      "name": "暗影 X-MOD2",
+      "ability": "突击步枪，动能射击；增加改装空间并改善操控。"
+    },
+    "cp_w_volkodav": {
+      "name": "猎狼",
+      "ability": "近战武器，刀刃攻击；命中有概率施加特殊燃烧，对受此燃烧影响的目标必定暴击。同时燃烧的目标越多，暴击伤害越高，精度越低。"
+    },
+    "cp_w_widow_maker": {
+      "name": "寡妇制造者",
+      "ability": "精准步枪，技术充能射击；每次射击发射两枚弹丸，造成化学伤害并提高中毒概率。充能射击伤害提高，中毒概率提高20%。"
+    },
+    "cp_w_wild_dog": {
+      "name": "野狗",
+      "ability": "机枪，动能射击；连续命中提高射速与暴击率。弹药耗尽时，快速近战攻击造成大量伤害。重量较大，略微降低移动速度与跳跃高度。"
+    },
+    "cp_w_yasha": {
+      "name": "夜叉",
+      "ability": "狙击步枪，智能追踪，需要兼容连接；增加改装空间并改善操控。每次锁定一个目标。"
+    },
+    "cp_os_dynalar_sandevistan": {
+      "name": "迪纳拉斯安威斯坦",
+      "ability": "启用时加快感知与反应。"
+    },
+    "cp_os_zetatech_sandevistan": {
+      "name": "泽塔科技斯安威斯坦",
+      "ability": "启用时加快感知与反应。"
+    },
+    "cp_os_qiant_warp_dancer": {
+      "name": "千替“扭曲舞者”",
+      "ability": "启用时加快感知与反应。"
+    },
+    "cp_os_militech_falcon": {
+      "name": "军用科技“猎鹰”",
+      "ability": "启用时加快感知与反应。"
+    },
+    "cp_os_militech_apogee": {
+      "name": "军用科技“远地点”",
+      "ability": "启用时加快感知与反应。"
+    },
+    "cp_os_biodyne_berserk": {
+      "name": "生物动力狂暴",
+      "ability": "启用时强化近战与防护。"
+    },
+    "cp_os_moore_tech_berserk": {
+      "name": "摩尔科技狂暴",
+      "ability": "启用时强化近战与防护。"
+    },
+    "cp_os_zetatech_berserk": {
+      "name": "泽塔科技狂暴",
+      "ability": "启用时强化近战与防护。"
+    },
+    "cp_os_militech_berserk": {
+      "name": "军用科技狂暴",
+      "ability": "启用时强化近战与防护。"
+    },
+    "cp_os_arasaka_shadow": {
+      "name": "弦卷“暗影”",
+      "aliases": [
+        "荒坂“暗影”"
+      ],
+      "ability": "接入具有通路与权限的设备，运行快速破解。"
+    },
+    "cp_os_biotech_sigma": {
+      "name": "生物科技“西格玛”",
+      "ability": "接入具有通路与权限的设备，运行快速破解。"
+    },
+    "cp_os_militech_paraline": {
+      "name": "军用科技“平行线”",
+      "ability": "接入具有通路与权限的设备，运行快速破解。"
+    },
+    "cp_os_netwatch_netdriver": {
+      "name": "网络监察“网驱”",
+      "ability": "接入具有通路与权限的设备，运行快速破解。"
+    },
+    "cp_os_raven_microcyber": {
+      "name": "乌鸦“微型赛博”",
+      "ability": "接入具有通路与权限的设备，运行快速破解。"
+    },
+    "cp_os_tetratronic_rippler": {
+      "name": "四相传电“涟漪”",
+      "ability": "接入具有通路与权限的设备，运行快速破解。"
+    },
+    "cp_os_militech_canto_mk_6": {
+      "name": "军用科技“篇章”六型",
+      "ability": "接入具有通路与权限的设备，运行快速破解。"
+    },
+    "cp_c_ballistic_coprocessor": {
+      "ability": "辅助动能武器跳弹。",
+      "name": "弹道协处理器"
+    },
+    "cp_c_berserk": {
+      "ability": "启用时强化近战与防护。",
+      "name": "狂暴系统"
+    },
+    "cp_c_biomonitor": {
+      "ability": "生命低于一半时自动调用已装备的医疗物品。",
+      "name": "生物监测"
+    },
+    "cp_c_fortified_ankles": {
+      "ability": "蓄力后进行高跳。",
+      "name": "加固踝骨"
+    },
+    "cp_c_optical_camo": {
+      "ability": "启用时降低可见度。",
+      "name": "光学迷彩"
+    },
+    "cp_c_sandevistan": {
+      "ability": "加速感知与反应。",
+      "name": "斯安威斯坦"
+    },
+    "cp_c_second_heart": {
+      "ability": "失去行动能力后帮助心脏恢复搏动。",
+      "name": "第二心脏"
+    },
+    "cp_c_basic_kiroshi_optics": {
+      "name": "歧路司基础义眼",
+      "ability": "扫描、放大与读取可见信息，减缓摄像头察觉。"
+    },
+    "cp_c_bionic_joints": {
+      "name": "仿生关节",
+      "ability": "增加身体防护。"
+    },
+    "cp_c_blood_pump": {
+      "name": "血泵",
+      "ability": "主动泵入治疗物质，按已确认的恢复量治疗。"
+    },
+    "cp_c_chitin": {
+      "name": "甲壳",
+      "ability": "坚固的皮下壳层，提供防护及恢复辅助。"
+    },
+    "cp_c_cyberdeck": {
+      "name": "网络接入仓",
+      "ability": "接入具有实际通路的设备并进行快速破解。"
+    },
+    "cp_c_dense_marrow": {
+      "name": "致密骨髓",
+      "ability": "提高近战伤害，动作仍消耗体力。"
+    },
+    "cp_c_epimorphic_skeleton": {
+      "name": "仿生骨骼",
+      "ability": "提高生命上限。"
+    },
+    "cp_c_ex_disk": {
+      "name": "额外磁盘",
+      "ability": "增加RAM及快速破解处理空间。"
+    },
+    "cp_c_memory_boost": {
+      "name": "记忆增强",
+      "ability": "击倒目标后恢复少量RAM。"
+    },
+    "cp_c_monowire": {
+      "name": "单分子线",
+      "ability": "臂部武器；按其刀刃、钝击、线刃或发射器类型使用。"
+    },
+    "cp_c_rara_avis": {
+      "name": "稀有鸟",
+      "ability": "大幅提高护甲防护。"
+    },
+    "cp_c_reinforced_tendons": {
+      "name": "强化肌腱",
+      "ability": "支持空中二次跳跃。"
+    },
+    "cp_c_smart_link": {
+      "name": "智能连接",
+      "ability": "允许使用兼容智能武器的追踪锁定。"
+    },
+    "cp_w_ba_xing_chong": {
+      "name": "八星铳",
+      "ability": "霰弹枪，智能追踪，需要兼容连接；发射爆炸弹药，可同时智能锁定六个目标。爆炸范围内的目标受到伤害。生命较低时加快装填并提高燃烧概率。重量较大，略微降低移动速度与跳跃高度。"
+    },
+    "cp_w_comrade_s_hammer": {
+      "name": "同志的铁锤",
+      "ability": "左轮，技术充能射击；弹巢装填一发爆炸弹，快速近战攻击会自动装填。爆炸弹不能穿透掩体。暴击伤害提高50%。"
+    },
+    "cp_w_errata": {
+      "name": "白热光",
+      "ability": "近战武器，刀刃攻击；可向目标跃击，攻击燃烧目标必定暴击。"
+    },
+    "cp_w_her_majesty": {
+      "name": "女王陛下",
+      "ability": "手枪，动能射击；配备专用消音器。光学迷彩启用时提高伤害和精度，爆头必定暴击。"
+    },
+    "cp_w_yinglong": {
+      "name": "应龙",
+      "ability": "冲锋枪，智能追踪，需要兼容连接；附加电击伤害，命中有概率触发电磁脉冲。电击概率提高20%。"
+    }
+  }
+}

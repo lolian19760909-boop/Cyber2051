@@ -1,0 +1,10 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),{fixture}=require('./save.test.cjs'),input=path.resolve(__dirname,'../../交付/基线/2.3.0-整理前.json'),{componentsOf}=require('../../工具/lib/updater.cjs'),Core=require('../../卡片源码/运行时/core.js');
+test('prepared opening with actual full-card content journal: five samples',async()=>{
+ const card=JSON.parse(fs.readFileSync(input)),before={...componentsOf(card.data),registry:{format:1,packages:{}}},after=structuredClone(before);after.worldbook.internalName+='-chat';
+ const context={cardId:'cyber2051',characterKey:'test.png',chatId:'chat-a',busy:false};let journal,current=before;
+ await Core.execute({before,after,expectedContext:context,installed:{scope:'chat'},host:{getContext:()=>context,snapshot:async()=>current,writeStage:async()=>{current=after;}},storage:{get:async()=>journal,claim:async(k,j)=>{journal=structuredClone(j);return true;},set:async(k,j)=>{journal=structuredClone(j);return true;}}});
+ assert.deepEqual(journal.stages,['worldbook']);const record={status:'active',instanceId:'real',journalName:'real-journal',journal},samples=[];
+ for(let i=0;i<5;i++){const f=fixture('street',{character:{__cxx_update_state:{instanceId:'real',journalName:'real-journal'}},get record(){return structuredClone(record);}});await f.player.prepareOpening();const start=performance.now();await f.player.completeOpening({value:f.choice});samples.push(performance.now()-start);assert.equal(f.row.swipe_id,1);await f.player.waitForSaved();f.player.stop();}
+ const sorted=[...samples].sort((a,b)=>a-b),report={case:'actual frozen card scripts/regex in chat sync journal',journalBytes:Buffer.byteLength(JSON.stringify(record)),samples,median:sorted[2],p95:sorted[4],max:sorted[4],realHost:false};fs.writeFileSync(path.resolve(__dirname,'../../.cache/checks/opening-journal.json'),JSON.stringify(report,null,2));console.log(report);assert.ok(sorted[4]<200,'prepared local opening target '+sorted[4]);
+});

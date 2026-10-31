@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),B=require('./build-data.cjs');
+const catalog=B.build();fs.mkdirSync(B.out,{recursive:true});
+const files=['index.html','site.css','app.mjs','viewer.mjs','model.mjs','projection.mjs','host.mjs','game-install.mjs','map-site.caddy'];
+for(const file of files)if(fs.existsSync(path.join(__dirname,file)))fs.copyFileSync(path.join(__dirname,file),path.join(B.out,file));
+const tileFile=path.join(B.out,'data/tiles.json');if(!fs.existsSync(tileFile))throw Error('先运行站点/bake.cjs生成图块。');
+const tiles=JSON.parse(fs.readFileSync(tileFile));
+const component={schema:'cyber2051.map-site/1',id:'cyber2051.map-site',version:'0.1.3-study',catalogRevision:catalog.revision,artRevision:tiles.revision,projection:tiles.projection,entry:'index.html',module:'app.mjs',hostModule:'host.mjs',maps:catalog.maps.map(m=>({id:m.id,places:m.places.length})),artStatus:'正式市场—RiNG—红花街样板候选；其他地区为历史背景，未通过全图美术验收',driverAccepted:false,files:files.filter(f=>fs.existsSync(path.join(B.out,f))).map(f=>{const bytes=fs.readFileSync(path.join(B.out,f));return{path:f,bytes:bytes.length,sha256:B.sha(bytes)};})};
+const mapData=tiles.maps.map(m=>m.tiles?m:JSON.parse(fs.readFileSync(path.join(B.out,m.index))));const chunks=mapData.flatMap(m=>m.chunks||[]);const dataFiles=['data/catalog.json','data/tiles.json',...tiles.maps.map(m=>m.index).filter(Boolean),...chunks.map(c=>c.path)];component.files.push(...dataFiles.map(file=>{const bytes=fs.readFileSync(path.join(B.out,file));return{path:file,bytes:bytes.length,sha256:B.sha(bytes)};}));component.assets=[...new Map(mapData.flatMap(m=>m.tiles||m.chunks.flatMap(c=>JSON.parse(fs.readFileSync(path.join(B.out,c.path))).tiles)).map(t=>[t.path,{path:t.path,bytes:t.bytes,sha256:t.sha256}])).values()];
+fs.writeFileSync(path.join(B.out,'component.json'),JSON.stringify(component,null,2));console.log(JSON.stringify({out:B.out,files:component.files.length,catalogRevision:catalog.revision,artRevision:tiles.revision}));

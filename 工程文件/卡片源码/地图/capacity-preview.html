@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>M8 地图容量测试台</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#110e14;color:#dddbdf}body{margin:20px}h1{font-size:24px;margin:0 0 10px}p{max-width:1050px;line-height:1.6;margin:8px 0}.warning{color:#d9b57c}button{font:inherit;padding:8px 15px;background:#261820;border:1px solid #80505e;color:#f4e0e5;cursor:pointer}button:disabled{opacity:.45;cursor:default}button:focus-visible{outline:2px solid #78dcda;outline-offset:3px}.controls{display:flex;gap:10px;align-items:center;margin:16px 0}#benchmark-progress{color:#89d7d5;min-height:1.5em}#benchmark-stage{width:1280px;min-height:720px;border:1px solid #673c48;background:#08080f;margin:12px 0}#benchmark-stage iframe{display:block;width:1280px;height:720px;border:0}#benchmark-result{white-space:pre-wrap;overflow-wrap:anywhere;max-height:440px;overflow:auto;padding:15px;background:#0b1117;border:1px solid #334b54;font:12px/1.45 monospace}details{max-width:1060px}summary{cursor:pointer;color:#ddc8a0}code{color:#94d3d4}ol{line-height:1.7}
+</style></head><body>
+<h1>M8 地图容量测试台</h1>
+<p>同一个 1280 × 720 可见地图框，依次装载冻结 M7、中心候选、11000 和 15000 建筑对象压力页。每个版本先预热一次，再交错测试三轮；只挂载一张地图。</p>
+<p class="warning">压力页是明确标注的合成数据，可能重叠，不用于剧情或美术验收。这里测绘制耗时、启动等待、长任务、DOM 数量和概览位图字节；不把它们称作 FPS、INP 或总内存。</p>
+<details><summary>运行方法、场景与时间成本</summary><ol>
+<li>先运行 <code>node build-capacity-fixtures.mjs --write</code>，确保中心候选与压力页均已生成。默认预览不会被替换。</li>
+<li>保持测试台位于前台。点“开始新测试”运行首项，随后逐项点“运行下一项”；也可勾选“自动逐项运行”，从启动的下一项开始连续完成剩余项。总计 16 项，每项通常约 5–12 秒，高压可到 20–40 秒；单项 55 秒截止，完整测试预留约 3–7 分钟。停止、失败或转后台会关闭自动。</li>
+<li>前六场景为旧中心同坐标对照：平面总览、公司广场、湾西港、暗池、暗池平移、概览缩放。后两场景为东、北样带诊断，旧 M7 尚未建设，因此不混入同区对照统计。</li>
+<li>每场景执行八次镜头恢复并等待实际绘制计数增加及两个动画帧；每项末尾观察一秒静止绘制计数。预热结果保留记录但不进入统计。</li>
+<li>结果只写下面的 JSON，不自动写文件或改变地图设置。失败项保留原因；重新开始会清空本次测试记录。</li>
+</ol></details>
+<div class="controls"><button id="benchmark-start">开始新测试</button><button id="benchmark-next" disabled>运行下一项</button><button id="benchmark-stop" disabled>停止当前项</button><label><input id="benchmark-auto" type="checkbox"> 自动逐项运行</label></div>
+<div id="benchmark-progress" role="status" aria-live="polite">尚未开始。运行时保留此页在前台。</div>
+<div id="benchmark-stage" aria-label="1280乘720地图测试框"></div>
+<h2>测试结果</h2><pre id="benchmark-result">{"status":"not-started"}</pre>
+<script src="capacity-preview.js"></script></body></html>

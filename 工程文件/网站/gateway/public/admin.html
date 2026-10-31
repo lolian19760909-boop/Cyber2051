@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>站务管理 · 东京都2051</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/workshop/theme.css?v=motion20261027"><script src="/workshop/theme-runtime.js?v=motion20261027"></script><script>CxxThemeRuntime.install(window);</script><link rel="stylesheet" href="/site.css?v=motion20261027"><link rel="stylesheet" href="/workshop/poster-system.css?v=motion20261027">
+<script src="/i18n.js?v=site-accounts-20261031" defer></script>
+<script src="/workshop/site-ui.js?v=motion20261027" defer></script>
+<script src="/publish.js?v=adminofficial20261006" defer></script>
+<link rel="stylesheet" href="/workshop/submission-format.css?v=submission20261006">
+<script src="/workshop/submission-view.js?v=submission20261006" defer></script>
+<script src="/workshop/admin-ui.js?v=submission20261006" defer></script>
+<style>
+
+.release-step { margin-top:18px; }
+.release-step h2 { margin:0 0 8px;font-size:17px;color:#fff; }
+.release-step p { margin:6px 0;font-size:14px; }
+.release-step fieldset { margin:0;border:0;padding:0;min-width:0; }
+.release-list { padding-left:20px;overflow-wrap:anywhere; }
+.release-list li { margin:8px 0; }
+.release-status { margin:16px 0;overflow-wrap:anywhere; }
+.release-check { display:flex;gap:10px;align-items:flex-start;margin:16px 0; }
+.release-check input[type=checkbox] { width:auto;flex:none;margin-top:6px; }
+
+
+.release-warning { color:var(--amber); }
+.admin-bug-text { white-space:pre-wrap; overflow-wrap:anywhere; font:inherit; line-height:1.7; user-select:text; }
+.admin-bug-image { max-width:100%; height:auto; margin:20px 0; }
+</style>
+</head>
+<body class="site admin-site poster-theme">
+<a class="skip-link" href="#admin-main" data-ui-zh="跳到管理内容" data-ui-en="Skip to management" data-ui-ja="管理内容へ移動">跳到管理内容</a>
+<header class="site-header"><div class="bar">
+  <a class="logo" href="/"><span class="cube" aria-hidden="true"></span>TOKYO 2051 <small>ADMIN</small></a>
+  <nav class="nav" aria-label="网站导航"><a href="/" data-i18n="nav.home">首页</a><a href="/recent.html" data-ui-zh="近期详情" data-ui-en="Latest details" data-ui-ja="最近の情報">近期详情</a><a href="/play/" data-ui-zh="开始游玩" data-ui-en="Play now" data-ui-ja="プレイする">开始游玩</a><a href="/workshop.html" data-i18n="nav.ws">创意工坊</a><a href="/workshop/" data-i18n="nav.fb">留言墙</a></nav>
+</div></header>
+<main id="admin-main" class="wrap admin-page">
+<div class="page-register" aria-hidden="true"><span>07 / SITE MANAGEMENT</span><span>TOKYO 2051</span></div>
+  <section id="admin-login" class="panel admin-login" aria-labelledby="admin-login-title">
+    <p class="kicker">STAFF ACCESS / TOKYO 2051</p>
+    <h1 id="admin-login-title" class="page-title" data-ui-zh="进入站务管理" data-ui-en="Enter site management" data-ui-ja="サイト管理に入る">进入站务管理</h1>
+    <p class="page-sub" data-ui-zh="审核留言和投稿，维护公告与账号。" data-ui-en="Review messages and submissions, and manage announcements and accounts." data-ui-ja="メッセージや投稿を審査し、お知らせとアカウントを管理します。">审核留言和投稿，维护公告与账号。</p>
+    <form id="admin-login-form" autocomplete="off">
+      <label for="token" data-ui-zh="管理员密码" data-ui-en="Administrator password" data-ui-ja="管理者パスワード">管理员密码</label>
+      <div class="admin-password-field">
+        <input id="token" name="admin-password" type="password" required autocomplete="off" spellcheck="false" autocapitalize="none" aria-describedby="admin-password-note" placeholder="输入管理员密码" data-ph-zh="输入管理员密码" data-ph-en="Enter administrator password" data-ph-ja="管理者パスワードを入力">
+        <button id="admin-show-password" class="btn ghost" type="button" aria-controls="token" aria-pressed="false" data-ui-zh="显示" data-ui-en="Show" data-ui-ja="表示">显示</button>
+      </div>
+      <p id="admin-password-note" class="hint" data-ui-zh="本页面不保存管理密码。每次进入、刷新或退出后，都需要重新输入。" data-ui-en="This page does not save your management password. Enter it again after returning, reloading, or signing out." data-ui-ja="このページは管理パスワードを保存しません。再訪問・再読み込み・ログアウト後は再入力してください。">本页面不保存管理密码。每次进入、刷新或退出后，都需要重新输入。</p>
+      <button id="admin-enter" class="btn" type="submit" data-ui-zh="进入管理台" data-ui-en="Enter management" data-ui-ja="管理画面へ">进入管理台</button>
+    </form>
+    <p id="admin-login-message" class="msg" role="status" aria-live="polite"></p>
+    <a class="admin-back-link" href="/" data-ui-zh="← 返回网站" data-ui-en="← Back to the website" data-ui-ja="← サイトに戻る">← 返回网站</a>
+  </section>
+  <section id="admin-workspace" class="admin-workspace" hidden aria-labelledby="admin-workspace-title">
+    <div class="admin-heading">
+      <div><p class="kicker">STAFF CONSOLE / TOKYO 2051</p><h1 id="admin-workspace-title" class="page-title" data-ui-zh="站务管理" data-ui-en="Site management" data-ui-ja="サイト管理">站务管理</h1><p class="page-sub" data-ui-zh="从待办开始，逐条处理。" data-ui-en="Start with pending work and review each item." data-ui-ja="未処理の項目から、一件ずつ確認しましょう。">从待办开始，逐条处理。</p></div>
+      <div class="toolbar"><span class="badge status-approved" data-ui-zh="管理员已验证" data-ui-en="Administrator verified" data-ui-ja="管理者確認済み">管理员已验证</span><button id="admin-refresh" class="btn ghost" type="button" data-ui-zh="刷新数据" data-ui-en="Refresh data" data-ui-ja="データを更新">刷新数据</button><button id="admin-logout" class="btn ghost" type="button" data-ui-zh="退出管理" data-ui-en="Sign out" data-ui-ja="管理を終了">退出管理</button></div>
+    </div>
+    <div class="admin-shell">
+      <aside class="admin-sidebar panel">
+        <nav aria-label="管理分区">
+          <button type="button" data-zone="overview" aria-current="page"><span data-ui-zh="待办概览" data-ui-en="Overview" data-ui-ja="概要">待办概览</span></button>
+          <button type="button" data-zone="feedback"><span data-ui-zh="留言审核" data-ui-en="Messages" data-ui-ja="メッセージ審査">留言审核</span><span id="admin-feedback-badge" class="admin-count"></span></button>
+          <button type="button" data-zone="bugs"><span data-ui-zh="BUG 反馈" data-ui-en="Bug reports" data-ui-ja="不具合報告">BUG 反馈</span></button>
+          <button type="button" data-zone="submissions"><span data-ui-zh="投稿审核" data-ui-en="Submissions" data-ui-ja="投稿審査">投稿审核</span><span id="admin-submissions-badge" class="admin-count"></span></button>
+          <button type="button" data-zone="announcements"><span data-ui-zh="公告管理" data-ui-en="Announcements" data-ui-ja="お知らせ管理">公告管理</span></button>
+          <button type="button" data-zone="official"><span data-ui-zh="官方更新" data-ui-en="Official updates" data-ui-ja="公式更新">官方更新</span></button>
+          <button type="button" data-zone="accounts"><span data-ui-zh="账号管理" data-ui-en="Accounts" data-ui-ja="アカウント管理">账号管理</span></button>
+        </nav>
+        <p class="hint" data-ui-zh="离开页面后需要重新输入密码。" data-ui-en="Enter your password again after leaving this page." data-ui-ja="ページを離れた後はパスワードを再入力してください。">离开页面后需要重新输入密码。</p>
+      </aside>
+      <div class="admin-content">
+        <h2 id="admin-content-title" tabindex="-1">待办概览</h2>
+        <p id="admin-message" class="msg" role="status" aria-live="polite"></p>
+        <div id="admin-overview" class="admin-overview"></div>
+        <form id="admin-filters" class="toolbar admin-filters" hidden>
+          <label id="admin-status-field" class="admin-filter-field"><span data-ui-zh="状态" data-ui-en="Status" data-ui-ja="状態">状态</span><select id="admin-status"></select></label>
+          <label id="admin-type-field" class="admin-filter-field" hidden><span data-ui-zh="投稿类型" data-ui-en="Submission type" data-ui-ja="投稿の種類">投稿类型</span><select id="admin-type"></select></label>
+          <label class="admin-filter-field admin-search-field"><span data-ui-zh="搜索" data-ui-en="Search" data-ui-ja="検索">搜索</span><input id="admin-search" type="search" maxlength="120" placeholder="搜索内容或作者" data-ph-zh="搜索内容或作者" data-ph-en="Search content or author" data-ph-ja="内容や投稿者を検索"></label>
+          <button class="btn ghost" type="submit" data-ui-zh="搜索" data-ui-en="Search" data-ui-ja="検索">搜索</button>
+        </form>
+        <div id="admin-ann-actions" class="toolbar" hidden><button id="admin-ann-new" class="btn" type="button" data-ui-zh="发布公告" data-ui-en="New announcement" data-ui-ja="お知らせを作成">发布公告</button></div>
+        <div id="admin-official" hidden>
+          <p class="hint" data-ui-zh="使用当前管理员身份发布，无需再次登录。" data-ui-en="Publish with your current administrator session. No additional sign-in is needed." data-ui-ja="現在の管理者ログインで公開できます。追加のログインは不要です。">使用当前管理员身份发布，无需再次登录。</p>
+          <p id="account-state" role="status"></p>
+  <section id="release" class="panel release-step" aria-labelledby="files-title" hidden>
+    <h2 id="files-title" data-ui-zh="1 · 选择更新文件" data-ui-en="1 · Choose update files" data-ui-ja="1 · 更新ファイルを選択">1 · 选择更新文件</h2>
+    <p data-ui-zh="选择维护流程导出的角色卡 JSON 或内容包 JSON，可以一次选择多个内容包。立绘、任务、世界观等修改会随相应内容包一起发布。" data-ui-en="Choose a maintained rolecard or content package JSON. Multiple packages can be selected. Portraits, quests and world content are released with their corresponding packages." data-ui-ja="保守工程から出力したカードやコンテンツパッケージの JSON を選択してください。複数選択できます。立ち絵、依頼、世界設定は対応するパッケージと一緒に公開されます。">选择维护流程导出的角色卡 JSON 或内容包 JSON，可以一次选择多个内容包。立绘、任务、世界观等修改会随相应内容包一起发布。</p>
+    <p class="hint" data-ui-zh="请使用干净的维护导出，不要上传玩家存档或验收卡。新版卡在这里仅用于核对并提取基础内容；程序随完整新卡交付，玩家通过存档迁移续玩。" data-ui-en="Use a clean maintained export, not a player save or test card. Modern cards supply only static base content here. New code ships in a complete card; players migrate their saves." data-ui-ja="プレイヤーのセーブや検証用カードではなく、保守用の出力を使用してください。新カードからは基本コンテンツのみ抽出します。新しいコードは完全版カードで配布し、セーブを移行します。">请使用干净的维护导出，不要上传玩家存档或验收卡。新版卡在这里仅用于核对并提取基础内容；程序随完整新卡交付，玩家通过存档迁移续玩。</p>
+    <p class="hint" data-ui-zh="服务会核对版本、内容归属和旧版本。此处只接收 JSON；PNG 卡仍由原有打包流程生成。" data-ui-en="The service checks versions and content ownership. Only JSON is accepted here; PNG cards use the existing packaging process." data-ui-ja="バージョンと内容の帰属を確認します。ここは JSON のみ対応し、PNG カードは既存の工程で生成します。">服务会核对版本、内容归属和旧版本。此处只接收 JSON；PNG 卡仍由原有打包流程生成。</p>
+    <fieldset id="file-controls">
+      <label class="fld" for="files" data-ui-zh="本次更新文件" data-ui-en="Update files" data-ui-ja="今回の更新ファイル">本次更新文件</label>
+      <input id="files" type="file" accept=".json,application/json" multiple>
+      <label class="fld" for="withdraw-packages">撤回公开发行的内容包（可多选）</label>
+      <select id="withdraw-packages" multiple size="4" aria-describedby="withdraw-note"></select>
+      <p id="withdraw-note" class="hint">先核对预览，再确认撤回。新的更新清单将不再提供所选包；已安装内容、旧任务和必要历史定义保留。作者撤下投稿后，仍需在这里完成签名目录撤回。</p>
+      <p id="file-state" class="hint">尚未选择文件。</p>
+      <div class="toolbar"><button id="preview" class="btn" disabled data-ui-zh="检查并预览" data-ui-en="Check and preview" data-ui-ja="確認してプレビュー">检查并预览</button></div>
+    </fieldset>
+  </section>
+  <section id="preview-panel" class="panel release-step" aria-labelledby="preview-title" hidden>
+    <h2 id="preview-title" tabindex="-1" data-ui-zh="2 · 核对并发布" data-ui-en="2 · Review and release" data-ui-ja="2 · 確認して公開">2 · 核对并发布</h2>
+    <p id="preview-state"></p>
+    <ul id="preview-list" class="release-list"></ul>
+    <p class="release-warning" data-ui-zh="确认后，玩家会在酒馆里看到这批更新。玩家保留是否安装的选择。" data-ui-en="After confirmation, players will see this update in SillyTavern and retain the choice to install it." data-ui-ja="確認後、プレイヤーは酒館で更新を確認できます。導入するかどうかはプレイヤーが選びます。">确认后，玩家会在酒馆里看到这批更新。玩家保留是否安装的选择。</p>
+    <label class="release-check"><input id="confirm" type="checkbox"><span data-ui-zh="我已核对这批内容，确认发布给玩家。" data-ui-en="I have reviewed this content and confirm its release to players." data-ui-ja="内容を確認し、プレイヤーへの公開に同意します。">我已核对这批内容，确认发布给玩家。</span></label>
+    <button id="publish" class="btn" disabled data-ui-zh="确认发布" data-ui-en="Confirm release" data-ui-ja="公開を確認">确认发布</button>
+  </section>
+  <p id="message" class="msg release-status" role="status" aria-live="polite"></p>
+        </div>
+        <div id="admin-list" class="admin-list" aria-live="polite"></div>
+        <div id="admin-pagination" class="toolbar admin-pagination" hidden><p id="admin-page-info" class="meta"></p><button id="admin-prev" class="btn ghost" type="button" disabled data-ui-zh="上一页" data-ui-en="Previous" data-ui-ja="前へ">上一页</button><button id="admin-next" class="btn ghost" type="button" disabled data-ui-zh="下一页" data-ui-en="Next" data-ui-ja="次へ">下一页</button></div>
+      </div>
+    </div>
+  </section>
+  <noscript><p class="msg err">管理台需要启用 JavaScript 才能使用。</p></noscript>
+</main>
+<dialog id="admin-dialog" class="admin-dialog" aria-labelledby="admin-dialog-title"><form id="admin-dialog-form"><h2 id="admin-dialog-title"></h2><div id="admin-dialog-body" class="admin-dialog-body"></div><p id="admin-dialog-message" class="msg" role="status" aria-live="polite"></p><div class="toolbar admin-dialog-actions"><button id="admin-dialog-close" class="btn ghost" type="button" data-ui-zh="关闭" data-ui-en="Close" data-ui-ja="閉じる">关闭</button><button id="admin-dialog-confirm" class="btn" type="submit" hidden>确认</button></div></form></dialog>
+<footer class="site-footer"><div class="fline"><span data-ui-zh="CYBER2051.TOP · 站务管理" data-ui-en="CYBER2051.TOP · Site management" data-ui-ja="CYBER2051.TOP · サイト管理">CYBER2051.TOP · 站务管理</span></div></footer>
+</body>
+</html>

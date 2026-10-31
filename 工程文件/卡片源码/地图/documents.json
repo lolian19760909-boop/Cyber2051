@@ -1,0 +1,12 @@
+[
+  {
+    "id": "tokyo-central",
+    "name": "东京都 · 中心大区",
+    "resource": "tokyo-central"
+  },
+  {
+    "id": "west-expansion",
+    "name": "西部大区 · 山梨与富士",
+    "resource": "west-expansion"
+  }
+]

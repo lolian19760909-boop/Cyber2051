@@ -1,0 +1,18 @@
+{
+  "literalGuard": "(?<cxx_literal>^ {0,3}(?<cxx_fence>\\x60{3,}|~{3,})[^\\r\\n]*(?:\\r?\\n|$)[\\s\\S]*?(?:^ {0,3}\\k<cxx_fence>[\\x60~]*[ \\t]*(?:\\r?\\n|(?![\\s\\S]))|(?![\\s\\S]))|^ {0,3}>[^\\r\\n]*(?:\\r?\\n(?![ \\t]*(?:\\r?\\n|$))[^\\r\\n]*)*|^(?: {4}|\\t)[^\\r\\n]*|<(?:pre|code|blockquote)\\b[^>]*>[\\s\\S]*?(?:<\\/(?:pre|code|blockquote)>|(?![\\s\\S]))|<!--[\\s\\S]*?(?:-->|(?![\\s\\S]))|(?<cxx_ticks>\\x60+)[\\s\\S]*?\\k<cxx_ticks>|“[^”]*”|‘[^’]*’|「[^」]*」|『[^』]*』|\"[^\"\\r\\n]*\"|'[^'\\r\\n]*')",
+  "bodies": {
+    "status": "<ztl>\\s*({[\\s\\S]*?})\\s*<\\/ztl>|(?=<StatusPlaceHolderImpl\\/>)",
+    "old-status": "<ztl>\\s*({[\\s\\S]*?})\\s*<\\/ztl>",
+    "analysis": "<UpdateVariable>(?:(?!<\\/?UpdateVariable>)[\\s\\S])*?<(Analysis|Analyze)>((?:(?!<\\/?UpdateVariable>)[\\s\\S])*?)<\\/\\1>(?:(?!<\\/?UpdateVariable>)[\\s\\S])*?<\\/UpdateVariable>",
+    "update": "<UpdateVariable>[\\s\\S]*?<\\/UpdateVariable>",
+    "status-marker": "<StatusPlaceHolderImpl/>",
+    "options": "<xuan>([\\s\\S]*?)<\\/xuan>",
+    "gui-prompt": "<Gui>[\\s\\S]*?<\\/Gui>",
+    "opening-user": "【开场白】([\\s\\S]*?)【\\/开场白】",
+    "opening-assistant": "【开局】([\\s\\S]*?)【\\/开局】",
+    "city-context": "<CityPublicContext>[\\s\\S]*?<\\/CityPublicContext>",
+    "story": "<\\/?cxx-story\\s*>",
+    "dialogue-retired": "<cxx-say\\s+speaker=\"([^\"<>]+)\"\\s+expression=\"[a-z_]+\"\\s*>([\\s\\S]*?)<\\/cxx-say\\s*>",
+    "opening-mount": "^<Opening(?:Form\\/>|Page id=\"(?:[1-9]|1[0-9]|2[0-4])\"\\/>)[ \\t]*(?=\\r?\\n|$)"
+  }
+}

@@ -1,0 +1,13 @@
+# Prepared route; import into the owning Caddyfile only in an authorized deployment.
+# All files here are public map assets. No credentials or player records are served.
+redir /map /map/ 308
+handle_path /map/* {
+ root * /opt/cyber2051/map
+ header Access-Control-Allow-Origin "*"
+ header Cache-Control "no-cache"
+ @mapAssets path /assets/*
+ header @mapAssets Cache-Control "public, max-age=31536000, immutable"
+ @mapModules path *.mjs
+ header @mapModules Content-Type "text/javascript; charset=utf-8"
+ file_server
+}

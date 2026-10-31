@@ -1,0 +1,11 @@
+.submission-prose,.submission-comparison{margin-block:1.5rem;min-width:0}
+.submission-prose h3,.submission-comparison h3{font-size:1rem;color:var(--ink,#e5e5e5);margin-block:0 1rem}
+.submission-prose-text{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;line-height:1.85;background:transparent;border-left:2px solid #936b7d;padding:0 0 0 1rem;margin:0;color:inherit;max-width:100%}
+.submission-media{border:1px solid #555;margin-block:1rem;padding:1rem;min-width:0}
+.submission-media label{display:block;margin-block:.5rem}
+.submission-media input{width:100%;box-sizing:border-box}
+#guided-prerequisites{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem}
+#guided-prerequisites label{display:flex;align-items:center;gap:.4rem}
+#guided-prerequisites input{width:auto}
+#contract-form .hint{margin:.4rem 0 1.25rem;font-size:.85rem;line-height:1.65}
+#original-draft pre,#preview-json{white-space:pre-wrap;overflow-wrap:anywhere;max-height:24rem;overflow:auto}

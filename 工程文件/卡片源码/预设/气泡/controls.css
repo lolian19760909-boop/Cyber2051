@@ -1,0 +1,22 @@
+#cxx-bda-control{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:8px 0;padding:12px 14px;border:1px solid var(--cxx-line,#71343f);border-left:3px solid var(--cxx-structure,#f2534c);border-radius:0;background:var(--cxx-panel,#120a0d);color:var(--cxx-text,#e6e9e8);font:16px/1.6 var(--cxx-font-ui,"Microsoft YaHei UI","Microsoft YaHei","PingFang SC",sans-serif);color-scheme:dark}
+#cxx-bda-control>span{color:var(--cxx-heading,#f2534c);font:var(--cxx-weight-latin,600) 12px/1.4 var(--cxx-font-latin,Rajdhani,Bahnschrift,"Microsoft YaHei",sans-serif);letter-spacing:var(--cxx-track,.12em);text-transform:uppercase}
+#cxx-bda-control select{flex:1 1 100%;min-width:0;max-width:100%;min-height:44px;margin:0;padding:0 12px;border:1px solid var(--cxx-line,#71343f);border-radius:0;background:var(--cxx-canvas,#100f14);color:var(--cxx-on-canvas,#ebe7e5);font:inherit;font-size:16px}
+#cxx-bda-control select:focus-visible{outline:2px solid var(--cxx-interactive,#52e0e8);outline-offset:2px}
+#cxx-bda-roles{flex:1 1 100%;min-width:0}
+#cxx-bda-roles summary{display:flex;align-items:center;min-height:44px;color:var(--cxx-interactive,#52e0e8);font-size:14px;cursor:pointer;list-style:none}
+#cxx-bda-roles summary::before{content:"＋";margin-right:8px}
+#cxx-bda-roles summary::-webkit-details-marker{display:none}
+#cxx-bda-roles .cxx-bda-role-actions{display:flex;flex-wrap:wrap;gap:8px;padding-bottom:8px}
+#cxx-bda-roles button{min-height:44px;margin:0;padding:8px 18px;border:1px solid var(--cxx-line,#71343f);border-radius:0;background:var(--cxx-canvas,#100f14);color:var(--cxx-interactive,#52e0e8);font:inherit;cursor:pointer}
+#cxx-bda-roles .cxx-bda-role-groups{max-height:min(45vh,420px);overflow-y:auto;overscroll-behavior:contain;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:2px}
+#cxx-bda-roles fieldset{min-width:0;margin:0;padding:0 10px 8px;border:1px solid var(--cxx-line,#71343f);border-radius:0}
+#cxx-bda-roles legend{max-width:100%;padding:0 4px;color:var(--cxx-heading,#f2534c)}
+#cxx-bda-roles label{display:flex;align-items:center;gap:8px;min-height:40px;margin:0;color:var(--cxx-text,#e6e9e8);font-size:14px;line-height:1.4;cursor:pointer;overflow-wrap:anywhere}
+#cxx-bda-roles input[type=checkbox]{appearance:none!important;display:grid!important;place-items:center!important;flex:none;width:16px;height:16px;margin:0;padding:0;border:1px solid var(--cxx-line-strong,#f2534c);border-radius:0;background:transparent;color:var(--cxx-on-interactive,#100f14);font:11px/1 var(--cxx-font-ui,"Microsoft YaHei",sans-serif);cursor:pointer}
+#cxx-bda-roles input[type=checkbox]:checked,#cxx-bda-roles input[type=checkbox]:indeterminate{background:var(--cxx-interactive,#52e0e8);border-color:var(--cxx-interactive,#52e0e8)}
+#cxx-bda-roles input[type=checkbox]:checked::before{content:"✓"}
+#cxx-bda-roles input[type=checkbox]:indeterminate::before{content:"−"}
+#cxx-bda-roles .cxx-bda-role-members{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 10px}
+#cxx-bda-roles :is(button,input,summary):focus-visible{outline:2px solid var(--cxx-interactive,#52e0e8);outline-offset:2px}
+#cxx-bda-control .cxx-bda-user-avatar{flex:1 1 100%;display:flex;align-items:center;gap:8px;color:var(--cxx-muted,#b5b8bd);font-size:14px}
+@media(max-width:480px){#cxx-bda-roles .cxx-bda-role-groups{grid-template-columns:minmax(0,1fr)}}

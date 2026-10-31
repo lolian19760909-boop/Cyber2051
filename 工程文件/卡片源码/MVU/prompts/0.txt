@@ -1,0 +1,48 @@
+【变量输出格式】
+正文模型输出剧情、状态栏与选项；额外解析模型依据本轮事实输出下列更新。正文解析模式由正文模型在同次回复末尾完成更新。两种模式使用同一套字段与结算规则。
+
+<输出位置与格式>
+只输出一组 UpdateVariable，内含完整 JSONPatch。Analysis 可省略；需要说明时只用一句实际变化摘要，不展开思考。JSONPatch 为合法 JSON 数组，数字不用引号，无变化写 []。已有叶字段用 replace；add 只用于当前注入规则明确支持的玩法记录和任务 events 数组。不替换整个 stat_data、terminal 或无关对象。
+</输出位置与格式>
+
+<更新条件>
+只记录本轮实际发生且尚未保存的变化。计划、预约、持有状态和回顾不产生新记录。没有变化时 JSONPatch 写 []。
+</更新条件>
+
+<允许更新>
+- 成长、资源、物品、装配、主动状态：向 /terminal/gameplay/numericInput 提交事件数组；事件结构按本轮注入的数值规则。不得直接写 growth、numeric、inventory、equipment、itemDefinitions、itemReceipts、loadout。
+- 成果：实际完成的小事、阶段目标、委托提交 achievement 事件；各独立成果分别记录，同一成果只记一次，经验由程序计算。source 必须为 {"kind":"story","id":"稳定成果编号"} 对象；kind 按事实选择 story/training/activity/quest，category 按实际成果选择 small/stage/gig/major，不使用 minor/interaction 等其他词。
+- NPC：使用 add /terminal/rosterInput，value 为本轮 ztl 主场景在场人物的事实数组。每项含稳定 id、actor 准确姓名、kind 和 quote 正文原句；achievement 另带 source、category、completed:true、reason。不要写 /terminal/roster/present，名单由程序从 ztl 提取；不要结算离场、平行或仅远程出现的人物。
+- 装备：保留明确型号、品质与能力，不用一级填未知品质；购买的实际扣款与装备同批提交。界面已保存的装配不再上报。
+- 钱包：/terminal/wallet 下的 yen 是余额，earned/spent 是累计收入/支出，累计值不回减。余额变化＝累计收入增量－累计支出增量。
+- 地点：实际到达才更新 /terminal/gameplay/location 的 mapId、placeId，使用已登记编号。扮演已有人物时，钱包与地点使用当前请求指定的 /terminal/ensemble/actors/<人物ID> 对应字段，不改其他人的记录。
+- 委托：仅更新已接取且有内容编号的 terminal.quests.<id>，可写 state、rank、objective、knownFacts、agreedYen、paidYen、refundedYen、settled、deadlineAt。state 按实际结果为进行中／完成／失败／暂离／已放弃／已过期；objective 仅写当前公开目标。agreedYen 是约定总额，paidYen/refundedYen 是实际累计收款/退款，settled 表示报酬结清，deadlineAt 仅写明确截止时间。缺失的允许字段可 add，不新增委托记录。
+- 已装载剧情任务：遵从动态注入的事件协议，add /terminal/quests/<id>/events，value为1—8项数组。每项kind为happened，按任务类型带event、stage或node及evidence；结果／分歧按注入规则带outcome或choice、value。evidence是fact与本轮正文原句quote，原句8—400字。禁止直接覆盖这些任务的state、objective、knownFacts、chapter、plot或line；程序继续验证任务归属、节点、引文与重复结算。委托实际收退款仍与钱包同批。
+</允许更新>
+
+<禁止重复结算>
+界面确认的开局、配点、物品与装配，以及程序结算的逐轮战斗伤害、治疗、消耗，均不重复上报。持有、计划与回顾不算新获得。委托完成不等于付款；paidYen 增量与钱包收入、refundedYen 增量与钱包支出同批保存。未知历史金额不猜成零后补发。接取、追踪、操作凭据、questJournal 由程序维护。
+</禁止重复结算>
+
+<UpdateVariable>
+<Analysis>本轮没有新增可保存的变化。</Analysis>
+<JSONPatch>[]</JSONPatch>
+</UpdateVariable>
+
+NPC变化只登记本轮ztl在场人物，离场、平行和远程人物冻结。使用add /terminal/rosterInput事实数组，每项包含稳定id、actor准确姓名、kind和quote正文原句。kind为achievement时另带source、category、completed:true、reason；kind为resource时另带resource:"hp|stamina|ram"、amount、reason；SAN使用shock/support/medicate事实，不直接写数值。不要扫描或结算未在场的61人。具体协议随成长上下文注入。
+
+<非空更新示例>
+下例仅说明字段结构，不代表当前故事已发生。前值：玩家 wallet={"yen":1200,"earned":3000,"spent":1800}。本轮正文原句为“主角修好中继器，客户随后转入5000日元维修费。”和“立希协助定位了中继器的故障接点。”；ztl.characters 中确有椎名立希在场。只在本轮事实与前值确实相符时填写对应变化；其他情境使用自己的真实原句和稳定编号。
+<UpdateVariable>
+<Analysis>记录实际报酬和双方已完成的修理成果。</Analysis>
+<JSONPatch>
+[
+  {"op":"replace","path":"/terminal/wallet/yen","value":6200},
+  {"op":"replace","path":"/terminal/wallet/earned","value":8000},
+  {"op":"add","path":"/terminal/gameplay/numericInput","value":[{"id":"repair_relay_01","kind":"achievement","source":{"kind":"story","id":"relay_repaired_01"},"category":"small","completed":true,"reason":"本轮已经修好中继器。"}]},
+  {"op":"add","path":"/terminal/rosterInput","value":[{"id":"taki_relay_help_01","actor":"椎名立希","kind":"achievement","source":{"kind":"story","id":"taki_relay_diagnosis_01"},"category":"small","completed":true,"reason":"完成故障接点定位。","quote":"立希协助定位了中继器的故障接点。"}]}
+]
+</JSONPatch>
+</UpdateVariable>
+扮演已有人物时，玩家 numericInput 与 wallet 路径使用本轮注入的真实 actor 路径，不改原玩家或其他人物。NPC 自身付款如需结算，必须另用已知的该 NPC 钱包三值计算，不从本示例猜测其余额；未知历史款项不补零。同一事实续写/重试沿用同一 id 与 source.id；同一批一项失败时全批不保存。
+</非空更新示例>

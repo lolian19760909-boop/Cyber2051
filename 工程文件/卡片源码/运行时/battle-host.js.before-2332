@@ -1,0 +1,161 @@
+(function(root,factory){const api=factory(root);if(typeof module==='object'&&module.exports)module.exports=api;else root.CxxBattleHost=api;})(globalThis,function(root){
+ 'use strict';
+ const structuredClone=(typeof module==='object'&&module.exports?require('../共享/data-clone.js'):globalThis.CxxDataClone).clone;
+  const CryptoCompat=typeof module==='object'&&module.exports?require('./crypto-compat.js'):globalThis.CxxCrypto;
+ // MVU appends its result after the completed story. Accept only that suffix;
+ // edits to the story itself must still invalidate a pending round.
+ function sameReply(before,after){const body=s=>String(s||'').replace(/\r\n/g,'\n').replace(/\s*<StatusPlaceHolderImpl\/>\s*$/,'').trimEnd(),a=body(before),b=body(after);return a===b||b.startsWith(a)&&/^\s*<UpdateVariable>[\s\S]*<\/UpdateVariable>\s*$/.test(b.slice(a.length));}
+ function create({api=root,top=root.parent||root,B=root.CxxBattle}){const C=root.CxxBattleContext||(typeof module==='object'&&module.exports?require('./battle-context.js'):null),ctx=()=>api.SillyTavern.getContext(),listeners=[],copy=v=>structuredClone(v);let pending=null,running=null,stopped=false,error='',disposed=false,generation=0,timer=null,finishFlight=null,scene=null,scanEpoch=0,scanId=null,ready=null,turnId=null,turnEpoch=0,roster=null,closureProof=null,closureId=null,closureEpoch=0,stage='idle',closing=false,closureWait=0,reportingError=false,warningKey='';
+  const closureSeen=new Set();
+  const scope=()=>{const c=ctx();return JSON.stringify([c.characters?.[c.characterId]?.avatar,c.getCurrentChatId()]);};
+  const hash=s=>root.CxxLoadout.hash(s),storageKey=()=> 'cxx-battle-pending:'+scope();
+  function persist(){try{if(pending)top.sessionStorage.setItem(storageKey(),JSON.stringify(pending));else top.sessionStorage.removeItem(storageKey());}catch{}}
+  function load(){warningKey='';cancelRecognition();cancelPreparation();cancelClosure();scene=null;roster=null;closureProof=null;pending=null;running=null;stopped=false;error='';stage='idle';closing=false;closureWait=0;closureSeen.clear();generation++;try{pending=JSON.parse(top.sessionStorage.getItem(storageKey())||'null');if(pending&&pending.scope!==scope())pending=null;}catch{}}
+  const canonicalChat=()=>top.CxxSource?ctx().chat.map((m,i)=>top.CxxSource.message(m,i)):ctx().chat;
+  const branch=end=>hash(JSON.stringify(canonicalChat().slice(0,end+1).map(m=>[m.is_user,m.swipe_id||0,m.mes])));
+  // Fingerprinting old malformed rows must not prevent reading a valid current
+  // encounter; only C.messages supplies semantic input to the recognizer.
+  const storyText=m=>{try{return C.storyText(m);}catch{return String(m.mes||'');}};
+  const sceneSource=()=>hash(scope()+actorStamp()+JSON.stringify(canonicalChat().map(m=>[!!m.is_user,!!m.is_system,m.swipe_id||0,storyText(m)])));
+  const A=typeof module==='object'&&module.exports?require('./ensemble-state.js'):root.CxxEnsembleState||top.CxxEnsembleState;
+  function selected(stat,actorId){if(A)return A.selected(stat,actorId);if(stat?.terminal?.ensemble)throw Error('人物状态服务尚未就绪。');return {actorId:'player',gameplay:stat?.terminal?.gameplay,binding:null};}
+  function liveStat(){const s=top.Cxx236State||root.Cxx236State;if(!s||typeof s.stat!=='function')return null;try{const v=s.stat();return v&&v.terminal?v:null;}catch(e){return null;}}
+  function currentStat(){for(const m of ctx().chat.slice().reverse()){const s=m.variables?.[m.swipe_id||0]?.stat_data;if(s?.terminal)return s;}const live=liveStat();if(live)return live;throw Error('当前分支的人物存档尚未就绪。');}
+  function currentGame(){return selected(currentStat()).gameplay;}
+  function actorFor(type,stat){const actorId=top.CxxContext?.generationBinding?.(type)?.actorId;if(!actorId&&stat?.terminal?.ensemble&&!(stat.terminal.ensemble.control?.actorId==='player'&&stat.terminal.ensemble.control?.revision===0)&&['swipe','regenerate','continue'].includes(type))throw Error('旧回复的人物来源服务尚未就绪。');return selected(stat,actorId);}
+  const actorStamp=()=>JSON.stringify(selected(currentStat()).binding);
+  function encounter(){return scene&&scene.source===sceneSource()&&scene.draft===inputDraft()?copy(scene):null;}
+  function authorizeEncounter(id){const value=encounter();if(!value?.inCombat||value.id!==id)throw Error('当前现场未确认或正文已变化，请重新识别战况。');return value;}
+  function cancelRecognition(){scanEpoch++;if(scanId)top.__cxx_utility__?.cancel(scanId);scanId=null;}
+  function notify(){top.dispatchEvent?.(new top.Event('cxx-player-changed'));}
+  function status(value,message=''){stage=value;error=message;notify();}
+  function inputDraft(){return top.document?.querySelector('#send_textarea')?.value||'';}
+  function cancelPreparation(){turnEpoch++;if(turnId)top.__cxx_utility__?.cancel(turnId);turnId=null;ready=null;}
+  function cancelClosure(){closureEpoch++;if(closureId)top.__cxx_utility__?.cancel(closureId);closureId=null;}
+  function history(game,{to=ctx().chat.length-1,draft}={}){
+    const c=game.numeric?.combat,from=c?.active?c.encounterStart:c?.closed?.source?.floor;
+    return C.messages(canonicalChat(),{from:Number.isInteger(from)?from:0,to,draft});
+  }
+  function request(id,purpose,messages,game,extra,system){
+    const utility=top.__cxx_utility__;if(!utility)throw Error('解析连接尚未就绪，请在终端或开局设置连接，或修正本轮行动后发送。');
+    const input={...C.input(messages,game),purpose,...extra};
+    return utility.request({id,kind:'battle',input,system:C.instructions+'\n'+system});
+  }
+  async function recognize(){if(top.CxxSource)await top.CxxSource.prime();
+    if(disposed||!idle())throw Error('请等待正文和变量处理结束后识别。');
+    cancelRecognition();const epoch=scanEpoch,source=sceneSource(),game=currentGame(),draft=inputDraft(),messages=history(game,{draft});
+    if(!messages.some(m=>m.role==='assistant'))throw Error('当前没有可识别的正文现场。');
+    const id='encounter_'+CryptoCompat.uuid(top.crypto).replaceAll('-','');scanId=id;status('recognizing');
+    try{
+      const active=game.numeric?.combat?.active;
+      const result=await request(id,active?'roster':'scene',messages,game,{},active?'只返回{allies:[],enemies:[],checks:[],departures:[{id,evidence}]}。列出当前名单和新增参战者；departures仅填明确离开本场冲突者，不以本段没提到代替离场。':'只返回{inCombat:boolean,startFloor:本场冲突起点楼层,evidence:{floor,swipe,quote:最新assistant实际交战或即将交火的原句},allies:[],enemies:[],checks:[]}。玩家声明足以列入候选，但不能独自证明现场已经交战。已结束或不确定设false。');
+      if(disposed||epoch!==scanEpoch||source!==sceneSource()||draft!==inputDraft()||!idle()||B.stateKey(game)!==B.stateKey(currentGame()))throw Error('现场或识别任务已变化，旧结果未采用。');
+      if(active){roster={...C.changes(result,messages,game),id,source,draft,battleId:game.numeric.combat.id,expected:JSON.stringify(game.numeric.combat)};status(roster.changed?'confirmation':'ready');return {...copy(roster),inCombat:true};}
+      scene={...C.scene(result,messages,game),id,source,draft};status(scene.inCombat?'confirmation':'idle');return copy(scene);
+    }catch(e){if(epoch===scanEpoch)status('error',e.message);throw e;
+    }finally{if(epoch===scanEpoch)scanId=null;}
+  }
+  function authorizeRoster(id){if(!roster?.changed||roster.id!==id||roster.source!==sceneSource()||roster.draft!==inputDraft()||roster.expected!==JSON.stringify(currentGame().numeric.combat))throw Error('参战名单或输入已变化，请重新识别。');return copy(roster);}
+  async function confirmRoster(id){const value=authorizeRoster(id),actor=selected(currentStat());await top.__cxx_player__.commit({action:'battle-roster',actorId:actor.actorId,...(actor.binding?{actorBinding:actor.binding}:{}),rosterId:id,expected:value.expected});roster=null;cancelPreparation();status('ready','名单已保存，可以继续发送。');}
+  function gameFor(type){let end=ctx().chat.length-1;if(['regenerate','swipe'].includes(type)&&!ctx().chat[end]?.is_user)end--;for(let i=end;i>=0;i--){const m=ctx().chat[i],s=m.variables?.[m.swipe_id||0]?.stat_data;if(s?.terminal)return actorFor(type,s).gameplay;}throw Error('本轮起点存档尚未就绪。');}
+  function manualAction(type,game){
+    const c=game.numeric?.combat,latest=['regenerate','swipe'].includes(type)?actorFor(type,currentStat()).gameplay?.numeric?.combat:c;
+    return latest?.id===c?.id&&latest?.round===c?.round&&latest?.actionOverride?.round===(c.round||0)+1?latest.actions?.player:null;
+  }
+  function preparationKey(type,draft,game){return hash(JSON.stringify([scope(),actorStamp(),actorFor(type,currentStat()).actorId,branch(ctx().chat.length-1),type,draft,B.stateKey(game),manualAction(type,game)]));}
+  async function preflight({type='normal',draft=inputDraft()}={}){if(top.CxxSource)await top.CxxSource.prime();
+    if(disposed||!idle())throw Error('请等待正文与变量保存结束后发送。');
+    let game=gameFor(type),c=game.numeric?.combat;
+    if(!c?.manual||!c.active||c.paused){cancelPreparation();return;}
+    if(pending?.received){await finish();game=gameFor(type);c=game.numeric?.combat;if(pending?.received)throw Error('上一轮结算尚未保存，请重试保存。');if(!c?.active)return;}
+    if(type==='continue'){
+      if(!pending)return;
+      if(pending.scope!==scope()||(pending.actorId||'player')!==actorFor(type,currentStat()).actorId||pending.sourceBranch!==branch(ctx().chat.length-2)||pending.ticket.expected!==B.stateKey(game))throw Error('行动或本轮起点已变化；请重新生成本轮，不能续写旧行动。');return;
+    }
+    if(B.mode(c)==='cheat')return;
+    const key=preparationKey(type,draft,game);if(ready?.key===key)return;
+    cancelPreparation();const epoch=turnEpoch,id='turn_'+CryptoCompat.uuid(top.crypto).replaceAll('-',''),originalDraft=inputDraft();turnId=id;status('recognizing');
+    try{
+      let selected;
+      const correction=manualAction(type,game);
+      if(correction)selected=C.action(correction,game,{manual:true});
+      else{
+        const reroll=['regenerate','swipe'].includes(type),to=ctx().chat.length-1-(reroll&&!ctx().chat.at(-1)?.is_user?1:0),messages=history(game,{to,...(!reroll?{draft}:{} )}),text=reroll?messages.findLast(m=>m.role==='player')?.text||'':draft||(!ctx().chat.at(-1)?.is_user?'':ctx().chat.at(-1).mes);
+        const result=await request(id,'turn',messages,game,{playerAction:text,abilities:B.available(game).map(x=>({id:x.id,name:x.name}))},'识别playerAction本轮实际行动，只返回{action:{kind:attack|defend|ability|withdraw,target:现有编号,ability:现有能力编号},allies:[],enemies:[],checks:[],departures:[{id,evidence}]}。纯交涉、观察、等待或空输入按defend。攻击有多个可能目标且未明确时target空，不猜测；能力不在输入列表时ability空。按实际正文和玩家明确参战声明核对增援；departures须有明确离场依据。');
+        const delta=C.changes(result,messages,game);
+        if(disposed||epoch!==turnEpoch||key!==preparationKey(type,draft,gameFor(type))||originalDraft!==inputDraft()||!idle())throw Error('聊天、分支、草稿或战况已变化，输入保留，请重新发送。');
+        if(delta.changed){roster={...delta,id,source:sceneSource(),draft:originalDraft,battleId:c.id,expected:JSON.stringify(c)};status('confirmation','发现参战名单变化，请先确认名单；输入已保留。');top.__cxx_battle_surface__?.open();throw Error(error);}
+        selected=C.action(result.action,game);
+      }
+      if(disposed||epoch!==turnEpoch||key!==preparationKey(type,draft,gameFor(type))||originalDraft!==inputDraft())throw Error('待发送行动已经变化，输入已保留。');
+      const values=new Uint32Array(1);top.crypto.getRandomValues(values);const ticket=B.prepare(game,{id:'round_'+CryptoCompat.uuid(top.crypto).replaceAll('-',''),roll:values[0]/4294967296,actionOverride:selected});
+      ready={key,ticket,draft,type};status('ready');
+    }catch(e){if(epoch===turnEpoch&&stage!=='confirmation')status('error',e.message+' 输入已保留，可重试识别或修正本轮行动。');throw e;
+    }finally{if(epoch===turnEpoch)turnId=null;}
+  }
+  function assertOperation(request){
+    if(['battle-action','battle-roster','battle-pause','battle-edit'].includes(request.action)&&pending?.received)throw Error('上一轮正文已完成，请先重试保存本轮结算，再修改行动或名单。');
+  }
+  function authorizeClosure(){if(!closureProof||closureProof.source!==sceneSource()||closureProof.expected!==JSON.stringify(currentGame().numeric.combat))throw Error('战斗结束依据已变化。');return copy(closureProof);}
+  async function endBattle(reason='recovery'){
+    if(!idle()||closing)throw Error('请等待本轮正文与变量处理结束。');const actor=selected(currentStat()),c=actor.gameplay.numeric.combat;if(!c?.active)return;
+    if(reason==='narrative_end')authorizeClosure();
+    closing=true;cancelPreparation();cancelRecognition();if(reason==='recovery')cancelClosure();generation++;running=null;stopped=true;pending=null;persist();
+    try{await top.__cxx_player__.commit({action:'battle-close',actorId:actor.actorId,...(actor.binding?{actorBinding:actor.binding}:{}),battleId:c.id,reason,expected:JSON.stringify(c),source:{floor:ctx().chat.length-1,swipe:ctx().chat.at(-1)?.swipe_id||0}});pending=null;persist();roster=null;scene=null;status('saved',reason==='recovery'?'本场已异常结束，已保存资源保持，不判胜或发奖励。':'正文已结束本场冲突，战斗已收起。');}
+    catch(e){status('error',e.message);throw e;}finally{closing=false;closureProof=null;}
+  }
+  async function checkClosure({retry=false}={}){
+    if(disposed||closing||pending?.received||!idle()||stopped)return false;
+    let game;try{game=currentGame();}catch{return false;}const c=game.numeric?.combat,row=ctx().chat.at(-1);if(!c?.active||!c.paused||!row||row.is_user||row.is_system||!row.variables?.[row.swipe_id||0]?.stat_data)return false;
+    const owner=scope(),epochBefore=generation,expected=B.stateKey(game),swipe=row.swipe_id||0;if(top.CxxSource)await top.CxxSource.prime();
+    if(disposed||closing||pending?.received||stopped||!idle()||owner!==scope()||epochBefore!==generation||ctx().chat.at(-1)!==row||(row.swipe_id||0)!==swipe||expected!==B.stateKey(currentGame()))return false;
+    const source=sceneSource(),key=hash(source+expected);if(closureId||!retry&&closureSeen.has(key))return false;closureSeen.add(key);if(closureSeen.size>64)closureSeen.delete(closureSeen.values().next().value);
+    const id='closure_'+CryptoCompat.uuid(top.crypto).replaceAll('-',''),epoch=++closureEpoch,messages=history(game);closureId=id;
+    try{
+      const result=await request(id,'closure',messages,game,{},'只核对最新完整正文是否明确结束current.id所指同一场冲突，返回{ended:boolean,sameConflict:boolean,battleId:current.id,evidence:{floor,swipe,quote},enemies:[{id,state:incapacitated|withdrawn|truce,evidence:{floor,swipe,quote}}]}。必须全部敌人已被制服、撤离或停战，且最新正文明确冲突结束。愿望、威胁、暂时躲避、写作建议不算结束；不确定ended:false。');
+      if(disposed||epoch!==closureEpoch||source!==sceneSource()||B.stateKey(game)!==B.stateKey(currentGame())||!idle())return false;
+      const proof=C.closure(result,messages,game);if(!proof)return false;closureProof={...proof,battleId:c.id,source,expected:JSON.stringify(c)};await endBattle('narrative_end');return true;
+    }catch(e){if(epoch===closureEpoch&&!disposed)status('error','战斗结束尚未确认：'+e.message+' 可重查结束或使用异常结束。');return false;}finally{if(epoch===closureEpoch)closureId=null;}
+  }
+  function warn(e){if(disposed)return;error=e.message||String(e);const key=JSON.stringify([scope(),generation,error]);if(warningKey===key)return;warningKey=key;top.toastr?.warning(error,'本轮交锋');reportingError=true;try{top.dispatchEvent?.(new top.Event('cxx-player-changed'));}finally{reportingError=false;}}
+  function prepare(type,stat,dryRun){if(dryRun)return '';const chat=ctx().chat,last=chat.length-1,isContinue=type==='continue',reroll=['regenerate','swipe'].includes(type),target=isContinue||reroll&&!chat[last]?.is_user?last:last+1,sourceBranch=branch(isContinue||reroll&&!chat[last]?.is_user?last-1:last),actor=actorFor(type,stat),g=actor.gameplay;
+   const samePending=pending&&pending.scope===scope()&&(pending.actorId||'player')===actor.actorId&&pending.sourceBranch===sourceBranch&&pending.ticket.expected===B.stateKey(g)&&(isContinue||pending.draft===inputDraft());
+   if(isContinue&&!pending)return '';
+   if(isContinue&&!samePending)throw Error('行动或本轮起点已变化；请重新生成本轮，不能续写旧行动。');
+   if(!g?.numeric?.combat?.manual||!g.numeric.combat.active||g.numeric.combat.paused){running=null;return '';}
+   if(pending?.received)throw Error('上一轮结算尚未保存，请在战斗面板重试保存后继续。');
+   if(!samePending||reroll){
+    let ticket;
+    if(B.mode(g.numeric.combat)==='system'){
+      if(!ready||ready.key!==preparationKey(type,inputDraft(),g))throw Error('本轮行动尚未识别，请从发送按钮重试，或在战斗面板修正本轮行动。');
+      ticket=B.prepare(g,{...ready.ticket,source:{floor:target,swipe:0}});
+    }else{const values=new Uint32Array(1);top.crypto.getRandomValues(values);ticket=B.prepare(g,{id:'round_'+CryptoCompat.uuid(top.crypto).replaceAll('-',''),roll:values[0]/4294967296,source:{floor:target,swipe:0}});}
+    ticket={...ticket,actorId:actor.actorId};pending={scope:scope(),actorId:actor.actorId,sourceBranch,target,draft:inputDraft(),created:Date.now(),ticket,received:null};
+   }
+   running={id:pending.ticket.id,epoch:++generation};stopped=false;error='';warningKey='';stage='generating';persist();return B.prompt(pending.ticket);
+  }
+  function stoppedGeneration(){stopped=true;running=null;stage=pending?'stopped':'idle';persist();}
+  function pendingFor(source){
+   if(!pending||stopped||closing||pending.scope!==scope()||(!running&&!pending.received)||!Number.isInteger(source?.floor))return null;
+   const floor=source.floor,row=ctx().chat[floor],stream=ctx().streamingProcessor;
+   if(!row||row.is_user||row.is_system||!row.mes?.trim()||(row.swipe_id||0)!==source.swipe||ctx().isGenerating||stream?.messageId===floor&&stream?.abortController?.signal.aborted)return null;
+   if(branch(floor-1)!==pending.sourceBranch||pending.received&&(pending.received.floor!==floor||pending.received.swipe!==source.swipe||!sameReply(pending.received.text,row.mes)))return null;
+   const live=selected(currentStat(),pending.actorId||'player').gameplay?.numeric?.combat;if(live?.closed&&live.id===pending.ticket.snapshot.numeric.combat.id)return null;
+   return {...B.prepare(pending.ticket.snapshot,{...pending.ticket,source:{floor,swipe:source.swipe}}),actorId:pending.actorId||'player'};
+  }
+  function received(floor,type){if(!running||!pending||running.id!==pending.ticket.id||pending.scope!==scope()||!Number.isInteger(floor))return;const m=ctx().chat[floor],stream=ctx().streamingProcessor;if(!m||m.is_user||!m.mes?.trim()||stopped||stream?.messageId===floor&&stream?.abortController?.signal.aborted)return;pending.target=floor;pending.sourceBranch=branch(floor-1);pending.received={floor,swipe:m.swipe_id||0,text:m.mes,epoch:generation};const source={floor,swipe:m.swipe_id||0};pending.ticket={...B.prepare(pending.ticket.snapshot,{...pending.ticket,source}),actorId:pending.actorId||'player'};persist();stage="saving";notify();schedule();}
+  function idle(){return !ctx().isGenerating&&!api.builtin?.duringGenerating?.()&&!api.Mvu?.isDuringExtraAnalysis?.()&&!top.Mvu?.isDuringExtraAnalysis?.()&&!top.__cxx_gal_g1__?.numericBusy?.();}
+  function schedule(){if(timer||disposed)return;timer=setTimeout(()=>{timer=null;const owner=scope(),epoch=generation;void finish().then(()=>{if(disposed||closing)return;if(!idle()){if(!closureWait)closureWait=Date.now();if(Date.now()-closureWait<30000)schedule();return;}closureWait=0;return checkClosure();}).catch(e=>{if(!disposed&&owner===scope()&&epoch===generation)warn(e);});},150);}
+  function finish(){if(finishFlight)return finishFlight;const flight=finishOnce().finally(()=>{if(finishFlight===flight)finishFlight=null;});finishFlight=flight;return flight;}
+  async function finishOnce(){if(disposed||!pending?.received||stopped)return false;const p=pending,receipt=p.received,epoch=generation;if(p.scope!==scope())return false;if(top.CxxSource)await top.CxxSource.prime();if(disposed||stopped||pending!==p||p.scope!==scope()||epoch!==generation)return false;const start=Date.now();while(!idle()){if(disposed||pending!==p||p.scope!==scope())return false;if(Date.now()-start>30000)throw Error('本轮正文已完成，变量处理仍未结束；结果已保留，可稍后重试保存。');await new Promise(r=>setTimeout(r,150));}
+   const row=ctx().chat[receipt.floor];if(pending!==p||p.scope!==scope()||row?.is_user||(row?.swipe_id||0)!==receipt.swipe||!sameReply(receipt.text,row?.mes))throw Error('回复分支已变化，原交锋结果未写入。');const stat=row.variables?.[receipt.swipe]?.stat_data,actor=stat&&selected(stat,p.actorId||'player'),live=actor?.gameplay;if(!live){if(Date.now()-p.created<30000){schedule();return false;}throw Error('正文层的变量快照尚未就绪；交锋结果已保留，未提前扣血。');}stage='saving';
+   if(!live.numeric?.receipts?.[p.ticket.id]?.round)await top.__cxx_player__.commit({action:'battle-resolve',actorId:actor.actorId,...(actor.binding?{actorBinding:actor.binding}:{}),pending:p.ticket,floor:receipt.floor,swipe:receipt.swipe});else await top.__cxx_player__.retrySave();
+   if(pending===p){pending=null;running=null;ready=null;error='';warningKey='';stage='saved';persist();notify();}return true;
+  }
+  function on(name,fn){const event=ctx().eventTypes[name];if(!event)return;api.eventOn(event,fn);listeners.push(()=>api.eventRemoveListener(event,fn));}
+  function start(){top.__cxx_battle__?.destroy();top.__cxx_battle__=service;load();schedule();on('CHAT_CHANGED',()=>{load();schedule();});on('GENERATION_STARTED',(_,options,dryRun)=>{if(!dryRun)stopped=false;});on('GENERATION_STOPPED',stoppedGeneration);on('MESSAGE_RECEIVED',received);on('MESSAGE_SENT',floor=>{if(running&&pending&&pending.scope===scope()){pending.sourceBranch=branch(Number.isInteger(floor)?floor:ctx().chat.length-1);persist();}});on('GENERATION_ENDED',schedule);on('MESSAGE_SWIPED',()=>{if(!ctx().isGenerating){cancelPreparation();cancelRecognition();cancelClosure();roster=null;running=null;generation++;schedule();}});
+   const changed=()=>{if(reportingError)return;closureWait=0;schedule();};top.addEventListener?.('cxx-player-changed',changed);listeners.push(()=>top.removeEventListener?.('cxx-player-changed',changed));return service;}
+  const service={preflight,prepare,pendingFor,finish,recognize,encounter,authorizeEncounter,cancelRecognition,cancelPreparation,assertOperation,authorizeRoster,confirmRoster,authorizeClosure,endBattle,checkClosure,roster:()=>roster?copy(roster):null,state:()=>({pending:!!pending,received:!!pending?.received,error,stage,recognizing:!!turnId||!!scanId,closing:!!closureId}),start,destroy(){disposed=true;cancelRecognition();cancelPreparation();cancelClosure();scene=null;clearTimeout(timer);listeners.splice(0).forEach(f=>f());if(top.__cxx_battle__===service)delete top.__cxx_battle__;}};return service;
+ }
+ return {create};
+});

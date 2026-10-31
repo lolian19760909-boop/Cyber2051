@@ -1,0 +1,90 @@
+{
+  "purpose": "Decorative backgrounds, not location or story evidence",
+  "items": [
+    {
+      "key": "scene",
+      "source": "终端UI_行动background.png",
+      "sourceSha256": "235c34462e59a5e0d5c6cc394fc97481499bcca93cbf1b3047a579ca06057e52",
+      "output": "assets/operations/scene.webp",
+      "size": [
+        1200,
+        900
+      ],
+      "bytes": 14396,
+      "sha256": "f68037d39777831aed092033b2204da987d3ee334e426c6eb44ed172979081a6"
+    },
+    {
+      "key": "row-1",
+      "source": "终端UI_行动任务background1.png",
+      "sourceSha256": "58c79ca2fd22e894aaa206d666c6f759b12be4bcaee20e4b1a6628fba7dc4724",
+      "output": "assets/operations/row-1.webp",
+      "size": [
+        1200,
+        900
+      ],
+      "bytes": 44084,
+      "sha256": "14afbcd0da72cf8a5afaeb982b5a97bf1771ce31c850c75e651dfa47acfaeea2"
+    },
+    {
+      "key": "row-2",
+      "source": "终端UI_行动任务background2.png",
+      "sourceSha256": "e40667b7ac4d3a6c4df0bd5b82d0f8949cf4a000762e0e7a7b02a4279386c4a5",
+      "output": "assets/operations/row-2.webp",
+      "size": [
+        1200,
+        675
+      ],
+      "bytes": 64900,
+      "sha256": "1eafe3c6a2cd59cf2dc9a5eda1703233e94879c71b27fc68113822e855b161ac"
+    },
+    {
+      "key": "row-3",
+      "source": "终端UI_行动任务background3.png",
+      "sourceSha256": "fe6e143ad79f8de329fbf00668b4405f6282e3a7206d3f0880619cfcf426754b",
+      "output": "assets/operations/row-3.webp",
+      "size": [
+        1200,
+        400
+      ],
+      "bytes": 37588,
+      "sha256": "3df698f428de8bd3cba4ccb5520a041f991cd881c025057041512e0f69a561bc"
+    },
+    {
+      "key": "row-4",
+      "source": "终端UI_行动任务background4.png",
+      "sourceSha256": "d28fefd9d9b8d26f97b4dec01971d1aaed1848565cd0ad93ad1500410112f359",
+      "output": "assets/operations/row-4.webp",
+      "size": [
+        1200,
+        400
+      ],
+      "bytes": 32726,
+      "sha256": "8cd35472d3c0720add7bdc75de3a0867480d4e32b91383ff146c2284f77e2ecb"
+    },
+    {
+      "key": "row-5",
+      "source": "终端UI_行动任务background5.png",
+      "sourceSha256": "8fd90046e182d5cfbf3224e9d8f893e68c820c9cb21ac6aba218f9a86be9f6de",
+      "output": "assets/operations/row-5.webp",
+      "size": [
+        1200,
+        400
+      ],
+      "bytes": 24364,
+      "sha256": "18477b0171e409a6276acbdd41da911b9d27fc186fe295dc38bcd53467227f2f"
+    },
+    {
+      "key": "row-6",
+      "source": "终端UI_行动任务background6.png",
+      "sourceSha256": "05b55b896dc34fbc95c4f7c7cac0fe927775b24870b1faa501ce35f150304e7e",
+      "output": "assets/operations/row-6.webp",
+      "size": [
+        1200,
+        400
+      ],
+      "bytes": 40040,
+      "sha256": "c2d89d54da7645cc5e8a1c167ef167227844d00eef29203bbbbea9536ab90cac"
+    }
+  ],
+  "bytes": 258098
+}

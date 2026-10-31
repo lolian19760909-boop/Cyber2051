@@ -1,0 +1,35 @@
+{
+  "format": "tavern-visual-project",
+  "schema": 1,
+  "id": "cxx-forge-dissolve",
+  "version": "2",
+  "title": "初始装备像素装配",
+  "engine": {
+    "id": "web-bundle",
+    "version": "1"
+  },
+  "scene": {
+    "file": "entry.js",
+    "interactive": false
+  },
+  "inputs": [
+    {
+      "id": "theme",
+      "type": "string"
+    },
+    {
+      "id": "from",
+      "type": "string"
+    },
+    {
+      "id": "to",
+      "type": "string"
+    }
+  ],
+  "events": [
+    "complete"
+  ],
+  "files": [
+    "entry.js"
+  ]
+}

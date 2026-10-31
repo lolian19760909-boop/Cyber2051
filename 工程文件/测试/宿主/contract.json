@@ -1,0 +1,20 @@
+{
+  "target": "latest-stable",
+  "reviewedAt": "2026-10-08",
+  "reviewedRelease": "v2.3.0",
+  "reportedSillyTavernVersion": "1.18.0",
+  "releaseUrl": "https://github.com/Darkatse/TauriTavern/releases/tag/v2.3.0",
+  "sources": ["src/scripts/st-context.js", "src/compat-version.js"],
+  "sourceHashes": {
+    "src/scripts/st-context.js": "274aee68915a364664d9c472f5888af9908663d27ac882dbd3583fe26633d4e4",
+    "src/compat-version.js": "a766eaeb81d395f4736e384015e3ea855a1f1eb3002e919918d17a20a9299fd7"
+  },
+  "modules": {
+    "Cxx238Dialogue": "正文/dialogue.js",
+    "CxxDisplayGuard235": "正文/display-guard.js",
+    "CxxGalParser": "Gal/parser.js",
+    "CxxGalLandscape": "Gal/landscape.js",
+    "CxxPlayerHost": "运行时/player-host.js",
+    "CxxUpdateHost": "运行时/host.js"
+  }
+}

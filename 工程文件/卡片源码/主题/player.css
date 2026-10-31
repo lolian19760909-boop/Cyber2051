@@ -1,0 +1,25 @@
+/* 2051 / compact audio deck */
+.xp { font-family:'Cascadia Code','Consolas','Noto Sans SC',sans-serif; }
+.xp-c { background:linear-gradient(135deg,#210f14,#0d080c);border:1px solid #59262a;border-radius:3px;box-shadow:0 10px 24px rgba(0,0,0,.28); }
+.xp-di { border-color:#6ecbd0;filter:saturate(.65);box-shadow:none; }.xp-d.on .xp-di { box-shadow:0 0 0 2px rgba(110,203,208,.15); }
+.xp-dh { background:#09080b;border-color:#6ecbd0; }.xp-ds,.xp-st { opacity:.18;filter:grayscale(1); }
+.xp-t { color:#d2d5d4; }.xp-t .xn { color:#dc5c59; }.xp-a { color:#a4a8aa; }
+.xp-num { color:#6ecbd0;background:rgba(110,203,208,.06);border:1px solid #5a292d;border-radius:2px; }
+.xp-br:nth-child(odd) { background:#6ecbd0; }.xp-br:nth-child(even) { background:#dc5c59; }
+.xp-sk,.xp-md { background:#241116;border:1px solid #5a292d;border-radius:2px; }
+.xp-sk:hover,.xp-md:hover { background:#302025;border-color:#6ecbd0; }
+.xp-sk svg,.xp-md[data-m="0"] svg,.xp-md[data-m="2"] svg { fill:#6ecbd0;opacity:.8; }
+.xp-md[data-m="1"] { background:#38191e;border-color:#dc5c59; }.xp-md[data-m="1"] svg { fill:#dc5c59; }
+.xp-p { background:#6ecbd0;border:1px solid #92e0e2;border-radius:2px;box-shadow:0 0 0 4px rgba(110,203,208,.07); }
+.xp-p:hover { box-shadow:0 0 0 4px rgba(110,203,208,.12); }.xp-pi { border-left-color:#08080b; }.xp-ppb { background:#08080b; }
+.xp-vol svg { fill:#6ecbd0; }.xp-vr { background:linear-gradient(90deg,#dc5c59,#6ecbd0); }
+.xp-vr::-webkit-slider-thumb,.xp-vr::-moz-range-thumb { background:#6ecbd0;border-color:#09080b;box-shadow:none; }
+.xp-bl { background:linear-gradient(90deg,#6ecbd0,#5a292d,#dc5c59);height:2px;border-radius:0; }
+.xp-p:focus-visible,.xp-sk:focus-visible,.xp-md:focus-visible { outline:2px solid #dc5c59;outline-offset:2px; }
+@keyframes cp-player-flow { from { background-position:100% 0; } to { background-position:-100% 0; } }
+.xp-bl {
+  background:linear-gradient(90deg,transparent 24%,#5a292d 38%,#6ecbd0 50%,#dc5c59 54%,transparent 70%);
+  background-size:220% 100%;animation:cp-player-flow 11s linear infinite;
+}
+@media (prefers-reduced-motion:reduce) { .xp *, .xp *::before, .xp *::after { animation-duration:.01ms !important;transition-duration:.01ms !important; } }
+@media (prefers-reduced-motion:reduce) { .xp-bl { animation:none !important; } }

@@ -1,0 +1,26 @@
+Web tokenizer distribution notice for Cyber 2051
+
+Included package: @agnai/web-tokenizers 0.1.3
+Original package file: lib/index.js (including its embedded WebAssembly)
+Package repository: https://github.com/mlc-ai/tokenizers-cpp
+Web bindings: https://github.com/mlc-ai/tokenizers-cpp/tree/main/web
+Package license declaration: Apache-2.0
+Upstream license: https://github.com/mlc-ai/tokenizers-cpp/blob/main/LICENSE
+
+The package README identifies its wrapped libraries as:
+- HuggingFace tokenizers: https://github.com/huggingface/tokenizers
+- SentencePiece: https://github.com/google/sentencepiece
+
+The original bundled runtime, including embedded copyright and permission
+notices for its JavaScript helpers, is retained. Cyber 2051 adds an ES module
+export boundary and selects the browser environment for this local runtime;
+the bundled tokenizer algorithms and WebAssembly are not edited.
+
+The installed package version and original runtime SHA-256 are recorded in
+src/models/native/provenance.json. The generated asset SHA-256 values are
+recorded there as well. This notice was prepared by the Cyber 2051 project
+from the installed package metadata and README; it is not an upstream NOTICE.
+
+Related separately licensed dependency:
+tiktoken 1.0.22, JS/WASM bindings, https://github.com/dqbd/tiktoken
+MIT copyright and permission notice: tiktoken-LICENSE

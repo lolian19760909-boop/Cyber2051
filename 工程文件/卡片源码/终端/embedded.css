@@ -1,0 +1,137 @@
+html[data-cxx-embedded=true] {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  color-scheme: dark;
+  background: var(--cxx-ink)!important;
+}
+
+html[data-cxx-embedded=true] body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--cxx-ink)!important;
+}
+
+html[data-cxx-embedded=true] #t2051x-root {
+  height: 100%;
+  min-height: 0;
+  background: transparent;
+}
+
+html[data-cxx-embedded=true] #t2051x-terminal {
+  position: absolute!important;
+  inset: 0!important;
+  transform: none!important;
+  width: 100%!important;
+  height: 100%!important;
+  min-height: 0!important;
+  max-height: none!important;
+  display: flex;
+  flex-direction: column;
+  border: 0;
+  background: transparent!important;
+  padding: 0;
+}
+
+html[data-cxx-embedded=true] #t2051x-terminal[hidden] {
+  display: none!important;
+}
+
+html[data-cxx-embedded=true] #t2051x-terminal>.masthead {
+  display: none!important;
+}
+
+html[data-cxx-embedded=true] #t2051x-system-nav {
+  display: none!important;
+}
+
+html[data-cxx-embedded=true] .terminal-foot {
+  display: none!important;
+}
+
+html[data-cxx-embedded=true] .terminal-scene {
+  display: none!important;
+}
+
+html[data-cxx-embedded=true] #t2051x-fab {
+  display: none!important;
+}
+
+html[data-cxx-embedded=true] .terminal-history-back {
+  display: none!important;
+}
+
+html[data-cxx-embedded=true] #t2051x-workspace {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  grid-column: auto;
+  background: transparent;
+}
+
+html[data-cxx-embedded=true] #t2051x-workspace>.page {
+  min-height: 100%;
+  height: auto;
+  padding: 12px;
+  background: transparent;
+}
+
+/* The journal, network and archive pages scroll inside their list and detail columns, so they keep the workspace height as in the standalone terminal. */
+html[data-cxx-embedded=true] #t2051x-workspace>#terminal-module-operations,
+html[data-cxx-embedded=true] #t2051x-workspace>#terminal-module-network {
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+}
+
+html[data-cxx-embedded=true] #t2051x-workspace>#t2051x-page-archive {
+  height: 100%;
+  min-height: 0;
+  padding: 12px 8px 8px;
+}
+
+/* The city page's map fills the workspace (DESIGN.md 10.14); its section page carries the padding. */
+html[data-cxx-embedded=true] #t2051x-workspace>.city-page {
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+}
+
+html[data-cxx-embedded=true] #t2051x-workspace>.terminal-player {
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+html[data-cxx-embedded=true] .terminal-player-body {
+  min-height: 0;
+  overflow: hidden;
+  flex: 1;
+  padding: 8px 12px;
+}
+
+@media (max-width:700px) {
+  html[data-cxx-embedded=true] #t2051x-workspace>.page {
+    padding: 4px;
+  }
+
+  html[data-cxx-embedded=true] .terminal-player-body {
+    padding: 6px 2px;
+  }
+}
+
+@media (max-height:480px) {
+  html[data-cxx-embedded=true] .terminal-player-body {
+    padding: 4px 8px;
+  }
+}
+
+.module-stage[hidden] {
+  display: none!important;
+}

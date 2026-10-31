@@ -1,0 +1,5946 @@
+{
+  "schema": 1,
+  "profile": {
+    "backgroundMaxEdge": 1920,
+    "backgroundQuality": 92,
+    "portraitQuality": 94,
+    "portraitResize": false,
+    "alpha": "lossless",
+    "ui": "lossless-pixel-identical",
+    "format": "webp",
+    "method": 6
+  },
+  "sourceSHA256": "91a1e50011fa8b260b7633182eef6cdf89abc8ed1c4f0411782f3b5dcd5ebe8a",
+  "sourceManifest": "6d21106f02e69bbff05c321aa1d0d5fb01002a6c22c1da38b18e7974cb910ae0",
+  "manifest": "9a08328b374406a70cbffc6dbc1ac0572e910995550966cd2c89906b1fd7b3c7",
+  "sourceBytes": 281621237,
+  "bytes": 53686082,
+  "archiveBytes": 53805880,
+  "archiveSHA256": "0375675366b823361508378f8e830400ac9bbcb66a03773cac379afd76d66356",
+  "assets": [
+    {
+      "sourceId": "bf397fe403875ec5efb80a7138959c2c470177ab93d365cd7d56be6aa3648dea",
+      "id": "e1baf04f66d5b4b5fdeb815eb993fe9533c5d7fca1e17f9c1e7fd1efbe258332",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 4790,
+      "bytes": 2506,
+      "sourceSize": [
+        128,
+        128
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.072
+    },
+    {
+      "sourceId": "efa667abb3c2723468891591c1078e11c63845778959230fa12d93654e3dd567",
+      "id": "ad0486eb979754d945c64041c66403855585a2880b94eab4865dace8a202d0ee",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 5059,
+      "bytes": 2514,
+      "sourceSize": [
+        128,
+        128
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.073
+    },
+    {
+      "sourceId": "db9c1126b29abba48749213118c278d64d5ed99af6b5d2f4633ee8065ab89058",
+      "id": "0ca1364e705b91f69ffda6b727aa937d0f5347191e00d56c3dc330493dad484d",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 3479,
+      "bytes": 1648,
+      "sourceSize": [
+        128,
+        128
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.069
+    },
+    {
+      "sourceId": "e49476465ac9ca1ca68675291eb3eeb761ddf375ff40018fc9fa4c7ba5c8c631",
+      "id": "a6431f9623f4851f1b556b217509f394739a9647078b2d560b1bb3209a58c74e",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 4079,
+      "bytes": 2086,
+      "sourceSize": [
+        128,
+        128
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.073
+    },
+    {
+      "sourceId": "b4620082d8ed4c34b763bacb94cc05167ec3ffc5a2772a2990746bb3f1383d9f",
+      "id": "865e661ca6fb6c8f920f766ef239b7575e1dfb9a24c55d01c629ecbb381ab65d",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 3860,
+      "bytes": 2002,
+      "sourceSize": [
+        128,
+        128
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.006
+    },
+    {
+      "sourceId": "9d87d15e69d12e5e03884e83782a1d95b4961022a244e04dfe0c970776ac9289",
+      "id": "9d87d15e69d12e5e03884e83782a1d95b4961022a244e04dfe0c970776ac9289",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 99730,
+      "bytes": 99730,
+      "sourceSize": [
+        1200,
+        400
+      ],
+      "size": [
+        1200,
+        400
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.508
+    },
+    {
+      "sourceId": "659edc9c548f8f95a876bc4bda749645f11078d7572dd95aa08043b33d8a7285",
+      "id": "659edc9c548f8f95a876bc4bda749645f11078d7572dd95aa08043b33d8a7285",
+      "group": "ui",
+      "names": [
+        "hub-background-659edc9c548f8f95.webp"
+      ],
+      "sourceBytes": 34524,
+      "bytes": 34524,
+      "sourceSize": [
+        1672,
+        941
+      ],
+      "size": [
+        1672,
+        941
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.659
+    },
+    {
+      "sourceId": "3a474a1954a8d45e437323b9cea36c48a71afebf2346cbc96ecafbcb19b78a2e",
+      "id": "3a474a1954a8d45e437323b9cea36c48a71afebf2346cbc96ecafbcb19b78a2e",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 6896,
+      "bytes": 6896,
+      "sourceSize": [
+        960,
+        540
+      ],
+      "size": [
+        960,
+        540
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.418
+    },
+    {
+      "sourceId": "4219fa142e20e57d83703f54d1871faffae7da686b1afadbf42079154fbd60c8",
+      "id": "124ba378856ca8f040aa34d9f97f0621a31649bde89538b12774e7421b407881",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 30673,
+      "bytes": 20976,
+      "sourceSize": [
+        647,
+        173
+      ],
+      "size": [
+        647,
+        173
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.26
+    },
+    {
+      "sourceId": "235f46ab8ffe1de85360ec169716f1c485eaa0be9a3fa80dc092a6d5ebee13aa",
+      "id": "235f46ab8ffe1de85360ec169716f1c485eaa0be9a3fa80dc092a6d5ebee13aa",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 7930,
+      "bytes": 7930,
+      "sourceSize": [
+        1085,
+        283
+      ],
+      "size": [
+        1085,
+        283
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.248
+    },
+    {
+      "sourceId": "20635c5511962445f2c82e393d877f8677b87cb9d12bbedd4e8de6ad9bedefdb",
+      "id": "a3208fce4d98e36a527b4fe3bac9f198dd88a1d5b104b82ab12b261d360d8355",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 227500,
+      "bytes": 153578,
+      "sourceSize": [
+        343,
+        484
+      ],
+      "size": [
+        343,
+        484
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.434
+    },
+    {
+      "sourceId": "eb79f263a976a4bc07dc4420dea1df653e46967c0d8c6367d81410069f36f77c",
+      "id": "eb79f263a976a4bc07dc4420dea1df653e46967c0d8c6367d81410069f36f77c",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 35588,
+      "bytes": 35588,
+      "sourceSize": [
+        251,
+        360
+      ],
+      "size": [
+        251,
+        360
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.27
+    },
+    {
+      "sourceId": "5a11daec945e9298b9314c59c8cfee541e0342cc1302f06b1789686e05d0a29e",
+      "id": "5a11daec945e9298b9314c59c8cfee541e0342cc1302f06b1789686e05d0a29e",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 40824,
+      "bytes": 40824,
+      "sourceSize": [
+        256,
+        360
+      ],
+      "size": [
+        256,
+        360
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.282
+    },
+    {
+      "sourceId": "38698bf2a498a3bce415928038764194752abf01cf0a4a14fc67f84b0de766e1",
+      "id": "38698bf2a498a3bce415928038764194752abf01cf0a4a14fc67f84b0de766e1",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 32234,
+      "bytes": 32234,
+      "sourceSize": [
+        245,
+        360
+      ],
+      "size": [
+        245,
+        360
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.27
+    },
+    {
+      "sourceId": "18f1f843ac3455de722e8e48b2dc8a31283aa190b9f7222e9179ecfa8c0b057c",
+      "id": "2708e3caa4065a69b373696ca9a29a549686c02e807b0afbb82a2c72eabbfb9c",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 2506,
+      "bytes": 1366,
+      "sourceSize": [
+        56,
+        54
+      ],
+      "size": [
+        56,
+        54
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.003
+    },
+    {
+      "sourceId": "17c70fd807a9a153aa96610d71d3f10e6169f1183f2aba00c659328d59a98b36",
+      "id": "17c70fd807a9a153aa96610d71d3f10e6169f1183f2aba00c659328d59a98b36",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 3494,
+      "bytes": 3494,
+      "sourceSize": [
+        240,
+        64
+      ],
+      "size": [
+        240,
+        64
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.06
+    },
+    {
+      "sourceId": "1700baac574e21ae022a8856ed7c09e486d95856eaaedf64c2d0e969775ecf2e",
+      "id": "1700baac574e21ae022a8856ed7c09e486d95856eaaedf64c2d0e969775ecf2e",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 3400,
+      "bytes": 3400,
+      "sourceSize": [
+        240,
+        64
+      ],
+      "size": [
+        240,
+        64
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.061
+    },
+    {
+      "sourceId": "5f8f8d5eea8a96333321668db5d23e88de34ff8b50b6d6df267fdf7a2ccf26fe",
+      "id": "5f8f8d5eea8a96333321668db5d23e88de34ff8b50b6d6df267fdf7a2ccf26fe",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 21526,
+      "bytes": 21526,
+      "sourceSize": [
+        480,
+        270
+      ],
+      "size": [
+        480,
+        270
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.365
+    },
+    {
+      "sourceId": "5d403fc26350a93e0a96429f4453e42ff5b4a3c05a9e09ead9fd062aec954ca8",
+      "id": "5d403fc26350a93e0a96429f4453e42ff5b4a3c05a9e09ead9fd062aec954ca8",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 22774,
+      "bytes": 22774,
+      "sourceSize": [
+        480,
+        270
+      ],
+      "size": [
+        480,
+        270
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.35
+    },
+    {
+      "sourceId": "0301553a81b59bf97fc16565b4b804ce28ca83fc5bf87db9e3eae322a34a6747",
+      "id": "0301553a81b59bf97fc16565b4b804ce28ca83fc5bf87db9e3eae322a34a6747",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 24746,
+      "bytes": 24746,
+      "sourceSize": [
+        480,
+        270
+      ],
+      "size": [
+        480,
+        270
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.388
+    },
+    {
+      "sourceId": "ab93b07a00dfcc4244cd670d601138783ce13217db50bab3ac01d79c1efceee1",
+      "id": "ab93b07a00dfcc4244cd670d601138783ce13217db50bab3ac01d79c1efceee1",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 15206,
+      "bytes": 15206,
+      "sourceSize": [
+        480,
+        270
+      ],
+      "size": [
+        480,
+        270
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.337
+    },
+    {
+      "sourceId": "9ffec32a70536efcee8967b2d56ba778e6c1f2c0f7cc64bc76c602bad02dbb6a",
+      "id": "9ffec32a70536efcee8967b2d56ba778e6c1f2c0f7cc64bc76c602bad02dbb6a",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 18016,
+      "bytes": 18016,
+      "sourceSize": [
+        480,
+        270
+      ],
+      "size": [
+        480,
+        270
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.339
+    },
+    {
+      "sourceId": "050de563428930bedb4636746e66eb467ef2f37d4617d5de05ec77fd830caa6d",
+      "id": "050de563428930bedb4636746e66eb467ef2f37d4617d5de05ec77fd830caa6d",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 17322,
+      "bytes": 17322,
+      "sourceSize": [
+        480,
+        270
+      ],
+      "size": [
+        480,
+        270
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.362
+    },
+    {
+      "sourceId": "779098b588564c26aad1b609294c2e3723f6857be32ba8a3be1a666ea654de9e",
+      "id": "779098b588564c26aad1b609294c2e3723f6857be32ba8a3be1a666ea654de9e",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 9466,
+      "bytes": 9466,
+      "sourceSize": [
+        480,
+        270
+      ],
+      "size": [
+        480,
+        270
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.362
+    },
+    {
+      "sourceId": "82ed83802195a82816c7a07c6ca09a99840f00230d7db0447ae00f83a87647eb",
+      "id": "82ed83802195a82816c7a07c6ca09a99840f00230d7db0447ae00f83a87647eb",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 24178,
+      "bytes": 24178,
+      "sourceSize": [
+        480,
+        270
+      ],
+      "size": [
+        480,
+        270
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.386
+    },
+    {
+      "sourceId": "203a819c25b4dbe3d726ce34fd41eb8633daa35d6575e57578b024044528fc8d",
+      "id": "203a819c25b4dbe3d726ce34fd41eb8633daa35d6575e57578b024044528fc8d",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 5794,
+      "bytes": 5794,
+      "sourceSize": [
+        144,
+        144
+      ],
+      "size": [
+        144,
+        144
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.074
+    },
+    {
+      "sourceId": "e1a2f2d1f6db0df8d84fd4bb2ae545bd58b2dde6734c19d3b86e69e4ce550af7",
+      "id": "e1a2f2d1f6db0df8d84fd4bb2ae545bd58b2dde6734c19d3b86e69e4ce550af7",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 6210,
+      "bytes": 6210,
+      "sourceSize": [
+        144,
+        144
+      ],
+      "size": [
+        144,
+        144
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.077
+    },
+    {
+      "sourceId": "a146f0a371d4bae2a5b1a614de5a4fccd70e19183cb13f6eb716909f62af7884",
+      "id": "a146f0a371d4bae2a5b1a614de5a4fccd70e19183cb13f6eb716909f62af7884",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 5752,
+      "bytes": 5752,
+      "sourceSize": [
+        144,
+        144
+      ],
+      "size": [
+        144,
+        144
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.075
+    },
+    {
+      "sourceId": "ea3cdcae09b1ece3254e4308b575c61b51e981b41fe369925e6069f7d427c858",
+      "id": "ea3cdcae09b1ece3254e4308b575c61b51e981b41fe369925e6069f7d427c858",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 4590,
+      "bytes": 4590,
+      "sourceSize": [
+        144,
+        144
+      ],
+      "size": [
+        144,
+        144
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.074
+    },
+    {
+      "sourceId": "18a8ffa62707c5836696c90cdb2340f69f5ade2f3e6c34e38de4568e3fc3ddca",
+      "id": "18a8ffa62707c5836696c90cdb2340f69f5ade2f3e6c34e38de4568e3fc3ddca",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 6120,
+      "bytes": 6120,
+      "sourceSize": [
+        144,
+        144
+      ],
+      "size": [
+        144,
+        144
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.078
+    },
+    {
+      "sourceId": "902d5c1693362e0d07f3bd13a8aa5097b38a87aaafa11601839f42196f1aff5b",
+      "id": "902d5c1693362e0d07f3bd13a8aa5097b38a87aaafa11601839f42196f1aff5b",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 6922,
+      "bytes": 6922,
+      "sourceSize": [
+        144,
+        144
+      ],
+      "size": [
+        144,
+        144
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.079
+    },
+    {
+      "sourceId": "0074f777d957511ed2190b7f9c91f7f096bf1a019523517ae815abedbc8d5fdd",
+      "id": "0074f777d957511ed2190b7f9c91f7f096bf1a019523517ae815abedbc8d5fdd",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 5064,
+      "bytes": 5064,
+      "sourceSize": [
+        144,
+        144
+      ],
+      "size": [
+        144,
+        144
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.074
+    },
+    {
+      "sourceId": "9ac6314f8d3a1512432bc00ec975161345f2df7674a1e7e59f00a6c32d561689",
+      "id": "9ac6314f8d3a1512432bc00ec975161345f2df7674a1e7e59f00a6c32d561689",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 5588,
+      "bytes": 5588,
+      "sourceSize": [
+        144,
+        144
+      ],
+      "size": [
+        144,
+        144
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.077
+    },
+    {
+      "sourceId": "74040225427dd29f66514dd4ec900780dd06b94933479511dee2db73ed61e08e",
+      "id": "74040225427dd29f66514dd4ec900780dd06b94933479511dee2db73ed61e08e",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 4954,
+      "bytes": 4954,
+      "sourceSize": [
+        144,
+        144
+      ],
+      "size": [
+        144,
+        144
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.073
+    },
+    {
+      "sourceId": "f189e269e5b0f6c0bd43fd6f089f7a388fc0760a6d304a21022d1f64d6565c08",
+      "id": "f189e269e5b0f6c0bd43fd6f089f7a388fc0760a6d304a21022d1f64d6565c08",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 5942,
+      "bytes": 5942,
+      "sourceSize": [
+        144,
+        144
+      ],
+      "size": [
+        144,
+        144
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.08
+    },
+    {
+      "sourceId": "addc41b593f5a48cb89a8da5fa94585e9a46529773b8431050a1241c945afd25",
+      "id": "addc41b593f5a48cb89a8da5fa94585e9a46529773b8431050a1241c945afd25",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 245798,
+      "bytes": 245798,
+      "sourceSize": [
+        1600,
+        896
+      ],
+      "size": [
+        1600,
+        896
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 1.343
+    },
+    {
+      "sourceId": "7d1c348259ff5756127d91dc08a8c54718034674dfa76d7d833414fe2898066b",
+      "id": "7d1c348259ff5756127d91dc08a8c54718034674dfa76d7d833414fe2898066b",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 104306,
+      "bytes": 104306,
+      "sourceSize": [
+        1600,
+        854
+      ],
+      "size": [
+        1600,
+        854
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 1.407
+    },
+    {
+      "sourceId": "6ef60a8d63ad8b37f8f0e3e394c2eefad4ae458245e3aa3dc48b9bff9736f63a",
+      "id": "6ef60a8d63ad8b37f8f0e3e394c2eefad4ae458245e3aa3dc48b9bff9736f63a",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 115198,
+      "bytes": 115198,
+      "sourceSize": [
+        1600,
+        900
+      ],
+      "size": [
+        1600,
+        900
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 1.583
+    },
+    {
+      "sourceId": "f0cf46fe919d87e6a4365a3a0f6b8ed8eb44e2c9d0b907deeba8686fd2ad9b3c",
+      "id": "f0cf46fe919d87e6a4365a3a0f6b8ed8eb44e2c9d0b907deeba8686fd2ad9b3c",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 194954,
+      "bytes": 194954,
+      "sourceSize": [
+        900,
+        1350
+      ],
+      "size": [
+        900,
+        1350
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.706
+    },
+    {
+      "sourceId": "2020778d1f9f799838acb4b998b01d654055b2f77d93164fd732b12310418652",
+      "id": "2020778d1f9f799838acb4b998b01d654055b2f77d93164fd732b12310418652",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 90444,
+      "bytes": 90444,
+      "sourceSize": [
+        480,
+        720
+      ],
+      "size": [
+        480,
+        720
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.484
+    },
+    {
+      "sourceId": "c3eb3accbd07183bf3afd1531e722320ecbee7387fe68cacf05010599d29bcab",
+      "id": "c3eb3accbd07183bf3afd1531e722320ecbee7387fe68cacf05010599d29bcab",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 75580,
+      "bytes": 75580,
+      "sourceSize": [
+        480,
+        720
+      ],
+      "size": [
+        480,
+        720
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.448
+    },
+    {
+      "sourceId": "41b3a8efe90710144fc25e043f225eace70afa350a65938425201ebbe6982a96",
+      "id": "41b3a8efe90710144fc25e043f225eace70afa350a65938425201ebbe6982a96",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 70436,
+      "bytes": 70436,
+      "sourceSize": [
+        480,
+        720
+      ],
+      "size": [
+        480,
+        720
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.443
+    },
+    {
+      "sourceId": "55213f3aa0f13272215a5973ec8cc9dac0fa3af988146a28fc7273cc795d733d",
+      "id": "55213f3aa0f13272215a5973ec8cc9dac0fa3af988146a28fc7273cc795d733d",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 64368,
+      "bytes": 64368,
+      "sourceSize": [
+        480,
+        720
+      ],
+      "size": [
+        480,
+        720
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.501
+    },
+    {
+      "sourceId": "f9a68b7919967d48d0c7413217eea7223b136a4b87658f9e4bd59407ce23a430",
+      "id": "f9a68b7919967d48d0c7413217eea7223b136a4b87658f9e4bd59407ce23a430",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 61900,
+      "bytes": 61900,
+      "sourceSize": [
+        480,
+        720
+      ],
+      "size": [
+        480,
+        720
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.474
+    },
+    {
+      "sourceId": "f1ca42efc48a6e8a9323affbf507dbdc2193a913a0cab9f25c604cbf86d9a515",
+      "id": "f1ca42efc48a6e8a9323affbf507dbdc2193a913a0cab9f25c604cbf86d9a515",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 97308,
+      "bytes": 97308,
+      "sourceSize": [
+        480,
+        720
+      ],
+      "size": [
+        480,
+        720
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.419
+    },
+    {
+      "sourceId": "bcd48c241d53e22354210140536a80f8020fce403acf5b30fce713614e7b4540",
+      "id": "bcd48c241d53e22354210140536a80f8020fce403acf5b30fce713614e7b4540",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 82706,
+      "bytes": 82706,
+      "sourceSize": [
+        480,
+        720
+      ],
+      "size": [
+        480,
+        720
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.405
+    },
+    {
+      "sourceId": "41b1701431d452139624b40fff01ead7268570952c1a10da4c9b3b41034a4c66",
+      "id": "41b1701431d452139624b40fff01ead7268570952c1a10da4c9b3b41034a4c66",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 71956,
+      "bytes": 71956,
+      "sourceSize": [
+        480,
+        720
+      ],
+      "size": [
+        480,
+        720
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.509
+    },
+    {
+      "sourceId": "cb957cb8a1ff4e9384e92feed4a71807ca7b6954790651922eebcd6e61ca0bf0",
+      "id": "cb957cb8a1ff4e9384e92feed4a71807ca7b6954790651922eebcd6e61ca0bf0",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 73678,
+      "bytes": 73678,
+      "sourceSize": [
+        480,
+        720
+      ],
+      "size": [
+        480,
+        720
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.525
+    },
+    {
+      "sourceId": "4b10181e0aa8151aa9ecc8b5e2cb8f8b9ee6f2d72a32c3883bd694380ec75750",
+      "id": "4b10181e0aa8151aa9ecc8b5e2cb8f8b9ee6f2d72a32c3883bd694380ec75750",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 10222,
+      "bytes": 10222,
+      "sourceSize": [
+        384,
+        192
+      ],
+      "size": [
+        384,
+        192
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.228
+    },
+    {
+      "sourceId": "506696b468fe865178b5f09078f8fccbf855351276e20911c829c47c381191a5",
+      "id": "506696b468fe865178b5f09078f8fccbf855351276e20911c829c47c381191a5",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 11438,
+      "bytes": 11438,
+      "sourceSize": [
+        400,
+        200
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.22
+    },
+    {
+      "sourceId": "0f1d10d86a845a1733e657eaf4171aacb5fcbbfa68cee603d5af3ca959a7358d",
+      "id": "0f1d10d86a845a1733e657eaf4171aacb5fcbbfa68cee603d5af3ca959a7358d",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 11592,
+      "bytes": 11592,
+      "sourceSize": [
+        400,
+        200
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.251
+    },
+    {
+      "sourceId": "40f7ef74757641082ed2706f1942cbbd3e1dea82fe15d0af6e8a098faab9c522",
+      "id": "40f7ef74757641082ed2706f1942cbbd3e1dea82fe15d0af6e8a098faab9c522",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 7828,
+      "bytes": 7828,
+      "sourceSize": [
+        400,
+        200
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.251
+    },
+    {
+      "sourceId": "82b902fbd76d21950257c3e75e02651d4bf9784f124939624b5fdcdba4115531",
+      "id": "82b902fbd76d21950257c3e75e02651d4bf9784f124939624b5fdcdba4115531",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 9620,
+      "bytes": 9620,
+      "sourceSize": [
+        400,
+        200
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.286
+    },
+    {
+      "sourceId": "fe5c96a4c7d05dfea8dfecf8321b83f32c38b916a1d82fe2cbddf9f01aa9cd75",
+      "id": "fe5c96a4c7d05dfea8dfecf8321b83f32c38b916a1d82fe2cbddf9f01aa9cd75",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 8480,
+      "bytes": 8480,
+      "sourceSize": [
+        400,
+        200
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.248
+    },
+    {
+      "sourceId": "f9d69d009c4c707bf862f56e3f1fe3c163234bbf14de292e944d5973026f4edd",
+      "id": "f9d69d009c4c707bf862f56e3f1fe3c163234bbf14de292e944d5973026f4edd",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 7306,
+      "bytes": 7306,
+      "sourceSize": [
+        400,
+        200
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.256
+    },
+    {
+      "sourceId": "ca3a91834fc0691c85c5ea85cea926751160d81ca876fb9eb019d44a7d4785c0",
+      "id": "ca3a91834fc0691c85c5ea85cea926751160d81ca876fb9eb019d44a7d4785c0",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 10632,
+      "bytes": 10632,
+      "sourceSize": [
+        400,
+        200
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.246
+    },
+    {
+      "sourceId": "29e7b878654fe95cde0285fb02e6f031b6d654469243e6d278ffca8d18e17fcf",
+      "id": "29e7b878654fe95cde0285fb02e6f031b6d654469243e6d278ffca8d18e17fcf",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 2958,
+      "bytes": 2958,
+      "sourceSize": [
+        400,
+        200
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.243
+    },
+    {
+      "sourceId": "e73facedfc55bcfb064bbbf66ef4d3ff0a8f415ed8f3bab0bb74a7eedfabe284",
+      "id": "e73facedfc55bcfb064bbbf66ef4d3ff0a8f415ed8f3bab0bb74a7eedfabe284",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 3704,
+      "bytes": 3704,
+      "sourceSize": [
+        400,
+        200
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.201
+    },
+    {
+      "sourceId": "c327845fa387b527dfc2413899d38483dedfed74f670c19ef6a9e54e28b71fb4",
+      "id": "c327845fa387b527dfc2413899d38483dedfed74f670c19ef6a9e54e28b71fb4",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 6460,
+      "bytes": 6460,
+      "sourceSize": [
+        400,
+        200
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.197
+    },
+    {
+      "sourceId": "9303fd6b95b1014ab4ebed0ce83ad15ccf5e62e0e990001f429f6b168743cd16",
+      "id": "9303fd6b95b1014ab4ebed0ce83ad15ccf5e62e0e990001f429f6b168743cd16",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 12550,
+      "bytes": 12550,
+      "sourceSize": [
+        400,
+        200
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.264
+    },
+    {
+      "sourceId": "dae10d63c9a36272991cdcbdef79f4810eb8185374375f31358eb65ad23319c8",
+      "id": "dae10d63c9a36272991cdcbdef79f4810eb8185374375f31358eb65ad23319c8",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 13716,
+      "bytes": 13716,
+      "sourceSize": [
+        400,
+        200
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.283
+    },
+    {
+      "sourceId": "24d28fa339a0c927b1a7b6d6c48d59cd4e706bcdb0ffb239d31924f66aad1b0d",
+      "id": "24d28fa339a0c927b1a7b6d6c48d59cd4e706bcdb0ffb239d31924f66aad1b0d",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 10408,
+      "bytes": 10408,
+      "sourceSize": [
+        400,
+        200
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.204
+    },
+    {
+      "sourceId": "96245eaf2c73c4e1f7293f464b0244233df9a2d8de6fea8e462e760c2ae04ee4",
+      "id": "96245eaf2c73c4e1f7293f464b0244233df9a2d8de6fea8e462e760c2ae04ee4",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 10870,
+      "bytes": 10870,
+      "sourceSize": [
+        400,
+        200
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.272
+    },
+    {
+      "sourceId": "f40352fb56862ae6e6c5580be41fa51243867be568df73d5d486a8619b75ed81",
+      "id": "f40352fb56862ae6e6c5580be41fa51243867be568df73d5d486a8619b75ed81",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 8142,
+      "bytes": 8142,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.138
+    },
+    {
+      "sourceId": "450a4d5153a5896d6c58685687a8b91dbcf2855cd7bedebdce7a2910973c092a",
+      "id": "450a4d5153a5896d6c58685687a8b91dbcf2855cd7bedebdce7a2910973c092a",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 9878,
+      "bytes": 9878,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.2
+    },
+    {
+      "sourceId": "0b19e16bf0ed2a5edfb3711383c8ad046a0d98194219d7a0b406bd27861dda57",
+      "id": "0b19e16bf0ed2a5edfb3711383c8ad046a0d98194219d7a0b406bd27861dda57",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 8712,
+      "bytes": 8712,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.136
+    },
+    {
+      "sourceId": "c976e2b1c69765cead17b77e6b7c3bce675e254c5988714f0fd0829236a03f2c",
+      "id": "c976e2b1c69765cead17b77e6b7c3bce675e254c5988714f0fd0829236a03f2c",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 9098,
+      "bytes": 9098,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.153
+    },
+    {
+      "sourceId": "c3acc2f502810d75578db1220ca00f0fee56fa6302323336cd4c5632f1b52d59",
+      "id": "c3acc2f502810d75578db1220ca00f0fee56fa6302323336cd4c5632f1b52d59",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 6714,
+      "bytes": 6714,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.183
+    },
+    {
+      "sourceId": "ecf5a6a5d213e7144fcdf1a352ad488084d7300d479f898b6171f0c09752ea8d",
+      "id": "ecf5a6a5d213e7144fcdf1a352ad488084d7300d479f898b6171f0c09752ea8d",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 11828,
+      "bytes": 11828,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.194
+    },
+    {
+      "sourceId": "f966dce3e5c7b5ed7f90b91e485fad6ec97f36f96acdede70b781bcb24f6fc30",
+      "id": "f966dce3e5c7b5ed7f90b91e485fad6ec97f36f96acdede70b781bcb24f6fc30",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 9750,
+      "bytes": 9750,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.22
+    },
+    {
+      "sourceId": "2b2e7e48ec96a55f78df61f617bb8a392fd09a1b4397641b197973f966483691",
+      "id": "2b2e7e48ec96a55f78df61f617bb8a392fd09a1b4397641b197973f966483691",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 9274,
+      "bytes": 9274,
+      "sourceSize": [
+        192,
+        192
+      ],
+      "size": [
+        192,
+        192
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.196
+    },
+    {
+      "sourceId": "1238ebaf53713798159f0bec777361db1c96eb442029398b2cccc0af8caf0689",
+      "id": "1238ebaf53713798159f0bec777361db1c96eb442029398b2cccc0af8caf0689",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 16436,
+      "bytes": 16436,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.213
+    },
+    {
+      "sourceId": "4f68c1a4fca05aceb159a108efc7037e30daee26a858bad13486eda279971b3b",
+      "id": "4f68c1a4fca05aceb159a108efc7037e30daee26a858bad13486eda279971b3b",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 10128,
+      "bytes": 10128,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.184
+    },
+    {
+      "sourceId": "ae1d4fa0fdfca0389bbae5967c8d802f90415ab4d340f49d9c8e8c013ffa0a8d",
+      "id": "ae1d4fa0fdfca0389bbae5967c8d802f90415ab4d340f49d9c8e8c013ffa0a8d",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 12620,
+      "bytes": 12620,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.208
+    },
+    {
+      "sourceId": "e40b1910e134e9e699e954f7297c45ea116636585d679c6c6f5ec6425e9a38b7",
+      "id": "e40b1910e134e9e699e954f7297c45ea116636585d679c6c6f5ec6425e9a38b7",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 10294,
+      "bytes": 10294,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.188
+    },
+    {
+      "sourceId": "4fe91812b171c23f3ed858773437fe4c08de59ed117e77e556a62c09b0160863",
+      "id": "4fe91812b171c23f3ed858773437fe4c08de59ed117e77e556a62c09b0160863",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 13498,
+      "bytes": 13498,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.193
+    },
+    {
+      "sourceId": "fc0f20434ca7e16c4c652536f18b8dcb1b908f829c5067f164136e852a5dc2ae",
+      "id": "fc0f20434ca7e16c4c652536f18b8dcb1b908f829c5067f164136e852a5dc2ae",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 9510,
+      "bytes": 9510,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.164
+    },
+    {
+      "sourceId": "f018bbe9c2900e15e136b4b796f3290e471a827b31c3d1da203b5df90118c780",
+      "id": "f018bbe9c2900e15e136b4b796f3290e471a827b31c3d1da203b5df90118c780",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 11810,
+      "bytes": 11810,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.202
+    },
+    {
+      "sourceId": "7a2c0cef386a4c5fb102c323660b466da8cf6195623a487abbb930705a1de532",
+      "id": "7a2c0cef386a4c5fb102c323660b466da8cf6195623a487abbb930705a1de532",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 8584,
+      "bytes": 8584,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.181
+    },
+    {
+      "sourceId": "11bd7c17b2aa960afa2e7ae84d6453e624b6ebebac37edbe89e00b9fc67579d8",
+      "id": "11bd7c17b2aa960afa2e7ae84d6453e624b6ebebac37edbe89e00b9fc67579d8",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 7512,
+      "bytes": 7512,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.147
+    },
+    {
+      "sourceId": "2ed5a1f0cb5d0d5ca6149db1f599b7bb2b93e02ea95f08b1e01052e77b579c1a",
+      "id": "2ed5a1f0cb5d0d5ca6149db1f599b7bb2b93e02ea95f08b1e01052e77b579c1a",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 5706,
+      "bytes": 5706,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.131
+    },
+    {
+      "sourceId": "3626d14dc9352f6a2595a56a39db9c65b769b55a11c9bf1821cf17bdaff190d7",
+      "id": "3626d14dc9352f6a2595a56a39db9c65b769b55a11c9bf1821cf17bdaff190d7",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 5888,
+      "bytes": 5888,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.15
+    },
+    {
+      "sourceId": "1c706c5d777634c17a0f55d13599f25094b45b42999bca39766ff4650bbcbac8",
+      "id": "1c706c5d777634c17a0f55d13599f25094b45b42999bca39766ff4650bbcbac8",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 3922,
+      "bytes": 3922,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.186
+    },
+    {
+      "sourceId": "b98425307cdb7f5ccda110b02c8ff00eb1847a6761ed4b38a2808bfcd06eaecf",
+      "id": "b98425307cdb7f5ccda110b02c8ff00eb1847a6761ed4b38a2808bfcd06eaecf",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 6032,
+      "bytes": 6032,
+      "sourceSize": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.176
+    },
+    {
+      "sourceId": "83fd460ae068c41c44571d1c6956741bb04533b9c075bc53e15629c76ee81305",
+      "id": "83fd460ae068c41c44571d1c6956741bb04533b9c075bc53e15629c76ee81305",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 78268,
+      "bytes": 78268,
+      "sourceSize": [
+        500,
+        1200
+      ],
+      "size": [
+        500,
+        1200
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.756
+    },
+    {
+      "sourceId": "e4a3a7307c690c2647cd6ccb4076500404d1227c1f4f70738b4add56b98744c9",
+      "id": "8cb8be13907e61e466758a28f5c60bebcb48ca7758c903afea02f0e0be5df735",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 58609,
+      "bytes": 52030,
+      "sourceSize": [
+        1172,
+        972
+      ],
+      "size": [
+        1172,
+        972
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.117
+    },
+    {
+      "sourceId": "0e0eae2cb1d31cbcaec5ee6e2ab14df12694188e009e7667569c31ebdf1ecedb",
+      "id": "86b64bbe05392873cabec7e1be01b69b4ac35cd6bf019d07d5897a1c5dccaa1c",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 967862,
+      "bytes": 948896,
+      "sourceSize": [
+        2250,
+        2028
+      ],
+      "size": [
+        2250,
+        2028
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.762
+    },
+    {
+      "sourceId": "602deeff0afc33ca0713b724a232d524c55592dbc31fb0d46afc6b39d27c5545",
+      "id": "602deeff0afc33ca0713b724a232d524c55592dbc31fb0d46afc6b39d27c5545",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 79866,
+      "bytes": 79866,
+      "sourceSize": [
+        1920,
+        960
+      ],
+      "size": [
+        1920,
+        960
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 1.343
+    },
+    {
+      "sourceId": "f019d6d68f9efe7842fb943b3fbda2d68319bc576c840b1d3e4f60f0cdfb006f",
+      "id": "8732a197a8fc11b71639f7267c686ed0d0a719602ceb3e2faad163e5b4c615a9",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 967862,
+      "bytes": 948896,
+      "sourceSize": [
+        2250,
+        2028
+      ],
+      "size": [
+        2250,
+        2028
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.892
+    },
+    {
+      "sourceId": "d3a2625fa153f21da979eed464df8452cf7980f728090347a624cf6636bfef36",
+      "id": "faa3a26123d7b3da7fc7623da2cce635b420ae4e39d5fa1294143184255d60a2",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 60389,
+      "bytes": 53758,
+      "sourceSize": [
+        1172,
+        972
+      ],
+      "size": [
+        1172,
+        972
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.186
+    },
+    {
+      "sourceId": "489761ff1d6e8e3687a56ecaf7fea44f191472e87d568bfb0e9fdc04dd19e8f3",
+      "id": "410bc0e21ad5b0e4a79bb47b11b15ecc2ac0af92169cd80bd508d2453171e65b",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 62439,
+      "bytes": 61768,
+      "sourceSize": [
+        1172,
+        972
+      ],
+      "size": [
+        1172,
+        972
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.096
+    },
+    {
+      "sourceId": "65907db149df6ab84e1f8b42d116efe63db27d94be5f55a01cb3323d8179bf40",
+      "id": "f451f5551e19e62a31cee1914434f29b38b92985c569c5124bbbddebfc569d64",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 967862,
+      "bytes": 948896,
+      "sourceSize": [
+        2250,
+        2028
+      ],
+      "size": [
+        2250,
+        2028
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.895
+    },
+    {
+      "sourceId": "d20ab3bbdd16b2a1e1080bc95484e13e5877ddb6411318b852432086e68fdfb7",
+      "id": "291035c2386f60ccbc297a6f9771297eb2727f84cd5c2d8c13644116f592d66e",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 6353,
+      "bytes": 4514,
+      "sourceSize": [
+        380,
+        336
+      ],
+      "size": [
+        380,
+        336
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.118
+    },
+    {
+      "sourceId": "f438fb3426641506ffbf66051d01fd6e01bb186e22680fd3e8929dc16f01e92b",
+      "id": "a9aba024add719337d9b3d321fec12242eab13d86640bc77d422f6bdb4dd5405",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 5713,
+      "bytes": 4020,
+      "sourceSize": [
+        380,
+        336
+      ],
+      "size": [
+        380,
+        336
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.034
+    },
+    {
+      "sourceId": "a31bcb3bb795aaab3d8338e998a102f0246df0cade1e942be5390020849490e4",
+      "id": "54ac7e1d64f52408eabb72370bb2c8c329a20cbb04bfb21f8f18234a717c5541",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 6211,
+      "bytes": 4370,
+      "sourceSize": [
+        380,
+        336
+      ],
+      "size": [
+        380,
+        336
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.052
+    },
+    {
+      "sourceId": "c01142f475e61748fdc420cb033dec1fd97f9fe663f91c3be7e29c71b7f84e2c",
+      "id": "ca6efed2d6b95f41723420de941a2699f1c320a5813c27dc36d98a5a37a43093",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 50315,
+      "bytes": 47866,
+      "sourceSize": [
+        564,
+        564
+      ],
+      "size": [
+        564,
+        564
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.392
+    },
+    {
+      "sourceId": "951842011dc68fdbc689e27d00136e32c8a87d5bcbc0f02b1301d69c0a45f07d",
+      "id": "adc0defc3ac093c087ca47a32996bc66a5e484da8b5406bedea425f65308a30c",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 4384,
+      "bytes": 3108,
+      "sourceSize": [
+        236,
+        236
+      ],
+      "size": [
+        236,
+        236
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.016
+    },
+    {
+      "sourceId": "92f21c643695649fd4c4a00922a131691f1816ddd393fd8a2ed6cc4cb6628262",
+      "id": "b949d9abe1fa7571092018fda8f9200287a01ebc312041c6b64e2fb812021faa",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 4330,
+      "bytes": 3138,
+      "sourceSize": [
+        236,
+        236
+      ],
+      "size": [
+        236,
+        236
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.021
+    },
+    {
+      "sourceId": "80164f19d951dbb4df78fde4599ac23c51d537b68776a6770d8fe39a6c4d27eb",
+      "id": "e17be2b07a33cfdd3b76d05f923d364d763406c11345c16800cbd93e31822051",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 4010,
+      "bytes": 2786,
+      "sourceSize": [
+        236,
+        236
+      ],
+      "size": [
+        236,
+        236
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.015
+    },
+    {
+      "sourceId": "7fa1110941495cb63430a294dee81cc53e953a32e21e16cc1f014e5ccaaee13f",
+      "id": "bdac71c90cbeef3f85487297b8ede434032806ba9a2e34b4057e01642629a750",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 4357,
+      "bytes": 2978,
+      "sourceSize": [
+        236,
+        236
+      ],
+      "size": [
+        236,
+        236
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.024
+    },
+    {
+      "sourceId": "500378dce69a011d5483ec01429e20a9d192ae17516b09e005024858811c76a1",
+      "id": "500378dce69a011d5483ec01429e20a9d192ae17516b09e005024858811c76a1",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 50778,
+      "bytes": 50778,
+      "sourceSize": [
+        616,
+        616
+      ],
+      "size": [
+        616,
+        616
+      ],
+      "mime": "image/png",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.123
+    },
+    {
+      "sourceId": "1db3ffad63eb6f7ba13f9dc3634c2114d73e32c91edbe0d32d4963894797e939",
+      "id": "4d009e232286f8207cd9b9414eddc7bc93d82a6ebf1921b7201912c58f032d61",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 3937,
+      "bytes": 2802,
+      "sourceSize": [
+        236,
+        236
+      ],
+      "size": [
+        236,
+        236
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.018
+    },
+    {
+      "sourceId": "df273f0b8ea0191b4bda0b11e0d6ce747f80a25225a6a079f84be8461be3a329",
+      "id": "9a619a854eca3357cf0285e47b009d49b01b62cf8939857367deafacafa38db8",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 16298,
+      "bytes": 13652,
+      "sourceSize": [
+        582,
+        490
+      ],
+      "size": [
+        582,
+        490
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.045
+    },
+    {
+      "sourceId": "f68037d39777831aed092033b2204da987d3ee334e426c6eb44ed172979081a6",
+      "id": "f68037d39777831aed092033b2204da987d3ee334e426c6eb44ed172979081a6",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 14396,
+      "bytes": 14396,
+      "sourceSize": [
+        1200,
+        900
+      ],
+      "size": [
+        1200,
+        900
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.839
+    },
+    {
+      "sourceId": "14afbcd0da72cf8a5afaeb982b5a97bf1771ce31c850c75e651dfa47acfaeea2",
+      "id": "14afbcd0da72cf8a5afaeb982b5a97bf1771ce31c850c75e651dfa47acfaeea2",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 44084,
+      "bytes": 44084,
+      "sourceSize": [
+        1200,
+        900
+      ],
+      "size": [
+        1200,
+        900
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.855
+    },
+    {
+      "sourceId": "1eafe3c6a2cd59cf2dc9a5eda1703233e94879c71b27fc68113822e855b161ac",
+      "id": "1eafe3c6a2cd59cf2dc9a5eda1703233e94879c71b27fc68113822e855b161ac",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 64900,
+      "bytes": 64900,
+      "sourceSize": [
+        1200,
+        675
+      ],
+      "size": [
+        1200,
+        675
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 1.143
+    },
+    {
+      "sourceId": "3df698f428de8bd3cba4ccb5520a041f991cd881c025057041512e0f69a561bc",
+      "id": "3df698f428de8bd3cba4ccb5520a041f991cd881c025057041512e0f69a561bc",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 37588,
+      "bytes": 37588,
+      "sourceSize": [
+        1200,
+        400
+      ],
+      "size": [
+        1200,
+        400
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.714
+    },
+    {
+      "sourceId": "8cd35472d3c0720add7bdc75de3a0867480d4e32b91383ff146c2284f77e2ecb",
+      "id": "8cd35472d3c0720add7bdc75de3a0867480d4e32b91383ff146c2284f77e2ecb",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 32726,
+      "bytes": 32726,
+      "sourceSize": [
+        1200,
+        400
+      ],
+      "size": [
+        1200,
+        400
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.673
+    },
+    {
+      "sourceId": "18477b0171e409a6276acbdd41da911b9d27fc186fe295dc38bcd53467227f2f",
+      "id": "18477b0171e409a6276acbdd41da911b9d27fc186fe295dc38bcd53467227f2f",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 24364,
+      "bytes": 24364,
+      "sourceSize": [
+        1200,
+        400
+      ],
+      "size": [
+        1200,
+        400
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.621
+    },
+    {
+      "sourceId": "c2d89d54da7645cc5e8a1c167ef167227844d00eef29203bbbbea9536ab90cac",
+      "id": "c2d89d54da7645cc5e8a1c167ef167227844d00eef29203bbbbea9536ab90cac",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 40040,
+      "bytes": 40040,
+      "sourceSize": [
+        1200,
+        400
+      ],
+      "size": [
+        1200,
+        400
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.644
+    },
+    {
+      "sourceId": "548653075070d75607a4ca881ed8c27be5de73a7743caf6321d3ae1e7d871f86",
+      "id": "82fd878671ef95e5ceb6120f8105660d74b7af518104084e2e849d54feadeca9",
+      "group": "background",
+      "names": [
+        "2051CG_RING_midnight.png"
+      ],
+      "sourceBytes": 2136008,
+      "bytes": 250976,
+      "sourceSize": [
+        1717,
+        916
+      ],
+      "size": [
+        1717,
+        916
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.711
+    },
+    {
+      "sourceId": "346a4961cedb2dd902935fbbf4dec581127cd6cf269f142ecf859a1106f52b9d",
+      "id": "e354f65c6cd461cc15c0aa33ee635124f9af75ebf3515117ec5ff53db0fbae5e",
+      "group": "background",
+      "names": [
+        "2051CG_RING_morning.png"
+      ],
+      "sourceBytes": 2973835,
+      "bytes": 397204,
+      "sourceSize": [
+        1600,
+        896
+      ],
+      "size": [
+        1600,
+        896
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 3.064
+    },
+    {
+      "sourceId": "240758b16a18b4117854a255d567c1b61b145b5bf001491a88363f425b15aa19",
+      "id": "b54d076c49fa7f58b4dd1c14344c52bc54fc2b25a00a99684a1b650b1ef3acf8",
+      "group": "background",
+      "names": [
+        "2051CG_T1_morning.png"
+      ],
+      "sourceBytes": 2316489,
+      "bytes": 333288,
+      "sourceSize": [
+        1927,
+        816
+      ],
+      "size": [
+        1920,
+        813
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.789
+    },
+    {
+      "sourceId": "45a73c3799867bbcadd2d644f972bcb77e0252a1a446901a4e7f2d14815d2e80",
+      "id": "1d632e5c78d0a437e5e48ead773ccd9947a01c31109f2f2313340cfddaf2961d",
+      "group": "background",
+      "names": [
+        "2051CG_T2_morning.png"
+      ],
+      "sourceBytes": 2361612,
+      "bytes": 337690,
+      "sourceSize": [
+        1935,
+        813
+      ],
+      "size": [
+        1920,
+        807
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.844
+    },
+    {
+      "sourceId": "106b95de78218f82e1d3994efcc409de706367896598f5f2b4912999ea4cc40c",
+      "id": "9123eccd08346866057776fa6b97b1fb6dafdfad0df9cabd4b05ba9ba60dd6b1",
+      "group": "background",
+      "names": [
+        "2051CG_T3_morning.png"
+      ],
+      "sourceBytes": 2288615,
+      "bytes": 338340,
+      "sourceSize": [
+        1918,
+        820
+      ],
+      "size": [
+        1918,
+        820
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.814
+    },
+    {
+      "sourceId": "01cbe5533fe398fd4390f769643e947105576b04e2e80d51c05434053bfd5126",
+      "id": "6567fdd0056dc57eb6ab06c61e449a223944d52b92cbb8237cca567a8e220b09",
+      "group": "background",
+      "names": [
+        "2051CG_T4_morning.png"
+      ],
+      "sourceBytes": 2452918,
+      "bytes": 372262,
+      "sourceSize": [
+        1938,
+        811
+      ],
+      "size": [
+        1920,
+        803
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.907
+    },
+    {
+      "sourceId": "a00b4db86bf6b93f2469b21a729635a3c8009726a9bdc52a1be2c52bdc843656",
+      "id": "8b830e0603296c8909f9c26f881fa81b2f0fe9ea419565d8c79529ffd6406856",
+      "group": "background",
+      "names": [
+        "2051CG_T5_morning.png"
+      ],
+      "sourceBytes": 1871330,
+      "bytes": 169946,
+      "sourceSize": [
+        1938,
+        812
+      ],
+      "size": [
+        1920,
+        804
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.619
+    },
+    {
+      "sourceId": "afbf119b255b3b26de101842a5db13f0b09a1e3bc5445f74c744a1d27bc523ec",
+      "id": "1e4ff80d4303796d28b797f2b7643d3c1b83e0b11f4d296435ddf3d62f5259ba",
+      "group": "background",
+      "names": [
+        "2051CG_T6_morning.png"
+      ],
+      "sourceBytes": 1923295,
+      "bytes": 167560,
+      "sourceSize": [
+        1937,
+        812
+      ],
+      "size": [
+        1920,
+        805
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.606
+    },
+    {
+      "sourceId": "14d19225a0d536f62e9c35839e1a92ef20600a96cce85c5bc0fff2f5865ca9ca",
+      "id": "6805a4a88afad0d9672327c67003b3a30bd5cbba7c0d1d796d328b76b6a9f102",
+      "group": "background",
+      "names": [
+        "2051CG_T7_morning.png"
+      ],
+      "sourceBytes": 1844077,
+      "bytes": 180320,
+      "sourceSize": [
+        1915,
+        821
+      ],
+      "size": [
+        1915,
+        821
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.654
+    },
+    {
+      "sourceId": "b64369732e75d5a48d8dc4ab4ba1ebe743708f44ad8e6d8a360ba0b368dc9051",
+      "id": "5d92d15f9ab3aaa2765a6a1818d2d54a3b14235d664f6894c7afcbe2d9519da4",
+      "group": "background",
+      "names": [
+        "2051CG_T8_midnight.png"
+      ],
+      "sourceBytes": 1989312,
+      "bytes": 226346,
+      "sourceSize": [
+        1927,
+        816
+      ],
+      "size": [
+        1920,
+        813
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.729
+    },
+    {
+      "sourceId": "26b551cb591a2be82d69dff20dbbb238301a8e655bda54e2d069abd517904fec",
+      "id": "9c9f8f11de08cb32153d7361fccdb99f4d7f650cebee23a5657fda7b8bca7b81",
+      "group": "background",
+      "names": [
+        "2051CG_T9_midnight.png"
+      ],
+      "sourceBytes": 2016616,
+      "bytes": 214964,
+      "sourceSize": [
+        1933,
+        813
+      ],
+      "size": [
+        1920,
+        808
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.798
+    },
+    {
+      "sourceId": "9f3c7a305f386156df694897de70b2ee414d7e6d57be24b6075b18c9d67db958",
+      "id": "38bc09e459dcfecb12384f453a71eb43d3622e94844f1f3fb83b05fcbe518681",
+      "group": "background",
+      "names": [
+        "2051CG_ark_Mutsumihouse_bedroom_morning.png"
+      ],
+      "sourceBytes": 1882244,
+      "bytes": 151962,
+      "sourceSize": [
+        1673,
+        940
+      ],
+      "size": [
+        1673,
+        940
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.613
+    },
+    {
+      "sourceId": "8a54eba75152b11060c398f89b04d335490b9711ff44213ed4ca0b4ac3e79032",
+      "id": "8b3cfd4be982f966a1b3ec2dff7bd4837bf571332bb1717faa9623c1e8da4957",
+      "group": "background",
+      "names": [
+        "2051CG_ark_Mutsumihouse_room_morning.png"
+      ],
+      "sourceBytes": 2533978,
+      "bytes": 398526,
+      "sourceSize": [
+        1672,
+        941
+      ],
+      "size": [
+        1672,
+        941
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.887
+    },
+    {
+      "sourceId": "f6fa42c36d357724a63c5507f59371092e801a40ad88a93c489f3285b9decc99",
+      "id": "50d93c7ebdbd32b31a145d28b6c6bb2a5f5087cd36c5701c9000f062ba3029a7",
+      "group": "background",
+      "names": [
+        "2051CG_ark_Mutsumihouse_yard_morning.png"
+      ],
+      "sourceBytes": 3067728,
+      "bytes": 539236,
+      "sourceSize": [
+        1671,
+        941
+      ],
+      "size": [
+        1671,
+        941
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.933
+    },
+    {
+      "sourceId": "9e79118386d63f3b844289e626d9966d02c26d98cc714a268782be00dede2855",
+      "id": "87e848d179774182bddeae40e631eaea7ca21362b2b9cd09c451a167418a96b3",
+      "group": "background",
+      "names": [
+        "2051CG_ark_restaurant_morning.png"
+      ],
+      "sourceBytes": 2149858,
+      "bytes": 303898,
+      "sourceSize": [
+        1749,
+        899
+      ],
+      "size": [
+        1749,
+        899
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.648
+    },
+    {
+      "sourceId": "08390d23e3be90469a735adeeedc1d17e7f0213e31ea43074230d2367076cb07",
+      "id": "2edffe4127199ccd15c7466d8004773680b2ddc958f322c05db73fa1ba7f1fe6",
+      "group": "background",
+      "names": [
+        "2051CG_core_Togawa Aisle.png"
+      ],
+      "sourceBytes": 2014623,
+      "bytes": 240562,
+      "sourceSize": [
+        1667,
+        943
+      ],
+      "size": [
+        1667,
+        943
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.623
+    },
+    {
+      "sourceId": "6fe4e2a923221d2ac7966ab3c48ed02eb3dce0a2f60e3a1d68a855a9c9747a99",
+      "id": "6939087213dd04b3c16505a62760fd581b142266e0e6857e123a80b05103c1a5",
+      "group": "background",
+      "names": [
+        "2051CG_core_Togawa Entrance.png"
+      ],
+      "sourceBytes": 2194890,
+      "bytes": 329086,
+      "sourceSize": [
+        1683,
+        935
+      ],
+      "size": [
+        1683,
+        935
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.584
+    },
+    {
+      "sourceId": "5f6e8d803aec53c9c00766364c3ff66c5795f63642d4f22bc396fd1c2b4990a6",
+      "id": "9aa0eb417d97a1ac648bfa5961bd1e5f1427b17f62e6fd821ab89c340c4a30dd",
+      "group": "background",
+      "names": [
+        "2051CG_core_Togawa restroom_morning.png"
+      ],
+      "sourceBytes": 2472705,
+      "bytes": 384490,
+      "sourceSize": [
+        1672,
+        941
+      ],
+      "size": [
+        1672,
+        941
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.742
+    },
+    {
+      "sourceId": "af5a688a059d4b2194d04084c0f632dc0b2284f388d08f7f1dda858992a4f51c",
+      "id": "44261f83072d44d13efd6de2e3f23f375b6220198d93cc22fc7b1d62d23e15a4",
+      "group": "background",
+      "names": [
+        "2051CG_core_midnight.png"
+      ],
+      "sourceBytes": 6018836,
+      "bytes": 583380,
+      "sourceSize": [
+        2370,
+        1327
+      ],
+      "size": [
+        1920,
+        1075
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 3.465
+    },
+    {
+      "sourceId": "49304315c92bb762022cbc14304f5d8a69ad4f2636b768d15636fba2a224139c",
+      "id": "b0d4a54aeeecf6a7230538837da47db27beed155c458910632c0809aee4b89bb",
+      "group": "background",
+      "names": [
+        "2051CG_core_morning.png"
+      ],
+      "sourceBytes": 2708826,
+      "bytes": 471588,
+      "sourceSize": [
+        1676,
+        939
+      ],
+      "size": [
+        1676,
+        939
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.817
+    },
+    {
+      "sourceId": "280e798e3bf74e4a1f9c90b67c4e54e451f5f5cc01f0ee32340c8c453ecad696",
+      "id": "cb74d9a3b9c3139d8d81c768ef6486bc9d39a0d86307f1c1af71eb19fa5d0864",
+      "group": "background",
+      "names": [
+        "2051CG_core_mujica hideout_armory.png"
+      ],
+      "sourceBytes": 1792972,
+      "bytes": 187512,
+      "sourceSize": [
+        1675,
+        939
+      ],
+      "size": [
+        1675,
+        939
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.559
+    },
+    {
+      "sourceId": "4a8d17968f602f6f7a602e50bfcf5aa8d03aa13adbc7b4b039cfe223ff5377ee",
+      "id": "e54e29eafecebbf3841bef46833641f3670d2784c068454c914c6f9fa7707bc7",
+      "group": "background",
+      "names": [
+        "2051CG_core_mujica hideout_balcony.png"
+      ],
+      "sourceBytes": 2036273,
+      "bytes": 251050,
+      "sourceSize": [
+        1672,
+        941
+      ],
+      "size": [
+        1672,
+        941
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.689
+    },
+    {
+      "sourceId": "4c04e894546c57bc565adfcffba5c9fcbea8d76e6cae6ceba48457291887bcef",
+      "id": "5a4b320602c87a98f643ca1814ce1b820edd843a834eeefc53e611d86d0a38c7",
+      "group": "background",
+      "names": [
+        "2051CG_core_mujica hideout_baseroom_morning.png"
+      ],
+      "sourceBytes": 1841420,
+      "bytes": 181562,
+      "sourceSize": [
+        1665,
+        944
+      ],
+      "size": [
+        1665,
+        944
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.626
+    },
+    {
+      "sourceId": "dd9684c16914dd1d315032191c13f5f6e77349559c58cbe401d93f0493cbe444",
+      "id": "86ad1d56012650ef268eaa35962ba7b5a8affb99c48e8867b5cf80cb12431ae7",
+      "group": "background",
+      "names": [
+        "2051CG_core_mujica hideout_bedroom_morning.png"
+      ],
+      "sourceBytes": 1821399,
+      "bytes": 187240,
+      "sourceSize": [
+        1670,
+        942
+      ],
+      "size": [
+        1670,
+        942
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.642
+    },
+    {
+      "sourceId": "b9c730afe09786f536a5c788ff564d5853d59fb8c0a87b8f239994a3d55bca47",
+      "id": "a93075eb591ff3f2dc649f57b81f585864594f5cbad2c3fd2bafa72d8ee4defd",
+      "group": "background",
+      "names": [
+        "2051CG_core_mujica hideout_missionnary room_morning.png"
+      ],
+      "sourceBytes": 1610230,
+      "bytes": 160436,
+      "sourceSize": [
+        1672,
+        941
+      ],
+      "size": [
+        1672,
+        941
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.55
+    },
+    {
+      "sourceId": "f6080616517246c6adf81bf9c2ab6cc0201ff5b1a777acf2031af3dd66dd9725",
+      "id": "09fd15730e7d4b7bb484ff5718ab15896cd0a4be894c2232579b3f3916f22d35",
+      "group": "background",
+      "names": [
+        "2051CG_core_soyohouse_bathroom.png"
+      ],
+      "sourceBytes": 1807756,
+      "bytes": 167392,
+      "sourceSize": [
+        1672,
+        940
+      ],
+      "size": [
+        1672,
+        940
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.62
+    },
+    {
+      "sourceId": "8503cece7d2ecd4ace327afdc634daea7f793975ee91ec499362259db29686a6",
+      "id": "b163b1210b25000f94deb6459e71cd2adb28f089b421ed073b5c92a9b8e42d7f",
+      "group": "background",
+      "names": [
+        "2051CG_core_soyohouse_bedroom_midnight.png"
+      ],
+      "sourceBytes": 2127681,
+      "bytes": 226712,
+      "sourceSize": [
+        1672,
+        940
+      ],
+      "size": [
+        1672,
+        940
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.693
+    },
+    {
+      "sourceId": "3320afdb4399cd4727b878816d469200d3f12cb3c614849555fc4bab07f94ee4",
+      "id": "d90e0ef67d5affae57ea367c945b186fe6b5806fb57f021553b7c21bd00796b5",
+      "group": "background",
+      "names": [
+        "2051CG_core_soyohouse_outside_midnight.png"
+      ],
+      "sourceBytes": 2220274,
+      "bytes": 326658,
+      "sourceSize": [
+        1672,
+        941
+      ],
+      "size": [
+        1672,
+        941
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.704
+    },
+    {
+      "sourceId": "3551be7231ff8a057f203949983bfeabeee62f9ef5839482fef890995f9bdfd3",
+      "id": "9e53e309ea0d98333dc93422968e90441980bb208617fd744af819bcc46fbd57",
+      "group": "background",
+      "names": [
+        "2051CG_core_soyohouse_room_midnight.png"
+      ],
+      "sourceBytes": 2141425,
+      "bytes": 293958,
+      "sourceSize": [
+        1672,
+        940
+      ],
+      "size": [
+        1672,
+        940
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.716
+    },
+    {
+      "sourceId": "14a28a0b3625fc9a56e9ba0e978421a2347919a6f6608c473e63394624d0a035",
+      "id": "b866726f6d06a31a62c2f9c54e381be6a4cf1f78dd31a49529fa94f56e359d61",
+      "group": "background",
+      "names": [
+        "2051CG_core_soyohouse_swimpool_midnight.png"
+      ],
+      "sourceBytes": 2249854,
+      "bytes": 296818,
+      "sourceSize": [
+        1672,
+        940
+      ],
+      "size": [
+        1672,
+        940
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.769
+    },
+    {
+      "sourceId": "647a4a69ecd2ae1615f137e3ac03ac6f2fc3ffd59862f53a01b9f9a3694aabc7",
+      "id": "828d00fa207801887fae5070efbce12f65f2599cafe9a93f9fe7319155196656",
+      "group": "background",
+      "names": [
+        "2051CG_darkpool_Ranahouse.png"
+      ],
+      "sourceBytes": 1922081,
+      "bytes": 225814,
+      "sourceSize": [
+        1670,
+        942
+      ],
+      "size": [
+        1670,
+        942
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.73
+    },
+    {
+      "sourceId": "7d5f3123f41b02a5fd6727e77cc55e7a74b66b70a69f469a1e4d1b9b761fe595",
+      "id": "273552346f6c0dc90d2ee0b178c0b2c717ef115920fc8b89846e6f3ab3fd1a3e",
+      "group": "background",
+      "names": [
+        "2051CG_darkpool_Ranahouse_bedroom.png"
+      ],
+      "sourceBytes": 2091500,
+      "bytes": 276478,
+      "sourceSize": [
+        1673,
+        940
+      ],
+      "size": [
+        1673,
+        940
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.75
+    },
+    {
+      "sourceId": "3f7c31905d9058536f0cbde76c1127c2c5323f313ba28e3bca36658c1a41027f",
+      "id": "27808b0d10c6bfa05e12f1009b69ed05d01a289ada9b764fc132d7e59cfa1030",
+      "group": "background",
+      "names": [
+        "2051CG_darkpool_backyard_midnight.png"
+      ],
+      "sourceBytes": 2064303,
+      "bytes": 215162,
+      "sourceSize": [
+        1677,
+        938
+      ],
+      "size": [
+        1677,
+        938
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.743
+    },
+    {
+      "sourceId": "5e1ea777de6667ddf42cd56720879211865f1dbd93a0f5092516c434d2cb15aa",
+      "id": "65bd5510c9354735a47f3cd58ef23047e59998ba2374ddd708d3b5b2661fc5ea",
+      "group": "background",
+      "names": [
+        "2051CG_darkpool_midnight.png"
+      ],
+      "sourceBytes": 2790960,
+      "bytes": 354006,
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "size": [
+        1536,
+        1024
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 2.956
+    },
+    {
+      "sourceId": "1486a33f96209c037cd450bce2d4b4a2b3dc50dead28e2b69459e79d3c98503a",
+      "id": "3977f12b279abf24ba407c0bb37fb97544fa8f329efa131649305e1966117d2c",
+      "group": "background",
+      "names": [
+        "2051CG_darkpool_midnight2.png"
+      ],
+      "sourceBytes": 2446980,
+      "bytes": 390576,
+      "sourceSize": [
+        1672,
+        940
+      ],
+      "size": [
+        1672,
+        940
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.796
+    },
+    {
+      "sourceId": "5f2a47b1d9e277ed7a88db48b06659b41ea9da76dacd404f5b4bf432d753a14e",
+      "id": "8889cfd41b1b2ebee6e3c3524ba2ae3057060580f50394989cf57607ddeaa2d3",
+      "group": "background",
+      "names": [
+        "2051CG_darkpool_morning.png"
+      ],
+      "sourceBytes": 3029848,
+      "bytes": 388708,
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "size": [
+        1536,
+        1024
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 3.061
+    },
+    {
+      "sourceId": "61e9240a8964eec25f9ec67c79848c9913bae705c1238091d9eebe171fc89377",
+      "id": "e332562be098342554e872c8a9b180365670fa1be9b3508d151b6b30f89a9e9b",
+      "group": "background",
+      "names": [
+        "2051CG_darkpool_nyamuhouse_bedroom.png"
+      ],
+      "sourceBytes": 1632856,
+      "bytes": 153870,
+      "sourceSize": [
+        1670,
+        942
+      ],
+      "size": [
+        1670,
+        942
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.611
+    },
+    {
+      "sourceId": "0521d269c2939d3c84adf45518431b5a8c16ed91ea843034b11d25d31d490022",
+      "id": "de8d2b7afba9ac2ce77239f5432a039af7c3f3fb0fb2a2f6be46117f932193a5",
+      "group": "background",
+      "names": [
+        "2051CG_darkpool_nyamuhouse_diningroom.png"
+      ],
+      "sourceBytes": 1856995,
+      "bytes": 185834,
+      "sourceSize": [
+        1668,
+        943
+      ],
+      "size": [
+        1668,
+        943
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.59
+    },
+    {
+      "sourceId": "832299196ea398b40def19823f9f6dad66c98ebf7058494a863a4e2a4184e3d0",
+      "id": "f14d7d4b06252b9b8f23149e9dee85d5fe4bfcbe88b76482a262d3162d3c6f47",
+      "group": "background",
+      "names": [
+        "2051CG_darkpool_nyamuhouse_outside_midnight.png"
+      ],
+      "sourceBytes": 1979334,
+      "bytes": 220186,
+      "sourceSize": [
+        1668,
+        943
+      ],
+      "size": [
+        1668,
+        943
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.681
+    },
+    {
+      "sourceId": "e0f92c5a639346a7d8a19fd6f754abc053820b10a9cbc24eb5b9a68d90b5ba54",
+      "id": "b35a83ab91fb8c2f5407d5adafa8eacf12ee2c3c95f57e74dd61e3ff9db778fb",
+      "group": "background",
+      "names": [
+        "2051CG_darkpool_nyamuhouse_room_midnight.png"
+      ],
+      "sourceBytes": 1729746,
+      "bytes": 158568,
+      "sourceSize": [
+        1673,
+        940
+      ],
+      "size": [
+        1673,
+        940
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.578
+    },
+    {
+      "sourceId": "0648166f661c613cefa2bb54bc3ded350f9208e9d6adc7b95bdf96de1fd9210f",
+      "id": "c8e70162b04cf4b2fb3f3ba2c92cabaeae58f794fd619077b70ab565cb3f1f16",
+      "group": "background",
+      "names": [
+        "2051CG_darkpool_takihouse_bedroom_midnight.png"
+      ],
+      "sourceBytes": 1955528,
+      "bytes": 191380,
+      "sourceSize": [
+        1672,
+        941
+      ],
+      "size": [
+        1672,
+        941
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.662
+    },
+    {
+      "sourceId": "97f3e498a8f83b419a2b8459a31c503871963a1c9e52258d2ee631d778a8e0c5",
+      "id": "cdc2b589ba35bb8c00a38d39f76e8bc130669e8d96d54b0f4c863a56a5936a65",
+      "group": "background",
+      "names": [
+        "2051CG_darkpool_takihouse_out_midnight.png"
+      ],
+      "sourceBytes": 2513176,
+      "bytes": 431568,
+      "sourceSize": [
+        1672,
+        941
+      ],
+      "size": [
+        1672,
+        941
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.72
+    },
+    {
+      "sourceId": "ec00a6baec3c97243933d2cb418cb8dc18f9e69d4134c0054bb55349d5c74d21",
+      "id": "e713271d917c288466eafa556b6d3fe91a497e45bf202323af9a07ac8120d056",
+      "group": "background",
+      "names": [
+        "2051CG_darkpool_takihouse_room_midnight.png"
+      ],
+      "sourceBytes": 2106840,
+      "bytes": 247360,
+      "sourceSize": [
+        1672,
+        941
+      ],
+      "size": [
+        1672,
+        941
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.707
+    },
+    {
+      "sourceId": "0b49c2eb2038acbc558adf466facc5dd0b9ed9dcf7bf01e95b67e80737a205e7",
+      "id": "2a3d059792c267eddd2d42d8bc68d6eecce7088cca8abf9cba620ddcac25037e",
+      "group": "background",
+      "names": [
+        "2051CG_lowtown_midnight.png"
+      ],
+      "sourceBytes": 2811851,
+      "bytes": 474668,
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "size": [
+        1536,
+        1024
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.87
+    },
+    {
+      "sourceId": "22962e483a207bd8dd5d197430b606ede2f5e2f948134fd4fd9e93f5e7812e21",
+      "id": "35ed85ddfbe9d2cd402e3579c8ef019d68b9ab34f6e28f11367a6d3fb0523003",
+      "group": "background",
+      "names": [
+        "2051CG_lowtown_midnight2.png"
+      ],
+      "sourceBytes": 2148967,
+      "bytes": 280240,
+      "sourceSize": [
+        1676,
+        939
+      ],
+      "size": [
+        1676,
+        939
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.732
+    },
+    {
+      "sourceId": "d167b5dcb3dd4b739cc73ed0e7b27bc7db1a680f3b546cde7a0229b0ce43dee3",
+      "id": "78ecde91e728333c388cff79dba5db3cfdaaec03d23e9f79954f144fcb7dc878",
+      "group": "background",
+      "names": [
+        "2051CG_lowtown_morning.png"
+      ],
+      "sourceBytes": 3313960,
+      "bytes": 476342,
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "size": [
+        1536,
+        1024
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 4.422
+    },
+    {
+      "sourceId": "c703bd8d007d651179cdd8e7369498fcfda45f22b4de873f6e55016ae15562a0",
+      "id": "808df1ea7a8f0bed40e70a087529a9685915d2e58768f643a92dba65585dc786",
+      "group": "background",
+      "names": [
+        "2051CG_lowtown_morning2.png"
+      ],
+      "sourceBytes": 2456630,
+      "bytes": 289352,
+      "sourceSize": [
+        1600,
+        896
+      ],
+      "size": [
+        1600,
+        896
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 2.75
+    },
+    {
+      "sourceId": "555117b61a06d5afbf44754896c2f84633777218bd770fb1b6b533bb822f0b45",
+      "id": "ac9284c73efd7490e4beb7d5af06ae3a9c45296e0cc1ef1f7cc1e9ad28106dda",
+      "group": "background",
+      "names": [
+        "2051CG_lowtown_morning3.png"
+      ],
+      "sourceBytes": 2327989,
+      "bytes": 341102,
+      "sourceSize": [
+        1678,
+        937
+      ],
+      "size": [
+        1678,
+        937
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.781
+    },
+    {
+      "sourceId": "c81a491d5882122934591f52db663ccdfa685fb4c646b49a617ef71af9e5e7e5",
+      "id": "8bf77db60de1ed329cf1d2924f0a1acb453e32279ec55d34d8711a970fe1e817",
+      "group": "background",
+      "names": [
+        "2051CG_lowtown_sakihouse_balcony.png"
+      ],
+      "sourceBytes": 2598627,
+      "bytes": 425622,
+      "sourceSize": [
+        1672,
+        940
+      ],
+      "size": [
+        1672,
+        940
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.856
+    },
+    {
+      "sourceId": "81e0445e3ae26af293b0af9d8490cff3f680b162dc28cb0242840c289ea81378",
+      "id": "777fda732e4b7da4399240d2bc9ac88b05a0278db4bbb6aad4aec3d4f42ace1a",
+      "group": "background",
+      "names": [
+        "2051CG_lowtown_sakihouse_balcony_morning.png"
+      ],
+      "sourceBytes": 2287681,
+      "bytes": 340976,
+      "sourceSize": [
+        1670,
+        941
+      ],
+      "size": [
+        1670,
+        941
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.787
+    },
+    {
+      "sourceId": "acf99e7fca9c42c5fbb5c0c6667732b63a19ecb118a5b7e3a4903ecd2f286954",
+      "id": "2f0d36a5e67f3bc0313130fdc53a522326277c298b1eb88eb044b73a4258f3bd",
+      "group": "background",
+      "names": [
+        "2051CG_lowtown_sakihouse_bathroom_morning.png"
+      ],
+      "sourceBytes": 2400190,
+      "bytes": 347052,
+      "sourceSize": [
+        1673,
+        940
+      ],
+      "size": [
+        1673,
+        940
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.832
+    },
+    {
+      "sourceId": "12b19eedbd8cff194ea78bb8c7707b43dd19cb8d614251a4af7b748700a29788",
+      "id": "f245b28c688c921cf8e1550dbdcccfe702b9730873843a47021efee3463bbda0",
+      "group": "background",
+      "names": [
+        "2051CG_lowtown_sakihouse_morning.png"
+      ],
+      "sourceBytes": 2460326,
+      "bytes": 367854,
+      "sourceSize": [
+        1672,
+        941
+      ],
+      "size": [
+        1672,
+        941
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.844
+    },
+    {
+      "sourceId": "3d6147a5dd18322ee51d04f693bb6185b31bc4eaac6d7fca5fd9f4d964bd4d8c",
+      "id": "455a43b6030ab7bd1dfd93c89a7f42c47524dc9961f896a4dcaff96d5b69b10f",
+      "group": "background",
+      "names": [
+        "2051CG_neonring_Umirihouse_midnight.png"
+      ],
+      "sourceBytes": 2368785,
+      "bytes": 345240,
+      "sourceSize": [
+        1672,
+        941
+      ],
+      "size": [
+        1672,
+        941
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.803
+    },
+    {
+      "sourceId": "f2a003c8355b66602eef8117e3477e0aa9bab9c063099d95559e98d005565d5c",
+      "id": "63b60aa7162a8b4f94e9d674071659f5390386160a2d79c5888b999edd70579b",
+      "group": "background",
+      "names": [
+        "2051CG_neonring_alley_midnight.png"
+      ],
+      "sourceBytes": 1945756,
+      "bytes": 207010,
+      "sourceSize": [
+        1672,
+        941
+      ],
+      "size": [
+        1672,
+        941
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.682
+    },
+    {
+      "sourceId": "59e4a3573477fadacbc2db3c6c004af278f18c30b0dfc6b5b052053064931852",
+      "id": "0661be2456008c3308c01c75accc6d195d00306860394a8c38fface6ee81f97c",
+      "group": "background",
+      "names": [
+        "2051CG_neonring_midnight.png"
+      ],
+      "sourceBytes": 2724129,
+      "bytes": 432122,
+      "sourceSize": [
+        1792,
+        896
+      ],
+      "size": [
+        1792,
+        896
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 7.619
+    },
+    {
+      "sourceId": "df784c14a878c934191c8aade52980af22d42cb0bcd6cebee2dd9957908670c4",
+      "id": "3487cdbfc5a797a94bd59d88ac5a77e8935b0479fb45cfa8f4837bd5807e86fb",
+      "group": "background",
+      "names": [
+        "2051CG_neonring_midnight2.png"
+      ],
+      "sourceBytes": 2906069,
+      "bytes": 402898,
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "size": [
+        1536,
+        1024
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.271
+    },
+    {
+      "sourceId": "a2377ba26270484fe2376360c6fb5ec480f32a6eb7898936886613a0b9e622d7",
+      "id": "e0e56e92539c2337f80f949222b080b9d60acaafc6c4ecb4f1591e1a022702d0",
+      "group": "background",
+      "names": [
+        "2051CG_neonring_morning.png"
+      ],
+      "sourceBytes": 2682791,
+      "bytes": 463080,
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1774,
+        887
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.723
+    },
+    {
+      "sourceId": "78ee50c24b84db0f8b96c5cc3ab26fbc4540fb43fb73e16411ea6bad600c0896",
+      "id": "de1c86a0a203051d61ddd822b0cccd3134ce717bd300bc181557fa8d07a59e63",
+      "group": "background",
+      "names": [
+        "2051CG_neonring_morning2.png"
+      ],
+      "sourceBytes": 3005287,
+      "bytes": 495792,
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "size": [
+        1536,
+        1024
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.948
+    },
+    {
+      "sourceId": "a93b84b2cba1e5e1cf2641433b2387ee0514a7ba4800384fbfb7a5d0b1dd3cdd",
+      "id": "e6a26ecd0cd107a1b26ec3fea02fc48bd6702d34ad9dbcd7cc8dc19f6c03895b",
+      "group": "background",
+      "names": [
+        "2051CG_neonring_uikahouse_bedroom_midnight.png"
+      ],
+      "sourceBytes": 1935414,
+      "bytes": 204240,
+      "sourceSize": [
+        1699,
+        926
+      ],
+      "size": [
+        1699,
+        926
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.662
+    },
+    {
+      "sourceId": "ea48f369a6ca283be93249686af3fa30613fe702f830f68f2066206b27018d0f",
+      "id": "3721d1ab376d7711d1a125be7698f4ff9604bda855e38fa824121c5b64e75148",
+      "group": "background",
+      "names": [
+        "2051CG_neonring_uikahouse_midnight.png"
+      ],
+      "sourceBytes": 2264290,
+      "bytes": 311214,
+      "sourceSize": [
+        1672,
+        941
+      ],
+      "size": [
+        1672,
+        941
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.778
+    },
+    {
+      "sourceId": "112a36f54fbe5acbb46e7959039019af30b07112442a939157cccfd024aa66b3",
+      "id": "449ebc594a9774ceffacc3b57852df02fd3449f35f32e2a370964fff8785fe3c",
+      "group": "background",
+      "names": [
+        "2051CG_redflower_midnight.png"
+      ],
+      "sourceBytes": 2028393,
+      "bytes": 265574,
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "size": [
+        1536,
+        1024
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.589
+    },
+    {
+      "sourceId": "4fae06cd125412f281925cd61eadac32e88733d9464efec79814bdbb8242abaf",
+      "id": "1ee560a56632fbf5d6593cc40b8f4857c6fc32c5dd68ac2c0d2184ac99eb37b6",
+      "group": "background",
+      "names": [
+        "2051CG_redflower_morning.png"
+      ],
+      "sourceBytes": 2510002,
+      "bytes": 388236,
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "size": [
+        1536,
+        1024
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.799
+    },
+    {
+      "sourceId": "a7f3cb78ce69e17b3e685b5d6a7159bedb1207ed19afc85dd131275f576e07c5",
+      "id": "62a7d823d9f22bf459c0d25adce451fa2acc16d9bd79663332c6473761d2384b",
+      "group": "portrait",
+      "names": [
+        "Tomorin_tachi_normal.png"
+      ],
+      "sourceBytes": 1749206,
+      "bytes": 392834,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 7.944
+    },
+    {
+      "sourceId": "46ded2d1e85c2f41fe9ebaee113da34dd4a5d09911a821a4df879b18a4ef880d",
+      "id": "ce096ff512bbc2eaf7a90a85cd3ebe220421b52eae00fa9d2e854a462c8c74ae",
+      "group": "portrait",
+      "names": [
+        "Tomorin_tachi_smile.png"
+      ],
+      "sourceBytes": 1748430,
+      "bytes": 392286,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 8.142
+    },
+    {
+      "sourceId": "8d4718eb74b6bd04d594f10fa212b199350bcdb8c1e7f0cb00f3c28c0224fd34",
+      "id": "e00bf945f524e7229bdeadd511ddffe9b82278d8ffe6bf9884bec8de1580902a",
+      "group": "portrait",
+      "names": [
+        "Tomorin_tachi_blush.png"
+      ],
+      "sourceBytes": 1749504,
+      "bytes": 392650,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 7.821
+    },
+    {
+      "sourceId": "2b62f3f3d757fa673e32de59f93727e9e1f5a0b1816ce7443c290cdaf7fa8c96",
+      "id": "f45c0d73486ba169ba2aef3398f2be7046d1d19571671a263507f886f0b179a2",
+      "group": "portrait",
+      "names": [
+        "Tomorin_tachi_serious.png"
+      ],
+      "sourceBytes": 1748210,
+      "bytes": 391380,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 7.193
+    },
+    {
+      "sourceId": "7b1fb18b84cf43d894a4fef16a6ca4b6162dfd8f107e159f59d36cb09f6e1065",
+      "id": "35460948dc4bea61a6d62123749608f7ddf36839db3fb7a821e780718930c6a3",
+      "group": "portrait",
+      "names": [
+        "Tomorin_tachi_sadness.png"
+      ],
+      "sourceBytes": 1747945,
+      "bytes": 392648,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 7.589
+    },
+    {
+      "sourceId": "aeb16dcff89ea4a1e7883706d3ef5d47a7f60823855758297934710fd5231180",
+      "id": "0046fafdee2101dffe25087581f44bad835752ee1aafc48b11849cb04e592396",
+      "group": "portrait",
+      "names": [
+        "Tomorin_tachi_shocked.png"
+      ],
+      "sourceBytes": 1747604,
+      "bytes": 391236,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 7.878
+    },
+    {
+      "sourceId": "d12cbf0b1e0e96a65142a11b9d1a0613ab51374e4bc4697bf3b57f1fdab8e154",
+      "id": "3ea5b5d3dacec68cb27faa097d3799d8fbd38df010770f08e7060ef4b6a42773",
+      "group": "portrait",
+      "names": [
+        "Tomorin_tachi_constricted pupils.png"
+      ],
+      "sourceBytes": 1748170,
+      "bytes": 391292,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 7.832
+    },
+    {
+      "sourceId": "08c0aa96ceb4ddd928e2729cdc554a3423dbef33c133bb4c58f6d3acbf668bbf",
+      "id": "ac84ac04d589c93152d1c0353c6d0dc7a0935def1edd2e9d88dddbb9f0359ef7",
+      "group": "portrait",
+      "names": [
+        "Tomorin_tachi_yandere trance.png"
+      ],
+      "sourceBytes": 1750825,
+      "bytes": 391894,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 7.685
+    },
+    {
+      "sourceId": "3b9bf5ea3a58d289fc1e53e139f9d9a2a7b189380c95050c95a2ed34982bb79a",
+      "id": "c5398fe9911d4db08ef78a918327c81adc836caf912499a00b21f102f68f3330",
+      "group": "portrait",
+      "names": [
+        "Anon_tachi_normal.png"
+      ],
+      "sourceBytes": 1827631,
+      "bytes": 380738,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.707
+    },
+    {
+      "sourceId": "f063bc3cbdc7931cfc233dc9e6b14bb7a9f5d2b1ab2fdabca89af7902a625718",
+      "id": "d8aeb945f97d19cbcc5a272de2e5b296bbb5481ee195897e06f8eef32ac60dce",
+      "group": "portrait",
+      "names": [
+        "Anon_tachi_smile.png"
+      ],
+      "sourceBytes": 1828051,
+      "bytes": 380814,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.829
+    },
+    {
+      "sourceId": "87faae3f6e2168692dfa2b70ace81916c0e479f601240367e586a429b904efc1",
+      "id": "95363a2c980dbdc35b3fd6919606a6c2288ea73b26744b6c142cd62ea7621251",
+      "group": "portrait",
+      "names": [
+        "Anon_tachi_blush.png"
+      ],
+      "sourceBytes": 1828873,
+      "bytes": 381236,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.919
+    },
+    {
+      "sourceId": "01ae38d48146c3935a0509086b5a86eafbb2aad78fa4eb236f44041a0fe844fb",
+      "id": "c7c6af808b6e82304469ddaaca2f72aaaddafd1727983b3f11522191a0afcd94",
+      "group": "portrait",
+      "names": [
+        "Anon_tachi_serious.png"
+      ],
+      "sourceBytes": 1828067,
+      "bytes": 380588,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.831
+    },
+    {
+      "sourceId": "83e0db57e926b816611347c46cc7e116d659093eff0d8e6dc1a3d03de0f1f521",
+      "id": "c69b90d47028c7f09539c9d83be6d38d9eba8eadad703345485939b8aeb66a61",
+      "group": "portrait",
+      "names": [
+        "Anon_tachi_sadness.png"
+      ],
+      "sourceBytes": 1829409,
+      "bytes": 381238,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.065
+    },
+    {
+      "sourceId": "5b3c0e6d593a03689e28083bf597e5b6c6f3698aa4753c392993bca591b40f18",
+      "id": "2f5f766ee77669b6a22393f43dd45f076ca51080019b247fd81ac5ef5269e62c",
+      "group": "portrait",
+      "names": [
+        "Anon_tachi_shocked.png"
+      ],
+      "sourceBytes": 1828540,
+      "bytes": 380674,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.324
+    },
+    {
+      "sourceId": "c7146fe31a9c7b7df7e007b02877e10951cbcfec48ddddba6f3a2a6c315f1b0f",
+      "id": "c747e58b1709cff853294088416967b41590ad3097e68c0e8ffb603765b57aa0",
+      "group": "portrait",
+      "names": [
+        "Anon_tachi_constricted pupils.png"
+      ],
+      "sourceBytes": 1830275,
+      "bytes": 381404,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.936
+    },
+    {
+      "sourceId": "f5cb916e9f7b033fb3ef3ac60672a5db721597db0a8a957a1226b39baf129e38",
+      "id": "05ab53d012f08caf33fdf5ebe1ebd4756f9e2b2537cab6f3b23c8003da1640e3",
+      "group": "portrait",
+      "names": [
+        "Anon_tachi_yandere trance.png"
+      ],
+      "sourceBytes": 1829452,
+      "bytes": 381346,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.011
+    },
+    {
+      "sourceId": "ad8d6391987a27bd4e909d1cfbc3581090c889bc91a31bba4f347705c1cdd6a8",
+      "id": "35bfbf87411e9d23f2319f42862e835e4b5bd4034c59c42995adc4d35aeece4b",
+      "group": "portrait",
+      "names": [
+        "Soyo_tachi_normal.png"
+      ],
+      "sourceBytes": 1490566,
+      "bytes": 318114,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.194
+    },
+    {
+      "sourceId": "d0d5bcfef639b8d1e3a4e591d3b2b235c456048530f6033195d01fb614ffe9df",
+      "id": "1835e645132896fc62f20154c9eb1012704a56e7dd608f3f9091090ef7d2b7ae",
+      "group": "portrait",
+      "names": [
+        "Soyo_tachi_smile.png"
+      ],
+      "sourceBytes": 1475802,
+      "bytes": 315730,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.106
+    },
+    {
+      "sourceId": "915ec82fde115ad0b53554c4abec6233bbe35caaf5e8dfd7c960a7eb614af384",
+      "id": "31ada1b82d393296edc51602029ef4a431dfc2572079e86f5237645832d34a26",
+      "group": "portrait",
+      "names": [
+        "Soyo_tachi_blush.png"
+      ],
+      "sourceBytes": 1477320,
+      "bytes": 315828,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.027
+    },
+    {
+      "sourceId": "344819fd3d9b72ab8d4d999d3e9fded6babb8fb6082c0f60f7838b425fcbb951",
+      "id": "266df9f8b19863f7181eba64753097455d5c85d00041c9126dfc602145a13cb4",
+      "group": "portrait",
+      "names": [
+        "Soyo_tachi_serious.png"
+      ],
+      "sourceBytes": 1475760,
+      "bytes": 315478,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.685
+    },
+    {
+      "sourceId": "1657947fce5ec7debb7b6671d584bf1825c6aaeba5c4ee2dccdd4937ad9fa79a",
+      "id": "c49b8a63bc59c2bceb736f7d1e059d0465b16507aaeac833a120b7c5039b91ed",
+      "group": "portrait",
+      "names": [
+        "Soyo_tachi_sadness.png"
+      ],
+      "sourceBytes": 1477519,
+      "bytes": 315720,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.186
+    },
+    {
+      "sourceId": "049b40ed7bc46e1323ff45ce85a3ed04aaae0a686af508ffba9491ce5ec681b2",
+      "id": "e3ad200a274f7636425f3a5f1e8c8729104cd82660f8f5d44745fa6ebf15651b",
+      "group": "portrait",
+      "names": [
+        "Soyo_tachi_shocked.png"
+      ],
+      "sourceBytes": 1475576,
+      "bytes": 315912,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.093
+    },
+    {
+      "sourceId": "99fc43ff1af79ad251f250bd5beedb1b0af484cf2912da6069576a8d39a54ecf",
+      "id": "3847028338408b2a935b89ddea2e3afac5d586ca532ccb4327eec0b6f51230c6",
+      "group": "portrait",
+      "names": [
+        "Soyo_tachi_constricted pupils.png"
+      ],
+      "sourceBytes": 1476168,
+      "bytes": 314936,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.68
+    },
+    {
+      "sourceId": "5a04705b8c0c3893abe2afac9457fece77ccdd76263a8e8cecba606a6904dd53",
+      "id": "b7b950a53399b1cdcad0220398fb0d0f0b80b98667cba505b40782944e9a1295",
+      "group": "portrait",
+      "names": [
+        "Soyo_tachi_yandere trance.png"
+      ],
+      "sourceBytes": 1477024,
+      "bytes": 316892,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.541
+    },
+    {
+      "sourceId": "51264ce6a8e8d088946d1838420495937d24887ca02f939c5ac4fdaf777fad87",
+      "id": "2a571049297c4e618725310eb9d95b73e26f69824585ce24a18f0f8e69e76c74",
+      "group": "portrait",
+      "names": [
+        "Taki_tachi_normal.png"
+      ],
+      "sourceBytes": 1590108,
+      "bytes": 314812,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.663
+    },
+    {
+      "sourceId": "31cc00b6b1a3e86507e79b53d10c237367654bde359b1e173d807b8d6ab45b32",
+      "id": "4f6144d90c91799c634c919be922d978a4bf2c17f0c771afd775acb77f06e0e0",
+      "group": "portrait",
+      "names": [
+        "Taki_tachi_smile.png"
+      ],
+      "sourceBytes": 1382878,
+      "bytes": 293560,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.853
+    },
+    {
+      "sourceId": "f7459ec6fd48e804fe6081df1544e25b5ef811328aac91f9427d4a8d1590746d",
+      "id": "c012bdb7fd5506b878d95cf0e54b23e49f1dcb5cd2468d96266518d6c6e433da",
+      "group": "portrait",
+      "names": [
+        "Taki_tachi_blush.png"
+      ],
+      "sourceBytes": 1384014,
+      "bytes": 294164,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.536
+    },
+    {
+      "sourceId": "21f1183d8deb658d66cfbcbf06262feda273e720471ec438f3d6edde4e9acf84",
+      "id": "ba0cf659de7876943e2d4088f7b47a86ca7251048fc0eced1d8215d5db2202ef",
+      "group": "portrait",
+      "names": [
+        "Taki_tachi_serious.png"
+      ],
+      "sourceBytes": 1380778,
+      "bytes": 293198,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.109
+    },
+    {
+      "sourceId": "5dde6c8913e50e1761f3687cf5fa1ca60d76be4c7b4043d4ea0bad97578fab7f",
+      "id": "6e93c7a92c2452e983fa7e8bf1afb96f3c2473924894def2b8094cb9b22e8a0b",
+      "group": "portrait",
+      "names": [
+        "Taki_tachi_sadness.png"
+      ],
+      "sourceBytes": 1382475,
+      "bytes": 293572,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.765
+    },
+    {
+      "sourceId": "b733f08b990fb9a4eda59a1e73fc7c6f28734b1bc95c0b21d4004d2e59420bd3",
+      "id": "90f48db3a89d709ecdd60787f546e17513858e1adb8e604870c56ff2a6885ec8",
+      "group": "portrait",
+      "names": [
+        "Taki_tachi_shocked.png"
+      ],
+      "sourceBytes": 1381377,
+      "bytes": 293088,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.766
+    },
+    {
+      "sourceId": "ab58ddca2a27c1827981a20a11e5b0dfc3da41db22b9188ebbe3db66a4e94a90",
+      "id": "fb3471af11a74ad309c36e06ab01a2320e7af598ca961cc6beb6a41482c4203b",
+      "group": "portrait",
+      "names": [
+        "Taki_tachi_constricted pupils.png"
+      ],
+      "sourceBytes": 1380430,
+      "bytes": 293160,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.457
+    },
+    {
+      "sourceId": "2599e1bb98044408f9196d516bef386c60b77cb2cbb7f37862cac53a0caa593d",
+      "id": "96f1569c9d9033df8adf20cf1cf6c15aad8c1a2c68484e118ced9b82b589481c",
+      "group": "portrait",
+      "names": [
+        "Taki_tachi_yandere trance.png"
+      ],
+      "sourceBytes": 1382317,
+      "bytes": 293496,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.264
+    },
+    {
+      "sourceId": "f6d1f48767a723daf1c3922bdb142209e7ffdcd46aad7eec849dcd0f2d01ec9a",
+      "id": "de9379d6ff6552037e58caeec180a781490c13180dddd910014824d6c737519c",
+      "group": "portrait",
+      "names": [
+        "Rana_tachi_normal.png"
+      ],
+      "sourceBytes": 1426381,
+      "bytes": 276524,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 4.74
+    },
+    {
+      "sourceId": "748ea4c206fa0d008901ca10fb31aac8e6d4c759955b2c2c7d9b83d2a7f125dd",
+      "id": "2db9328eb62893e2e6e181892e46a24ec99a034039737eb107bece878cce434f",
+      "group": "portrait",
+      "names": [
+        "Rana_tachi_smile.png"
+      ],
+      "sourceBytes": 2077687,
+      "bytes": 291592,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.663
+    },
+    {
+      "sourceId": "ed4a8b44742e125c4119f7d1a43c7e06aba22ae7c2d87032eba3de92cc0790f4",
+      "id": "83c6a212205aaffe3c4e58cbd0fd5f80ef0a76087a974e914793e7047f5bcb8b",
+      "group": "portrait",
+      "names": [
+        "Rana_tachi_blush.png"
+      ],
+      "sourceBytes": 1421161,
+      "bytes": 275006,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.237
+    },
+    {
+      "sourceId": "208d7ba112cce2abf6dd9a75b158c19cb85f74ccdc01220d8f70f977b40756f7",
+      "id": "c7992dac014cfe4daa0a3d567e34ed80040fbc4857b5ef30bda2f65186aceefc",
+      "group": "portrait",
+      "names": [
+        "Rana_tachi_serious.png"
+      ],
+      "sourceBytes": 1420941,
+      "bytes": 275020,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 4.624
+    },
+    {
+      "sourceId": "0ef2e99f3f295f9e9dd35adddb983ee59c5a96812a13c2a0b4a9db7fe178db48",
+      "id": "c4a4870abee320549a577f82b0b914ded683bfc253617417db2b385cd40ac378",
+      "group": "portrait",
+      "names": [
+        "Rana_tachi_sadness.png"
+      ],
+      "sourceBytes": 1425798,
+      "bytes": 276122,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.484
+    },
+    {
+      "sourceId": "a3b5acdce11fc02ef67f8c1817ed69b82ba0bf55888847edf19d82eecbda0c35",
+      "id": "ac2949fb537b7c0916b711800c720029b6a8b205368be1075bb41a2f3ffa2ee3",
+      "group": "portrait",
+      "names": [
+        "Rana_tachi_shocked.png"
+      ],
+      "sourceBytes": 1423629,
+      "bytes": 275762,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.576
+    },
+    {
+      "sourceId": "bdf818ac9499aae33dd294586ec7a5ac977b75ae35df5269f869a47cef0f9c04",
+      "id": "91bbdde647bfc17c82d02f6a5adf0a8d01635036762bdc5c31e6fffe1583927c",
+      "group": "portrait",
+      "names": [
+        "Rana_tachi_constricted pupils.png"
+      ],
+      "sourceBytes": 1422666,
+      "bytes": 275142,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.578
+    },
+    {
+      "sourceId": "9010c6df09811e17e799f0edb8e4d72fede757a2af1e3b2ac3a46797cd8fdd1f",
+      "id": "e082998a4f87e0a2673b45a790bed68935781364d9161014968416b3a9068333",
+      "group": "portrait",
+      "names": [
+        "Rana_tachi_yandere trance.png"
+      ],
+      "sourceBytes": 1423195,
+      "bytes": 275606,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.817
+    },
+    {
+      "sourceId": "e133517e8c5da2c577416b4c9982aa0fbbdc3e25342d6922697e4425e55977c6",
+      "id": "42ecdb5fc46eb65f170fadbca08165576afe978426915055068e239f91c817c8",
+      "group": "portrait",
+      "names": [
+        "Saki_tachi_normal.png"
+      ],
+      "sourceBytes": 1526887,
+      "bytes": 327430,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.97
+    },
+    {
+      "sourceId": "ba4e3878251542d04a2e6949e382abadda116f5ed391f0944ec7bd0304159f49",
+      "id": "a5c61ec02f908672c643ee5759437a616c1297e88588a23065fc27993d679505",
+      "group": "portrait",
+      "names": [
+        "Saki_tachi_smile.png"
+      ],
+      "sourceBytes": 1820687,
+      "bytes": 342612,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.637
+    },
+    {
+      "sourceId": "45d62729b3522c786101c07379971d87e97fd83c16695af63a205f16a628b6ca",
+      "id": "73b6add01f0b7261b1956a9c2c4a15449f7b034fc7a8a65522912cb44672161c",
+      "group": "portrait",
+      "names": [
+        "Saki_tachi_blush.png"
+      ],
+      "sourceBytes": 1522561,
+      "bytes": 325506,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.959
+    },
+    {
+      "sourceId": "975aca4218d2bf754560daf62c49c28050781d27cef295c6487db20ca2356b21",
+      "id": "aeab58417c67f71acae0d4bd82b3a0376b34277a4da435c4fbfde0d4c9c23e8f",
+      "group": "portrait",
+      "names": [
+        "Saki_tachi_serious.png"
+      ],
+      "sourceBytes": 1522243,
+      "bytes": 325856,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 7.023
+    },
+    {
+      "sourceId": "5c3526dc1131494a6464ec9246ba1121dcde70f52d41364ac2807f5055b7bfab",
+      "id": "7017b688528eeb58f7ec0cd4b8164f3b4c7c4de0742f9bb96050def2d69b492f",
+      "group": "portrait",
+      "names": [
+        "Saki_tachi_sadness.png"
+      ],
+      "sourceBytes": 1521684,
+      "bytes": 324990,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 7.014
+    },
+    {
+      "sourceId": "fce65b14d8308db23824647e24a07ef4cf2a8b1e76302e5e7cd7d2a011d6b5dd",
+      "id": "3a3ee0d42f13749fd964d0092a20f786fd4c446ddf19dc7219dc4beaeac4317e",
+      "group": "portrait",
+      "names": [
+        "Saki_tachi_shocked.png"
+      ],
+      "sourceBytes": 1521378,
+      "bytes": 325322,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.572
+    },
+    {
+      "sourceId": "696e87da6c550115032d0b6ca2bdad9030a2c1288902628cac89b13c49919eb7",
+      "id": "49c05107d43aafc61c62d27c5105d9a48809d91e58809c8bb48d480e1ab875d9",
+      "group": "portrait",
+      "names": [
+        "Saki_tachi_constricted pupils.png"
+      ],
+      "sourceBytes": 1519949,
+      "bytes": 324940,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.895
+    },
+    {
+      "sourceId": "26464046a31f23d8ab6d71158d191723570be1156c381511b0324a2a8450fd99",
+      "id": "474d67ca1ea85b93fa8a43b326cf1565cbf872cf388c118682ad55fa0344a7b2",
+      "group": "portrait",
+      "names": [
+        "Saki_tachi_yandere trance.png"
+      ],
+      "sourceBytes": 1522393,
+      "bytes": 325850,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 7.298
+    },
+    {
+      "sourceId": "6994a6ae970074b3eb2c83eb3fecf2de00ff7e44e2ac7baaf4ad75d7103d0022",
+      "id": "4f027b60a1ecde33981ffe5b2bb62216e8a19f4fa77cb0ac8993d1ebda812a6f",
+      "group": "portrait",
+      "names": [
+        "Uika_tachi_normal.png"
+      ],
+      "sourceBytes": 1697613,
+      "bytes": 470154,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 8.656
+    },
+    {
+      "sourceId": "b84777007fd2ba3e4f4501b079ccbafc26c5de70d89b7af6df2de30f83210027",
+      "id": "649e6b6cf461c6fe044c04b8114562465618477dbf3b4c889b81c5a7d3f1b487",
+      "group": "portrait",
+      "names": [
+        "Uika_tachi_smile.png"
+      ],
+      "sourceBytes": 2014988,
+      "bytes": 485492,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 8.748
+    },
+    {
+      "sourceId": "7d72e643a5cc8036eedd947fc13c228512d777e31dcce945e6056a8261ed7f85",
+      "id": "53573f3c9a1d4c5ae2f5043c7fb5662650a7d6863997a28af40d5a204a00ad78",
+      "group": "portrait",
+      "names": [
+        "Uika_tachi_blush.png"
+      ],
+      "sourceBytes": 1699654,
+      "bytes": 471006,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 8.526
+    },
+    {
+      "sourceId": "31cc1538e8fcf6e680d809617a8069b6f9c5499b4ac6d8e8a578df0fc0579657",
+      "id": "9bf4e3f4f73a78dd823a72dd0bb9a8957c7d248472001fc7a95bf2989599d7d8",
+      "group": "portrait",
+      "names": [
+        "Uika_tachi_serious.png"
+      ],
+      "sourceBytes": 1698641,
+      "bytes": 470712,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 8.716
+    },
+    {
+      "sourceId": "56506176081e0240cb05a83bafe5a99f83e2ae21a9ef7b9df9283b598f1bae5d",
+      "id": "c5877e9ca79253fc55b229f42ddd1944e12073088fa524d1bc194dec5cf67d5d",
+      "group": "portrait",
+      "names": [
+        "Uika_tachi_sadness.png"
+      ],
+      "sourceBytes": 1698277,
+      "bytes": 471012,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 8.528
+    },
+    {
+      "sourceId": "c4a98258ff91f6525eec181f788a5dd3b31d323450d58cd4f79c7c0489b98242",
+      "id": "0474fa5e94b977c01b6a7c181593e08e0b98c51d391612999bd14b2344b4cdf8",
+      "group": "portrait",
+      "names": [
+        "Uika_tachi_shocked.png"
+      ],
+      "sourceBytes": 1697517,
+      "bytes": 470576,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 8.501
+    },
+    {
+      "sourceId": "d070d71f276d5bcfc3aa2de2b39bb4d2709e31ade5bdcacb591548b773b62a24",
+      "id": "8229c3ceb7a7c14708debc55280e95cf31c457edfe785d50f35b47dec2772948",
+      "group": "portrait",
+      "names": [
+        "Uika_tachi_constricted pupils.png"
+      ],
+      "sourceBytes": 1699424,
+      "bytes": 471258,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 8.634
+    },
+    {
+      "sourceId": "0e953abdb915ee4431adc476cdddd0d3b51eabf2d1548e126287970cfb9110fa",
+      "id": "1586398d1e9e8084cd2360c1f5c3f0f05d9915fabcdee93f1ade822a97fb3747",
+      "group": "portrait",
+      "names": [
+        "Uika_tachi_yandere trance.png"
+      ],
+      "sourceBytes": 1700053,
+      "bytes": 471522,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 8.934
+    },
+    {
+      "sourceId": "78c7325924dda6a4b60b27953e559f47854cb3a048b72035b24e2d32078593f0",
+      "id": "4e24a1e0b76ff9ae41527e56e609ec03704b017c7df6fb869779540a5d7c3efa",
+      "group": "portrait",
+      "names": [
+        "Mutsumi_tachi_normal.png"
+      ],
+      "sourceBytes": 1660999,
+      "bytes": 333816,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 7.11
+    },
+    {
+      "sourceId": "f3ccd9e7e797f8310871af0040f3bbbde710a0a9283f998ffb60257aed430921",
+      "id": "f17faa9f0f0ffcd042de349239d22150627cc9d40c5c64fd660c3dd2420b9bf9",
+      "group": "portrait",
+      "names": [
+        "Mutsumi_tachi_smile.png"
+      ],
+      "sourceBytes": 1656361,
+      "bytes": 330810,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.913
+    },
+    {
+      "sourceId": "7e004b4418506cd11aba2784c8031ce027c1b2122f306be628de542c562378bd",
+      "id": "e19dee1e597b72a6999029afe332bf920c81852cd45e3d09f5cff7423d127f04",
+      "group": "portrait",
+      "names": [
+        "Mutsumi_tachi_blush.png"
+      ],
+      "sourceBytes": 1656432,
+      "bytes": 331044,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.619
+    },
+    {
+      "sourceId": "2529f66b4735a7e034cbb700d2cd44612f1d422cc2b8c3d443f780b8d262a10e",
+      "id": "3be2f41f4f0ba2e87199d60fdf25d297ce0aa849012575c0c732bd629f583e1b",
+      "group": "portrait",
+      "names": [
+        "Mutsumi_tachi_serious.png"
+      ],
+      "sourceBytes": 1653918,
+      "bytes": 330534,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.599
+    },
+    {
+      "sourceId": "f8fd8ad214773e88f6ee4be9f4973111798fbbab9ce519f7737198bde9815960",
+      "id": "5bb91924c7deaee6b596d9e9b6e890fb597981dbfe31507924ab63fc2ad1304c",
+      "group": "portrait",
+      "names": [
+        "Mutsumi_tachi_sadness.png"
+      ],
+      "sourceBytes": 1653948,
+      "bytes": 330482,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.14
+    },
+    {
+      "sourceId": "a4dd89eb460c9dd212ee9423a17c0f61b04342a8d4f84179d7b3960104942247",
+      "id": "5d13c9abf03ac2b21a1d8a9af1000472adea765387bb6809bfdfd064a42abb46",
+      "group": "portrait",
+      "names": [
+        "Mutsumi_tachi_shocked.png"
+      ],
+      "sourceBytes": 1655151,
+      "bytes": 330824,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.388
+    },
+    {
+      "sourceId": "bda4ff63bcd6145d00f2c17a9829e458406827c10ecbd9cdcf00a3ef53adbe20",
+      "id": "0572c84ab4af2b661ef1eb33e9c1edd0ff75fc946a430977e308658015c00dac",
+      "group": "portrait",
+      "names": [
+        "Mutsumi_tachi_constricted pupils.png"
+      ],
+      "sourceBytes": 1654870,
+      "bytes": 330122,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.333
+    },
+    {
+      "sourceId": "698110f0898fcb1d352e36061cdc585b5e787d0b5ce24d3c37cf4fc362b1ef53",
+      "id": "8641495bc63ecd7b535e80afdfd0cf874f4beac4236b4bb8afba7557a3b857fe",
+      "group": "portrait",
+      "names": [
+        "Mutsumi_tachi_yandere trance.png"
+      ],
+      "sourceBytes": 1655206,
+      "bytes": 330684,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.645
+    },
+    {
+      "sourceId": "23fcee32dcf0e29be18f070eb317376e29c2eaa00442889ac894246983b9186e",
+      "id": "5da640f68d04d4f63316b71ea3bd2fba748bda21f3c9ac2a3876b15954603fee",
+      "group": "portrait",
+      "names": [
+        "Umiri_tachi_normal.png"
+      ],
+      "sourceBytes": 2146420,
+      "bytes": 373602,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.514
+    },
+    {
+      "sourceId": "bf3f0b16234a259f70c5cb90fbea3f4a017aa84a06db30bc9b9aeb33c09bceb9",
+      "id": "58e214cfba09a501089087f021ee06bea4380bee3cb152261d88b77f76f26fe4",
+      "group": "portrait",
+      "names": [
+        "Umiri_tachi_smile.png"
+      ],
+      "sourceBytes": 1774836,
+      "bytes": 335208,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.29
+    },
+    {
+      "sourceId": "d1b8fa658d921b929469e90dad36989e91b0eebc8855940e4c584915a470fe32",
+      "id": "a75d62236f9c748e7a65e435051e2363a80b89bec2764fe92c020f235211c96c",
+      "group": "portrait",
+      "names": [
+        "Umiri_tachi_blush.png"
+      ],
+      "sourceBytes": 1775261,
+      "bytes": 334928,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.359
+    },
+    {
+      "sourceId": "f13ca941e7d2634bd805a1cb0dda893d56bf07eaa7bbb0dae837dfce7f0f3af7",
+      "id": "fc369117cc318e439d19b4012a5c26fa1df1a05f195dfd7803d918f85f09123f",
+      "group": "portrait",
+      "names": [
+        "Umiri_tachi_serious.png"
+      ],
+      "sourceBytes": 1775020,
+      "bytes": 334454,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.6
+    },
+    {
+      "sourceId": "5192fb9896837bafcca31b0c3b087830a19e31fc1f0cd585debbec386aaf95e7",
+      "id": "06c2faa151b09808cd3fe90a1c84450c0255520a8fc9c0327c841d125135cd8b",
+      "group": "portrait",
+      "names": [
+        "Umiri_tachi_sadness.png"
+      ],
+      "sourceBytes": 1774969,
+      "bytes": 335436,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.309
+    },
+    {
+      "sourceId": "31879c3edc62c7a974bc51390668d51edf707d6676eb0892ef104d779bc852da",
+      "id": "f3a16d03e6393d5f8bd7664e7a243a8540ba116ee27c7ef2befdc56ac5095b23",
+      "group": "portrait",
+      "names": [
+        "Umiri_tachi_shocked.png"
+      ],
+      "sourceBytes": 1773493,
+      "bytes": 334622,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.708
+    },
+    {
+      "sourceId": "7368b2567c6f621af806421385a15d4c3fe057405df106dd6c171b8ed06f0594",
+      "id": "aadcda39836d3518a8259c1830a1c8549a9965cf3c466089a977f347df00abd1",
+      "group": "portrait",
+      "names": [
+        "Umiri_tachi_constricted pupils.png"
+      ],
+      "sourceBytes": 1774800,
+      "bytes": 334624,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.243
+    },
+    {
+      "sourceId": "8575a3f21e44c138d4060c1f45d3102c0ca06b221552e0c1779ec68592d271f4",
+      "id": "49780772193553889ad0b094ff8fba74d11baed4a9dcd3c8a9c09063b88ed160",
+      "group": "portrait",
+      "names": [
+        "Umiri_tachi_yandere trance.png"
+      ],
+      "sourceBytes": 1777588,
+      "bytes": 335414,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.275
+    },
+    {
+      "sourceId": "cf044b0319deb97f0fe69bdc4c667d6fee99d4d285419a61d8192aff46f4eed6",
+      "id": "2d37d00a509a542d9c9af682bd53e751cf2261f872d302a7d1aa20e0a42bf739",
+      "group": "portrait",
+      "names": [
+        "Nyamu_tachi_normal.png"
+      ],
+      "sourceBytes": 1815075,
+      "bytes": 326904,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.574
+    },
+    {
+      "sourceId": "9d4871943687c0eeadce200423f6c65d53bcbaa64823af5397cac7b97343755e",
+      "id": "9f2e604a0f69e88181aa6b5f9a18c8087d7bd473570673dd2586d3656903cc4f",
+      "group": "portrait",
+      "names": [
+        "Nyamu_tachi_smile.png"
+      ],
+      "sourceBytes": 1449330,
+      "bytes": 313432,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.321
+    },
+    {
+      "sourceId": "8b531f4dda2d00eee3132a5f2ac5f183963d483d38c28b4ddd4bb0f0e718f6ac",
+      "id": "1c4e83c0de0441421d371382e570ff5b1413875497b0718ea6873a43985b4a71",
+      "group": "portrait",
+      "names": [
+        "Nyamu_tachi_blush.png"
+      ],
+      "sourceBytes": 1451759,
+      "bytes": 314696,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.636
+    },
+    {
+      "sourceId": "f6e8c12ccbafb868facdf71c960e5d29ef519c0fc9e15e09bf14f847aadb398e",
+      "id": "2d9af1f18c98565a4535865d2ef1c9dd50612dc3bd01711a792d52955689b487",
+      "group": "portrait",
+      "names": [
+        "Nyamu_tachi_serious.png"
+      ],
+      "sourceBytes": 1449486,
+      "bytes": 314042,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.664
+    },
+    {
+      "sourceId": "121ccadf727d1a91cc58a62833550015ebebc6957c0d67213194fb0805b53b9d",
+      "id": "b8d5dcfb104bdb7d99fbad48c93c135e8c50d21e8bb5617322bf6a20fc4a00ce",
+      "group": "portrait",
+      "names": [
+        "Nyamu_tachi_sadness.png"
+      ],
+      "sourceBytes": 1450758,
+      "bytes": 313564,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.352
+    },
+    {
+      "sourceId": "759ca492f2672f470e2de0f22d6165b3408b67cf6ef474eef837ad936352699b",
+      "id": "159b843db888b9e3673589784988e8b4e70edb22e1aeab06c6dcf7b14e465d45",
+      "group": "portrait",
+      "names": [
+        "Nyamu_tachi_shocked.png"
+      ],
+      "sourceBytes": 1451869,
+      "bytes": 315014,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.824
+    },
+    {
+      "sourceId": "b9244f5b4e6f722a6d3376e5f0349b63a6e6deccfe3a1dde4f6a6388f9437f20",
+      "id": "4c00145f7ae32df8e8764c5ccc5f3327c24f4edac82109111375b162e1119c92",
+      "group": "portrait",
+      "names": [
+        "Nyamu_tachi_constricted pupils.png"
+      ],
+      "sourceBytes": 1450112,
+      "bytes": 313794,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 6.702
+    },
+    {
+      "sourceId": "0fb7f6200710cf95f64a786b29896520a29e829de58c58a7cd688cf7ac31ff7f",
+      "id": "82b92c6b231b3fea675a0de135fba7eaf6d9765cb0978f554ad8d316356b742b",
+      "group": "portrait",
+      "names": [
+        "Nyamu_tachi_yandere trance.png"
+      ],
+      "sourceBytes": 1450345,
+      "bytes": 313520,
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": false,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 5.995
+    },
+    {
+      "sourceId": "e5a1a2beb9f2d6837dd45a28202c21e2fc3106b188fa0a796fa14d2a2e826c2e",
+      "id": "e5a1a2beb9f2d6837dd45a28202c21e2fc3106b188fa0a796fa14d2a2e826c2e",
+      "group": "ui",
+      "names": [
+        "reputation-e5a1a2beb9f2d683.webp"
+      ],
+      "sourceBytes": 186054,
+      "bytes": 186054,
+      "sourceSize": [
+        585,
+        840
+      ],
+      "size": [
+        585,
+        840
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.759
+    },
+    {
+      "sourceId": "da4a8e4dc7381d4aa604c3da132c2a086a990645e4066c20c5b38b69646f22f9",
+      "id": "da4a8e4dc7381d4aa604c3da132c2a086a990645e4066c20c5b38b69646f22f9",
+      "group": "ui",
+      "names": [
+        "bonds-da4a8e4dc7381d4a.webp"
+      ],
+      "sourceBytes": 210198,
+      "bytes": 210198,
+      "sourceSize": [
+        598,
+        840
+      ],
+      "size": [
+        598,
+        840
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.773
+    },
+    {
+      "sourceId": "02db6b3d535fd46ef3d3bc530ceba5f9aa7ced3fa81cef7bcde695c7874a910e",
+      "id": "02db6b3d535fd46ef3d3bc530ceba5f9aa7ced3fa81cef7bcde695c7874a910e",
+      "group": "ui",
+      "names": [
+        "story-02db6b3d535fd46e.webp"
+      ],
+      "sourceBytes": 169622,
+      "bytes": 169622,
+      "sourceSize": [
+        571,
+        840
+      ],
+      "size": [
+        571,
+        840
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 0.73
+    },
+    {
+      "sourceId": "52522854a521df788b48f758480bfc90c9e1a9c7d7e57e6275dbd03238e00ce6",
+      "id": "c08c2c6c5d4db486a9db8d1c02f3719de7e44e969084bff6549679ae5f4f4bcd",
+      "group": "ui",
+      "names": [],
+      "sourceBytes": 870854,
+      "bytes": 638916,
+      "sourceSize": [
+        2172,
+        724
+      ],
+      "size": [
+        2172,
+        724
+      ],
+      "mime": "image/webp",
+      "alphaExact": true,
+      "pixelsExact": true,
+      "canvasAnchor": "unchanged",
+      "deviceSelection": "shared-desktop-mobile",
+      "seconds": 1.07
+    }
+  ]
+}

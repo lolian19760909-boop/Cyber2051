@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>body {
+  font-family: var(--cxx-font-ui);
+}
+
+@keyframes nyamu-fade {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.nyamu-wrap {
+  max-width: 780px;
+  margin: 30px auto;
+  animation: nyamu-fade 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  --cp-ink: var(--cxx-ink);
+  --cp-panel: var(--cxx-panel);
+  --cp-panel-hi: var(--cxx-raised);
+  --cp-line: var(--cxx-line);
+  --cp-cyan: var(--cxx-cyan);
+  --cp-red: var(--cxx-red);
+  --cp-amber: var(--cxx-yellow);
+  --cp-text: var(--cxx-text);
+  --cp-muted: var(--cxx-muted);
+  font-family: var(--cxx-font-ui);
+  color: var(--cp-text);
+}
+
+.nyamu-card {
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  background: radial-gradient(ellipse at 50% -18%,color-mix(in srgb, var(--cxx-narrative-panel) 50%, transparent),transparent 62%),repeating-linear-gradient(0deg,transparent 0 31px,color-mix(in srgb, var(--cxx-red) 2.20%, transparent) 31px 32px),var(--cp-ink);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  box-shadow: 0 18px 46px color-mix(in srgb, var(--cxx-shadow) 42%, transparent);
+}
+
+.nyamu-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  z-index: 10;
+  background: var(--cp-panel-hi);
+}
+
+.nyamu-card::after {
+  width: 35%;
+  border-radius: 0 4px 4px 0;
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+  background: var(--cp-red);
+}
+
+.nyamu-left {
+  flex: 1;
+  padding: 35px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  background: transparent;
+  border-right: 1px solid var(--cp-line);
+}
+
+.nyamu-account {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  border-bottom: 1px dashed var(--cp-line);
+}
+
+.nyamu-avatar {
+  width: 36px;
+  height: 36px;
+  color: var(--cxx-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 800;
+  font-family: var(--cxx-font-ui);
+  background: var(--cp-red);
+  box-shadow: none;
+  border-radius: 2px;
+}
+
+.nyamu-id {
+  font-family: var(--cxx-font-ui);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--cp-text);
+}
+
+.nyamu-id span {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0;
+  margin-top: 2px;
+  color: var(--cp-muted);
+}
+
+.nyamu-portrait-box {
+  width: 100%;
+  padding: 8px;
+  background: var(--cp-panel-hi);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.nyamu-portrait {
+  display: block;
+  background: var(--cxx-panel);
+  height: 400px;
+  width: 100%;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 1px;
+  filter: saturate(.78) contrast(1.05);
+}
+
+.nyamu-stats {
+  margin-top: 15px;
+  width: 100%;
+  padding: 0 5px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--cxx-font-ui);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cp-cyan);
+}
+
+.nyamu-right {
+  flex: 1.15;
+  padding: 40px 35px;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+}
+
+.nyamu-video-window {
+  align-self: flex-end;
+  position: relative;
+  padding: 6px;
+  margin-bottom: 30px;
+  background: var(--cp-panel-hi);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.nyamu-rec {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--cxx-font-ui);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  z-index: 5;
+  color: var(--cp-red);
+  text-shadow: none;
+}
+
+.nyamu-rec::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--cxx-red);
+  border-radius: 50%;
+  animation: nyamu-blink 1.5s infinite;
+}
+
+@keyframes nyamu-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.nyamu-gif {
+  display: block;
+  height: 90px;
+  width: auto;
+  filter: saturate(.78) contrast(1.05);
+  border-radius: 1px;
+}
+
+.nyamu-text {
+  font-size: 14px;
+  line-height: 1.9;
+  text-align: justify;
+  margin-bottom: 35px;
+  color: var(--cp-text);
+}
+
+.nyamu-text p {
+  margin: 0 0 14px 0;
+}
+
+.nyamu-text p:last-child {
+  margin: 0;
+}
+
+.nyamu-action {
+  margin-top: auto;
+  text-align: right;
+}
+
+.nyamu-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 32px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  font-family: var(--cxx-font-ui);
+  color: var(--cp-ink);
+  background: var(--cp-cyan);
+  border: 1px solid var(--cp-cyan);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cxx-cyan) 22.00%, transparent);
+  text-shadow: none;
+}
+
+.nyamu-btn:hover {
+  transform: translateY(-2px);
+  background: var(--cxx-cyan);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--cxx-cyan) 12.00%, transparent),0 6px 20px color-mix(in srgb, var(--cxx-cyan) 15.00%, transparent);
+  color: var(--cp-ink);
+}
+
+.nyamu-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--cxx-red) 20.00%, transparent);
+}
+
+.nyamu-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  background: color-mix(in srgb, var(--cxx-ink) 93%, transparent);
+  backdrop-filter: blur(3px);
+}
+
+.nyamu-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.nyamu-spinner {
+  width: 45px;
+  height: 45px;
+  border: 3px solid var(--cxx-red-soft);
+  border-top: 3px solid var(--cxx-red);
+  border-radius: 50%;
+  animation: nyamu-spin 1s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite;
+  margin-bottom: 20px;
+  border-color: var(--cp-line);
+  border-top-color: var(--cp-cyan);
+}
+
+@keyframes nyamu-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.nyamu-over-txt {
+  font-family: var(--cxx-font-ui);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--cp-cyan);
+}
+
+@media (max-width: 680px) {
+  .nyamu-card {
+    flex-direction: column;
+  }
+
+  .nyamu-left {
+    border-right: none;
+    border-bottom: 1px solid var(--cxx-red-soft);
+    padding: 25px;
+  }
+
+  .nyamu-right {
+    padding: 30px 25px;
+  }
+
+  .nyamu-video-window {
+    align-self: center;
+    margin-top: -15px;
+    margin-bottom: 25px;
+  }
+
+  .nyamu-action {
+    text-align: center;
+    margin-top: 15px;
+  }
+}
+
+.nyamu-paper::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.nyamu-book::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.nyamu-board::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.nyamu-notebook::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.nyamu-container::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.nyamu-journal::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+@keyframes cp-alt-flow {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .nyamu-wrap * {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .nyamu-wrap *::before {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .nyamu-wrap *::after {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+}
+
+.nyamu-text strong {
+  color: var(--cp-amber);
+}
+</style>
+</head>
+<body>
+
+<div class="nyamu-wrap" id="nyamuWrap">
+    <div class="nyamu-card">
+
+        <!-- 左侧社交主页区 -->
+        <div class="nyamu-left">
+            <div class="nyamu-account">
+                <div class="nyamu-avatar">N</div>
+                <div class="nyamu-id">Nyamu_official<span>@nyamu_chan</span></div>
+            </div>
+
+            <div class="nyamu-portrait-box">
+                <img class="nyamu-portrait" src="https://cyber2051.top/img/%E7%A5%90%E5%A4%A9%E5%AF%BA%E8%8B%A5%E9%BA%A6%2FNyamu_%E7%AB%99%E5%A7%BF%E8%87%AA%E4%BF%A1__2.png" alt="祐天寺若麦">
+            </div>
+
+            <div class="nyamu-stats">
+                <span>♡ 12.8K</span>
+                <span>⎋ Share</span>
+            </div>
+        </div>
+
+        <!-- 右侧信息与交互区 -->
+        <div class="nyamu-right">
+
+            <!-- 带闪烁录制红点的小窗GIF -->
+            <div class="nyamu-video-window">
+                <div class="nyamu-rec">REC</div>
+                <img class="nyamu-gif" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E5%96%B5%E6%A2%A6%E5%A4%A7%E5%8F%AB.gif" alt="喵梦大叫">
+            </div>
+
+            <!-- UI界面文字：日常碎碎念，不留悬念，展现人物性格 -->
+            <div class="nyamu-text">
+                <p>今天剪超梦剪得肩膀都酸了，播放量也没有达到预期，感觉真是好心烦啊。</p>
+                <p>上午出门想去新开的那家甜品店拍点素材转转运，结果刚好碰上大排长龙，东京都哪来这么多有钱人。</p>
+                <p>不过没关系，作为一个成熟的女士，这点小事还影响不到我。先找个地方休整一下，顺便想想接下来的企划该怎么搞吧。</p>
+            </div>
+
+            <div class="nyamu-action">
+                <!-- 藏在按钮里的Prompt指令 -->
+                <button class="nyamu-btn" onclick="nyamuStart()"
+                     data-prompt="【开始】【开场白】
+# 场景生成指令
+
+## 核心任务
+- 请作为【场景描绘者】，创作一段关于祐天寺若麦（网名：喵梦）的开局剧情。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+
+## 场景要素
+- **时间：** 2050年12月25日，晚上八点半。
+- **地点：** 喵梦的单间公寓，随后转至附近的街道。
+- **核心人物：** 祐天寺若麦（喵梦）。
+
+## 剧情大纲与必须包含的细节：
+1. **视频完工与疲惫的现实：** 晚上八点半，喵梦终于完成了新一期超梦的最后剪辑和发布。她长长地舒了一口气，整个人像是脱力了一般仰面瘫倒在旋转椅上。此时，她的肚子发出了两声非常不顾及形象的咕噜声。她确认了一下时间，这才惊觉自己和超梦较劲了太久，早已经错过了正常的饭点。
+2. **流量焦虑与破局的野心：** 她顺手刷新了一下论坛上自己账号的后台数据。尽管这一期内容她私下里精心打磨了很久，但冷冰冰的数据却显示反响平平，按照目前的增长速率来看，估计最终的数据和以前那些不温不火的超梦还是大差不差。喵梦不甘心地咬了咬自己的嘴唇。两年了，一直在这个不大不小的体量徘徊，她深知这样下去可不行，必须得做出些改变。难不成真的要去拍些黑帮火拼的场面？还是干脆全身心投入黑客事业，把表界账号丢掉？
+3. **寻找新卖点：** 思考之余，喵梦的目光落在了房间角落里那套一直被她私下里一直有在练习的电子鼓上。她想起了最近“乐队”这个词在学生群体里似乎非常有热度和话题性。她盘算着，要是进行一些小小的转型会不会有所突破呢？也许可以去那个出名的RiNG社区走走......
+4. 思考被胃部的抗议再次打断。虽然满脑子都是怎么涨流量，但现在还是得先出门填饱肚子。她想起了附近似乎有一家评价还不错的拉面店，里面有一道据说“能把死人辣活”的招牌拉面。喵梦站起身收拾了一下准备出门，脑海里忽然闪过一个荒谬的念头：既然做普通的超梦火不了，那自己要是干脆转型发那种挑战变态辣的吃播，会不会有说法呢？这个念头刚一冒出来，就被她自己当作玩笑轻笑了一声。（“吃播”仅为人物塑造铺垫，严禁深入探讨，此时的喵梦并没有真的要放弃去做“吃播”的，也不会真的想去吃那碗“把死人辣活”的拉面）
+
+## 最高优先级指令
+在描绘完喵梦准备出门的场景后，【立即停止输出】。严禁强行推进后续对话或代替玩家行动，将故事的控制权交给玩家。在创作过程中严禁透露和祐天寺若麦的身世相关的设定。
+【/开场白】">
+                    开 始 ✦
+                </button>
+            </div>
+        </div>
+
+        <!-- 加载动画遮罩 -->
+        <div class="nyamu-overlay" id="nyamuOverlay">
+            <div class="nyamu-spinner"></div>
+            <div class="nyamu-over-txt">UPLOADING...</div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function nyamuStart() {
+    var btn = document.querySelector('.nyamu-btn');
+    var promptText = btn.getAttribute('data-prompt');
+
+    return parent.Cxx236OpeningHost.submitPreview(window, '/send ' + promptText + '|/trigger');
+}
+</script>
+
+</body>
+</html>

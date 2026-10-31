@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sacramento&display=swap');
+
+/* ===== 动画 ===== */
+@keyframes anon-pop-in {
+    0% { opacity: 0; transform: scale(0.9) translateY(18px); filter: blur(3px); }
+    50% { transform: scale(1.015) translateY(-3px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+}
+@keyframes anon-bubble-float {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.25; }
+    50% { transform: translateY(-8px) scale(1.1); opacity: 0.45; }
+}
+@keyframes anon-sparkle-twinkle {
+    0%, 100% { opacity: 0.15; transform: scale(0.8) rotate(0deg); }
+    50% { opacity: 0.55; transform: scale(1.15) rotate(12deg); }
+}
+@keyframes anon-bow-wiggle {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+}
+@keyframes anon-pearl-glow {
+    0%, 100% { box-shadow: 0 0 3px rgba(255, 200, 220, 0.2); }
+    50% { box-shadow: 0 0 8px rgba(255, 200, 220, 0.45); }
+}
+@keyframes anon-drift {
+    0%, 100% { transform: translateX(0) translateY(0); }
+    25% { transform: translateX(2px) translateY(-2px); }
+    75% { transform: translateX(-2px) translateY(1px); }
+}
+@keyframes anon-petal-fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0.5; }
+    100% { transform: translateY(20px) rotate(25deg); opacity: 0; }
+}
+@keyframes anon-gentle-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+@keyframes anon-heart-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.2; }
+    50% { transform: scale(1.2); opacity: 0.45; }
+}
+@keyframes anon-shimmer-line {
+    0% { left: -100%; }
+    100% { left: 200%; }
+}
+@keyframes anon-dot-dance {
+    0%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+}
+@keyframes anon-tag-swing {
+    0%, 100% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
+}
+@keyframes anon-border-breathe {
+    0%, 100% { border-color: rgba(220, 190, 230, 0.25); }
+    50% { border-color: rgba(240, 200, 220, 0.4); }
+}
+
+.anon-wrap {
+    max-width: 790px;
+    margin: 30px auto;
+    font-family: 'Quicksand', 'Noto Sans SC', sans-serif;
+    animation: anon-pop-in 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+    position: relative;
+}
+
+/* ===== 主体：梦幻信笺 ===== */
+.anon-card {
+    position: relative;
+    background:
+        radial-gradient(ellipse at 15% 20%, rgba(255, 210, 230, 0.08) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 75%, rgba(200, 210, 255, 0.07) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 50%, rgba(255, 230, 245, 0.04) 0%, transparent 70%),
+        linear-gradient(165deg, #FFF8FC 0%, #FDF5FA 25%, #FAF3FB 50%, #F7F2FD 75%, #F5F0FC 100%);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow:
+        0 18px 45px rgba(200, 170, 220, 0.15),
+        0 6px 16px rgba(220, 190, 240, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        inset 0 0 40px rgba(255, 220, 240, 0.03);
+    border: 1.5px solid rgba(220, 195, 235, 0.3);
+    animation: anon-border-breathe 5s ease-in-out infinite;
+}
+
+/* ===== 顶部蝴蝶结装饰条 ===== */
+.anon-top-ribbon {
+    position: relative;
+    z-index: 6;
+    height: 36px;
+    background: linear-gradient(90deg,
+        rgba(255, 220, 240, 0.1) 0%,
+        rgba(255, 210, 235, 0.15) 30%,
+        rgba(220, 210, 250, 0.12) 70%,
+        rgba(210, 200, 245, 0.08) 100%);
+    border-bottom: 1px solid rgba(230, 210, 240, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    overflow: hidden;
+}
+/* CSS 蝴蝶结 */
+.anon-bow {
+    position: relative;
+    width: 24px; height: 14px;
+    animation: anon-bow-wiggle 3s ease-in-out infinite;
+}
+.anon-bow-left, .anon-bow-right {
+    position: absolute;
+    top: 0;
+    width: 11px; height: 14px;
+    border-radius: 50% 50% 50% 50%;
+    border: 1.5px solid rgba(230, 170, 200, 0.4);
+    background: rgba(255, 210, 230, 0.12);
+}
+.anon-bow-left { left: 0; transform: rotate(-10deg); border-radius: 50% 10% 50% 50%; }
+.anon-bow-right { right: 0; transform: rotate(10deg); border-radius: 10% 50% 50% 50%; }
+.anon-bow-center {
+    position: absolute;
+    top: 4px; left: 50%;
+    transform: translateX(-50%);
+    width: 5px; height: 6px;
+    background: rgba(230, 170, 200, 0.35);
+    border-radius: 50%;
+}
+.anon-bow-tail-l, .anon-bow-tail-r {
+    position: absolute;
+    bottom: -4px;
+    width: 1px; height: 7px;
+    background: rgba(230, 170, 200, 0.25);
+}
+.anon-bow-tail-l { left: 8px; transform: rotate(-15deg); }
+.anon-bow-tail-r { right: 8px; transform: rotate(15deg); }
+
+/* 顶部小珍珠点缀 */
+.anon-top-pearl {
+    width: 4px; height: 4px;
+    background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9), rgba(230, 210, 240, 0.4));
+    border-radius: 50%;
+    border: 0.5px solid rgba(220, 200, 235, 0.3);
+    animation: anon-pearl-glow 3s ease-in-out infinite;
+}
+.anon-top-pearl:nth-child(2) { animation-delay: 0.5s; width: 3px; height: 3px; }
+.anon-top-pearl:nth-child(4) { animation-delay: 1s; width: 3.5px; height: 3.5px; }
+.anon-top-pearl:nth-child(6) { animation-delay: 1.5s; }
+.anon-top-pearl:nth-child(8) { animation-delay: 2s; width: 3px; height: 3px; }
+
+/* ===== 角落标签贴 ===== */
+.anon-corner-tag {
+    position: absolute;
+    top: 44px; right: -4px;
+    background: linear-gradient(135deg, rgba(255, 200, 220, 0.35), rgba(255, 180, 210, 0.25));
+    padding: 4px 18px 4px 12px;
+    border-radius: 4px 0 0 4px;
+    z-index: 8;
+    box-shadow: -2px 2px 5px rgba(0,0,0,0.04);
+    animation: anon-tag-swing 4s ease-in-out infinite;
+}
+.anon-corner-tag::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    border-style: solid;
+    border-width: 12px 6px 12px 0;
+    border-color: transparent rgba(253, 245, 250, 1) transparent transparent;
+}
+.anon-corner-tag-text {
+    font-family: 'Caveat', cursive;
+    font-size: 11px;
+    color: rgba(180, 130, 160, 0.6);
+    letter-spacing: 1px;
+}
+
+/* ===== 主内容区 ===== */
+.anon-inner {
+    display: flex;
+    padding: 25px 28px 18px 28px;
+    gap: 0;
+    position: relative;
+    z-index: 3;
+}
+
+/* ===== 左侧：文字区 ===== */
+.anon-left {
+    flex: 1.1;
+    padding: 12px 18px 12px 14px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* 日期贴纸 - 圆角药丸 */
+.anon-date-pill {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 14px;
+    background: linear-gradient(135deg, rgba(255, 200, 225, 0.25), rgba(210, 200, 245, 0.2));
+    border: 1px solid rgba(230, 200, 240, 0.3);
+    border-radius: 20px;
+    margin-bottom: 14px;
+}
+.anon-date-pill-dot {
+    width: 5px; height: 5px;
+    background: rgba(240, 180, 210, 0.5);
+    border-radius: 50%;
+}
+.anon-date-pill-text {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: rgba(180, 150, 190, 0.65);
+    letter-spacing: 1.5px;
+}
+
+/* 名字 */
+.anon-name-script {
+    font-family: 'Sacramento', cursive;
+    font-size: 36px;
+    color: rgba(210, 160, 190, 0.55);
+    margin: 0;
+    line-height: 1.1;
+    letter-spacing: 1px;
+}
+.anon-name-jp {
+    font-size: 13.5px;
+    color: rgba(190, 160, 200, 0.5);
+    letter-spacing: 5px;
+    margin-bottom: 18px;
+    font-weight: 300;
+    font-family: 'Noto Sans SC', sans-serif;
+}
+
+/* 正文 - 横线格 + 柔和色调 */
+.anon-text-pad {
+    position: relative;
+    background:
+        repeating-linear-gradient(
+            180deg,
+            transparent 0px,
+            transparent 27px,
+            rgba(220, 200, 235, 0.15) 27px,
+            rgba(220, 200, 235, 0.15) 28px
+        );
+    padding: 6px 10px 6px 18px;
+    margin-bottom: 18px;
+    border-radius: 8px;
+}
+/* 左边距线 */
+.anon-text-pad::before {
+    content: '';
+    position: absolute;
+    left: 10px; top: 8px; bottom: 8px;
+    width: 1.5px;
+    background: rgba(255, 190, 210, 0.2);
+    border-radius: 2px;
+}
+.anon-text {
+    font-size: 13.5px;
+    line-height: 28px;
+    color: rgba(140, 120, 160, 0.7);
+    text-align: justify;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 400;
+}
+.anon-text p { margin: 0 0 0 0; }
+
+/* GIF 区域 - 宝丽来照片风格 */
+.anon-polaroid {
+    align-self: flex-start;
+    position: relative;
+    background: #FFF;
+    padding: 6px 6px 26px 6px;
+    border-radius: 3px;
+    box-shadow:
+        0 4px 12px rgba(180, 160, 200, 0.12),
+        0 1px 3px rgba(0,0,0,0.04);
+    transform: rotate(-2.5deg);
+    transition: all 0.3s ease;
+    margin-top: auto;
+}
+.anon-polaroid:hover { transform: rotate(0deg) scale(1.04); box-shadow: 0 6px 18px rgba(180, 160, 200, 0.18); }
+.anon-polaroid-gif {
+    height: 82px; width: auto; display: block; border-radius: 2px;
+}
+.anon-polaroid-label {
+    position: absolute;
+    bottom: 5px; left: 0; right: 0;
+    text-align: center;
+    font-family: 'Caveat', cursive;
+    font-size: 12px;
+    color: rgba(190, 160, 200, 0.55);
+    letter-spacing: 1px;
+}
+/* 小贴纸胶带 */
+.anon-polaroid-tape {
+    position: absolute;
+    top: -5px; left: 15px;
+    width: 35px; height: 12px;
+    background: rgba(255, 210, 230, 0.3);
+    transform: rotate(-3deg);
+    border-radius: 1px;
+}
+
+/* ===== 中间分隔 ===== */
+.anon-separator {
+    width: 35px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 15px 0;
+    position: relative;
+}
+/* 虚线 */
+.anon-sep-dash {
+    flex: 1;
+    width: 1px;
+    background: repeating-linear-gradient(
+        180deg,
+        rgba(220, 200, 240, 0.3) 0px,
+        rgba(220, 200, 240, 0.3) 4px,
+        transparent 4px,
+        transparent 9px
+    );
+}
+/* CSS 小花 */
+.anon-sep-bloom {
+    width: 12px; height: 12px;
+    position: relative;
+    flex-shrink: 0;
+}
+.anon-sep-bloom::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(240, 190, 220, 0.3);
+    border-radius: 50%;
+    box-shadow:
+        0 -6px 0 -2px rgba(240, 190, 220, 0.2),
+        0 6px 0 -2px rgba(240, 190, 220, 0.2),
+        -6px 0 0 -2px rgba(210, 195, 240, 0.2),
+        6px 0 0 -2px rgba(210, 195, 240, 0.2);
+}
+.anon-sep-bloom::after {
+    content: '';
+    position: absolute;
+    top: 3.5px; left: 3.5px; right: 3.5px; bottom: 3.5px;
+    background: rgba(255, 240, 250, 0.6);
+    border-radius: 50%;
+}
+/* 小蝴蝶结装饰（分隔线上） */
+.anon-sep-mini-bow {
+    width: 10px; height: 6px;
+    position: relative;
+    flex-shrink: 0;
+}
+.anon-sep-mini-bow::before, .anon-sep-mini-bow::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 5px; height: 6px;
+    border: 1px solid rgba(230, 180, 210, 0.3);
+    background: rgba(255, 210, 230, 0.08);
+}
+.anon-sep-mini-bow::before { left: 0; border-radius: 50% 10% 50% 50%; }
+.anon-sep-mini-bow::after { right: 0; border-radius: 10% 50% 50% 50%; }
+
+/* ===== 右侧：立绘区 ===== */
+.anon-right {
+    flex: 0.88;
+    padding: 12px 12px 12px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* 立绘相框 - 圆角卡片 + 多层边框 */
+.anon-portrait-card {
+    position: relative;
+    background: #FFF;
+    padding: 8px;
+    border-radius: 18px;
+    border: 1.5px solid rgba(225, 200, 240, 0.35);
+    box-shadow:
+        0 8px 24px rgba(210, 185, 230, 0.12),
+        0 2px 6px rgba(0,0,0,0.03),
+        inset 0 0 12px rgba(255, 230, 245, 0.1);
+    transition: all 0.35s ease;
+    max-width: 255px;
+}
+.anon-portrait-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 14px 32px rgba(210, 185, 230, 0.2),
+        0 0 15px rgba(255, 200, 230, 0.06);
+    border-color: rgba(240, 200, 225, 0.5);
+}
+.anon-portrait-img {
+    width: 100%; height: auto; display: block;
+    border-radius: 13px;
+}
+
+/* 相框上方的蝴蝶结 */
+.anon-frame-bow {
+    position: absolute;
+    top: -10px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 6;
+    animation: anon-bow-wiggle 3.5s ease-in-out infinite;
+}
+.anon-frame-bow-l, .anon-frame-bow-r {
+    position: absolute;
+    top: 0;
+    width: 14px; height: 10px;
+    border: 1.5px solid rgba(240, 180, 210, 0.45);
+    background: rgba(255, 215, 235, 0.15);
+}
+.anon-frame-bow-l { left: -15px; border-radius: 50% 10% 50% 50%; transform: rotate(-8deg); }
+.anon-frame-bow-r { right: -15px; border-radius: 10% 50% 50% 50%; transform: rotate(8deg); }
+.anon-frame-bow-knot {
+    position: absolute;
+    top: 2px; left: 50%;
+    transform: translateX(-50%);
+    width: 6px; height: 6px;
+    background: rgba(240, 180, 210, 0.4);
+    border-radius: 50%;
+}
+.anon-frame-bow-trail-l, .anon-frame-bow-trail-r {
+    position: absolute;
+    bottom: -5px;
+    width: 1px; height: 8px;
+    background: rgba(240, 180, 210, 0.25);
+}
+.anon-frame-bow-trail-l { left: 0; transform: rotate(-12deg); }
+.anon-frame-bow-trail-r { right: 0; transform: rotate(12deg); }
+
+/* 相框角落小珍珠 */
+.anon-frame-pearl {
+    position: absolute;
+    width: 5px; height: 5px;
+    background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9), rgba(230, 215, 240, 0.4));
+    border-radius: 50%;
+    border: 0.5px solid rgba(220, 205, 240, 0.3);
+    animation: anon-pearl-glow 3s ease-in-out infinite;
+    z-index: 3;
+}
+.anon-frame-pearl:nth-child(3) { top: 5px; left: 5px; animation-delay: 0s; }
+.anon-frame-pearl:nth-child(4) { top: 5px; right: 5px; animation-delay: 0.8s; }
+.anon-frame-pearl:nth-child(5) { bottom: 5px; left: 5px; animation-delay: 1.6s; }
+.anon-frame-pearl:nth-child(6) { bottom: 5px; right: 5px; animation-delay: 2.4s; }
+
+/* 立绘下方文字 */
+.anon-caption {
+    font-family: 'Caveat', cursive;
+    text-align: center;
+    margin-top: 12px;
+    font-size: 15px;
+    color: rgba(200, 170, 210, 0.5);
+    letter-spacing: 2px;
+}
+
+/* ===== 散落装饰元素 ===== */
+/* 气泡 */
+.anon-bubble {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(220, 210, 245, 0.2);
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), transparent);
+    z-index: 2;
+    pointer-events: none;
+    animation: anon-bubble-float 5s ease-in-out infinite;
+}
+.anon-bubble:nth-child(1) { width: 18px; height: 18px; top: 55px; right: 40px; animation-delay: 0s; }
+.anon-bubble:nth-child(2) { width: 12px; height: 12px; bottom: 100px; left: 25px; animation-delay: 1s; }
+.anon-bubble:nth-child(3) { width: 8px; height: 8px; top: 50%; right: 18px; animation-delay: 2s; }
+.anon-bubble:nth-child(4) { width: 14px; height: 14px; top: 30%; left: 45%; animation-delay: 0.5s; }
+.anon-bubble:nth-child(5) { width: 10px; height: 10px; bottom: 60px; left: 55%; animation-delay: 1.5s; }
+.anon-bubble:nth-child(6) { width: 6px; height: 6px; top: 65%; left: 20px; animation-delay: 2.5s; }
+
+/* 星星碎片 */
+.anon-star-bit {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    animation: anon-sparkle-twinkle 3.5s ease-in-out infinite;
+}
+.anon-star-bit::before {
+    font-size: 10px;
+}
+.anon-star-bit:nth-child(1)::before { content: '✦'; color: rgba(240, 200, 220, 0.35); }
+.anon-star-bit:nth-child(2)::before { content: '✧'; color: rgba(200, 195, 240, 0.3); }
+.anon-star-bit:nth-child(3)::before { content: '⋆'; color: rgba(240, 210, 225, 0.35); }
+.anon-star-bit:nth-child(4)::before { content: '✦'; color: rgba(210, 200, 245, 0.3); }
+.anon-star-bit:nth-child(5)::before { content: '✧'; color: rgba(240, 195, 215, 0.3); }
+.anon-star-bit:nth-child(6)::before { content: '⋆'; color: rgba(200, 200, 240, 0.25); }
+.anon-star-bit:nth-child(1) { top: 48px; left: 35%; animation-delay: 0s; }
+.anon-star-bit:nth-child(2) { bottom: 80px; right: 30px; animation-delay: 0.7s; }
+.anon-star-bit:nth-child(3) { top: 40%; right: 55px; animation-delay: 1.4s; }
+.anon-star-bit:nth-child(4) { bottom: 35px; left: 40%; animation-delay: 2.1s; }
+.anon-star-bit:nth-child(5) { top: 70px; left: 18px; animation-delay: 0.3s; }
+.anon-star-bit:nth-child(6) { bottom: 110px; right: 55%; animation-delay: 1.8s; }
+
+/* 小爱心 */
+.anon-heart-bit {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    animation: anon-heart-pulse 3s ease-in-out infinite;
+}
+.anon-heart-bit::before {
+    content: '♡';
+    font-size: 11px;
+    color: rgba(245, 190, 210, 0.3);
+}
+.anon-heart-bit:nth-child(1) { top: 90px; right: 25px; animation-delay: 0.5s; }
+.anon-heart-bit:nth-child(2) { bottom: 50px; left: 30px; animation-delay: 1.5s; }
+.anon-heart-bit:nth-child(3) { top: 55%; left: 50px; animation-delay: 2.2s; }
+
+/* 小花瓣飘落 */
+.anon-petal {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    width: 5px; height: 8px;
+    background: rgba(255, 200, 220, 0.15);
+    border-radius: 0 50% 50% 50%;
+    animation: anon-petal-fall 4s ease-in-out infinite;
+}
+.anon-petal:nth-child(1) { top: 15%; left: 12%; animation-delay: 0s; transform: rotate(-20deg); }
+.anon-petal:nth-child(2) { top: 10%; right: 30%; animation-delay: 1.3s; transform: rotate(15deg); background: rgba(210, 200, 245, 0.12); }
+.anon-petal:nth-child(3) { top: 25%; left: 60%; animation-delay: 2.6s; width: 4px; height: 6px; }
+
+/* 小珍珠散落 */
+.anon-loose-pearl {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    width: 4px; height: 4px;
+    background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.7), rgba(225, 215, 240, 0.3));
+    border-radius: 50%;
+    border: 0.5px solid rgba(220, 210, 240, 0.2);
+    animation: anon-pearl-glow 4s ease-in-out infinite;
+}
+.anon-loose-pearl:nth-child(1) { top: 45%; right: 12px; animation-delay: 0.3s; }
+.anon-loose-pearl:nth-child(2) { bottom: 90px; left: 48%; animation-delay: 1.2s; width: 3px; height: 3px; }
+.anon-loose-pearl:nth-child(3) { top: 20%; left: 8%; animation-delay: 2.1s; width: 3.5px; height: 3.5px; }
+
+/* 彩色小圆点组 */
+.anon-dot-group {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    display: flex;
+    gap: 3px;
+}
+.anon-tiny-dot {
+    border-radius: 50%;
+    opacity: 0.35;
+}
+.anon-tiny-dot:nth-child(1) { width: 3px; height: 3px; background: rgba(255, 190, 215, 0.5); }
+.anon-tiny-dot:nth-child(2) { width: 4px; height: 4px; background: rgba(200, 200, 245, 0.4); }
+.anon-tiny-dot:nth-child(3) { width: 3px; height: 3px; background: rgba(255, 220, 200, 0.45); }
+
+/* ===== 按钮区 ===== */
+.anon-action {
+    position: relative;
+    z-index: 5;
+    text-align: center;
+    padding: 5px 28px 24px 28px;
+}
+.anon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 32px;
+    background: linear-gradient(135deg, rgba(255, 210, 230, 0.3), rgba(215, 205, 245, 0.25));
+    color: rgba(180, 150, 190, 0.7);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    border: 1.5px solid rgba(230, 200, 240, 0.3);
+    border-radius: 22px;
+    cursor: pointer;
+    transition: all 0.35s ease;
+    font-family: 'Quicksand', 'Noto Sans SC', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+.anon-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    transition: none;
+    animation: anon-shimmer-line 3s ease-in-out infinite;
+}
+.anon-btn:hover {
+    background: linear-gradient(135deg, rgba(255, 200, 225, 0.45), rgba(210, 200, 245, 0.4));
+    color: rgba(160, 120, 170, 0.85);
+    border-color: rgba(240, 195, 225, 0.5);
+    box-shadow: 0 6px 18px rgba(220, 190, 240, 0.2);
+    transform: translateY(-2px);
+}
+.anon-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(220, 190, 240, 0.1);
+}
+
+/* ===== 底部装饰 ===== */
+.anon-bottom-deco {
+    position: relative;
+    z-index: 5;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    border-top: 1px solid rgba(230, 215, 245, 0.12);
+}
+.anon-bottom-pearl {
+    width: 3px; height: 3px;
+    background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.6), rgba(225, 215, 240, 0.3));
+    border-radius: 50%;
+}
+.anon-bottom-diamond {
+    width: 4px; height: 4px;
+    background: rgba(230, 210, 245, 0.15);
+    transform: rotate(45deg);
+}
+
+/* ===== 过场遮罩 ===== */
+.anon-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(253, 248, 255, 0.88);
+    backdrop-filter: blur(8px);
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    border-radius: 24px;
+}
+.anon-overlay.active { opacity: 1; pointer-events: auto; }
+
+.anon-loader {
+    display: flex;
+    gap: 9px;
+}
+.anon-loader-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    animation: anon-dot-dance 1.2s ease-in-out infinite;
+}
+.anon-loader-dot:nth-child(1) { background: rgba(245, 190, 215, 0.5); animation-delay: 0s; }
+.anon-loader-dot:nth-child(2) { background: rgba(210, 200, 245, 0.5); animation-delay: 0.15s; }
+.anon-loader-dot:nth-child(3) { background: rgba(255, 220, 200, 0.5); animation-delay: 0.3s; }
+
+.anon-over-text {
+    font-family: 'Caveat', cursive;
+    font-size: 20px;
+    color: rgba(200, 170, 215, 0.55);
+    letter-spacing: 4px;
+}
+
+/* ===== 响应式 ===== */
+@media(max-width: 680px) {
+    .anon-inner { flex-direction: column; padding: 20px 18px 14px 18px; }
+    .anon-left { padding: 8px 5px; }
+    .anon-right { padding: 12px 5px 8px; }
+    .anon-separator {
+        width: 100%; height: 28px;
+        flex-direction: row;
+        padding: 0 15px;
+    }
+    .anon-sep-dash {
+        flex: 1; height: 1px; width: auto;
+        background: repeating-linear-gradient(
+            90deg,
+            rgba(220, 200, 240, 0.3) 0px,
+            rgba(220, 200, 240, 0.3) 4px,
+            transparent 4px,
+            transparent 9px
+        );
+    }
+    .anon-portrait-card { max-width: 200px; }
+    .anon-corner-tag { display: none; }
+    .anon-name-script { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+
+<div class="anon-wrap" id="anonWrap">
+    <div class="anon-card">
+
+        <!-- 散落装饰：气泡 -->
+        <div class="anon-bubble"></div>
+        <div class="anon-bubble"></div>
+        <div class="anon-bubble"></div>
+        <div class="anon-bubble"></div>
+        <div class="anon-bubble"></div>
+        <div class="anon-bubble"></div>
+
+        <!-- 散落装饰：星星碎片 -->
+        <div class="anon-star-bit"></div>
+        <div class="anon-star-bit"></div>
+        <div class="anon-star-bit"></div>
+        <div class="anon-star-bit"></div>
+        <div class="anon-star-bit"></div>
+        <div class="anon-star-bit"></div>
+
+        <!-- 散落装饰：小爱心 -->
+        <div class="anon-heart-bit"></div>
+        <div class="anon-heart-bit"></div>
+        <div class="anon-heart-bit"></div>
+
+        <!-- 散落装饰：小花瓣 -->
+        <div class="anon-petal"></div>
+        <div class="anon-petal"></div>
+        <div class="anon-petal"></div>
+
+        <!-- 散落装饰：小珍珠 -->
+        <div class="anon-loose-pearl"></div>
+        <div class="anon-loose-pearl"></div>
+        <div class="anon-loose-pearl"></div>
+
+        <!-- 散落装饰：彩色圆点组 -->
+        <div class="anon-dot-group" style="top: 42px; left: 52%;">
+            <div class="anon-tiny-dot"></div><div class="anon-tiny-dot"></div><div class="anon-tiny-dot"></div>
+        </div>
+        <div class="anon-dot-group" style="bottom: 55px; left: 22%;">
+            <div class="anon-tiny-dot"></div><div class="anon-tiny-dot"></div><div class="anon-tiny-dot"></div>
+        </div>
+
+        <!-- 顶部蝴蝶结装饰条 -->
+        <div class="anon-top-ribbon">
+            <div class="anon-top-pearl"></div>
+            <div class="anon-top-pearl"></div>
+            <div class="anon-bow">
+                <div class="anon-bow-left"></div>
+                <div class="anon-bow-right"></div>
+                <div class="anon-bow-center"></div>
+                <div class="anon-bow-tail-l"></div>
+                <div class="anon-bow-tail-r"></div>
+            </div>
+            <div class="anon-top-pearl"></div>
+            <div class="anon-top-pearl"></div>
+            <div class="anon-bow">
+                <div class="anon-bow-left"></div>
+                <div class="anon-bow-right"></div>
+                <div class="anon-bow-center"></div>
+                <div class="anon-bow-tail-l"></div>
+                <div class="anon-bow-tail-r"></div>
+            </div>
+            <div class="anon-top-pearl"></div>
+            <div class="anon-top-pearl"></div>
+        </div>
+
+        <!-- 角落标签 -->
+        <div class="anon-corner-tag">
+            <span class="anon-corner-tag-text">a daydream ☁</span>
+        </div>
+
+        <!-- ===== 主内容区 ===== -->
+        <div class="anon-inner">
+
+            <!-- 左侧：文字 -->
+            <div class="anon-left">
+                <div class="anon-date-pill">
+                    <div class="anon-date-pill-dot"></div>
+                    <span class="anon-date-pill-text">Feb. 2020</span>
+                </div>
+
+                <h2 class="anon-name-script">Anon Chihaya</h2>
+                <div class="anon-name-jp">千 早 爱 音</div>
+
+                <div class="anon-text-pad">
+                    <div class="anon-text">
+                        <p>公园长椅上坐了很久了。大概有一个小时？两个小时？已经不太记得了。</p>
+                        <p>手机屏幕亮了又暗了好几次，但是一条消息也没有点开看。</p>
+                        <p>……如果回去的话，被她们问起"伦敦怎么样"，要怎么回答才好呢。</p>
+                        <p>"超棒的哦！"——可是一点也不棒啊。</p>
+                        <p>明明来之前，跟所有人说的都是"我要去闪闪发光的地方"。</p>
+                    </div>
+                </div>
+
+                <div class="anon-polaroid">
+                    <div class="anon-polaroid-tape"></div>
+                    <img class="anon-polaroid-gif" src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E7%88%B1%E9%9F%B3%E6%8A%95%E9%99%8D.gif" alt="爱音">
+                    <div class="anon-polaroid-label">today ...</div>
+                </div>
+            </div>
+
+            <!-- 中间分隔 -->
+            <div class="anon-separator">
+                <div class="anon-sep-dash"></div>
+                <div class="anon-sep-bloom"></div>
+                <div class="anon-sep-dash"></div>
+                <div class="anon-sep-mini-bow"></div>
+                <div class="anon-sep-dash"></div>
+                <div class="anon-sep-bloom"></div>
+                <div class="anon-sep-dash"></div>
+            </div>
+
+            <!-- 右侧：立绘 -->
+            <div class="anon-right">
+                <div class="anon-portrait-card">
+                    <!-- 相框蝴蝶结 -->
+                    <div class="anon-frame-bow">
+                        <div class="anon-frame-bow-l"></div>
+                        <div class="anon-frame-bow-r"></div>
+                        <div class="anon-frame-bow-knot"></div>
+                        <div class="anon-frame-bow-trail-l"></div>
+                        <div class="anon-frame-bow-trail-r"></div>
+                    </div>
+                    <!-- 角落珍珠 -->
+                    <div class="anon-frame-pearl"></div>
+                    <div class="anon-frame-pearl"></div>
+                    <div class="anon-frame-pearl"></div>
+                    <div class="anon-frame-pearl"></div>
+                    <img class="anon-portrait-img" src="https://cyber2051.top/img/%E5%8D%83%E6%97%A9%E7%88%B1%E9%9F%B3%2FAnon_%E7%AB%8B%E7%BB%98%E7%99%BD%E5%BA%95.png" alt="千早爱音">
+                </div>
+                <div class="anon-caption">— Anon C. —</div>
+            </div>
+
+        </div>
+
+        <!-- 按钮 -->
+        <div class="anon-action">
+            <div class="anon-btn" onclick="anonStart()"
+                 data-prompt="【开始】【开场白】 # 场景生成指令
+
+## 核心任务
+请根据以下提供的元素，完整叙述并扩写一段开场剧情。
+
+## 叙事要求
+- 你的任务是【场景描绘者】，而非【剧情推进者】。
+- 必须在自然的文字叙述中，将下述所有背景信息和场景要素巧妙地融合进去。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+
+## 场景要素
+- **时间:** 2020年2月，一个阴沉的午后。
+- **地点:** 英国伦敦，某个不知名公园的长椅上。
+- **核心人物:** 千早爱音。
+- **玩家角色:** <user>，一名恰好路过的同乡。
+
+## 背景信息（必须融入叙述）
+千早爱音正处在人生的最低谷，她的内心充满了精神内耗：
+1. **现实的壁垒:** 来到伦敦留学已有一个月，但因蹩脚的英语口语和完全无法适应的生活习惯。
+2. **逃避的决定:** 她已经放弃，并决定下个月就逃回日本。
+3. **未来的恐惧:** 她害怕回到东京后，偶然遇到初中时的同学。她无法想象当被问及"闪闪发光"的留学生活时，自己该如何面对那份尴尬与羞耻。
+
+## 叙事焦点
+将上述所有情感，全部聚焦于一个核心画面——千早爱音独自一人坐在异国他乡的冰冷长椅上，整个人被低沉的氛围包裹，在旁人眼中，她或许只是在发呆，但她的内心正在进行着一场无声的风暴。
+
+## 【最高优先级指令】
+在描绘完user恰好路过，辨认出她可能是同乡，并停下了脚步之后，【必须立即停止】。严禁进行任何后续的角色扮演或剧情推进，将故事的控制权完全交还给玩家。 【/开场白】">
+                开始
+            </div>
+        </div>
+
+        <!-- 底部装饰 -->
+        <div class="anon-bottom-deco">
+            <div class="anon-bottom-pearl"></div>
+            <div class="anon-bottom-diamond"></div>
+            <div class="anon-bottom-pearl"></div>
+            <div class="anon-bottom-diamond"></div>
+            <div class="anon-bottom-pearl"></div>
+            <div class="anon-bottom-diamond"></div>
+            <div class="anon-bottom-pearl"></div>
+        </div>
+
+        <!-- 过场遮罩 -->
+        <div class="anon-overlay" id="anonOverlay">
+            <div class="anon-loader">
+                <div class="anon-loader-dot"></div>
+                <div class="anon-loader-dot"></div>
+                <div class="anon-loader-dot"></div>
+            </div>
+            <div class="anon-over-text">entering daydream...</div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function anonStart() {
+    var btn = document.querySelector('.anon-btn');
+    var promptText = btn.getAttribute('data-prompt');
+
+    if (typeof triggerSlash === 'function') {
+        triggerSlash('/send ' + promptText + '|/trigger');
+    } else {
+        var input = parent.document.querySelector('#send_textarea');
+        if (input) {
+            input.value = promptText;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
+
+    document.getElementById('anonOverlay').classList.add('active');
+}
+</script>
+
+</body>
+</html>

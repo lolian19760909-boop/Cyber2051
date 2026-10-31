@@ -1,0 +1,56 @@
+{
+  "packages": [
+    {
+      "name": "@rive-app/webgl2",
+      "version": "2.44.2",
+      "license": "MIT"
+    },
+    {
+      "name": "@lottiefiles/dotlottie-web",
+      "version": "0.81.0",
+      "license": "MIT"
+    }
+  ],
+  "files": [
+    {
+      "name": "rive-2.44.2.mjs",
+      "bytes": 559101,
+      "sha256": "11cc93b15e711c98fde14bb78c7ecf0d930a4baf2c8a189d1a19ee847c0df3ed"
+    },
+    {
+      "name": "rive-2.44.2.wasm",
+      "bytes": 2178508,
+      "sha256": "987654bcd3ed5801925484e7516ccf2c02dce392cfb11ed3fb134eca7badb156"
+    },
+    {
+      "name": "RIVE-LICENSE.txt",
+      "bytes": 1066,
+      "sha256": "8a1efa755d19446b51a18e1c15f6308728da0b36283c4d38050698ad6954b69a"
+    },
+    {
+      "name": "dotlottie-canvas-0.81.0.mjs",
+      "bytes": 165443,
+      "sha256": "1e50bf80381a4fbaf4153d807bff0294c11574db3d62d6e0cf5b0872cba27803"
+    },
+    {
+      "name": "dotlottie-canvas-0.81.0.wasm",
+      "bytes": 1238072,
+      "sha256": "92822207905406eee4f0785e8d4a99a504a24db6f658abfaec074a9420471b25"
+    },
+    {
+      "name": "dotlottie-webgl-0.81.0.mjs",
+      "bytes": 96594,
+      "sha256": "fc8e6a95258d696444059fd096f0111f3063edd5aa4dc051791eb8f0f7d78636"
+    },
+    {
+      "name": "dotlottie-webgl-0.81.0.wasm",
+      "bytes": 1366371,
+      "sha256": "cfbd1d18e71dc1b68e0f075872a306e349bfee02c49ea7ee4283a0f71315ced2"
+    },
+    {
+      "name": "DOTLOTTIE-LICENSE.txt",
+      "bytes": 1072,
+      "sha256": "779cec663b3c6590082566f2a000170d7a4d1a4bfc6f954e61efa4adddc652a8"
+    }
+  ]
+}

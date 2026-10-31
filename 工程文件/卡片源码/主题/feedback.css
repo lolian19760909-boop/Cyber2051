@@ -1,0 +1,64 @@
+/* Owned by each feedback surface. Tokens are scoped to .cxx-feedback-theme. */
+.cxx-feedback-theme { font:16px/1.6 var(--cxx-font-ui); color:var(--cxx-text); }
+.cxx-feedback-theme button, .cxx-feedback-theme input, .cxx-feedback-theme select {
+  box-sizing:border-box; min-height:44px; min-width:44px; font:16px/1.4 var(--cxx-font-ui);
+  padding:8px 12px; background:var(--cxx-raised); color:var(--cxx-text); border:1px solid var(--cxx-line);
+}
+.cxx-feedback-theme button { cursor:pointer; }
+.cxx-feedback-theme button:disabled { opacity:.55; cursor:wait; }
+.cxx-feedback-theme :focus-visible { outline:2px solid var(--cxx-cyan); outline-offset:2px; }
+.cxx-model-dialog {
+  box-sizing:border-box; width:min(560px,92vw); max-height:80dvh; overflow:auto;
+  padding:18px; background:var(--cxx-panel); border:1px solid var(--cxx-red);
+}
+.cxx-model-dialog input { width:100%; }
+.cxx-model-dialog [role=listbox] { max-height:48dvh; overflow:auto; }
+.cxx-model-dialog [role=option] { display:block; width:100%; text-align:left; overflow-wrap:anywhere; margin:6px 0; }
+.cxx-model-dialog [aria-selected=true] { background:var(--cxx-selected-panel); color:var(--cxx-cyan-soft); border-color:var(--cxx-cyan); }
+.cxx-draft-exit {
+  position:fixed; inset:0; width:100%; height:100%; max-width:none; max-height:none; margin:0; border:0;
+  z-index:2147483647; background:color-mix(in srgb,var(--cxx-ink) 90.98%,transparent);
+  display:grid; place-items:center; padding:16px; box-sizing:border-box;
+}
+.cxx-draft-exit>section {
+  box-sizing:border-box; width:100%; max-width:420px; max-height:100%; overflow:auto; padding:20px;
+  display:grid; gap:12px; background:var(--cxx-raised); border:1px solid var(--cxx-line);
+}
+.cxx-draft-exit h3 { margin:0 0 10px; color:var(--cxx-red); font:600 20px/1.4 var(--cxx-font-ui); }
+.cxx-draft-exit button { min-height:48px; padding:10px 16px; text-align:left; }
+.cxx-draft-exit [data-choice=save] { background:var(--cxx-red); color:var(--cxx-ink); border-color:var(--cxx-red); }
+.cxx-announcement {
+  box-sizing:border-box; width:min(640px,90vw); max-height:85dvh; overflow:auto; padding:28px;
+  background:var(--cxx-panel); border:1px solid var(--cxx-yellow); line-height:1.85;
+}
+.cxx-announcement>button { padding:8px 24px; background:var(--cxx-yellow); color:var(--cxx-ink); border:0; }
+.cxx-startup-help {
+  display:block; max-width:100%; padding:12px; border:1px solid var(--cxx-line);
+  background:var(--cxx-panel); white-space:normal; overflow-wrap:anywhere;
+}
+.cxx-startup-help summary { box-sizing:border-box; min-height:44px; cursor:pointer; padding:8px 0; }
+.cxx-startup-help textarea {
+  box-sizing:border-box; display:block; width:100%; height:240px; margin:10px 0; white-space:pre-wrap;
+  font:14px/1.5 var(--cxx-font-mono); color:var(--cxx-text); background:var(--cxx-ink); border:1px solid var(--cxx-line);
+}
+.cxx-startup-help button { margin:4px; }
+.cxx-opening-save {
+  box-sizing:border-box; display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  margin:12px 16px; padding:10px 14px; position:relative; z-index:2;
+  border:1px solid var(--cxx-line); background:var(--cxx-panel);
+}
+.cxx-opening-save button { color:var(--cxx-cyan-soft); border-color:var(--cxx-cyan); }
+.cxx-operation-feedback {
+  box-sizing:border-box; position:fixed; inset:auto 12px 12px; max-width:720px; max-height:calc(100dvh - 24px);
+  margin:0 auto; padding:14px 20px; overflow:auto; overflow-wrap:anywhere; white-space:pre-wrap;
+  background:var(--cxx-panel); border:1px solid var(--cxx-yellow); z-index:2147483647; pointer-events:auto;
+}
+.cxx-operation-feedback[data-block=true]::backdrop { background:color-mix(in srgb,var(--cxx-ink) 69.02%,transparent); pointer-events:auto; }
+.cxx-operation-feedback button { margin:6px; }
+.cxx-operation-feedback textarea { box-sizing:border-box; max-width:100%; width:100%; height:160px; font:14px/1.5 var(--cxx-font-mono); color:var(--cxx-text); background:var(--cxx-ink); border:1px solid var(--cxx-line); }
+.cxx-operation-spinner {
+  display:inline-block; width:18px; height:18px; border:2px solid color-mix(in srgb,var(--cxx-yellow) 26.67%,transparent);
+  border-top-color:var(--cxx-yellow); border-radius:50%; vertical-align:middle; margin-right:10px; animation:cxx-operation-spin 1s linear infinite;
+}
+@keyframes cxx-operation-spin { to { transform:rotate(360deg); } }
+@media (prefers-reduced-motion:reduce) { .cxx-operation-spinner { animation:none; } }

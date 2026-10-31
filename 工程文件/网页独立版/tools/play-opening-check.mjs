@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {createMemoryStatePort} from '../src/store/memory.mjs';
+import {DIRECT_OPENING_PROMPT,confirmedOpeningCommand,openingAction,pendingOpening} from '../src/app/opening.mjs';
+const port=createMemoryStatePort({accountId:'test'}),text=confirmedOpeningCommand('/send 已确认的开场|/trigger');
+await port.commit({accountId:'test',runId:'opening-test',nodeId:'opening',operationId:'create',parentNodeId:null,expectedRevision:0,branchId:'main',stateAfter:{},message:{kind:'opening',raw:'今天也是一个人。',openingAction:text}});
+let nodes=await port.readLineage('opening-test');
+const args={nodes,statePort:port,runId:'opening-test'};
+assert.equal((await pendingOpening(args)).text,text);
+assert.equal(await pendingOpening({...args,draft:'玩家写的另一项行动'}),null);
+const pending=await pendingOpening(args);await port.putRecords('drafts',args.runId,[{id:pending.operationId,kind:'opening-dispatch'}]);
+assert.equal((await pendingOpening(args)).text,text,'failed dispatch receipt must not consume the opening');
+assert.equal(await pendingOpening({...args,nodes:[...nodes,{message:{raw:'第一轮剧情',kind:'assistant'}}]}),null);
+assert.equal(await pendingOpening({...args,nodes:[{message:{raw:'作者直写开场',kind:'opening'}}]}),null);
+const exported=await port.exportRun(args.runId);assert.equal(exported.tables.drafts[0].id,pending.operationId);
+assert.equal(openingAction({direct:true}),DIRECT_OPENING_PROMPT);
+assert.equal(openingAction({command:'/send 作者开场指令|/trigger',direct:true}),'作者开场指令');
+assert.equal(openingAction({}),'');
+console.log('PASS 已确认指令解析、保留玩家输入、失败标记允许重试、成功正文后不重发、普通楼层与直写开场不误触、导出保留执行标记、直接出身开场有自动动作');

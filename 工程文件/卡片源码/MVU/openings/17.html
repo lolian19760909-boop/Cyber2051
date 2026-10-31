@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@200;300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+@keyframes ring-fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ring-slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ring-lineExpand { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes ring-glowPulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+@keyframes ring-spotlightDrift { 0%, 100% { transform: translate(-50%, -50%) rotate(0deg); } 33% { transform: translate(-48%, -52%) rotate(1deg); } 66% { transform: translate(-52%, -48%) rotate(-1deg); } }
+@keyframes ring-breathe { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+@keyframes ring-barPulse { 0%, 100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
+
+/* ====== Video Loading Overlay ====== */
+@keyframes ring-loadSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes ring-playPulse { 0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; } 50% { transform: translate(-50%, -50%) scale(1.12); opacity: 1; } }
+@keyframes ring-playGlow { 0%, 100% { box-shadow: 0 0 20px rgba(232, 168, 73, 0.15), inset 0 0 12px rgba(232, 168, 73, 0.05); } 50% { box-shadow: 0 0 40px rgba(232, 168, 73, 0.3), inset 0 0 20px rgba(232, 168, 73, 0.1); } }
+@keyframes ring-fadeOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes ring-scaleIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.5); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+
+.ring-video-overlay {
+    position: absolute; inset: 0; z-index: 5; background: #0B0B10;
+    display: flex; align-items: center; justify-content: center; transition: background 0.8s ease;
+}
+.ring-video-overlay.ready { background: rgba(11, 11, 16, 0.35); cursor: pointer; }
+.ring-video-overlay.hidden { animation: ring-fadeOut 0.6s ease forwards; pointer-events: none; }
+
+.ring-loader {
+    width: 40px; height: 40px; border: 2px solid rgba(232, 168, 73, 0.1);
+    border-top-color: rgba(232, 168, 73, 0.6); border-radius: 50%;
+    animation: ring-loadSpin 1s linear infinite; transition: opacity 0.4s ease;
+}
+.ring-loader.hide { opacity: 0; pointer-events: none; }
+
+.ring-play-btn {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5);
+    width: 68px; height: 68px; border-radius: 50%; background: rgba(11, 11, 16, 0.6);
+    border: 1.5px solid rgba(232, 168, 73, 0.35); display: flex; align-items: center;
+    justify-content: center; opacity: 0; pointer-events: none; backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+}
+.ring-play-btn.visible {
+    animation: ring-scaleIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards, ring-playPulse 2.5s ease-in-out 0.5s infinite, ring-playGlow 2.5s ease-in-out 0.5s infinite;
+    pointer-events: auto;
+}
+.ring-play-btn:hover { border-color: rgba(232, 168, 73, 0.7); background: rgba(232, 168, 73, 0.12); }
+.ring-play-icon { width: 0; height: 0; border-style: solid; border-width: 10px 0 10px 18px; border-color: transparent transparent transparent rgba(232, 168, 73, 0.8); margin-left: 3px; transition: border-color 0.3s ease; }
+.ring-play-btn:hover .ring-play-icon { border-color: transparent transparent transparent #E8A849; }
+
+/* ====== Pause Indicator ====== */
+.ring-pause-btn {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5);
+    width: 68px; height: 68px; border-radius: 50%; background: rgba(11, 11, 16, 0.6);
+    border: 1.5px solid rgba(232, 168, 73, 0.35); display: flex; align-items: center;
+    justify-content: center; gap: 6px; opacity: 0; pointer-events: none;
+    backdrop-filter: blur(8px); transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    z-index: 10;
+}
+.ring-pause-btn.visible {
+    opacity: 1; transform: translate(-50%, -50%) scale(1);
+    box-shadow: 0 0 20px rgba(232, 168, 73, 0.2);
+}
+.ring-pause-bar { width: 6px; height: 20px; background: rgba(232, 168, 73, 0.8); border-radius: 2px; }
+
+/* ====== Original Styles ====== */
+.ring-wrap { max-width: 860px; margin: 30px auto; font-family: 'Noto Sans SC', sans-serif; animation: ring-fadeIn 1s cubic-bezier(0.2, 0.8, 0.2, 1); position: relative; }
+.ring-card { position: relative; background: #0B0B10; border-radius: 16px; overflow: hidden; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04); }
+.ring-card::before { content: ''; position: absolute; top: 15%; left: 50%; width: 120%; height: 60%; background: radial-gradient(ellipse, rgba(232, 168, 73, 0.06) 0%, transparent 70%); transform: translate(-50%, -50%); animation: ring-spotlightDrift 8s ease-in-out infinite; pointer-events: none; z-index: 0; }
+
+.ring-hero { position: relative; width: 100%; aspect-ratio: 16 / 8.5; overflow: hidden; z-index: 1; cursor: pointer; }
+.ring-video { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(0.85) contrast(1.05) saturate(1.1); }
+.ring-hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11, 11, 16, 0.3) 0%, transparent 25%, transparent 55%, rgba(11, 11, 16, 0.85) 85%, rgba(11, 11, 16, 1) 100%), linear-gradient(90deg, rgba(11, 11, 16, 0.4) 0%, transparent 30%, transparent 70%, rgba(11, 11, 16, 0.4) 100%); pointer-events: none; z-index: 6; }
+.ring-hero-title { position: absolute; bottom: 30px; left: 40px; right: 40px; z-index: 7; animation: ring-slideUp 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s both; pointer-events: none; }
+.ring-scene-label { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 5px; text-transform: uppercase; color: rgba(232, 168, 73, 0.7); margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }
+.ring-scene-label::before { content: ''; display: block; width: 20px; height: 1px; background: rgba(232, 168, 73, 0.5); }
+.ring-main-title { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 300; color: #F0ECE4; letter-spacing: 3px; line-height: 1.2; margin: 0 0 6px 0; text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5); }
+.ring-main-title em { font-style: italic; font-weight: 400; color: #E8A849; }
+
+.ring-body { position: relative; z-index: 1; padding: 35px 40px 30px 40px; }
+.ring-meta { display: flex; align-items: center; gap: 20px; margin-bottom: 28px; animation: ring-slideUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s both; }
+.ring-meta-item { display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 400; color: rgba(232, 228, 220, 0.4); letter-spacing: 1.5px; }
+.ring-meta-icon { width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; opacity: 0.5; }
+.ring-meta-sep { width: 3px; height: 3px; background: rgba(232, 228, 220, 0.15); border-radius: 50%; }
+.ring-hr { height: 1px; background: linear-gradient(90deg, transparent 0%, rgba(232, 168, 73, 0.15) 20%, rgba(232, 168, 73, 0.25) 50%, rgba(232, 168, 73, 0.15) 80%, transparent 100%); border: none; margin: 0 0 28px 0; animation: ring-lineExpand 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.6s both; transform-origin: center; }
+
+.ring-content { animation: ring-slideUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.7s both; margin-bottom: 32px; }
+.ring-text { font-size: 14px; line-height: 2; color: rgba(232, 228, 220, 0.55); font-weight: 300; text-align: justify; letter-spacing: 0.5px; }
+.ring-text p { margin: 0 0 14px 0; } .ring-text p:last-child { margin: 0; }
+
+.ring-cast { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; animation: ring-slideUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.8s both; }
+.ring-cast-label { font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 500; letter-spacing: 4px; text-transform: uppercase; color: rgba(232, 228, 220, 0.25); width: 100%; margin-bottom: 4px; }
+.ring-cast-tag { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 20px; font-size: 12px; color: rgba(232, 228, 220, 0.5); font-weight: 300; letter-spacing: 1px; transition: all 0.3s ease; }
+.ring-cast-tag:hover { background: rgba(232, 168, 73, 0.06); border-color: rgba(232, 168, 73, 0.15); color: rgba(232, 228, 220, 0.8); }
+.ring-cast-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+
+.ring-eq { display: flex; align-items: flex-end; gap: 2px; height: 16px; opacity: 0.3; }
+.ring-eq-bar { width: 2px; background: #E8A849; border-radius: 1px; animation: ring-barPulse ease-in-out infinite; }
+.ring-eq-bar:nth-child(1) { height: 60%; animation-duration: 0.8s; } .ring-eq-bar:nth-child(2) { height: 100%; animation-duration: 0.6s; animation-delay: 0.1s; } .ring-eq-bar:nth-child(3) { height: 40%; animation-duration: 0.9s; animation-delay: 0.2s; } .ring-eq-bar:nth-child(4) { height: 80%; animation-duration: 0.7s; animation-delay: 0.15s; } .ring-eq-bar:nth-child(5) { height: 55%; animation-duration: 1s; animation-delay: 0.05s; }
+
+.ring-bottom-accent { height: 2px; background: linear-gradient(90deg, transparent 0%, rgba(232, 168, 73, 0.0) 10%, rgba(232, 168, 73, 0.3) 50%, rgba(232, 168, 73, 0.0) 90%, transparent 100%); animation: ring-breathe 4s ease-in-out infinite; }
+
+@media (max-width: 680px) {
+    .ring-wrap { margin: 15px 10px; } .ring-hero { aspect-ratio: 16 / 10; } .ring-hero-title { left: 24px; right: 24px; bottom: 20px; } .ring-main-title { font-size: 28px; } .ring-body { padding: 25px 24px 24px 24px; } .ring-meta { flex-wrap: wrap; gap: 10px; }
+    .ring-play-btn { width: 56px; height: 56px; } .ring-play-icon { border-width: 8px 0 8px 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="ring-wrap">
+    <div class="ring-card">
+        <!-- Video Hero -->
+        <div class="ring-hero" id="ringHeroArea">
+            <video class="ring-video" loop muted playsinline preload="auto" id="ringVideo"></video>
+
+            <!-- Video Loading / Play Overlay -->
+            <div class="ring-video-overlay" id="ringVideoOverlay">
+                <div class="ring-loader" id="ringLoader"></div>
+                <div class="ring-play-btn" id="ringPlayBtn">
+                    <div class="ring-play-icon"></div>
+                </div>
+            </div>
+
+            <!-- Pause Indicator -->
+            <div class="ring-pause-btn" id="ringPauseBtn">
+                <div class="ring-pause-bar"></div>
+                <div class="ring-pause-bar"></div>
+            </div>
+
+            <div class="ring-hero-overlay"></div>
+            <div class="ring-hero-title">
+                <div class="ring-scene-label">Scene — Live House RiNG</div>
+                <h1 class="ring-main-title">The First <em>Live</em></h1>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="ring-body">
+            <div class="ring-meta">
+                <div class="ring-meta-item">
+                    <div class="ring-meta-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+                    2020.05.24 Sun
+                </div>
+                <div class="ring-meta-sep"></div>
+                <div class="ring-meta-item">
+                    <div class="ring-meta-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+                    19:00 – 21:00
+                </div>
+                <div class="ring-meta-sep"></div>
+                <div class="ring-meta-item">
+                    <div class="ring-eq"><div class="ring-eq-bar"></div><div class="ring-eq-bar"></div><div class="ring-eq-bar"></div><div class="ring-eq-bar"></div><div class="ring-eq-bar"></div></div>
+                    Now Playing
+                </div>
+            </div>
+            <hr class="ring-hr">
+
+            <div class="ring-content">
+                <div class="ring-text">
+                  <p> LIVE HOUSE RiNG的空气里漂浮着一股热烘烘的、混杂着汗水和廉价香水的气味，有点像夏天傍晚被暴雨淋湿的柏油路。舞台的聚光灯把一切都照得有些失真，台下攒动的人头和挥舞的荧光棒汇成一片色彩斑驳的、不断起伏的海洋，发出嗡嗡的嘈杂声。</p>
+
+<p>高松灯觉得自己的心脏大概快要从喉咙里跳出来了。她握着麦克风，冰冷的金属触感从手心一直凉到后背。这是她们第一次正式站在这样的舞台上，面对这么多陌生的目光。每一道视线都像探照灯，让她无处遁形。</p>
+
+<p>椎名立希的鼓棒敲下第一个重音的时候，灯下意识地缩了一下肩膀。</p>
+
+<p>吉他声和贝斯声紧跟着响起，像约定好了一样，构建出一首歌的骨架。这是她们排练过好多次的《碧天伴走》。</p>
+
+<p>「在无人知晓处……垮着身子垂头丧气……」</p>
+
+<p>她的声音小得可怜，像是说给自己听的悄悄话，几乎一瞬间就被巨大的伴奏声盖了过去。喉咙像是被什么东西堵住了，干涩发紧。不行，唱不出来。脑子里一片空白，只剩下嗡嗡的耳鸣。她能感觉到立希的鼓点里透出些许焦躁，爱音那边也好像在拼命地朝自己使眼色，但她什么都看不清，只能低着头，盯着自己脚下那一小块被光照得发亮的地面。</p>
+
+<p>就在她快要放弃的时候，视线不经意地抬起，穿过层层叠叠的人影和摇晃的光点，落在了会场最后方的阴影里。</p>
+
+<p>一个很熟悉的身影。</p>
+
+<p>那头在昏暗光线下依然泛着柔和光泽的浅蓝色双马尾，就算隔着这么远，她也绝对不会认错。</p>
+
+<p>啊。</p>
+
+<p>是小祥。</p>
+
+<p>那一瞬间，仿佛有什么开关被按下了。那些被刻意遗忘的、关于去年的记忆碎片争先恐后地涌入脑海。天桥上的相遇，房间里的笔记本，练习室里的鼓励……是祥子告诉她，她的心声可以成为歌曲。是祥子给了她唱歌的理由。</p>
+
+<p>「……但是今天！你已经非常努力了！」</p>
+
+<p>歌声冲破了喉咙的桎梏，清澈而响亮，穿透了整个会场。灯抬起头，直视着前方，仿佛跨越了空间的距离，与那个身影遥遥相望。立希的鼓点立刻变得激昂，爱音的扫弦也充满了力量，素世温柔的贝斯线稳稳地托住了旋律。</p>
+
+<p>「一路持之以恒去努力！因为仅仅是站在这里！都已经拼尽全力！」</p>
+
+<p>她闭上眼睛，将这段时间以来的所有心情——迷茫、不安、和大家一起练习的快乐、想要继续下去的决心——全部融进了歌声里。</p>
+
+<p>一曲终了，台下爆发出热烈的掌声。灯扶着麦克风支架，大口地喘着气，汗水模糊了视线，但心里却是一种从未有过的踏实感。</p>
+
+<p>「那个……我一直，都找不到普通的定义。」</p>
+
+<p>她对着麦克风，用还有些不稳的气息轻声说着。</p>
+
+<p>「世界离我好遥远，好遥远……但是，和大家在一起的时光，让我觉得……就算迷路了，也没有关系。」</p>
+
+<p>会场里很安静，大家都在认真地听着。</p>
+
+<p>就在这份短暂的静谧被打破的瞬间，一段清脆的、不属于任何计划的吉他旋律响了起来。</p>
+
+<p>要乐奈站在舞台的角落，面无表情地拨动着琴弦，仿佛只是在弹奏一段再普通不过的过场音乐。</p>
+
+<p>舞台上，除了她之外的所有人都有些愣住。素世的脸色在一瞬间变得像纸一样苍白。</p>
+
+<p>这段旋愈发清晰，立希像是条件反射一般，举起鼓棒敲下了熟悉的鼓点。灯几乎是出于本能，就着这旋律和节奏，唱出了那句深深刻在记忆里的歌词。</p>
+
+<p>「憔悴的心，摇曳不定的目光……」</p>
+
+<p>当《春日影》的第一个音符响起时，丰川祥子感觉自己像是被钉在了原地。</p>
+
+<p>是这首歌。</p>
+
+<p>怎么会是这首歌？</p>
+
+<p>这首歌是她的过去，是她亲手创造又亲手埋葬的珍贵宝物。每一个音符都是她谱写的，每一个和弦都是她编排的。这首歌属于CRYCHIC，属于那个短暂如梦的春天。</p>
+
+<p>现在，它却被另一些人，在另一个舞台上，如此轻易地唱了出来。</p>
+
+<p>「穿过彩云之间，闪闪发光……心中满足，似要溢出……」</p>
+
+<p>灯的歌声清晰地传来，比过去更加成熟，也更加……刺耳。那些关于练习室的温暖回忆，与如今出租屋里的冰冷现实交叠在一起，像一把钝刀子，反复切割着她的神经。父亲酗酒的样子，自己在电话中心机械地应答客人的声音，雨夜里决绝的告别……那些她拼命想要忘记的一切，都被这首歌无情地唤醒了。</p>
+
+<p>「你的手心，为何会这样温暖呢？」</p>
+
+<p>不行。</p>
+
+<p>不能再听下去了。</p>
+
+<p>眼泪毫无预兆地涌了上来，模糊了视线。她不想哭，她不允许自己在这里示弱。祥子用手捂住嘴，压下喉咙里涌上的哽咽，猛地转过身，几乎是逃跑一样地冲出了那扇厚重的门，将身后的音乐和欢呼声全都隔绝开来。</p>
+
+<p>若叶睦站在原地，看着她踉跄离去的背影，没有追上去。她只是安静地转回头，金色的眼瞳里，倒映着舞台上闪烁的灯光，看不出任何情绪。</p>
+
+<p>演出在雷鸣般的掌声中结束了。</p>
+
+<p>---</p>
+
+<p>后台休息室。</p>
+
+<p>「呐！这算是大成功吧？！」</p>
+
+<p>千早爱音兴奋地开口。</p>
+
+<p>「吵死了，是大——成功才对吧！」</p>
+
+<p>椎名立希难得地没有反驳，嘴角甚至还带着笑意。</p>
+
+<p>「小灯！你唱的真棒！」</p>
+
+<p>「你唱的真的……」</p>
+
+<p>「为什么啊……」</p>
+
+<p>一个幽幽的声音打断了她们的庆祝。长崎素世站在门口的阴影里，一直沉默着的她，此刻终于开了口。她的声音很轻，却让整个房间的温度都降了下来。</p>
+
+<p>她缓缓抬起头，那张总是挂着温柔笑容的脸上，此刻只剩下冰冷的质问。</p>
+
+<p>「为什么要演奏《春日影》啊！！」</p>
+
+<p>她的声音突然拔高，变得尖锐，带着一丝歇斯底里。</p>
+
+<p>「那个……素世同学？」</p>
+
+<p>爱音被吓了一跳。</p>
+
+<p>「不是说了不会演奏的吗？！」</p>
+
+<p>「我才没说过。」</p>
+
+<p>立希冷淡地回应。</p>
+
+<p>素世的目光转向立希，像是在看一个不共戴天的仇人。</p>
+
+<p>「祥子……刚刚哭了。」</p>
+
+<p>「诶？」</p>
+
+<p>灯小声惊呼。爱音则是一脸状况外的表情。</p>
+
+<p>「她刚刚在吗？」</p>
+
+<p>「你知道这对她造成了多大的伤害吗？！……为什么要做这种事！」</p>
+
+<p>素世的声音里带上了哭腔。</p>
+
+<p>「那又怎么样。」</p>
+
+<p>立希抱起手臂，一脸无所谓地打断了她。</p>
+
+<p>「那家伙哭了又怎么样？已经和我们无关了吧？」</p>
+
+<p>这句话，成了压垮骆驼的最后一根稻草。</p>
+
+<p>“无关”？她们怎么能说出“无关”这两个字？CRYCHIC是她的全部，是她唯一的归宿。为了让大家回来，她做了多少努力，忍受了多少寂寞。可到头来，在她们眼里，竟然只是“无关”的事情。</p>
+
+<p>她的计划，她的希望，她所珍视的一切，都成了一个笑话。</p>
+
+<p>「太过分了！！」</p>
+
+<p>素世用尽全身的力气喊了出来。她什么都不想再说了。她抓起自己的贝斯包，看也没再看任何人一眼，转身用力地甩上门，冲了出去。</p>
+
+<p>“砰——”的一声巨响回荡在休息室里。</p>
+
+<p>成功的喜悦早已烟消云散，只剩下令人窒息的沉默。爱音张着嘴，不知道该说什么。灯低着头，手指不停地绞着衣角。</p>
+
+<p>立希站在原地，紧锁着眉头，看着那扇紧闭的门，一言不发。</p>
+                </div>
+            </div>
+
+            <div class="ring-cast">
+                <div class="ring-cast-label">On Stage & Beyond</div>
+                <div class="ring-cast-tag"><span class="ring-cast-dot" style="background:#77BBDD;"></span>高松 灯</div>
+                <div class="ring-cast-tag"><span class="ring-cast-dot" style="background:#FF8899;"></span>千早 爱音</div>
+                <div class="ring-cast-tag"><span class="ring-cast-dot" style="background:#77DD77;"></span>要 乐奈</div>
+                <div class="ring-cast-tag"><span class="ring-cast-dot" style="background:#FFDD88;"></span>长崎 素世</div>
+                <div class="ring-cast-tag"><span class="ring-cast-dot" style="background:#7777AA;"></span>椎名 立希</div>
+                <div class="ring-cast-tag"><span class="ring-cast-dot" style="background:#7799CC;"></span>丰川 祥子</div>
+                <div class="ring-cast-tag"><span class="ring-cast-dot" style="background:#779977;"></span>若叶 睦</div>
+            </div>
+        </div>
+        <div class="ring-bottom-accent"></div>
+    </div>
+</div>
+
+<script>
+(function() {
+    var video = document.getElementById('ringVideo');
+    var overlay = document.getElementById('ringVideoOverlay');
+    var loader = document.getElementById('ringLoader');
+    var playBtn = document.getElementById('ringPlayBtn');
+    var pauseBtn = document.getElementById('ringPauseBtn');
+    var heroArea = document.getElementById('ringHeroArea');
+    var hasTransitioned = false;
+
+    // ========== 零流量缓存魔法 ==========
+    var videoUrl = "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/7.mp4";
+    var topWin = window.top || window;
+    topWin._mygoVideoCache = topWin._mygoVideoCache || {};
+
+    if (topWin._mygoVideoCache[videoUrl]) {
+        video.src = topWin._mygoVideoCache[videoUrl];
+    } else {
+        fetch(videoUrl, { cache: 'force-cache' })
+            .then(function(res) {
+                if (!res.ok) throw new Error('Fetch failed');
+                return res.blob();
+            })
+            .then(function(blob) {
+                var blobUrl = URL.createObjectURL(blob);
+                topWin._mygoVideoCache[videoUrl] = blobUrl;
+                video.src = blobUrl;
+            })
+            .catch(function(e) {
+                console.warn("无法使用流量省流模式，正在尝试普通加载:", e);
+                video.src = videoUrl;
+            });
+    }
+
+    function onVideoReady() {
+        if (hasTransitioned) return;
+        hasTransitioned = true;
+        loader.classList.add('hide');
+        overlay.classList.add('ready');
+        setTimeout(function() {
+            playBtn.classList.add('visible');
+        }, 300);
+    }
+    video.addEventListener('canplay', onVideoReady);
+    if (video.readyState >= 3) onVideoReady();
+
+    // 点击播放逻辑
+    playBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        video.muted = false;
+        video.play().then(function() { overlay.classList.add('hidden'); })
+        .catch(function() { video.muted = true; video.play(); overlay.classList.add('hidden'); });
+    });
+    overlay.addEventListener('click', function() {
+        if (!overlay.classList.contains('ready')) return;
+        playBtn.click();
+    });
+
+    // 暂停/播放逻辑
+    heroArea.addEventListener('click', function() {
+        if (overlay.classList.contains('hidden')) {
+            if (!video.paused) {
+                video.pause();
+                pauseBtn.classList.add('visible');
+            } else {
+                video.play();
+                pauseBtn.classList.remove('visible');
+            }
+        }
+    });
+})();
+</script>
+
+</body>
+</html>

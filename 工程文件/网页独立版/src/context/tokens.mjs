@@ -1,0 +1,4 @@
+/** Conservative local estimate; this is explicitly not a model tokenizer or reported usage. */
+export function estimateTokens(value){const text=typeof value==='string'?value:JSON.stringify(value);if(!text)return 0;let ascii=0,other=0;for(const ch of text){if(ch.charCodeAt(0)<=127)ascii++;else other++;}return Math.ceil(ascii/3+other);}
+export function measureMessages(messages){return estimateTokens(messages)+messages.length*4+2;}
+export function contextBudget({contextSize,outputTokens,margin=0.1}){if(!Number.isFinite(contextSize)||!Number.isFinite(outputTokens)||contextSize<=outputTokens||outputTokens<0)throw Object.assign(new Error('上下文窗口必须大于预留输出长度'),{code:'context_budget'});const reserve=Math.ceil(contextSize*margin);return {window:contextSize,output:outputTokens,margin:reserve,input:Math.floor(contextSize-outputTokens-reserve),source:'local-estimate',estimate:true};}

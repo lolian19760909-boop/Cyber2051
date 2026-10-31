@@ -1,0 +1,10 @@
+.cxx-resources-panel,.cxx-resources-dialog{box-sizing:border-box;color:var(--cxx-text);color-scheme:dark;font:16px/1.6 var(--cxx-font-ui)}
+.cxx-resources-panel *,.cxx-resources-dialog *{box-sizing:border-box}
+.cxx-resources-status{margin:0 0 12px;white-space:pre-line;overflow-wrap:anywhere;color:var(--cxx-muted);font-size:14px}
+.cxx-resources-panel[data-state=error] .cxx-resources-status{color:var(--cxx-danger)}
+.cxx-resources-panel [hidden]{display:none}
+.cxx-resources-dialog{width:min(1180px,calc(100vw - 32px));max-width:none;max-height:calc(100dvh - 32px);overflow:auto;padding:0;border:1px solid var(--cxx-line);background:var(--cxx-canvas);scrollbar-width:thin;scrollbar-color:var(--cxx-line) var(--cxx-canvas)}
+.cxx-resources-dialog::backdrop{background:color-mix(in srgb,var(--cxx-scrim) 85%,transparent)}
+.cxx-resources-close{min-height:44px;min-width:44px;margin:0 16px 16px;padding:8px 16px;border:1px solid var(--cxx-line);border-radius:0;color:var(--cxx-text);background:var(--cxx-panel);font:inherit;cursor:pointer}
+.cxx-resources-close:focus-visible{outline:2px solid var(--cxx-interactive);outline-offset:2px}
+@media(hover:hover) and (pointer:fine){.cxx-resources-close:hover{border-color:var(--cxx-interactive)}}

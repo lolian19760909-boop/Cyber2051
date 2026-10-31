@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>东京都2051 · 全域地图</title><link rel="stylesheet" href="atlas.css"></head>
+<body><main class="atlas" id="atlas">
+<header class="mast"><div class="brand"><span class="brand-icon" aria-hidden="true">◈</span><div><b>東京都<span>2051</span></b><small>METROPOLITAN CARTOGRAPHY</small></div></div><div class="mast-center"><span class="current">地图</span><span>都市全域</span><span class="version">01 / 15</span></div><span class="build-label">2051常住人口 / 约5960万</span></header>
+<div class="workspace">
+<aside class="index-panel" id="index-panel" aria-label="地区与地点索引"><div class="panel-heading"><span>地区索引</span><button id="index-close" aria-label="收起地区索引">×</button></div>
+<label class="search-label" for="atlas-search"><span aria-hidden="true">⌕</span><input id="atlas-search" type="search" aria-label="搜索地区或地点" placeholder="搜索地区 / 地点" autocomplete="off"></label>
+<label class="place-region" for="place-region">筛选地区<select id="place-region"><option value="">全部地区</option></select></label>
+<details class="filter-panel" id="filter-panel"><summary>地点分类 <span id="filter-name">全部</span></summary><div class="place-filters" id="place-filters" role="group" aria-label="地点分类筛选"></div></details><div class="filter-summary"><span id="filter-count" role="status"></span><button id="filter-reset">重置筛选</button></div>
+<button class="pilot" id="pilot"><span class="tiny">CITY ARCHIVE / 01</span><strong>公司广场＋弦卷塔 <span>↗</span></strong><small>总部群 · 立体换乘 · 黑晶三塔</small></button>
+<div class="site-shortcuts"><button id="harbor-pilot">湾西货运港 ↗</button><button id="launch-pilot">木更津发射中心 ↗</button></div>
+<div class="index-scroll"><details class="tram-panel" id="tram-panel"><summary>都市轨道 <span>TRANSIT NETWORK</span></summary><div class="tram-tools"><button id="tram-toggle" aria-pressed="true">显示线路</button><small>街行电车 · 高架环线 · 地下环线</small></div><div id="tram-routes"></div></details><div id="region-list"></div><div id="node-list"></div></div>
+<div class="index-note"><span class="status-dot"></span>地域十四区＋环湾港区<br><small>按类别筛选 · 点击图标查看地点</small></div>
+</aside>
+<section class="map" id="map" aria-label="可拖动及缩放的都市地图" tabindex="0">
+<canvas id="map-canvas" aria-hidden="true"></canvas><div id="map-labels" class="map-labels"></div>
+<div class="map-top"><button id="index-toggle" aria-expanded="false" aria-controls="index-panel">☷ <span>地区</span></button><div class="location"><small>POSITION / TOKYO MEGACITY</small><b id="view-name">都市全域</b></div><div class="view-switch" aria-label="地图视角"><button data-view="auto" aria-pressed="true" title="未选区时保持平面，选中后只显示所属地区的立体建筑">选区3D</button><button data-view="flat" aria-pressed="false">平面</button><button data-view="depth" aria-pressed="false">全3D</button></div></div>
+<div class="bay-caption" id="bay-caption"><span>東京湾</span><small>TOKYO BAY</small></div>
+<div class="map-coordinate"><span id="view-mode">全域 / 平面</span><small id="coordinate"></small><div class="zoom-scale"><meter id="zoom-level" min="0" max="1" value="0.3" aria-label="当前地图缩放级别"></meter><span id="zoom-caption">全域</span></div></div>
+<div class="compass" aria-hidden="true"><i>N</i><span>╱</span><small>固定北向</small></div>
+<div class="map-controls"><button id="zoom-out" aria-label="缩小地图">−</button><button id="zoom-in" aria-label="放大地图">＋</button><button id="home" aria-label="返回全域地图">⌖ <span>全域</span></button><button id="poi-toggle" aria-label="显示地点" aria-pressed="true">◈ <span>地点</span></button></div>
+<div class="map-legend"><i class="legend-land"></i>地域底色 <i class="legend-road"></i>交通骨架 <i class="legend-poi"></i>分类地点</div>
+<p class="sr-only" id="map-help">使用地区索引或地点按钮导航，也可用方向键移动，加减键缩放，Home返回全域，Escape关闭详情。触屏支持双指缩放。</p>
+</section>
+<section class="detail" id="detail" aria-label="地图详情" hidden><header><span id="detail-kicker"></span><button id="detail-close" aria-label="关闭地图详情">×</button></header><div class="detail-body" id="detail-body"></div><footer><button id="detail-focus">⌖ 居中查看</button><span id="detail-status"></span></footer></section>
+</div>
+<footer class="foot"><div><span class="foot-icon">◈</span><b>都市图志</b><span class="foot-track">TOKYO / ATLAS</span></div><p><kbd>拖曳</kbd> 移动 <kbd>滚轮 / 双指</kbd> 缩放 <kbd>Esc</kbd> 关闭详情</p><span class="foot-code">2051 — CITY ARCHIVE</span></footer>
+<div class="sr-only" id="announce" role="status" aria-live="polite"></div>
+</main><script src="atlas-data.js"></script><script src="atlas-view-state.js"></script><script src="atlas.js"></script></body></html>

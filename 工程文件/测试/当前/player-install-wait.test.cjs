@@ -1,0 +1,7 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict');
+const {fixture,deferred,delay}=require('../lib/fixture-loader.cjs')('../当前/save.test.cjs',['fixture','deferred','delay']);
+
+test('player waits for a real pending journal to finish before mutating or saving',async()=>{const gate=deferred(),options={pending:true,waitForInstall:()=>gate.promise},f=fixture('street',options);const work=f.player.completeOpening({value:f.choice});await delay(0);assert.equal(f.stats().writes,0);assert.equal(f.stats().saves,0);options.pending=false;gate.resolve();await work;await f.player.waitForSaved();assert.equal(f.row.swipe_id,1);assert.equal(f.stats().saves,1);});
+test('waiting for installation cannot waive an unresolved record or failed recovery',async()=>{for(const fail of [false,true]){const options={pending:true,waitForInstall:async()=>{if(fail)throw Error('recovery needs review');}},f=fixture('street',options);await assert.rejects(f.player.completeOpening({value:f.choice}),fail?/recovery needs review/:/未完成的安装/);assert.equal(f.stats().writes,0);assert.equal(f.stats().saves,0);}});
+test('story changes while waiting for recovery stop the original player write',async()=>{const gate=deferred(),options={pending:true,waitForInstall:()=>gate.promise},f=fixture('street',options);const work=f.player.completeOpening({value:f.choice});await delay(0);f.switchChat();options.pending=false;gate.resolve();await assert.rejects(work,/聊天已切换/);assert.equal(f.stats().writes,0);assert.equal(f.stats().saves,0);});

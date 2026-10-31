@@ -1,0 +1,179 @@
+{
+  "version": "2051-police-1",
+  "districts": {
+    "underpool": {
+      "name": "暗池",
+      "response": 20,
+      "fineFactor": 0.8,
+      "specialMinutes": 12
+    },
+    "lowtown": {
+      "name": "荒川下城",
+      "response": 50,
+      "fineFactor": 1,
+      "specialMinutes": 8
+    },
+    "neonring": {
+      "name": "NEONRING",
+      "response": 80,
+      "fineFactor": 1.2,
+      "specialMinutes": 6
+    },
+    "imperial": {
+      "name": "皇核",
+      "response": 100,
+      "fineFactor": 1.5,
+      "specialMinutes": 4
+    },
+    "minato": {
+      "name": "联合工业区",
+      "response": 80,
+      "fineFactor": 1.2,
+      "specialMinutes": 6
+    }
+  },
+  "placeCoverage": {
+    "ring-basement-bar": 0,
+    "sunken-market": 0
+  },
+  "fineBase": [
+    0,
+    3000,
+    10000,
+    30000,
+    100000,
+    300000
+  ],
+  "weight": [
+    0,
+    1,
+    2,
+    4,
+    8,
+    16
+  ],
+  "hideStepMinutes": [
+    0,
+    5,
+    5,
+    10,
+    20,
+    20
+  ],
+  "windowMinutes": 43200,
+  "longTermThreshold": 20,
+  "valueBandsYen": [
+    10000,
+    100000,
+    1000000
+  ],
+  "specialChance": {
+    "fiveStars": 60,
+    "major": 100
+  },
+  "units": {
+    "patrol": {
+      "name": "普通巡警",
+      "template": "police_patrol",
+      "level": 8,
+      "rank": "regular",
+      "equipment": [
+        {
+          "template": "pistol",
+          "tier": 1
+        },
+        {
+          "template": "armor_vest",
+          "tier": 1
+        }
+      ]
+    },
+    "armed": {
+      "name": "武装警员",
+      "template": "police_armed",
+      "level": 14,
+      "rank": "regular",
+      "equipment": [
+        {
+          "template": "rifle",
+          "tier": 2
+        },
+        {
+          "template": "armor_vest",
+          "tier": 2
+        }
+      ]
+    },
+    "elite": {
+      "name": "精锐警员",
+      "template": "police_elite",
+      "level": 20,
+      "rank": "regular",
+      "equipment": [
+        {
+          "template": "rifle",
+          "tier": 3
+        },
+        {
+          "template": "subdermal_armor",
+          "tier": 3
+        }
+      ]
+    },
+    "special": {
+      "name": "暴恐机动队员",
+      "template": "police_special",
+      "level": 25,
+      "rank": "regular",
+      "equipment": [
+        {
+          "template": "rifle",
+          "tier": 4
+        },
+        {
+          "template": "subdermal_armor",
+          "tier": 4
+        },
+        {
+          "template": "sandevistan",
+          "tier": 4
+        }
+      ]
+    }
+  },
+  "teams": {
+    "1": [
+      "patrol",
+      "patrol"
+    ],
+    "2": [
+      "patrol",
+      "patrol",
+      "armed"
+    ],
+    "3": [
+      "armed",
+      "armed",
+      "elite"
+    ],
+    "4": [
+      "elite",
+      "elite",
+      "armed",
+      "armed"
+    ],
+    "5": [
+      "elite",
+      "elite",
+      "elite",
+      "elite"
+    ],
+    "special": [
+      "special",
+      "special",
+      "special",
+      "special"
+    ]
+  },
+  "tuning": "出警、消星、罚款、权重、累计窗口沿用POL-059—074。价值分档、两处地下零巡警、队伍装备、特别派遣概率与行程为首版实施参数，作者实玩后调平衡。"
+}

@@ -1,0 +1,361 @@
+{
+ "note": "电台/开场BGM 音频，2026-10-08 自原源下载校验；path 为 /opt/cyber2051/audio/ 下的平铺文件名",
+ "count": 59,
+ "totalBytes": 214548355,
+ "files": [
+  {
+   "path": "mxj.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/mxj.mp3",
+   "bytes": 3382288,
+   "sha256": "aa0006d93c491b00b9313c26158dc23002df7071e3935166e83a1a7823b9a670"
+  },
+  {
+   "path": "ynk.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/ynk.mp3",
+   "bytes": 3035152,
+   "sha256": "e4cb63cb71714431a954058aa1612e3cd8b2a389b4cee32bee5ed3ce21d72485"
+  },
+  {
+   "path": "scb.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/scb.mp3",
+   "bytes": 3797008,
+   "sha256": "1ee37775f3a5bc1e828b71c73a29c79e6099652cddbe4a5736acb8972d6af61e"
+  },
+  {
+   "path": "Subtitle.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/Subtitle.mp3",
+   "bytes": 1833232,
+   "sha256": "eabc070cd48794ef84fc88f3744d8101bcfa961bdbd4328d93dc7fd3c67e42bc"
+  },
+  {
+   "path": "gzyw.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/gzyw.mp3",
+   "bytes": 3317008,
+   "sha256": "31d4ec7f93a212a15d2e3e377adc80441438085d1c7e42b3652340e63c205ef9"
+  },
+  {
+   "path": "xinzang.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/xinzang.mp3",
+   "bytes": 3745936,
+   "sha256": "1c720525ad293880424ed481c9c7286ddf884138dadc051d9c79d27d0c4c47fe"
+  },
+  {
+   "path": "rei.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/rei.mp3",
+   "bytes": 4622606,
+   "sha256": "9551336bb82f251c62e8917d4104ca910c430260d5114c522484866ff00d55df"
+  },
+  {
+   "path": "pml.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/pml.mp3",
+   "bytes": 3115406,
+   "sha256": "804a8a4a5d900678487fc39f2ea171b472228a0678508bcf0a82d165a1bf8a4b"
+  },
+  {
+   "path": "mdqx.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/mdqx.mp3",
+   "bytes": 4051214,
+   "sha256": "61906afabeec5199ced41e9c89e5203957d106c62d783fd45fd34e4712050ae9"
+  },
+  {
+   "path": "Henceforth.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/Henceforth.mp3",
+   "bytes": 3750542,
+   "sha256": "6d7a186faefd8e8be3de14534a72687cec06371974671b882c94a65fa94938cb"
+  },
+  {
+   "path": "kamisama.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/kamisama.mp3",
+   "bytes": 4055054,
+   "sha256": "918698de29abaebfd7e4e2c9e2fb756a81a06989c3b41f3662e2ad7d71453ce4"
+  },
+  {
+   "path": "erxbx.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/erxbx.mp3",
+   "bytes": 3169934,
+   "sha256": "116dfc23ae3c284f5c732839be872fff5c4aa9794838a63dae1362565ac963be"
+  },
+  {
+   "path": "btbz.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/btbz.mp3",
+   "bytes": 3503632,
+   "sha256": "f7d63a7aa59f6f05819cb4412b236520bf1b61a5864f5e86eb8c79fbe0501859"
+  },
+  {
+   "path": "ysw.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/ysw.mp3",
+   "bytes": 3353104,
+   "sha256": "79f5a842d512ae718255294d19b62aed37ff4bfbf2d6a1b0bbcc5335aafcddbe"
+  },
+  {
+   "path": "yrqq.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/yrqq.mp3",
+   "bytes": 3782800,
+   "sha256": "cd27a951a4625c176fecb44e9bb785078331026fe379d14b86106adec96e01e9"
+  },
+  {
+   "path": "hwhl.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/hwhl.mp3",
+   "bytes": 3409934,
+   "sha256": "f590c909870c9ab1a2acd62571a41948d75cfd0fea6bf07fb77634bb49877058"
+  },
+  {
+   "path": "jqx.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/jqx.mp3",
+   "bytes": 3797774,
+   "sha256": "7a0d33890f3c93e394c0b26eabe4bd49d0e2c4f881e93fb8f1822f051629928a"
+  },
+  {
+   "path": "sor.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/sor.mp3",
+   "bytes": 4264720,
+   "sha256": "4a842a5eebac9fb000d9862da708569a73399cd951aeb4b5938496bfc00a606f"
+  },
+  {
+   "path": "AveMujica.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/AveMujica.mp3",
+   "bytes": 4096528,
+   "sha256": "55c3b74e28d2f58069bd6756eeb6f2d491c3d00c10388071f7c31fed5ab83681"
+  },
+  {
+   "path": "KiLLKiSS.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/KiLLKiSS.mp3",
+   "bytes": 3311248,
+   "sha256": "a898a316b4885fa8dc84e092aca45cecc2d14a2aa8d73dc9bffd59c5ea031af8"
+  },
+  {
+   "path": "GoodNight.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/GoodNight.mp3",
+   "bytes": 3723278,
+   "sha256": "c514289eb4ebd7b5a1ac55dae45214166cdb4bca01f43d50b56e46b6cda69133"
+  },
+  {
+   "path": "gzyw2.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/gzyw2.mp3",
+   "bytes": 3371150,
+   "sha256": "6705612908f21c074f869426e313b9a0954ec9d43201d248d69e3748a7c44dab"
+  },
+  {
+   "path": "mldq.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/mldq.mp3",
+   "bytes": 2415760,
+   "sha256": "241721e525841980e3aac49e27dd794b1fabf91e2c1cf32cc3e102346b5f62ed"
+  },
+  {
+   "path": "y.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/y.mp3",
+   "bytes": 3882256,
+   "sha256": "19e0f34d757c1fab9834418bb016816fc0ac8eeded8cef4894a5111e3c709b62"
+  },
+  {
+   "path": "bmx.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/bmx.mp3",
+   "bytes": 3628816,
+   "sha256": "1468911d9e760f1153a69d5ea60d13d2024800f393c44b6c4f6dbaa134e39175"
+  },
+  {
+   "path": "CrucifixX.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/CrucifixX.mp3",
+   "bytes": 4788112,
+   "sha256": "61254bba1b1d33c440f1b378f55807adf5ae76f05857c0c7d1a1e309053a97f4"
+  },
+  {
+   "path": "tq.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/tq.mp3",
+   "bytes": 4430608,
+   "sha256": "8ca347af24e1de83d0df3bd2bb211ce0a148a1f0eb5389e875bf508eaf8a5e39"
+  },
+  {
+   "path": "GeorgetteMeGeorgetteYou.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/GeorgetteMeGeorgetteYou.mp3",
+   "bytes": 3755920,
+   "sha256": "5e15d1e950f968c2d7439e539eb91c2a0c1c8fe84ade20881b97f1f63dd5e98f"
+  },
+  {
+   "path": "ffxdz.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/ffxdz.mp3",
+   "bytes": 4113040,
+   "sha256": "94ef6ca37a55e590a1d2d769aaa17faa012b7bd58b2af128e83ee829e2b8cc12"
+  },
+  {
+   "path": "zhyy.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/zhyy.mp3",
+   "bytes": 3668843,
+   "sha256": "6b656bc323f2c580cf67b45808a7f4cff9ac1f5a66acf3404548eb6dd493b2c6"
+  },
+  {
+   "path": "bdx.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/bdx.mp3",
+   "bytes": 3769367,
+   "sha256": "8f82463982b44cb79a8237fd3ed0187a953b833d99144e2cee0682ab296dd91b"
+  },
+  {
+   "path": "ccw.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/ccw.mp3",
+   "bytes": 2990595,
+   "sha256": "07ce8e45fc4fdb583b4f5f215af7d87cd5855e3a437e4156fc7534750b7233f4"
+  },
+  {
+   "path": "ybxyq.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/ybxyq.mp3",
+   "bytes": 4310092,
+   "sha256": "03620282375eafacd982db4dc9b78af76650d402de2456bb73b607d5bade2a08"
+  },
+  {
+   "path": "sheijia.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/sheijia.mp3",
+   "bytes": 2951207,
+   "sha256": "cdea6ae16e4557c4a0aaea13c500bd299bf1932a81c5d82eb99f2bd438f8da79"
+  },
+  {
+   "path": "bushuo.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/bushuo.mp3",
+   "bytes": 2633976,
+   "sha256": "610afa03621d1603ae12b2d047e3a0ee68e7fa83912120410b24e00066a4e294"
+  },
+  {
+   "path": "thz.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/thz.mp3",
+   "bytes": 4127762,
+   "sha256": "d6699ed47c515b053c408330f0de6a8b8d83549dee38fa289218d7473650c36a"
+  },
+  {
+   "path": "wkg.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/wkg.mp3",
+   "bytes": 2667831,
+   "sha256": "3ea2912572895bbfca1a62ba509f7a74d3627ec1b19694a37b5bdb61cd343f10"
+  },
+  {
+   "path": "nl.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/nl.mp3",
+   "bytes": 4451527,
+   "sha256": "49105fa1e47ec5eba76265d3d72c9bbb71020fd915b054d1283a9197a72456ad"
+  },
+  {
+   "path": "57.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/57.mp3",
+   "bytes": 2496784,
+   "sha256": "5148ceeef80831da9ea3729b15944e72bd8cc3c2ced6bdbab505bcc4cc4fedf0"
+  },
+  {
+   "path": "xtdf.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/xtdf.mp3",
+   "bytes": 3563936,
+   "sha256": "ba4ebc5992389fdbc6f898ed523978d90c8eccf5771adb5318ef73ce1b9d9f3a"
+  },
+  {
+   "path": "shuoaini.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/shuoaini.mp3",
+   "bytes": 3171054,
+   "sha256": "9f7e13412b740d5a59caecb16f6d267b4c36a58165ac62bd5c2519ca36d24d31"
+  },
+  {
+   "path": "leiqiao.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/leiqiao.mp3",
+   "bytes": 2859938,
+   "sha256": "85381ea3d4dce5fef13efa5a4602d1f85cab6d64d89f084cf16076fecc4f7e70"
+  },
+  {
+   "path": "aini.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/aini.mp3",
+   "bytes": 2298454,
+   "sha256": "a2b91f92a69649a9bdc0a8cd73cc1f85309293d7d5ced328382aaa97b26fd284"
+  },
+  {
+   "path": "Monitoring.mp3",
+   "originUrl": "https://gitgud.io/Kurusutenka/ROCA/-/raw/master/Monitoring.mp3",
+   "bytes": 2904810,
+   "sha256": "3723d9cbcd7d403a79375e4695886fe0cdf135c60ad465ab614d5ead08cd5082"
+  },
+  {
+   "path": "Love_Trial.mp3",
+   "originUrl": "https://gitgud.io/Kurusutenka/ROCA/-/raw/master/Love_Trial.mp3",
+   "bytes": 3560076,
+   "sha256": "7d9ba73856b16c85b8d38b0db7dacc1fe456699e885c19d440a82a62c74fc0c5"
+  },
+  {
+   "path": "hw1.mp3",
+   "originUrl": "https://gitgud.io/Kurusutenka/ROCA/-/raw/master/hw1.mp3",
+   "bytes": 4052748,
+   "sha256": "5e5d97205e91bfef671df2d567a639514632091266042e03491e3bcd3b6ccac3"
+  },
+  {
+   "path": "saritshinohara.mp3",
+   "originUrl": "https://gitgud.io/Kurusutenka/ROCA/-/raw/master/saritshinohara.mp3",
+   "bytes": 4370175,
+   "sha256": "061e7b201e7189ff831d91714fca9e8793a2bcdcabc118c89e5c4c3793980ac9"
+  },
+  {
+   "path": "Ghost_City_Tokyo.mp3",
+   "originUrl": "https://gitgud.io/Kurusutenka/ROCA/-/raw/master/Ghost_City_Tokyo.mp3",
+   "bytes": 3273868,
+   "sha256": "23d812f322b448191602510484dc320865fe1144e68474f5ceb8bebff0960de2"
+  },
+  {
+   "path": "Ginirohikousen.mp3",
+   "originUrl": "https://gitgud.io/Kurusutenka/ROCA/-/raw/master/Ginirohikousen.mp3",
+   "bytes": 6808332,
+   "sha256": "41d742d0c320d988e9b41d64653d4b2705588ce46b6ee2d930a63a9baa818d5f"
+  },
+  {
+   "path": "doriko1.mp3",
+   "originUrl": "https://gitgud.io/Kurusutenka/ROCA/-/raw/master/doriko1.mp3",
+   "bytes": 4469649,
+   "sha256": "248279245a4a571216c5c7fdc013693a212e435689808e73108d6da7fb861ed4"
+  },
+  {
+   "path": "deco2.mp3",
+   "originUrl": "https://gitgud.io/Kurusutenka/ROCA/-/raw/master/deco2.mp3",
+   "bytes": 3575436,
+   "sha256": "754772560a236941606d38fca8cb205242a7ab7813ff1cfce68c3254e57bc3d3"
+  },
+  {
+   "path": "dco1.mp3",
+   "originUrl": "https://gitgud.io/Kurusutenka/ROCA/-/raw/master/dco1.mp3",
+   "bytes": 3442305,
+   "sha256": "46f174a4e8e02cb48e67da125bf71221f0d9bab4f7f47371f93af0421f1b1755"
+  },
+  {
+   "path": "mzkm.mp3",
+   "originUrl": "https://gitgud.io/Kurusutenka/ROCA/-/raw/master/mzkm.mp3",
+   "bytes": 4138764,
+   "sha256": "d35e430071f632636e0d03c47f8802731d83fb4d2382c2367423fec5b6804703"
+  },
+  {
+   "path": "deco1.mp3",
+   "originUrl": "https://gitgud.io/Kurusutenka/ROCA/-/raw/master/deco1.mp3",
+   "bytes": 2224908,
+   "sha256": "9e306547cfb60f1022288d51c807d34fa54bf1c9385e96383c3804f11bf1bcd1"
+  },
+  {
+   "path": "ryo1.mp3",
+   "originUrl": "https://gitgud.io/Kurusutenka/ROCA/-/raw/master/ryo1.mp3",
+   "bytes": 5475852,
+   "sha256": "fccbd446e31c7fd1c59a3f200d19a885b30d8eda21796157f9557f1e8f6ed465"
+  },
+  {
+   "path": "hachi1.mp3",
+   "originUrl": "https://gitgud.io/Kurusutenka/ROCA/-/raw/master/hachi1.mp3",
+   "bytes": 3283212,
+   "sha256": "f2d3042d65201720d07c44bec03a23c50b054ce547b953112c66adce8ecdfb4e"
+  },
+  {
+   "path": "sugar.mp3",
+   "originUrl": "https://gitgud.io/Kurusutenka/ROCA/-/raw/master/sugar.mp3",
+   "bytes": 4292016,
+   "sha256": "c2450d69b13c05d41471b90a1b600ac259c61e5cfddc5032c85e61e93710bdb6"
+  },
+  {
+   "path": "kageroudaze.mp3",
+   "originUrl": "https://gitgud.io/Kurusutenka/ROCA/-/raw/master/kageroudaze.mp3",
+   "bytes": 3752076,
+   "sha256": "2fa4ecd7fa3e40083508f75bfbd363b080fe2bc5c81e54b6a5bf4d8ed31fef0d"
+  },
+  {
+   "path": "迷星叫.mp3",
+   "originUrl": "https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E8%BF%B7%E6%98%9F%E5%8F%AB.mp3",
+   "bytes": 3458702,
+   "sha256": "a52ffb1df7a55303ae396bb6d2f8f07f8a5c24637ebe3cdfaab86359a07ddb88"
+  }
+ ]
+}

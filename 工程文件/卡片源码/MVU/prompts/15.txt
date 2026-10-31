@@ -1,0 +1,42 @@
+terminal:
+  wallet:
+    id: wallet
+    yen: 0
+    earned: 0
+    spent: 0
+  quests:
+    $meta:
+      extensible: true
+  gameplay:
+    $meta:
+      extensible: true
+      recursiveExtensible: true
+    schema: 1
+    inventory:
+      $meta:
+        extensible: true
+        recursiveExtensible: true
+    blueprints:
+      $meta:
+        extensible: true
+        recursiveExtensible: true
+    skills:
+      $meta:
+        extensible: true
+        recursiveExtensible: true
+    equipment:
+      $meta:
+        extensible: true
+        recursiveExtensible: true
+    resources:
+      $meta:
+        extensible: true
+        recursiveExtensible: true
+    events:
+      $meta:
+        extensible: true
+        recursiveExtensible: true
+    results:
+      $meta:
+        extensible: true
+        recursiveExtensible: true

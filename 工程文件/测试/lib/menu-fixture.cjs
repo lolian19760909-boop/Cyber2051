@@ -1,0 +1,17 @@
+"use strict";
+// Existing launcher controlled adapter, reused for current menu and creation checks.
+module.exports.setup=({catalog,pages,css})=>{
+   window.CxxResources={source:v=>v,acquire:async url=>({url,release(){}}),check:async()=>{},subscribe(fn){fn({active:0,error:'',verification:{state:'checked',missing:0,corrupt:0}});return()=>{};}};
+   const cp=structuredClone;window.chosen='entry';window.created=0;window.saved=0;window.sent=0;window.failNewTag=false;window.listFails=false;window.failOpening=false;window.switched=0;window.preference={level:'medium',device:innerWidth<=600?'mobile':'desktop',gal:false};
+   const K=CxxStoryLibrary.KEY,route=(name,id,slot,when,location)=>[{chat_metadata:{[K]:{schema:1,kind:'route',storyId:id,routeId:id,name,slot,createdAt:'2026-10-01T00:00:00Z',lastPlayedAt:when},variables:{}}},{mes:'<cxx-story>雨落在街角。你和同伴停下脚步，约好明天再见。</cxx-story><ztl>'+JSON.stringify({location,characters:[{name:'高松灯'}]})+'</ztl>',swipe_id:0}];
+   window.db={entry:[{chat_metadata:{variables:{}}},{mes:'<OpeningForm/>',swipe_id:0}],A:route('霓虹尽头的约定','routeA',1,'2026-10-11T10:00:00Z','山手霓环 · 街口'),B:route('另一场雨','routeB',2,'2026-10-10T10:00:00Z','荒川下城')};
+   window.current=()=>({characterKey:'fixture.png',instanceId:'fixture-instance',chatId:chosen});window.callbacks=new Set();const c=()=>({chat:db[chosen].slice(1),name1:'测试玩家',substituteParams:t=>t.replaceAll('{{user}}','测试玩家')});
+   window.CxxOpeningCatalog=catalog;window.CxxStoryProfile.currentAvatar=async()=>CxxMenuArt.entries.Anon.fallback;window.SillyTavern={getContext:c};window.api={getVariables:()=>cp(db[chosen][0].chat_metadata.variables||{}),SillyTavern:{getContext:c},triggerSlash:async()=>{sent++;}};
+   window.runtime={key:()=>chosen,watchMessages:fn=>{callbacks.add(fn);return()=>callbacks.delete(fn);},scheduleMessages(){}};
+   window.Cxx236Preferences={read:()=>({...preference}),device:()=>preference.device,resolveDevice:v=>v==='auto'?'desktop':v,preview(){},clearPreview(){},open(){}};
+   window.__cxx_player__={prepareOpening:async()=>{},completeOpening:async o=>{if(failOpening)throw Error('受控人物保存失败');saved++;db[chosen][0].chat_metadata.variables.__cxx_identity={...o.value,setupToken:'initialized',openingScenario:o.swipe};window.lastOpening=o;},waitForSaved:async()=>{}};
+   window.adapter={current:async()=>({chatId:chosen,rows:cp(db[chosen])}),tagCurrent:async m=>{if(failNewTag)throw Error('受控登记失败');db[chosen][0].chat_metadata[K]=cp(m);},list:async()=>{if(listFails)throw Error('列表暂不可用');return Object.entries(db).map(([chatId,rows])=>({chatId,playable:CxxStoryLibrary.playable(rows),meta:cp(rows[0].chat_metadata[K]||null),preview:CxxStoryLibrary.describe(rows)}));},read:async id=>cp(db[id]),flush:async()=>{},open:async id=>{chosen=id;switched++;},newChat:async()=>{created++;chosen='new'+created;db[chosen]=[{chat_metadata:{variables:{}}},{mes:'<OpeningForm/>',swipe_id:0}];},capture:async()=>({payload:{header:cp(db[chosen][0]),messages:cp(db[chosen].slice(1))}})};
+   window.store=CxxStoryLibrary.createStore({adapter,hash:CxxUpdateCore.sha256,uuid:()=>crypto.randomUUID()});window.CxxOpeningStyle=css||window.CxxOpeningStyle;
+   window.openings=Cxx236Openings.create({win:window,api,runtime,pages,catalog});
+   window.menu=CxxGameMenu.create({win:window,store,context:current,version:globalThis.CxxGameMenuVersion,covers:CxxStoryAssets,begin:(slot,creationId,draft)=>store.newStory('故事 '+slot,null,slot,creationId,draft),openArchive:opts=>{window.archiveOpts=opts;},leave(){}});window.__cxx_launcher__=menu;menu.open();
+  };

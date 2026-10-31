@@ -1,0 +1,77 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>/*TERMINAL_STYLE*/</style></head><body>
+<!-- Shared terminal shell; behavior and styles are maintained separately. -->
+<div class="t2051x" id="t2051x-root" style="--read-size:16px;--texture:.35">
+<button class="t2051x-fab" id="t2051x-fab" type="button" disabled aria-busy="true" aria-label="打开东京都终端：城市地图与档案" aria-haspopup="dialog"><span class="t2051x-fab-mark" aria-hidden="true">◇</span><span class="t2051x-fab-txt" aria-hidden="true">终端</span></button>
+<div class="t2051x-loading" id="t2051x-loading"></div>
+<div class="terminal" id="t2051x-terminal" hidden>
+    <div class="terminal-scene" aria-hidden="true"><div class="scene-grid"></div><div class="scene-orbit"></div><span class="scene-word" id="t2051x-scene-word">ATLAS</span></div>
+    <header class="masthead">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">◇</span><div>東京都 <strong>2051</strong><small>METROPOLITAN ARCHIVE</small></div></div>
+      <div class="connection"><span aria-hidden="true">◆</span> LOCAL ARCHIVE <b>READ ONLY</b></div>
+      <button class="quiet" id="t2051x-close-terminal" aria-label="收起终端"><span aria-hidden="true">↙</span> 收起</button>
+    </header>
+    <nav class="system-nav" aria-label="终端系统" id="t2051x-system-nav"><div class="nav-heading" aria-hidden="true"><span>SYSTEM / DIRECTORY</span><b>系统目录<i>07</i></b></div></nav>
+    <main class="workspace" id="t2051x-workspace">
+      <section class="page city-page" id="t2051x-page-city" aria-label="城市地图"></section>
+      <section class="page other-page" id="t2051x-page-other" hidden aria-labelledby="t2051x-other-title"></section>
+      <section class="page archive-page sec-page" id="t2051x-page-archive" hidden aria-labelledby="t2051x-archive-title" data-view="list">
+        <header class="sec-head"><div class="sec-title"><small class="sec-eyebrow">ARCHIVE / <span id="t2051x-archive-kind-title">城市档案</span></small><h1 id="t2051x-archive-title">资料库</h1></div><span class="sec-grow"></span><nav class="sec-tabs archive-library" aria-label="资料库"><button type="button" data-library="archive" aria-pressed="true">文字档案</button><button type="button" data-library="media" aria-pressed="false">影像收藏</button></nav><div class="sec-figure"><small>条目</small><strong id="t2051x-archive-count">19</strong></div></header>
+        <div class="archive-body">
+          <aside class="archive-side">
+            <div class="archive-kinds" role="group" aria-label="资料分类"><button type="button" data-archive="city" aria-pressed="true"><span>城市档案</span><b data-archive-count="city">19</b></button><button type="button" data-archive="setting" aria-pressed="false"><span>世界设定</span><b data-archive-count="setting">0</b></button><button type="button" data-archive="library" aria-pressed="false"><span>文库</span><b data-archive-count="library">0</b></button></div>
+            <div class="archive-search" id="t2051x-archive-search-box"><label for="t2051x-archive-search">检索资料</label><input type="search" id="t2051x-archive-search" placeholder="检索地区或地点…" autocomplete="off"></div>
+            <p class="archive-note" id="t2051x-archive-description">地区概况与地点档案，保留在同一处。</p>
+          </aside>
+          <div class="archive-list sec-list sec-list-pane" id="t2051x-archive-grid" role="group" aria-label="城市档案列表"></div>
+          <article class="sec-detail archive-detail" id="t2051x-archive-selection">
+            <div class="archive-figure" aria-hidden="true"><img id="t2051x-archive-figure" alt="" hidden></div>
+            <div class="sec-scroll"><button type="button" class="archive-back" id="t2051x-archive-back">‹ 返回列表</button><p class="sec-eyebrow" id="t2051x-archive-selected-kind">SECTOR RECORD</p><h2 id="t2051x-archive-selected-title"></h2><p class="archive-region" id="t2051x-archive-selected-description"></p><div class="archive-facts" id="t2051x-archive-facts"></div><button type="button" class="sec-link" id="t2051x-archive-map">在地图中查看 ↗</button></div>
+            <div class="sec-actions"><button type="button" class="sec-button" id="t2051x-archive-prev" aria-label="上一份档案">←</button><span class="archive-position" id="t2051x-archive-position" role="status">01 / 19</span><button type="button" class="sec-button" id="t2051x-archive-next" aria-label="下一份档案">→</button><button type="button" class="sec-button is-primary" id="t2051x-archive-read">阅读当前档案 ↗</button></div>
+          </article>
+        </div>
+      </section>
+      <section class="page settings-page" id="t2051x-page-settings" hidden aria-labelledby="t2051x-settings-title">
+        <header class="page-head"><div><p class="eyebrow">07 / PREFERENCES</p><h1 id="t2051x-settings-title">设置 <span>显示与阅读</span></h1></div></header>
+        <div class="settings-body">
+          <div class="settings-intro"><div class="calibration-art" aria-hidden="true"><i></i><b>07</b></div><h2>让终端适合你</h2><p>调整阅读与动态效果。显示偏好只保存在这台设备上。</p></div>
+          <div class="settings-form">
+            <fieldset><legend>动态效果</legend><p>完整保留分层转场、扫描与定位过渡；简化与关闭取消这些动态效果。系统要求减少动态效果时始终优先遵守。</p><div class="segmented" id="t2051x-motion-options"><button data-motion="full" aria-pressed="true">完整</button><button data-motion="reduced" aria-pressed="false">简化</button><button data-motion="off" aria-pressed="false">关闭</button></div><span id="t2051x-motion-status" class="setting-note"></span></fieldset>
+            <div class="setting-row"><label for="t2051x-font-size">终端阅读字号 <output id="t2051x-font-value" for="t2051x-font-size">16 px</output></label><input id="t2051x-font-size" type="range" min="14" max="22" step="1" value="16"><div class="reading-sample"><p class="eyebrow">READING SAMPLE</p><p>城市的轮廓由街道组成，也由在这里生活的人组成。</p></div></div>
+            <div class="setting-row"><label for="t2051x-texture">背景网格 <output id="t2051x-texture-value" for="t2051x-texture">35%</output></label><input id="t2051x-texture" type="range" min="0" max="70" step="5" value="35"></div>
+            <label class="checkbox-row"><input id="t2051x-restore-view" type="checkbox" checked><span>重新打开时恢复地图视图<small>保留筛选、缩放与选中地点。</small></span></label>
+            <fieldset><legend>网路连接</legend><p>配置兼容接口后，网路页可以请求实时推演的都市动态。密钥只保存在这台设备上，请求直接消耗你自己的额度。</p>
+            <div class="setting-row"><label for="t2051x-net-api">接口地址</label><input id="t2051x-net-api" type="url" placeholder="https://example.com/v1" autocomplete="off"></div>
+            <div class="setting-row"><label for="t2051x-net-key">接口密钥</label><input id="t2051x-net-key" type="password" placeholder="sk-…" autocomplete="off"></div>
+            <div class="setting-row"><label for="t2051x-net-model">模型名</label><input id="t2051x-net-model" type="text" placeholder="模型名称" autocomplete="off"></div>
+            <label class="checkbox-row"><input id="t2051x-net-sync" type="checkbox"><span>把动态标题同步进剧情记忆<small>在游戏内生效：让故事里的角色得知最近的都市动态。</small></span></label>
+            <span id="t2051x-net-status" class="setting-note"></span>
+            </fieldset>
+            <button class="quiet" id="t2051x-reset-settings">恢复显示默认值</button>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="terminal-foot"><span><i aria-hidden="true">◇</i> <b id="t2051x-footer-name">CITY ATLAS</b></span><span class="footer-help"><kbd>Enter</kbd> 查看 <kbd>Esc</kbd> 返回</span><span>2051 / TOKYO</span></footer>
+  </div>
+  <dialog class="reader" id="t2051x-reader" aria-labelledby="t2051x-reader-title">
+    <div class="reader-top"><span class="eyebrow" id="t2051x-reader-kind">CITY RECORD</span><button class="quiet" id="t2051x-close-reader" autofocus aria-label="关闭阅读器">✕ 关闭</button></div>
+    <div class="reader-body" id="t2051x-reader-body"></div>
+    <div class="reader-foot"><span>METROPOLITAN ARCHIVE</span><button class="text-button" id="t2051x-reader-map">在地图中查看 ↗</button></div>
+  </dialog>
+  <dialog class="gallery-viewer" id="t2051x-gallery-viewer" aria-labelledby="t2051x-viewer-name">
+    <div class="reader-top"><span class="eyebrow" id="t2051x-viewer-label">ILLUSTRATION</span><button class="quiet" id="t2051x-close-viewer" autofocus aria-label="关闭查看器">✕ 关闭</button></div>
+    <div class="viewer-stage">
+      <button class="quiet viewer-arrow" id="t2051x-viewer-prev" aria-label="上一张">←</button>
+      <figure class="viewer-figure"><img class="viewer-pic" id="t2051x-viewer-pic" alt=""><div class="viewer-feedback" id="t2051x-viewer-feedback" role="status" hidden><p>图片暂不可用，可以重试或切换其他图片。</p><button class="quiet" id="t2051x-viewer-retry">重试图片</button></div></figure>
+      <button class="quiet viewer-arrow" id="t2051x-viewer-next" aria-label="下一张">→</button>
+    </div>
+    <div class="viewer-foot"><b id="t2051x-viewer-name"></b><span id="t2051x-viewer-position" role="status"></span></div>
+  </dialog>
+  <div class="live-message" id="t2051x-live-message" role="status" aria-live="polite"></div>
+</div>
+<script>/*TERMINAL_RUNTIME*/</script>
+<script id="cxx-ui-settings-236">
+(()=>{const form=document.querySelector('.settings-form');if(!form)return;const button=document.createElement('button');button.type='button';button.textContent='阅读方式与特效档位';button.style.cssText='min-height:44px;padding:10px 16px;margin:12px 0';button.onclick=()=>{const service=parent.Cxx236Preferences;if(service)service.open(true);else alert('显示设置尚未就绪，请重载助手脚本。');};form.prepend(button);})();
+</script>
+
+</body></html>

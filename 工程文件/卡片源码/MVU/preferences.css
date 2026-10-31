@@ -1,0 +1,237 @@
+#cxx-first-settings-236 {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: clamp(12px,3vw,40px);
+  border: 0;
+  box-sizing: border-box;
+  z-index: 2147483647;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--cxx-ink) 92.94%, transparent);
+  color: var(--cxx-text);
+  font: 16px/1.6 var(--cxx-font-ui);
+}
+
+#cxx-first-settings-236 * {
+  box-sizing: border-box;
+}
+
+#cxx-first-settings-236 .cxx-setup-panel {
+  display: grid;
+  grid-template-columns: .85fr 1.15fr;
+  width: min(920px,100%);
+  max-height: 94dvh;
+  overflow: auto;
+  border: 1px solid color-mix(in srgb, var(--cxx-line) 50%, transparent);
+  background: var(--cxx-panel);
+  box-shadow: 0 24px 80px color-mix(in srgb, var(--cxx-shadow) 60%, transparent);
+}
+
+#cxx-first-settings-236 .cxx-setup-hero {
+  position: relative;
+  min-height: 440px;
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  background: linear-gradient(180deg,color-mix(in srgb, var(--cxx-ink) 25.1%, transparent),color-mix(in srgb, var(--cxx-ink) 92.94%, transparent)),url('https://cyber2051.top/img/galgame/backgrounds/59e4a3573477fada/2051CG_neonring_midnight.png') center/cover;
+  border-top: 3px solid var(--cxx-red);
+}
+
+#cxx-first-settings-236 .cxx-setup-kicker {
+  font: 13px var(--cxx-font-mono);
+  letter-spacing: .28em;
+  color: var(--cxx-yellow-soft);
+}
+
+#cxx-first-settings-236 .cxx-setup-brand {
+  margin: auto 0 0;
+  font-size: clamp(42px,7vw,68px);
+  white-space: pre-line;
+  line-height: 1.05;
+  letter-spacing: .03em;
+  font-weight: 700;
+  color: var(--cxx-text);
+  text-shadow: 0 3px 28px var(--cxx-shadow);
+}
+
+#cxx-first-settings-236 .cxx-setup-caption {
+  font-size: 13px;
+  letter-spacing: .12em;
+  color: var(--cxx-muted);
+}
+
+#cxx-first-settings-236 .cxx-setup-step {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--cxx-muted);
+  border-top: 1px solid color-mix(in srgb, var(--cxx-line) 50%, transparent);
+  margin-top: 28px;
+  padding-top: 16px;
+}
+
+#cxx-first-settings-236 .cxx-setup-body {
+  padding: clamp(22px,4vw,38px);
+}
+
+#cxx-first-settings-236 .cxx-setup-title {
+  font-size: 23px;
+  line-height: 1.4;
+  margin: 0 0 8px;
+  color: var(--cxx-text);
+}
+
+#cxx-first-settings-236 .cxx-setup-intro {
+  margin: 0 0 26px;
+  color: var(--cxx-muted);
+  font-size: 16px;
+}
+
+#cxx-first-settings-236 fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0 0 24px;
+  min-width: 0;
+}
+
+#cxx-first-settings-236 legend {
+  font-size: 13px;
+  letter-spacing: .15em;
+  margin-bottom: 10px;
+  color: var(--cxx-muted);
+}
+
+#cxx-first-settings-236 .cxx-setup-choices {
+  display: flex;
+  gap: 8px;
+}
+
+#cxx-first-settings-236 .cxx-setup-choice {
+  flex: 1;
+  position: relative;
+  min-width: 0;
+  cursor: pointer;
+}
+
+#cxx-first-settings-236 input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+#cxx-first-settings-236 .cxx-setup-copy {
+  display: flex;
+  flex-direction: column;
+  min-height: 80px;
+  padding: 13px 9px;
+  background: var(--cxx-ink);
+  border: 1px solid color-mix(in srgb, var(--cxx-line) 50%, transparent);
+  text-align: center;
+}
+
+#cxx-first-settings-236 .cxx-setup-copy strong {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--cxx-text);
+}
+
+#cxx-first-settings-236 .cxx-setup-copy small {
+  font-size: 13px;
+  color: var(--cxx-muted);
+  margin-top: 4px;
+}
+
+#cxx-first-settings-236 input:checked+.cxx-setup-copy {
+  border-color: var(--cxx-cyan);
+  background: color-mix(in srgb, var(--cxx-cyan) 7.06%, transparent);
+  box-shadow: inset 0 -2px var(--cxx-cyan);
+}
+
+#cxx-first-settings-236 input:focus-visible+.cxx-setup-copy {
+  outline: 2px solid var(--cxx-yellow-soft);
+  outline-offset: 3px;
+}
+
+#cxx-first-settings-236 .cxx-setup-status {
+  min-height: 20px;
+  font-size: 13px;
+  color: var(--cxx-yellow-soft);
+  margin: 0 0 12px;
+}
+
+#cxx-first-settings-236 .cxx-setup-actions {
+  display: flex;
+  gap: 10px;
+}
+
+#cxx-first-settings-236 button {
+  font: inherit;
+  min-height: 46px;
+  padding: 10px 16px;
+  cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--cxx-line) 50%, transparent);
+  background: transparent;
+  color: var(--cxx-muted);
+}
+
+#cxx-first-settings-236 .cxx-setup-confirm {
+  flex: 1;
+  background: var(--cxx-red);
+  border-color: var(--cxx-red);
+  color: var(--cxx-ink);
+  font-weight: 700;
+}
+
+#cxx-first-settings-236 button:hover {
+  filter: brightness(1.12);
+}
+
+#cxx-first-settings-236 button:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+#cxx-first-settings-236 .cxx-setup-foot {
+  margin: 14px 0 0;
+  color: var(--cxx-muted);
+  font-size: 13px;
+}
+
+@media (max-width:620px) {
+  #cxx-first-settings-236 .cxx-setup-panel {
+    grid-template-columns: 1fr;
+  }
+
+  #cxx-first-settings-236 .cxx-setup-hero {
+    min-height: 180px;
+    padding: 20px;
+    background-position: center 48%;
+  }
+
+  #cxx-first-settings-236 .cxx-setup-brand {
+    font-size: 38px;
+    white-space: normal;
+  }
+
+  #cxx-first-settings-236 .cxx-setup-caption {
+    margin: 8px 0;
+  }
+
+  #cxx-first-settings-236 .cxx-setup-step {
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+
+  #cxx-first-settings-236 .cxx-setup-body {
+    padding: 22px;
+  }
+
+  #cxx-first-settings-236 .cxx-setup-title {
+    font-size: 20px;
+  }
+}

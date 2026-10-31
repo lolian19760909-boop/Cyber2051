@@ -1,0 +1,103 @@
+{
+ "schema": 1,
+ "id": "catalog-lowtown-recovery",
+ "title": "一只饭盒的重量",
+ "track": "commission",
+ "summary": "荒川下城一只装满旧存储片的保温饭盒被当成废金属拖走。失主急着取回的不是钱，是工友留下的声音。",
+ "mapId": "tokyo-central",
+ "placeId": "catalog-lowtown-recovery",
+ "pay": 15000,
+ "nodes": [
+  {
+   "id": "P1",
+   "title": "确认委托范围",
+   "lore": 177,
+   "locations": [
+    {
+     "mapId": "tokyo-central",
+     "placeId": "catalog-lowtown-recovery"
+    }
+   ],
+   "conditions": {
+    "agreed": "当前人物与掌勺人实际确认饭盒及全部存储片的找回范围、隐私要求与报酬"
+   },
+   "outcomes": {
+    "wait": {
+     "label": "当事人或当前人物明确暂缓处理",
+     "effect": "pause"
+    },
+    "decline": {
+     "label": "当前人物实际拒绝介入或终止本次委托",
+     "effect": "jump",
+     "target": "P3"
+    }
+   }
+  },
+  {
+   "id": "P2",
+   "title": "核对线索与实际处置",
+   "lore": 178,
+   "requires": [
+    "P1"
+   ],
+   "conditions": {
+    "traced": "实际核对蓝线饭盒、分拣单和全部存储片的去向",
+    "consent": "实际向持有人核实取回与试听复制情况，未把私人录音公开作为证明"
+   },
+   "outcomes": {
+    "wait": {
+     "label": "实际暂缓调查或等待当事人补充依据",
+     "effect": "pause"
+    },
+    "stop": {
+     "label": "当事人实际终止调查或目标已无法继续",
+     "effect": "jump",
+     "target": "P3"
+    }
+   }
+  },
+  {
+   "id": "P3",
+   "title": "结果与交接",
+   "lore": 179,
+   "requires": [
+    "P2"
+   ],
+   "conditions": {
+    "reported": "当前人物已向相关当事人说明实际结果、物品或通路状态及未解决事项"
+   },
+   "choices": {
+    "resolution": {
+     "playable": "饭盒与全部原片实际交回，原片经本人同意确认能够播放",
+     "returned": "约定物品实际交回，但可播放原片加价条件没有成立",
+     "partial": "部分物品未找回，当事人实际接受部分交付或约定替代处理",
+     "failed": "找回失败或当事人终止委托，已说明去向与未解决隐私问题",
+     "withdrawn": "尚未完成调查即明确退出，并向当事人说明没有完成的工作"
+    }
+   },
+   "endingChoice": "resolution",
+   "endings": {
+    "playable": {
+     "id": "playable",
+     "title": "原片与声音归还"
+    },
+    "returned": {
+     "id": "returned",
+     "title": "物品交还"
+    },
+    "partial": {
+     "id": "partial",
+     "title": "部分交付有了交代"
+    },
+    "failed": {
+     "id": "failed",
+     "title": "未能找回"
+    },
+    "withdrawn": {
+     "id": "withdrawn",
+     "title": "本次协助已退出"
+    }
+   }
+  }
+ ]
+}

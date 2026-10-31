@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<script>
+'use strict';
+const diagnosticRecords = [];
+function diagnosticRecord(kind, details) {
+  diagnosticRecords.push({ at: new Date().toISOString(), kind, ...details });
+  const output = document.getElementById('diagnostic-records');
+  if (output) output.textContent = JSON.stringify(diagnosticRecords, null, 2);
+}
+window.addEventListener('error', event => diagnosticRecord('parent-error', {
+  message: event.message, file: event.filename, line: event.lineno, column: event.colno,
+  stack: event.error?.stack || null,
+}));
+window.addEventListener('unhandledrejection', event => diagnosticRecord('parent-unhandledrejection', {
+  message: String(event.reason?.message || event.reason), stack: event.reason?.stack || null,
+}));
+window.addEventListener('message', event => {
+  const frame = document.getElementById('diagnostic-frame');
+  if (event.origin === location.origin && event.source === frame?.contentWindow && event.data?.kind === 'cxx-preview-diagnostic-child-error') {
+    diagnosticRecord('child-error', event.data.details);
+  }
+});
+diagnosticRecord('parent-head', { readyState: document.readyState, bodyPresent: Boolean(document.body) });
+document.addEventListener('DOMContentLoaded', () => diagnosticRecord('parent-dom-ready', {}), { once: true });
+window.addEventListener('load', () => diagnosticRecord('parent-loaded', {}), { once: true });
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>纯 iframe 加载诊断</title>
+<style>body{font:16px sans-serif;max-width:1100px;margin:24px auto;padding:0 16px}button{font:inherit;margin:8px 12px 8px 0;padding:12px}iframe{display:block;width:100%;height:140px;border:1px solid #777}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f0f0f0;padding:16px}</style>
+</head><body>
+<h1>纯同源 iframe 加载诊断</h1>
+<p>本页没有 Gal、终端或状态栏代码。初次进入只加载下面的静态 iframe；按钮用于比较单次加载与同一事件内立即替换 src。</p>
+<button id="single-load" type="button">单次加载 iframe</button>
+<button id="replace-source" type="button">立即替换 iframe src</button>
+<button id="slow-body" type="button">慢 body 对照（300ms）</button>
+<iframe id="diagnostic-frame" title="纯静态同源子页面" src="/preview-observer-diagnostic-child.html?pass=initial" onload="diagnosticRecord('iframe-loaded', { src: this.getAttribute('src') })"></iframe>
+<h2>页面自身可见的错误与加载记录</h2>
+<p>仍需同时核对浏览器日志；没有页面错误记录不等于浏览器内部没有报错。</p>
+<pre id="diagnostic-records" aria-label="诊断记录"></pre>
+<script>
+let diagnosticSequence = 0;
+const diagnosticFrame = document.getElementById('diagnostic-frame');
+document.getElementById('single-load').addEventListener('click', () => {
+  const sequence = ++diagnosticSequence;
+  diagnosticRecord('single-load-click', { sequence });
+  diagnosticFrame.src = '/preview-observer-diagnostic-child.html?pass=single&sequence=' + sequence;
+});
+document.getElementById('replace-source').addEventListener('click', () => {
+  const sequence = ++diagnosticSequence;
+  diagnosticRecord('replace-source-click', { sequence });
+  diagnosticFrame.src = '/preview-observer-diagnostic-child.html?pass=first&sequence=' + sequence;
+  diagnosticFrame.src = '/preview-observer-diagnostic-child.html?pass=replaced&sequence=' + sequence;
+  diagnosticRecord('replace-source-assigned', { sequence, src: diagnosticFrame.getAttribute('src') });
+});
+document.getElementById('slow-body').addEventListener('click', () => {
+  const sequence = ++diagnosticSequence;
+  diagnosticRecord('slow-body-click', { sequence, delayMs: 300 });
+  diagnosticFrame.src = '/preview-observer-diagnostic-child.html?slow=1&sequence=' + sequence;
+});
+</script>
+</body></html>

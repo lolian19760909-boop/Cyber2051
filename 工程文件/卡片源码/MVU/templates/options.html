@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>body {
+  margin: 0;
+  padding: 10px;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 16px;
+  color: var(--cxx-text);
+  font-family: var(--cxx-font-ui);
+}
+
+.options-card {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  -webkit-backdrop-filter: blur(12px);
+  overflow: hidden;
+  padding: 0;
+  background: linear-gradient(145deg,color-mix(in srgb, var(--cxx-raised) 97.00%, transparent),color-mix(in srgb, var(--cxx-ink) 98.00%, transparent));
+  border: 1px solid var(--cxx-line);
+  border-radius: 0;
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--cxx-shadow) 36.00%, transparent);
+  backdrop-filter: none;
+}
+
+.deco-circle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(25px);
+  opacity: 0.5;
+  z-index: 0;
+  pointer-events: none;
+  display: none;
+}
+
+.deco-1 {
+  width: 120px;
+  height: 120px;
+  background: var(--cxx-structure);
+  top: -40px;
+  left: -30px;
+}
+
+.deco-2 {
+  width: 90px;
+  height: 90px;
+  background: var(--cxx-interactive);
+  bottom: -30px;
+  right: -20px;
+}
+
+.deco-3 {
+  width: 60px;
+  height: 60px;
+  background: var(--cxx-interactive);
+  top: 50%;
+  right: 30%;
+}
+
+.card-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid color-mix(in srgb, var(--cxx-structure) 28.00%, transparent);
+}
+
+.card-header:hover .header-arrow {
+  transform: translateX(3px);
+}
+
+.header-avatar {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+}
+
+.header-avatar-img {
+  width: 100%;
+  height: 100%;
+  background-image: url('https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E7%88%B1%E9%9F%B3%E6%80%9D%E8%80%83.gif');
+  background-size: cover;
+  background-position: center;
+  border: 2px solid var(--cxx-line-strong);
+  border-radius: 0;
+  box-shadow: none;
+  filter: saturate(.8);
+}
+
+.header-avatar-ring {
+  position: absolute;
+  inset: -4px;
+  border: 1px dashed var(--cxx-line-strong);
+  border-radius: 0;
+  animation: none;
+  opacity: .5;
+}
+
+.header-text {
+  flex: 1;
+  margin-left: 14px;
+}
+
+.header-title {
+  font-weight: 800;
+  font-size: 16px;
+  margin-bottom: 2px;
+  letter-spacing: 0.3px;
+  color: var(--cxx-heading);
+}
+
+.header-sub {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cxx-muted);
+}
+
+.header-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 5px;
+  background: var(--cxx-structure);
+  box-shadow: none;
+  animation: none;
+}
+
+.header-arrow {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0;
+  background: var(--cxx-raised);
+  color: var(--cxx-interactive);
+  border: 1px solid var(--cxx-line);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.options-card[open] .header-arrow {
+  transform: rotate(90deg);
+}
+
+.options-card[open] .card-header:hover .header-arrow {
+  transform: rotate(90deg) scale(1.1);
+}
+
+.card-body {
+  position: relative;
+  z-index: 2;
+  padding: 0 14px 14px 14px;
+}
+
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.option-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px 16px;
+  font-family: var(--cxx-font-ui);
+  font-size: 16px;
+  min-height: 44px;
+  min-width: 44px;
+  overflow-wrap: anywhere;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  background: var(--cxx-panel);
+  border: 1px solid var(--cxx-line);
+  border-radius: 0;
+  color: var(--cxx-text);
+  transition: background-color .16s,border-color .16s,color .16s;
+}
+
+/* Number key, as on the Gal options. */
+.option-key {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border: 1px solid currentColor;
+  font: var(--cxx-weight-latin) 13px/1 var(--cxx-font-latin);
+  opacity: .85;
+}
+
+.option-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity .16s;
+  border-radius: 0;
+  background: linear-gradient(90deg,color-mix(in srgb, var(--cxx-structure) 7.00%, transparent),transparent);
+}
+
+.option-btn:hover::before {
+  opacity: 1;
+}
+
+.option-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.option-btn.active {
+  font-weight: 700;
+  background: var(--cxx-selected);
+  border-color: var(--cxx-selected);
+  color: var(--cxx-on-selected);
+  box-shadow: inset 2px 0 var(--cxx-interactive);
+}
+
+.option-btn.active::after {
+  content: ' ♥';
+  font-size: 0.85em;
+}
+
+.smug-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+  height: 35px;
+  position: relative;
+  overflow: visible;
+}
+
+.smug-img {
+  height: 32px;
+  width: auto;
+  opacity: 0;
+  transform: translateY(10px) scale(0.8);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  mix-blend-mode: normal;
+  filter: saturate(.7);
+}
+
+.smug-img.show {
+  opacity: 0.6;
+  transform: translateY(0) scale(1);
+}
+
+.card-summary-custom {
+  list-style: none;
+  cursor: pointer;
+}
+
+.card-summary-custom::-webkit-details-marker {
+  display: none;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+}
+
+/* The current option is filled with the attention colour (DESIGN.md 10.9). */
+.option-btn:is(:hover,:focus-visible):enabled {
+  background: var(--cxx-attention);
+  border-color: var(--cxx-attention);
+  color: var(--cxx-on-attention);
+  box-shadow: none;
+}
+
+.option-btn:focus-visible {
+  outline: 2px solid var(--cxx-interactive);
+  outline-offset: 2px;
+}
+
+.card-header:focus-visible {
+  outline: 2px solid var(--cxx-interactive);
+  outline-offset: 2px;
+}
+
+@supports (corner-shape: bevel) {
+  .option-btn { border-radius: var(--cxx-cut-s) 0; corner-shape: bevel; }
+  .options-card { border-radius: var(--cxx-cut-m) 0; corner-shape: bevel; }
+}
+
+.options-card::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-structure) 75.00%, transparent) 50%,transparent 85%);
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .options-card::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+
+  .options-card * {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+
+  .options-card *::before {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+
+  .options-card *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<details class="options-card" id="optionsCard">
+    <summary class="card-summary-custom">
+        <div class="card-header">
+            <div class="header-avatar">
+                <div class="header-avatar-ring"></div>
+                <div class="header-avatar-img"></div>
+            </div>
+            <div class="header-text">
+                <div class="header-title">接下来要怎么做呢...</div>
+                <div class="header-sub"><span class="header-dot"></span>点击展开选项</div>
+            </div>
+            <div class="header-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </div>
+        </div>
+    </summary>
+
+    <div class="card-body">
+        <div class="deco-circle deco-1"></div>
+        <div class="deco-circle deco-2"></div>
+        <div class="deco-circle deco-3"></div>
+
+        <div class="options-list" id="button-container"></div>
+
+        <div class="smug-container">
+            <img src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E7%88%B1%E9%9F%B3%E5%94%90%E7%AC%91.png" class="smug-img" id="smugFace">
+        </div>
+    </div>
+</details>
+
+<script type="text/template" id="options-data">
+$1
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const optionsDataSource = document.getElementById('options-data');
+    const container = document.getElementById('button-container');
+    const card = document.getElementById('optionsCard');
+    const headerSub = card ? card.querySelector('.header-sub') : null;
+    const smugFace = document.getElementById('smugFace');
+
+    if (!optionsDataSource || !container) return;
+
+    function updateOptions236(optionsText) {
+    const lines = optionsText.trim().split('\n');
+
+    container.innerHTML = '';
+
+    lines.forEach((line, index) => {
+        const trimmedLine = line.trim();
+        if (!trimmedLine) return;
+
+        const match = trimmedLine.match(/^\s*(\d+)\.\s*(.*)$/);
+        let actionText = trimmedLine;
+        if (match) {
+            actionText = match[2].trim();
+        }
+
+        const button = document.createElement('button');
+        button.className = 'option-btn';
+        if (match) {
+            const key = document.createElement('span');
+            key.className = 'option-key';
+            key.setAttribute('aria-hidden', 'true');
+            key.textContent = match[1];
+            button.append(key, document.createTextNode(actionText));
+        } else button.textContent = trimmedLine;
+        button.setAttribute('data-action', actionText);
+        button.style.animationDelay = (index * 0.05) + 's';
+
+        button.addEventListener('click', (event) => {
+            event.stopPropagation();
+            if(window.frameElement?.dataset.cxxReady!=='1')return;
+            let textToAppend = button.getAttribute('data-action');
+            if (!textToAppend) return;
+
+            try {
+                const input = window.parent.document.querySelector('#send_textarea');
+                if (input) {
+                    const currentValue = input.value.trim();
+                    input.value = currentValue ? `${currentValue}\n${textToAppend}` : textToAppend;
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            } catch (error) {
+                console.error('SillyTavern Regex Error:', error);
+            }
+
+            document.querySelectorAll('#button-container .option-btn').forEach(b => b.classList.remove('active'));
+            button.classList.add('active');
+
+            if (smugFace) {
+                smugFace.classList.remove('show');
+                void smugFace.offsetWidth;
+                smugFace.classList.add('show');
+            }
+        });
+
+        container.appendChild(button);
+    });
+
+    }
+    window.Cxx236ComponentUpdate=value=>{updateOptions236(value);document.querySelectorAll('.option-btn').forEach(b=>b.disabled=window.frameElement?.dataset.cxxReady!=='1');};
+    updateOptions236(window.Cxx236InitialValue || optionsDataSource.innerHTML);
+
+    if (card && headerSub) {
+        card.addEventListener('toggle', () => {
+            if (card.open) {
+                headerSub.innerHTML = '<span class="header-dot"></span>选一个吧~';
+            } else {
+                headerSub.innerHTML = '<span class="header-dot"></span>点击展开选项';
+            }
+        });
+    }
+});
+</script>
+
+</body>
+</html>

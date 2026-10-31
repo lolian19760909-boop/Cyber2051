@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-05T12:31:06.025Z",
+  "purpose": "Authorized numeric ownership derivative; historical snapshot receipt remains unchanged",
+  "priorFile": "../整合验收/P7-同源整卡-20261005/source-final-v6/前端升级/galgame/integrations/m18/terminal-host-state.js",
+  "priorSha256": "d815daf1fea4f1f1a931ba32d01df2e0db0c31f68b029db46e4f1e15f864582e",
+  "currentSha256": "db313b5e6c7f9174d339a6c2a17dc8d363c27aa94997d108c76e116afa6fe8a9",
+  "bytes": 4440,
+  "changes": [
+    "Do not synthesize missing wallet or stat_data",
+    "Block metadata mutations during model calculation and save confirmation"
+  ],
+  "driverAccepted": false
+}

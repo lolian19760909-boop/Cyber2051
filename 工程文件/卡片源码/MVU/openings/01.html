@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>.mn-wrap {
+  position: relative;
+  color: var(--cp-text);
+  max-width: 1100px;
+  margin: 0 auto;
+  font-family: var(--cxx-font-ui);
+  --cp-ink: var(--cxx-ink);
+  --cp-panel: var(--cxx-panel);
+  --cp-line: var(--cxx-line);
+  --cp-cyan: var(--cxx-cyan);
+  --cp-red: var(--cxx-red);
+  --cp-amber: var(--cxx-yellow);
+  --cp-text: var(--cxx-text);
+  --cp-muted: var(--cxx-muted);
+}
+
+.mn-book {
+  position: relative;
+  overflow: hidden;
+  border: 0;
+  border-top: 3px solid var(--cxx-red);
+  background: linear-gradient(color-mix(in srgb, var(--cxx-ink) 73.73%, transparent),var(--cxx-ink) 340px),url('https://cyber2051.top/img/galgame/backgrounds/59e4a3573477fada/2051CG_neonring_midnight.png') center top/1100px auto no-repeat;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.mn-spine {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 48px;
+  z-index: 2;
+  background: repeating-linear-gradient(0deg,transparent 0 7px,color-mix(in srgb, var(--cxx-red) 20.00%, transparent) 7px 8px,transparent 8px 13px),linear-gradient(90deg,var(--cxx-ink),var(--cxx-ink));
+  border-right: 1px solid var(--cp-line);
+  display: none;
+}
+
+.mn-sdot {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+}
+
+.mn-sdot-w {
+  opacity: 0.7;
+  background: var(--cp-red);
+}
+
+.mn-stxt {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%) rotate(-90deg);
+  white-space: nowrap;
+  font-size: 10px;
+  letter-spacing: 4px;
+  font-weight: bold;
+  color: var(--cp-muted);
+  text-shadow: none;
+  font-family: var(--cxx-font-mono);
+}
+
+.mn-th {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  border-radius: 2px 2px 0 0;
+  padding: 16px 0 24px;
+  background: transparent;
+  border-bottom: 1px solid color-mix(in srgb, var(--cxx-line) 18.82%, transparent);
+  align-items: center;
+}
+
+.mn-th .ico {
+  font-size: 20px;
+  display: none;
+}
+
+.mn-th .ttl {
+  font-weight: bold;
+  text-shadow: none;
+  color: var(--cxx-text);
+  font-size: 26px;
+  letter-spacing: .08em;
+}
+
+.mn-th .bdg {
+  margin-left: auto;
+  padding: 2px 10px;
+  font-size: 11px;
+  white-space: nowrap;
+  color: var(--cp-cyan);
+  border-radius: 2px;
+  background: transparent;
+  font: 11px var(--cxx-font-mono);
+  letter-spacing: .08em;
+}
+
+.mn-tb {
+  border-top: none;
+  border-color: var(--cp-line);
+  border-radius: 0 0 2px 2px;
+  box-shadow: none;
+  background: transparent;
+  border: 0;
+  padding: 28px 0 0;
+}
+
+.mn-ch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.mn-cd {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.mn-ct {
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: var(--cp-text);
+  font-size: 16px;
+}
+
+.mn-ctag {
+  padding: 2px 8px;
+  white-space: nowrap;
+  background: color-mix(in srgb, var(--cxx-red) 4.00%, transparent);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+  font-size: 10px;
+}
+
+.mn-ctag-bl {
+  background: var(--cxx-cyan-soft);
+  color: var(--cp-cyan);
+}
+
+.mn-ctag-pu {
+  background: var(--cxx-panel);
+  color: var(--cp-red);
+}
+
+.mn-ctag-go {
+  background: var(--cxx-yellow-soft);
+  color: var(--cp-amber);
+}
+
+.mn-ctag-hp {
+  background: var(--cxx-panel);
+  color: var(--cp-red);
+}
+
+.mn-ctag-dlc {
+  background: var(--cxx-panel);
+  color: var(--cp-cyan);
+}
+
+.mn-cl {
+  flex: 1;
+  height: 1px;
+  margin-left: 8px;
+  background: linear-gradient(90deg,var(--cp-line),transparent);
+}
+
+.mn-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+
+.mn-grid:last-child {
+  margin-bottom: 0;
+}
+
+.mn-grid.tri {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.mn-grid.fll .mn-btn:last-child {
+  grid-column: 1/3;
+}
+
+.mn-btn {
+  position: relative;
+  padding: 12px 14px 28px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--cxx-muted);
+  line-height: 1.6;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid;
+  text-align: left;
+  overflow: hidden;
+  user-select: none;
+}
+
+.mn-btn::after {
+  content: '▶ 进入';
+  position: absolute;
+  bottom: 6px;
+  right: 10px;
+  font-size: 10px;
+  padding: 2px 8px;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+  opacity: 1;
+  transform: none;
+  border: 0;
+  background: transparent;
+  color: var(--cxx-muted);
+  font-weight: 400;
+}
+
+.mn-btn:active {
+  transform: scale(0.97);
+  transition: transform 0.1s ease;
+}
+
+.mn-btn.bl:hover::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.mn-btn.pk:hover::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.mn-btn.pu:hover::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.mn-btn.go {
+  text-align: center;
+  border: 1px solid var(--cp-line);
+  color: var(--cp-text);
+  padding: 22px 20px 38px;
+  font-size: 14px;
+  line-height: 1.85;
+  background: color-mix(in srgb, var(--cxx-ink) 90.98%, transparent);
+  border-color: color-mix(in srgb, var(--cxx-line) 18.82%, transparent);
+  box-shadow: inset 2px 0 var(--cxx-red);
+  border-radius: 0;
+  min-height: 120px;
+}
+
+.mn-btn.go:hover::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.mn-btn.sp:hover::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.mn-btn.sb:hover::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.mn-btn.ny::after {
+  content: '▶ 选择';
+  color: var(--cp-cyan);
+  background: color-mix(in srgb, var(--cxx-cyan) 5.50%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cxx-cyan) 45.00%, transparent);
+  border-radius: 2px;
+}
+
+.mn-btn.ny:hover::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.mn-btn.dlc:hover::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.sn {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 10px;
+  font-weight: bold;
+  font: 11px var(--cxx-font-mono);
+  color: var(--cxx-muted);
+}
+
+.sc-p {
+  font-weight: bold;
+  color: var(--cxx-text);
+  font-size: 16px;
+}
+
+.sc-b {
+  font-weight: bold;
+  color: var(--cxx-text);
+  font-size: 16px;
+}
+
+.sc-g {
+  font-weight: bold;
+  color: var(--cxx-text);
+  font-size: 16px;
+}
+
+.sc-h {
+  font-weight: bold;
+  color: var(--cxx-text);
+  font-size: 16px;
+}
+
+.sc-s {
+  font-weight: bold;
+  color: var(--cxx-text);
+  font-size: 16px;
+}
+
+.sc-d {
+  font-weight: bold;
+  color: var(--cxx-text);
+  font-size: 16px;
+}
+
+.sc-ny {
+  font-weight: bold;
+  color: var(--cxx-text);
+  font-size: 16px;
+}
+
+.sc-t {
+  font-size: 10px;
+  color: var(--cp-muted);
+}
+
+.mn-ov {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: color-mix(in srgb, var(--cxx-shadow) 45%, transparent);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+
+.mn-ov.act {
+  display: flex;
+}
+
+.mn-md {
+  padding: 30px 40px;
+  text-align: center;
+  animation: mn-in 0.3s ease;
+  border: 1px solid var(--cp-cyan);
+  border-radius: 3px;
+  box-shadow: 0 16px 40px color-mix(in srgb, var(--cxx-shadow) 50%, transparent);
+  background: var(--cxx-ink);
+  border-color: var(--cxx-red);
+}
+
+@keyframes mn-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.mn-md .m-ico {
+  font-size: 36px;
+  margin-bottom: 12px;
+  display: none;
+}
+
+.mn-md .m-txt {
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: var(--cp-text);
+}
+
+.mn-md .m-sub {
+  font-size: 12px;
+  margin-top: 6px;
+  color: var(--cp-muted);
+}
+
+.mn-curl-o {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 40px 40px;
+  border-color: transparent transparent var(--cxx-red-soft) transparent;
+  border-radius: 0 0 12px 0;
+  display: none;
+}
+
+.mn-curl-i {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 36px 36px;
+  border-color: transparent transparent var(--cxx-red-soft) transparent;
+  display: none;
+}
+
+@media (max-width:600px) {
+  .mn-wrap {
+    margin: 6px;
+  }
+
+  .mn-spine {
+    width: 28px;
+  }
+
+  .mn-stxt {
+    font-size: 8px;
+    letter-spacing: 2px;
+    top: 50%;
+    left: 50%;
+  }
+
+  .mn-sdot {
+    width: 4px;
+    height: 4px;
+  }
+
+  .mn-main {
+    margin-left: 28px;
+  }
+
+  .mn-th {
+    padding: 10px 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .mn-th .bdg {
+    margin-left: 0;
+    font-size: 10px;
+    padding: 2px 8px;
+  }
+
+  .mn-tb {
+    padding: 16px 14px;
+  }
+
+  .mn-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .mn-grid.tri {
+    grid-template-columns: 1fr;
+  }
+
+  .mn-grid.fll .mn-btn:last-child {
+    grid-column: 1;
+  }
+
+  .mn-btn {
+    padding: 10px 12px 24px 12px;
+    font-size: 13px;
+  }
+
+  .mn-curl-o {
+    border-width: 0 0 30px 30px;
+  }
+
+  .mn-curl-i {
+    border-width: 0 0 26px 26px;
+  }
+}
+
+.mn-book::before {
+  content: '';
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+  top: 8px;
+  right: 4px;
+  bottom: 8px;
+  width: 3px;
+  background: repeating-linear-gradient(0deg,color-mix(in srgb, var(--cxx-red) 45.00%, transparent) 0 2px,transparent 2px 7px,color-mix(in srgb, var(--cxx-red) 16.00%, transparent) 7px 8px,transparent 8px 18px);
+  opacity: .65;
+  display: none;
+}
+
+.mn-sdot-b {
+  background: var(--cp-red);
+  box-shadow: none;
+}
+
+.mn-cd-bl {
+  background: var(--cp-cyan);
+  box-shadow: none;
+}
+
+.mn-cd-dlc {
+  background: var(--cp-cyan);
+  box-shadow: none;
+}
+
+.mn-cd-pu {
+  background: var(--cp-red);
+  box-shadow: none;
+}
+
+.mn-cd-hp {
+  background: var(--cp-red);
+  box-shadow: none;
+}
+
+.mn-cd-go {
+  background: var(--cp-amber);
+  box-shadow: none;
+}
+
+.mn-btn.bl {
+  border: 1px solid var(--cp-line);
+  color: var(--cp-text);
+  padding: 22px 20px 38px;
+  font-size: 14px;
+  line-height: 1.85;
+  background: color-mix(in srgb, var(--cxx-ink) 90.98%, transparent);
+  border-color: color-mix(in srgb, var(--cxx-line) 18.82%, transparent);
+  box-shadow: inset 2px 0 var(--cxx-red);
+  border-radius: 0;
+  min-height: 120px;
+}
+
+.mn-btn.pk {
+  border: 1px solid var(--cp-line);
+  color: var(--cp-text);
+  padding: 22px 20px 38px;
+  font-size: 14px;
+  line-height: 1.85;
+  background: color-mix(in srgb, var(--cxx-ink) 90.98%, transparent);
+  border-color: color-mix(in srgb, var(--cxx-line) 18.82%, transparent);
+  box-shadow: inset 2px 0 var(--cxx-red);
+  border-radius: 0;
+  min-height: 120px;
+}
+
+.mn-btn.pu {
+  border: 1px solid var(--cp-line);
+  color: var(--cp-text);
+  padding: 22px 20px 38px;
+  font-size: 14px;
+  line-height: 1.85;
+  background: color-mix(in srgb, var(--cxx-ink) 90.98%, transparent);
+  border-color: color-mix(in srgb, var(--cxx-line) 18.82%, transparent);
+  box-shadow: inset 2px 0 var(--cxx-red);
+  border-radius: 0;
+  min-height: 120px;
+}
+
+.mn-btn.sp {
+  border: 1px solid var(--cp-line);
+  color: var(--cp-text);
+  padding: 22px 20px 38px;
+  font-size: 14px;
+  line-height: 1.85;
+  background: color-mix(in srgb, var(--cxx-ink) 90.98%, transparent);
+  border-color: color-mix(in srgb, var(--cxx-line) 18.82%, transparent);
+  box-shadow: inset 2px 0 var(--cxx-red);
+  border-radius: 0;
+  min-height: 120px;
+}
+
+.mn-btn.sb {
+  border: 1px solid var(--cp-line);
+  color: var(--cp-text);
+  padding: 22px 20px 38px;
+  font-size: 14px;
+  line-height: 1.85;
+  background: color-mix(in srgb, var(--cxx-ink) 90.98%, transparent);
+  border-color: color-mix(in srgb, var(--cxx-line) 18.82%, transparent);
+  box-shadow: inset 2px 0 var(--cxx-red);
+  border-radius: 0;
+  min-height: 120px;
+}
+
+.mn-btn.ny {
+  border: 1px solid var(--cp-line);
+  color: var(--cp-text);
+  padding: 22px 20px 38px;
+  font-size: 14px;
+  line-height: 1.85;
+  background: color-mix(in srgb, var(--cxx-ink) 90.98%, transparent);
+  border-color: color-mix(in srgb, var(--cxx-line) 18.82%, transparent);
+  box-shadow: inset 2px 0 var(--cxx-red);
+  border-radius: 0;
+  min-height: 120px;
+}
+
+.mn-btn.dlc {
+  border: 1px solid var(--cp-line);
+  color: var(--cp-text);
+  padding: 22px 20px 38px;
+  font-size: 14px;
+  line-height: 1.85;
+  background: color-mix(in srgb, var(--cxx-ink) 90.98%, transparent);
+  border-color: color-mix(in srgb, var(--cxx-line) 18.82%, transparent);
+  box-shadow: inset 2px 0 var(--cxx-red);
+  border-radius: 0;
+  min-height: 120px;
+}
+
+.mn-btn.bl::after {
+  color: var(--cp-cyan);
+  background: color-mix(in srgb, var(--cxx-cyan) 5.50%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cxx-cyan) 45.00%, transparent);
+  border-radius: 2px;
+}
+
+.mn-btn.pk::after {
+  color: var(--cp-cyan);
+  background: color-mix(in srgb, var(--cxx-cyan) 5.50%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cxx-cyan) 45.00%, transparent);
+  border-radius: 2px;
+}
+
+.mn-btn.pu::after {
+  color: var(--cp-cyan);
+  background: color-mix(in srgb, var(--cxx-cyan) 5.50%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cxx-cyan) 45.00%, transparent);
+  border-radius: 2px;
+}
+
+.mn-btn.go::after {
+  color: var(--cp-cyan);
+  background: color-mix(in srgb, var(--cxx-cyan) 5.50%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cxx-cyan) 45.00%, transparent);
+  border-radius: 2px;
+}
+
+.mn-btn.sp::after {
+  color: var(--cp-cyan);
+  background: color-mix(in srgb, var(--cxx-cyan) 5.50%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cxx-cyan) 45.00%, transparent);
+  border-radius: 2px;
+}
+
+.mn-btn.sb::after {
+  color: var(--cp-cyan);
+  background: color-mix(in srgb, var(--cxx-cyan) 5.50%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cxx-cyan) 45.00%, transparent);
+  border-radius: 2px;
+}
+
+.mn-btn.dlc::after {
+  color: var(--cp-cyan);
+  background: color-mix(in srgb, var(--cxx-cyan) 5.50%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cxx-cyan) 45.00%, transparent);
+  border-radius: 2px;
+}
+
+.sn-bl {
+  color: var(--cp-cyan);
+}
+
+.sn-sb {
+  color: var(--cp-cyan);
+}
+
+.sn-dlc {
+  color: var(--cp-cyan);
+}
+
+.sn-pk {
+  color: var(--cp-red);
+}
+
+.sn-pu {
+  color: var(--cp-red);
+}
+
+.sn-hp {
+  color: var(--cp-red);
+}
+
+.sn-go {
+  color: var(--cp-amber);
+}
+
+.sn-ny {
+  color: var(--cp-amber);
+}
+
+.mn-wrap [style*="color:#2C3E50"] {
+  color: var(--cp-text);
+}
+
+.mn-wrap [style*="color:#3A5A6E"] {
+  color: var(--cp-text);
+}
+
+.mn-wrap [style*="color:#999"] {
+  color: var(--cp-muted);
+}
+
+.mn-wrap [style*="color:var(--cxx-cyan)"] {
+  color: var(--cp-cyan);
+}
+
+.mn-wrap [style*="color:var(--cxx-red-soft)"] {
+  color: var(--cp-red);
+}
+
+.mn-btn:focus-visible {
+  outline: 2px solid var(--cp-cyan);
+  outline-offset: 2px;
+}
+
+@keyframes cp-menu-flow {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}
+
+.mn-book::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 48px;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-menu-flow 13s linear infinite;
+  display: none;
+}
+
+.mn-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg,transparent 42%,color-mix(in srgb, var(--cxx-cyan) 11.00%, transparent) 50%,transparent 58%);
+  transform: translateX(-120%);
+  transition: transform .48s ease;
+  display: none;
+}
+
+.mn-btn:hover::before {
+  transform: translateX(120%);
+}
+
+.mn-btn:focus-visible::before {
+  transform: translateX(120%);
+}
+
+@media (max-width:600px) {
+  .mn-book::after {
+    left: 28px;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .mn-wrap * {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+
+  .mn-wrap *::before {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+
+  .mn-wrap *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .mn-book::after {
+    animation: none !important;
+  }
+
+  .mn-btn::before {
+    transition: none !important;
+  }
+}
+
+body {
+  font-family: var(--cxx-font-ui);
+  margin: 0;
+  background: var(--cxx-ink);
+}
+
+.mn-main {
+  margin-left: 0;
+  padding: clamp(18px,4vw,44px);
+}
+
+.mn-btn.bl:hover {
+  transform: none;
+  background: var(--cxx-panel);
+  border-color: var(--cxx-red);
+  box-shadow: inset 2px 0 var(--cxx-red);
+}
+
+.mn-btn.pk:hover {
+  transform: none;
+  background: var(--cxx-panel);
+  border-color: var(--cxx-red);
+  box-shadow: inset 2px 0 var(--cxx-red);
+}
+
+.mn-btn.pu:hover {
+  transform: none;
+  background: var(--cxx-panel);
+  border-color: var(--cxx-red);
+  box-shadow: inset 2px 0 var(--cxx-red);
+}
+
+.mn-btn.go:hover {
+  transform: none;
+  background: var(--cxx-panel);
+  border-color: var(--cxx-red);
+  box-shadow: inset 2px 0 var(--cxx-red);
+}
+
+.mn-btn.sp:hover {
+  transform: none;
+  background: var(--cxx-panel);
+  border-color: var(--cxx-red);
+  box-shadow: inset 2px 0 var(--cxx-red);
+}
+
+.mn-btn.sb:hover {
+  transform: none;
+  background: var(--cxx-panel);
+  border-color: var(--cxx-red);
+  box-shadow: inset 2px 0 var(--cxx-red);
+}
+
+.mn-btn.ny:hover {
+  transform: none;
+  background: var(--cxx-panel);
+  border-color: var(--cxx-red);
+  box-shadow: inset 2px 0 var(--cxx-red);
+}
+
+.mn-btn.dlc:hover {
+  transform: none;
+  background: var(--cxx-panel);
+  border-color: var(--cxx-red);
+  box-shadow: inset 2px 0 var(--cxx-red);
+}
+
+@media (max-width:600px) {
+  .mn-main {
+    margin: 0;
+    padding: 20px;
+  }
+
+  .mn-th .ttl {
+    font-size: 22px;
+  }
+
+  .mn-grid .mn-btn {
+    grid-column: auto;
+  }
+
+  .mn-btn {
+    min-height: 100px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="mn-wrap">
+<div class="mn-book">
+
+    <div class="mn-spine">
+        <div class="mn-sdot mn-sdot-b" style="top:20px;"></div>
+        <div class="mn-sdot mn-sdot-w" style="top:40px;"></div>
+        <div class="mn-sdot mn-sdot-b" style="top:60px;"></div>
+        <div class="mn-stxt">SCENARIO ✦ SELECT</div>
+        <div class="mn-sdot mn-sdot-b" style="bottom:60px;"></div>
+        <div class="mn-sdot mn-sdot-w" style="bottom:40px;"></div>
+        <div class="mn-sdot mn-sdot-b" style="bottom:20px;"></div>
+    </div>
+
+    <div class="mn-main">
+
+        <div class="mn-th">
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span class="ico">📖</span>
+                <span class="ttl">开局剧情选择</span>
+            </div>
+            <span class="bdg">03 / 选择故事起点</span>
+        </div>
+
+        <div class="mn-tb">
+
+            <!-- ===== 正篇前 ===== -->
+            <div class="mn-ch">
+                <div class="mn-cd mn-cd-bl"></div>
+                <span class="mn-ct">正篇前开局</span>
+                <span class="mn-ctag mn-ctag-bl">推荐新人</span>
+                <div class="mn-cl" style="background:linear-gradient(90deg,var(--cxx-cyan),transparent);"></div>
+            </div>
+            <p style="font-size:12px;color:var(--cxx-muted);margin:0 0 12px 0;font-style:italic;">开局一至开局十均为主线故事开始前的时间点（2050年12月-2051年3月）。</p>
+
+            <div class="mn-grid">
+                <div class="mn-btn bl" onclick="mgoLoad(1,'开局一：丰川祥子')"><span class="sn sn-bl">01</span><span class="sc-p">丰川祥子</span><br>无证黑户的祥子在赤羽的雨夜结束了一单零工，回到出租屋，面对画满红线的复仇名单。</div>
+                <div class="mn-btn pk" onclick="mgoLoad(2,'开局二：千早爱音')"><span class="sn sn-pk">02</span><span class="sc-b">千早爱音</span><br>留学逃回东京的爱音上了黑车，在红花街被敲诈到身无分文。</div>
+                <div class="mn-btn bl" onclick="mgoLoad(3,'开局三：初华＆真奈')"><span class="sn sn-bl">03</span><span class="sc-p">初华 &amp; 真奈</span><br>sumimi刚刚起步的十二月末，初华与真奈在小馆吃晚饭，思绪却飘向了祥子。</div>
+                <div class="mn-btn pk" onclick="mgoLoad(4,'开局四：椎名立希')"><span class="sn sn-pk">04</span><span class="sc-b">椎名立希</span><br>RING-Live!地下三层的酒吧里，立希一边擦着吧台，一边甩不开“真希的妹妹”的回忆。</div>
+                <div class="mn-btn bl" onclick="mgoLoad(5,'开局五：高松灯')"><span class="sn sn-bl">05</span><span class="sc-p">高松灯</span><br>公园的鹅卵石堆旁，机偶少女灯缩着身子，翻找着她收集的“宝贝”。</div>
+                <div class="mn-btn pk" onclick="mgoLoad(6,'开局六：要乐奈')"><span class="sn sn-pk">06</span><span class="sc-b">要乐奈</span><br>SPACE旧址的台阶上，“白色幽灵”乐奈晒着太阳，等会儿打算去RING-Live!弹吉他。</div>
+                <div class="mn-btn bl" onclick="mgoLoad(7,'开局七：八幡海铃')"><span class="sn sn-bl">07</span><span class="sc-p">八幡海铃</span><br>夕暮老街的宇田川巴诊所，刚结束委托的海铃一边处理伤口，一边琢磨要不要装强化肌腱。</div>
+                <div class="mn-btn pk" onclick="mgoLoad(8,'开局八：祐天寺若麦')"><span class="sn sn-pk">08</span><span class="sc-b">祐天寺若麦</span><br>发布完新一期超梦的喵梦瘫在椅子上——数据平平，肚子咕咕叫，先出门吃碗拉面。</div>
+                <div class="mn-btn bl" onclick="mgoLoad(9,'开局九：若叶睦')"><span class="sn sn-bl">09</span><span class="sc-p">若叶睦</span><br>旧生活的最后一天，睦带着给祥的茶叶，停在了她打工的仓库外。</div>
+                <div class="mn-btn pk" onclick="mgoLoad(10,'开局十：长崎素世')"><span class="sn sn-pk">10</span><span class="sc-b">长崎素世</span><br>结束秘书工作的素世回到六本木的公寓，一人晚餐后翻看着CRYCHIC的旧动态。</div>
+            </div>
+
+            <!-- ===== 特殊 ===== -->
+            <div class="mn-ch">
+                <div class="mn-cd mn-cd-hp"></div>
+                <span class="mn-ct">特殊开局</span>
+                <span class="mn-ctag mn-ctag-hp">💝 Special</span>
+                <div class="mn-cl" style="background:linear-gradient(90deg,var(--cxx-red),transparent);"></div>
+            </div>
+
+            <div class="mn-grid">
+                <div class="mn-btn ny" onclick="mgoLoad(20,'开局二十一：抱憾终身')" style="grid-column:1/3;"><span class="sn sn-ny">21</span><strong class="sc-ny">🌙 梦境开局（后续版本重写）</strong><br>成为她生命中最重要的那一束光，接着，让她为你抱憾终身。（当前为旧版内容）</div>
+            </div>
+            </div><!-- /mn-tb -->
+            </div><!-- /mn-main -->
+            </div><!-- /mn-book -->
+            </div><!-- /mn-wrap -->
+
+            <!-- 加载遮罩 -->
+            <div class="mn-ov" id="mgoOverlay">
+                <div class="mn-md">
+                    <div class="m-ico">📖</div>
+                    <div class="m-txt" id="mgoModalText">正在加载...</div>
+                    <div class="m-sub" id="mgoModalSub">即将进入故事...</div>
+                </div>
+            </div>
+
+
+<script>
+function mgoLoad(swipeId, titleName) { parent.Cxx236OpeningHost.selectPreview(window, swipeId + 1); }
+</script>
+
+</body>
+</html>

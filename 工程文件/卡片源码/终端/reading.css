@@ -1,0 +1,7 @@
+/* Reading copy follows the saved terminal preference; navigation and artwork keep their scale. */
+.t2051x :is(.page,.reader) :is(p:not(.eyebrow):not(.art-code):not(.record-code),dd,.news-body,.forum-floor,.quest-line,.gallery-info,.cxx-summary-panel pre){font-size:var(--read-size)!important;overflow-wrap:anywhere}
+.t2051x .checkbox-row small{font-size:var(--read-size);overflow-wrap:anywhere}
+.t2051x .reading-sample{margin-top:18px}
+/* Also installed in the active map document, whose CSS variables do not inherit across frames. */
+#detail-body :is(p,dd,li,summary){font-size:var(--read-size)!important;overflow-wrap:anywhere}
+#detail-body dd small{font-size:calc(var(--read-size) - 2px)}

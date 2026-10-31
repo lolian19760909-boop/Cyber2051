@@ -1,0 +1,20 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CXX-P3 本机委托验收</title><link rel="stylesheet" href="/site.css"><body class="site"><main class="wrap narrow"><h1>仅本机合成验收</h1><p>以下账号、钥匙、内容和数据库全部用于隔离测试，不连接 Discord 或生产工坊。按钮会调用当前本机网关的真实接口。</p>
+<div class="toolbar"><button id="author" class="btn">以合成作者填写委托</button><button id="official" class="btn">以合成官方作者打开发布页</button></div>
+<div class="toolbar"><button id="foundation" class="btn">初始化测试基础发行</button><button id="pending" class="btn">读取待审稿</button><button id="mine" class="btn">读取作者投稿</button></div>
+<label class="fld">投稿编号</label><input id="submission" type="number" min="1"><div class="toolbar"><button id="detail" class="btn">读取审核详情</button><button id="edit" class="btn">以作者打开改稿</button><button id="approve" class="btn">审核通过并生成包</button><button id="reject" class="btn">拒绝当前稿</button></div>
+<div class="toolbar"><button id="preview" class="btn">预览已审包签名发行</button><button id="publish" class="btn">确认本机测试发行</button><button id="export" class="btn">读取公开签名响应</button></div><p id="status" role="status"></p><pre id="output" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre></main><script>
+'use strict';const $=id=>document.getElementById(id);let item,preview;
+async function session(role){return(await fetch('/__fixture__/session?role='+role,{cache:'no-store'})).json();}
+async function call(route,role,body){const s=role?await session(role):null,r=await fetch(route,{method:body?'POST':'GET',headers:{...(s?{Authorization:'Bearer '+s.token}:{}),...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})}),j=await r.json();$('output').textContent=JSON.stringify(j,null,2);if(!r.ok)throw Error(j.message||j.error||r.status);return j;}
+function action(id,fn){$(id).addEventListener('click',async()=>{try{$('status').textContent='处理中……';await fn();$('status').textContent='本机操作完成。';}catch(e){$('status').textContent=e.message;}});}
+async function login(role,next){const s=await session(role);localStorage.setItem('cxx-oauth-token',s.token);localStorage.setItem('cxx-oauth-name',s.displayName);location.href=next;}
+async function detail(){const j=await call('/api/admin/submissions/'+Number($('submission').value),'admin');item=j.item;preview=null;return item;}
+action('author',()=>login('ordinary','/submit.html?type=contract'));action('official',()=>login('authorized','/publish.html'));
+action('pending',()=>call('/api/admin/submissions?status=pending','admin'));action('mine',()=>call('/api/workshop/me/submissions','ordinary'));
+action('detail',detail);action('edit',()=>login('ordinary','/submit.html?edit='+Number($('submission').value)));
+for(const name of ['approve','reject'])action(name,async()=>{await detail();await call('/api/admin/submissions/'+item.id+'/'+name,'admin',{baseRevision:item.revision});});
+action('foundation',async()=>{const card=await(await fetch('/__fixture__/card.json')).json();const p=await call('/api/official/preview','authorized',{card});await call('/api/official/publish','authorized',{previewId:p.previewId,previewHash:p.previewHash});});
+action('preview',async()=>{await detail();const j=await call('/api/workshop/submissions/'+item.id+'/contract-package');preview=await call('/api/official/workshop/'+item.id+'/preview','authorized',{baseRevision:item.revision,packageSha256:j.artifact.packageSha256});});
+action('publish',async()=>{if(!preview)throw Error('先预览已审包');await call('/api/official/publish','authorized',{previewId:preview.previewId,previewHash:preview.previewHash});preview=null;});
+action('export',()=>call('/__fixture__/public-fixture.json'));
+</script></body></html>

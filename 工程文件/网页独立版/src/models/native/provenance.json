@@ -1,0 +1,224 @@
+{
+  "version": "1.19.0",
+  "inputs": [
+    {
+      "path": "src/constants.js",
+      "sha256": "7487bc428eeaa7f22d923371b523ffcc9bb772ea3d984a85027e73e46990212f"
+    },
+    {
+      "path": "src/prompt-converters.js",
+      "sha256": "23c241d3642cee88a7b5964ea583cbcbf0c3c28543dab86ddfc25ec501111694"
+    },
+    {
+      "path": "src/util.js",
+      "sha256": "ef8750f2a885010946ffe52f7f91c86a5e596a0f881fbcc5679901dc9da81f68"
+    },
+    {
+      "path": "public/scripts/openai.js",
+      "sha256": "fa8111da944fac2d3f9f65ff017996f0b890f2a4663b67c3c2de44fa547668d8"
+    },
+    {
+      "path": "src/endpoints/backends/chat-completions.js",
+      "sha256": "9fc251057cc27f054ffdca34f34156d91a1bde62e3da047d171339bd6314851b"
+    },
+    {
+      "path": "public/scripts/instruct-mode.js",
+      "sha256": "ca9df098c62e3ceda714187dec635be7b7db572e433297d060506ab0be6f83bb"
+    },
+    {
+      "path": "public/scripts/textgen-settings.js",
+      "sha256": "ca4f52e6afc6e7cd5a5f7155b38119bb96e63febef1a6b589e64ae15331081a7"
+    },
+    {
+      "path": "public/scripts/nai-settings.js",
+      "sha256": "db70833d3c3c7e17b2b781e6878ad426378cc01d12784efda1ce18d36237fed4"
+    },
+    {
+      "path": "src/endpoints/novelai.js",
+      "sha256": "16956ff5f833b0336b77f3deaeb46ef06b0bee9c6d96057fb0c989881f7616f4"
+    },
+    {
+      "path": "public/scripts/logit-bias.js",
+      "sha256": "383cec346491eedda474bde917928b48dab7757b851180ed8a81b0195914db78"
+    },
+    {
+      "path": "public/scripts/kai-settings.js",
+      "sha256": "94618abf21a771624744a93ac8e734b996fc7b8cb00b087465bc31325d7b7f59"
+    },
+    {
+      "path": "node_modules/@agnai/web-tokenizers/lib/index.js",
+      "sha256": "077618cb8efd05904c556df675c32c482897bed89a196aea4f28b9f91b7093b9"
+    },
+    {
+      "path": "public/scripts/tokenizers.js",
+      "sha256": "99fd7ef6dcd12554026be54b730d0e7a1e53b077ad022191bedb2e1c31676311"
+    },
+    {
+      "path": "src/endpoints/tokenizers.js",
+      "sha256": "e179dbb49bef0bd1cf935e41bcaf98d961a2d1f3c8002d6a42d0dbcd274011d0"
+    },
+    {
+      "path": "public/scripts/textgen-models.js",
+      "sha256": "9fb8cb096de23fec93d8a2ce2564192e52cdfe51dcec40f3f2e800242cbed5b2"
+    }
+  ],
+  "generatedBy": "tools/native-model-build.mjs",
+  "libraries": {
+    "webTokenizers": "@agnai/web-tokenizers@0.1.3",
+    "tiktoken": "1.0.22",
+    "yaml": "2.8.3",
+    "sha": "sha.js@2.4.12"
+  },
+  "tokenizerAssets": [
+    {
+      "file": "APACHE-2.0-LICENSE",
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "file": "cl100k_base.json",
+      "bytes": 1090747,
+      "sha256": "49a4e05dea02c8fafbd50cc4725c4aab8f39386c0afedef118e0dfebc2fe523a"
+    },
+    {
+      "file": "claude.json",
+      "bytes": 1774213,
+      "sha256": "c241737df24b4e7f7c9af4fdcee29a0ca903dcb288a8b753bc346a3092911767"
+    },
+    {
+      "file": "command-a.json.gz",
+      "bytes": 3689028,
+      "sha256": "cb15a5c52a21d51f342cc47360285715364a1cf60eedc078e1f97dd9f0c16e0c",
+      "upstream": "https://github.com/SillyTavern/SillyTavern-Tokenizers/raw/main/command-a.json.gz"
+    },
+    {
+      "file": "command-r.json.gz",
+      "bytes": 3688933,
+      "sha256": "132fc87df0e48b604b0888c2519f920f63757b9a85d74be698f3a1851d840007",
+      "upstream": "https://github.com/SillyTavern/SillyTavern-Tokenizers/raw/main/command-r.json.gz"
+    },
+    {
+      "file": "deepseek.json.gz",
+      "bytes": 1759988,
+      "sha256": "8f148301305fec28917516aa009dacfb6ef3c791e621f8cdbc6b449683863aa5",
+      "upstream": "https://github.com/SillyTavern/SillyTavern-Tokenizers/raw/main/deepseek.json.gz"
+    },
+    {
+      "file": "gemma.model",
+      "bytes": 4241003,
+      "sha256": "61a7b147390c64585d6c3543dd6fc636906c9af3865a5548f27f31aee1d4c8e2"
+    },
+    {
+      "file": "gpt2.json",
+      "bytes": 545308,
+      "sha256": "199cf7ee5013d4cd95015d672fdc9d9d8ebf942f69fc5ed424148add1f533493"
+    },
+    {
+      "file": "jamba.model",
+      "bytes": 1124714,
+      "sha256": "8b0df4fb43262c452ef37061951a06df4c63ca191d02a60ea08f14428af24376"
+    },
+    {
+      "file": "llama.model",
+      "bytes": 499723,
+      "sha256": "9e556afd44213b6bd1be2b850ebbbd98f5481437a8021afaf58ee7fb1818d347"
+    },
+    {
+      "file": "llama3.json",
+      "bytes": 6082251,
+      "sha256": "126f3c57d297e9a5a18427338812d9fed68f132c612b3c42e361ce3157beb729"
+    },
+    {
+      "file": "mistral.model",
+      "bytes": 493443,
+      "sha256": "dadfd56d766715c61d2ef780a525ab43b8e6da4de6865bda3d95fdef5e134055"
+    },
+    {
+      "file": "model-to-encoding.json",
+      "bytes": 4186,
+      "sha256": "87a2d4e048ed2ebda0fee92a841b3527849574791bff16083c342a8b8f60688a"
+    },
+    {
+      "file": "nemo.json.gz",
+      "bytes": 2345925,
+      "sha256": "97bb0b00f9c33bd9919283325eca46213c0aa991e984ea6799203d2872a63086",
+      "upstream": "https://github.com/SillyTavern/SillyTavern-Tokenizers/raw/main/nemo.json.gz"
+    },
+    {
+      "file": "nerdstash.model",
+      "bytes": 1033724,
+      "sha256": "578fa0ed4d6dbee435f21d7f7a741506d09cdd93cce241008abf725407cbdb41"
+    },
+    {
+      "file": "nerdstash_v2.model",
+      "bytes": 1033744,
+      "sha256": "005ad680b10f1abd406bdb0ca9c6a5d83fc1f6e0a855bdd1942c1ceab1fb47ab"
+    },
+    {
+      "file": "o200k_base.json",
+      "bytes": 2325457,
+      "sha256": "df53e1a5f146e33a1b144d12ad9d685ee1b54dbc8b0950791ed45c933b119dc1"
+    },
+    {
+      "file": "p50k_base.json",
+      "bytes": 545805,
+      "sha256": "f1f1f3a216c670d53b56cd3077e16e2e60644482584521881e95996d9310034e"
+    },
+    {
+      "file": "p50k_edit.json",
+      "bytes": 545849,
+      "sha256": "82d4585313a5846f40c1718b7c11d837e8526267582810312720c8489d5485f1"
+    },
+    {
+      "file": "qwen2.json.gz",
+      "bytes": 1817745,
+      "sha256": "f874d7a2d4ba9591a980e7603648a43afeb3fa97740a3cd83cc74994f8affe52",
+      "upstream": "https://github.com/SillyTavern/SillyTavern-Tokenizers/raw/main/qwen2.json.gz"
+    },
+    {
+      "file": "r50k_base.json",
+      "bytes": 545308,
+      "sha256": "199cf7ee5013d4cd95015d672fdc9d9d8ebf942f69fc5ed424148add1f533493"
+    },
+    {
+      "file": "runtime.mjs",
+      "bytes": 4154294,
+      "sha256": "91a3c58968bb90aa02bd3e4eca03be3556fe2c52f1b313749c7db811b547d046"
+    },
+    {
+      "file": "tiktoken-LICENSE",
+      "bytes": 1078,
+      "sha256": "418cb499b436128d653d79941333a5437b7be2ea9213dcc2f04d15d5d2c51d86"
+    },
+    {
+      "file": "tiktoken_bg.js",
+      "bytes": 13338,
+      "sha256": "eebed1618f6cd2a9c1be475c698eebcac369c8bcff52206804b98ca67068b9c5"
+    },
+    {
+      "file": "tiktoken_bg.wasm",
+      "bytes": 1073364,
+      "sha256": "870fa4e0d8fe30a02b4703b2c4e24e7a8d99dcf6a1e8416c14b239f52a2eed55"
+    },
+    {
+      "file": "web-tokenizers-LICENSE",
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "file": "web-tokenizers-NOTICE",
+      "bytes": 1358,
+      "sha256": "5bdca90dfbb6de9946bf4396e213e04a923987af32cd38743ab351f82c012c9d"
+    },
+    {
+      "file": "yi.model",
+      "bytes": 1033105,
+      "sha256": "386c49cf943d71aa110361135338c50e38beeff0a66593480421f37b319e1a39"
+    }
+  ],
+  "changes": [
+    "Browser crypto/config boundary",
+    "Frontend UI/token/tool lookups supplied as values; synchronous pure parameter construction",
+    "Only Claude/Gemini request-body construction, no upstream transport or secrets"
+  ]
+}

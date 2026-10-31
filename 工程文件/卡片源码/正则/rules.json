@@ -1,0 +1,465 @@
+{
+  "format": "cyber2051.regex-source.v1",
+  "rules": [
+    {
+      "key": "status",
+      "owner": "MVU/templates/status0.html",
+      "purpose": "当前人物状态挂载，保留音乐占位符",
+      "script": {
+        "id": "21d245e4-dfe4-4a83-a340-030599077e86",
+        "scriptName": "人物状态",
+        "findRegex": {
+          "pattern": "status"
+        },
+        "replaceString": "<div data-cxx-slot=\"status0\"></div>",
+        "trimStrings": [],
+        "placement": [
+          1,
+          2
+        ],
+        "disabled": false,
+        "markdownOnly": true,
+        "promptOnly": false,
+        "runOnEdit": true,
+        "substituteRegex": 0,
+        "minDepth": null,
+        "maxDepth": 1
+      }
+    },
+    {
+      "key": "old-status",
+      "owner": "原生/prose.js",
+      "purpose": "深度3及以后隐藏旧状态正文",
+      "script": {
+        "id": "a0428061-a119-40b8-8176-84a963f3a43c",
+        "scriptName": "历史状态文本裁剪",
+        "findRegex": {
+          "pattern": "old-status",
+          "guard": true,
+          "flags": "gm"
+        },
+        "replaceString": "$<cxx_literal>",
+        "trimStrings": [],
+        "placement": [
+          1,
+          2
+        ],
+        "disabled": false,
+        "markdownOnly": true,
+        "promptOnly": true,
+        "runOnEdit": true,
+        "substituteRegex": 0,
+        "minDepth": 3,
+        "maxDepth": null
+      }
+    },
+    {
+      "key": "analysis",
+      "owner": "MVU/templates/mvu.html",
+      "purpose": "完整变量更新中的分析面板",
+      "script": {
+        "id": "5932266d-22e7-47bd-98f3-98fc5edac7b2",
+        "scriptName": "MVU1",
+        "disabled": false,
+        "runOnEdit": true,
+        "findRegex": {
+          "pattern": "analysis",
+          "flags": "gi"
+        },
+        "trimStrings": [],
+        "replaceString": "<div data-cxx-slot=\"mvu\"></div>",
+        "placement": [
+          1,
+          2
+        ],
+        "substituteRegex": 0,
+        "minDepth": null,
+        "maxDepth": 3,
+        "markdownOnly": true,
+        "promptOnly": false
+      }
+    },
+    {
+      "key": "update",
+      "owner": "MVU/variables.js",
+      "purpose": "隐藏变量更新正文",
+      "script": {
+        "id": "d8b51403-46c0-4e74-a954-b1e227001f45",
+        "scriptName": "MVU2",
+        "disabled": false,
+        "runOnEdit": true,
+        "findRegex": {
+          "pattern": "update",
+          "guard": true,
+          "flags": "gm"
+        },
+        "trimStrings": [],
+        "replaceString": "$<cxx_literal>",
+        "placement": [
+          1,
+          2
+        ],
+        "substituteRegex": 0,
+        "minDepth": null,
+        "maxDepth": null,
+        "markdownOnly": true,
+        "promptOnly": true
+      }
+    },
+    {
+      "key": "status-marker",
+      "owner": "MVU/variables.js",
+      "purpose": "提示词移除状态占位符",
+      "script": {
+        "id": "7d975933-6f4e-475c-877e-cee5cbdfc496",
+        "scriptName": "MVU3",
+        "findRegex": {
+          "pattern": "status-marker",
+          "guard": true,
+          "flags": "gm"
+        },
+        "replaceString": "$<cxx_literal>",
+        "trimStrings": [],
+        "placement": [
+          1,
+          2
+        ],
+        "disabled": false,
+        "markdownOnly": false,
+        "promptOnly": true,
+        "runOnEdit": true,
+        "substituteRegex": 0,
+        "minDepth": null,
+        "maxDepth": null
+      }
+    },
+    {
+      "key": "options",
+      "owner": "MVU/templates/options.html",
+      "purpose": "最新两层选项入口",
+      "script": {
+        "id": "e9984a2c-a1e5-4dde-900d-736d0d1aa582",
+        "scriptName": "选项1",
+        "findRegex": {
+          "pattern": "options",
+          "flags": ""
+        },
+        "replaceString": "<div data-cxx-slot=\"options\"></div>",
+        "trimStrings": [],
+        "placement": [
+          1,
+          2
+        ],
+        "disabled": false,
+        "markdownOnly": true,
+        "promptOnly": false,
+        "runOnEdit": true,
+        "substituteRegex": 0,
+        "minDepth": null,
+        "maxDepth": 1
+      }
+    },
+    {
+      "key": "options-prompt",
+      "owner": "MVU/templates/options.html",
+      "purpose": "提示词隐藏助手选项",
+      "script": {
+        "id": "d723f739-bd0b-4ad7-90f4-17cef66bbe6b",
+        "scriptName": "选项2",
+        "findRegex": {
+          "pattern": "options",
+          "guard": true,
+          "flags": "gm"
+        },
+        "replaceString": "$<cxx_literal>",
+        "trimStrings": [],
+        "placement": [
+          2
+        ],
+        "disabled": false,
+        "markdownOnly": false,
+        "promptOnly": true,
+        "runOnEdit": true,
+        "substituteRegex": 0,
+        "minDepth": null,
+        "maxDepth": null
+      }
+    },
+    {
+      "key": "gui-prompt",
+      "owner": "MVU/openings.js",
+      "purpose": "提示词隐藏旧Gui面板",
+      "script": {
+        "id": "4c5fb2c7-3c99-448a-9df8-71a55d605aca",
+        "scriptName": "首页1",
+        "findRegex": {
+          "pattern": "gui-prompt",
+          "guard": true,
+          "flags": "gm"
+        },
+        "replaceString": "$<cxx_literal>",
+        "trimStrings": [],
+        "placement": [
+          1,
+          2
+        ],
+        "disabled": false,
+        "markdownOnly": false,
+        "promptOnly": true,
+        "runOnEdit": true,
+        "substituteRegex": 0,
+        "minDepth": null,
+        "maxDepth": null
+      }
+    },
+    {
+      "key": "opening-user",
+      "owner": "MVU/openings.js",
+      "purpose": "显示隐藏用户旧开场协议",
+      "script": {
+        "id": "aa79aef3-f4c7-481b-b0a1-0cc414663795",
+        "scriptName": "首页2",
+        "findRegex": {
+          "pattern": "opening-user",
+          "flags": ""
+        },
+        "replaceString": "",
+        "trimStrings": [],
+        "placement": [
+          1
+        ],
+        "disabled": false,
+        "markdownOnly": true,
+        "promptOnly": false,
+        "runOnEdit": true,
+        "substituteRegex": 0,
+        "minDepth": null,
+        "maxDepth": null
+      }
+    },
+    {
+      "key": "opening-assistant",
+      "owner": "MVU/openings.js",
+      "purpose": "显示隐藏助手旧开局协议",
+      "script": {
+        "id": "a7fcc580-ae3d-460f-b1fe-788249a15ddb",
+        "scriptName": "首页3",
+        "findRegex": {
+          "pattern": "opening-assistant",
+          "flags": ""
+        },
+        "replaceString": "",
+        "trimStrings": [],
+        "placement": [
+          2
+        ],
+        "disabled": false,
+        "markdownOnly": true,
+        "promptOnly": false,
+        "runOnEdit": true,
+        "substituteRegex": 0,
+        "minDepth": null,
+        "maxDepth": null
+      }
+    },
+    {
+      "key": "music-mygo",
+      "owner": "MVU/templates/music12.html",
+      "purpose": "MyGO歌单，四选一",
+      "script": {
+        "id": "e3097532-7c12-4802-8000-c26a7d53eff7",
+        "scriptName": "歌单1（MyGO）（四选一）",
+        "findRegex": {
+          "pattern": "status-marker"
+        },
+        "replaceString": "<div data-cxx-slot=\"music12\"></div>",
+        "trimStrings": [],
+        "placement": [
+          1,
+          2
+        ],
+        "disabled": false,
+        "markdownOnly": true,
+        "promptOnly": false,
+        "runOnEdit": true,
+        "substituteRegex": 0,
+        "minDepth": null,
+        "maxDepth": 1
+      }
+    },
+    {
+      "key": "music-mujica",
+      "owner": "MVU/templates/music13.html",
+      "purpose": "Mujica歌单，四选一",
+      "script": {
+        "id": "8d2899a9-e103-463c-881f-b2160ad759de",
+        "scriptName": "歌单2（Mujica）（四选一）",
+        "findRegex": {
+          "pattern": "status-marker"
+        },
+        "replaceString": "<div data-cxx-slot=\"music13\"></div>",
+        "trimStrings": [],
+        "placement": [
+          1,
+          2
+        ],
+        "disabled": true,
+        "markdownOnly": true,
+        "promptOnly": false,
+        "runOnEdit": true,
+        "substituteRegex": 0,
+        "minDepth": null,
+        "maxDepth": 1
+      }
+    },
+    {
+      "key": "music-ai",
+      "owner": "MVU/templates/music14.html",
+      "purpose": "AI翻唱歌单，四选一",
+      "script": {
+        "id": "c52a3fd7-219d-4a84-93d3-17cabf187bc4",
+        "scriptName": "歌单3（Ai翻唱）（四选一）",
+        "findRegex": {
+          "pattern": "status-marker"
+        },
+        "replaceString": "<div data-cxx-slot=\"music14\"></div>",
+        "trimStrings": [],
+        "placement": [
+          1,
+          2
+        ],
+        "disabled": true,
+        "markdownOnly": true,
+        "promptOnly": false,
+        "runOnEdit": true,
+        "substituteRegex": 0,
+        "minDepth": null,
+        "maxDepth": 1
+      }
+    },
+    {
+      "key": "music-jp",
+      "owner": "MVU/templates/music15.html",
+      "purpose": "日术AI歌单，四选一",
+      "script": {
+        "id": "7de6baf0-4272-4133-b4c4-c27fbc2bdad7",
+        "scriptName": "歌单（日术Ai翻唱）（四选一）",
+        "findRegex": {
+          "pattern": "status-marker"
+        },
+        "replaceString": "<div data-cxx-slot=\"music15\"></div>",
+        "trimStrings": [],
+        "placement": [
+          1,
+          2
+        ],
+        "disabled": true,
+        "markdownOnly": true,
+        "promptOnly": false,
+        "runOnEdit": true,
+        "substituteRegex": 0,
+        "minDepth": null,
+        "maxDepth": 1
+      }
+    },
+    {
+      "key": "city-context",
+      "owner": "运行时/city-news.js",
+      "purpose": "城市摘要只隐藏显示，保留提示词",
+      "script": {
+        "id": "cxx-city-public-context-display-v1",
+        "scriptName": "城市公开摘要（隐藏展示）",
+        "disabled": false,
+        "runOnEdit": true,
+        "findRegex": {
+          "pattern": "city-context"
+        },
+        "trimStrings": [],
+        "replaceString": "",
+        "placement": [
+          2
+        ],
+        "substituteRegex": 0,
+        "minDepth": null,
+        "maxDepth": null,
+        "markdownOnly": true,
+        "promptOnly": false
+      }
+    },
+    {
+      "key": "story",
+      "owner": "Gal/parser.js",
+      "purpose": "显示剥离正文边界标签",
+      "script": {
+        "id": "cxx-story-display-233",
+        "scriptName": "正文分隔（显示）",
+        "findRegex": {
+          "pattern": "story",
+          "flags": "gi"
+        },
+        "replaceString": "",
+        "trimStrings": [],
+        "placement": [
+          2
+        ],
+        "disabled": false,
+        "markdownOnly": true,
+        "promptOnly": false,
+        "runOnEdit": true,
+        "substituteRegex": 0,
+        "minDepth": null,
+        "maxDepth": null
+      }
+    },
+    {
+      "key": "dialogue-retired",
+      "owner": "正文/dialogue.js",
+      "purpose": "已停用，台词由共享解析器接管；稳定ID暂保留",
+      "script": {
+        "id": "cxx-say-display-233",
+        "scriptName": "台词标签（由共享显示脚本接管）",
+        "findRegex": {
+          "pattern": "dialogue-retired",
+          "flags": "gi"
+        },
+        "replaceString": "$1：$2",
+        "trimStrings": [],
+        "placement": [
+          2
+        ],
+        "disabled": true,
+        "markdownOnly": true,
+        "promptOnly": false,
+        "runOnEdit": true,
+        "substituteRegex": 0,
+        "minDepth": null,
+        "maxDepth": null
+      }
+    },
+    {
+      "key": "opening-mount",
+      "owner": "MVU/openings.js",
+      "purpose": "短开场占位挂载；兼容已有编号协议",
+      "script": {
+        "id": "cxx-opening-mount-236",
+        "scriptName": "短开场页面入口",
+        "findRegex": {
+          "pattern": "opening-mount",
+          "flags": ""
+        },
+        "replaceString": "<div data-cxx-opening=\"236\"><section style=\"box-sizing:border-box;max-width:760px;margin:24px auto;padding:clamp(24px,5vw,44px);border:1px solid #ffffff22;border-left:3px solid #f65278;background:linear-gradient(125deg,#201b26,#11151e);color:#f1edf2;text-align:left;border-radius:4px\"><p style=\"margin:0 0 12px;color:#b6aebc;letter-spacing:.12em;font:500 14px/1.5 system-ui\">TOKYO 2051</p><h2 style=\"margin:0 0 16px;font:600 clamp(24px,4vw,34px)/1.4 system-ui\">东京都，等你回来。</h2><p data-cxx-entry-note style=\"margin:0 0 24px;line-height:1.8;overflow-wrap:anywhere\">正在连接开局界面；若长时间未响应，请启用酒馆助手与本卡脚本。</p><button type=\"button\" data-cxx-return-title disabled style=\"min-height:48px;padding:12px 24px;border:1px solid #f65278;border-radius:3px;background:#351f2c;color:#fff;font:600 16px/1.4 system-ui;cursor:pointer\">返回开局页面 →</button><details style=\"margin-top:20px;font:14px/1.8 system-ui\"><summary style=\"cursor:pointer;color:#78d6df\">首次使用：安装配套插件</summary><p>先在酒馆的“扩展 → 安装扩展”安装酒馆助手，并允许本卡脚本。随后返回标题页点击“插件安装”，可自动下载其余配套插件。</p><p><a href=\"https://github.com/N0VI028/JS-Slash-Runner\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:#78d6df\">酒馆助手安装仓库</a><br><span style=\"overflow-wrap:anywhere;user-select:text\">https://github.com/N0VI028/JS-Slash-Runner</span></p><p>镜译、记忆数据库与提示词模板也可在卡内安装页按需选择。MVU随卡提供。</p></details></section></div>",
+        "trimStrings": [],
+        "placement": [
+          2
+        ],
+        "disabled": false,
+        "markdownOnly": true,
+        "promptOnly": false,
+        "runOnEdit": true,
+        "substituteRegex": 0,
+        "minDepth": null,
+        "maxDepth": null
+      }
+    }
+  ]
+}

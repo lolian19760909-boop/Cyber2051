@@ -1,0 +1,12 @@
+'use strict';
+const {growth,engine,mvu}=require("../../卡片源码/数值引擎/index.cjs");
+const attributes=n=>Object.fromEntries(growth.attributes.map(k=>[k,n]));
+const state={schema:1,growth:growth.initialize({schema:1,level:1,xp:0,attributes:attributes(15),attributePoints:7,perkPoints:0,unrestricted:true},'custom')};
+const profiles={example_enemy:{attributes:attributes(10)}};
+const result=engine.settle(state,[{id:'example_start',kind:'encounter',encounterId:'example_fight',active:true,playerTags:[],enemies:[{id:'enemy',profileId:'example_enemy'}]}],{profiles});
+const assessment=engine.evaluateCombat(result.state,{profiles});
+console.log(engine.shortPrompt(assessment));
+console.log(JSON.stringify({playerPower:assessment.playerPower,enemyPower:assessment.enemyPower,playerChance:assessment.playerChance,enemyChance:assessment.enemyChance},null,2));
+const transaction=mvu.prepare({terminal:{gameplay:result.state}},[{op:'add',path:mvu.inputPath,value:[{id:'example_training',kind:'reward',source:{kind:'training',id:'example'},xp:2050,attributePoints:1,perkPoints:2}]}]);
+const savedGrowth=transaction.changes.find(c=>c.path.at(-1)==='growth').after;
+console.log(JSON.stringify({level:savedGrowth.level,xp:savedGrowth.xp,attributePoints:savedGrowth.attributePoints,perkPoints:savedGrowth.perkPoints},null,2));

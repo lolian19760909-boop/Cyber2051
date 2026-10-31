@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-mode="public">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>东京都2051 · 网页版</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="./site/theme.css">
+<link rel="stylesheet" href="./site/site.css">
+<link rel="stylesheet" href="./web/styles/app.css">
+<script src="./site/theme-runtime.js"></script>
+<script>CxxThemeRuntime.install(window);</script>
+<link rel="stylesheet" href="./opening-ui/base.css" data-opening-base>
+<link rel="stylesheet" href="./opening-ui/reading.css">
+</head>
+<body class="site cx77-reading-host" data-theme="red">
+  <div id="reading-surface" hidden>
+  <header class="site-header"><div class="bar topbar">
+    <a class="logo" href="/" aria-label="返回东京都2051网站"><img src="./opening-ui/assets/logo.png" alt="Tokyo 2051"></a>
+    <span class="spacer"></span>
+    <nav class="nav" id="play-nav" aria-label="游玩" hidden>
+      <button id="gal-btn" type="button">GAL</button><button id="terminal-btn" type="button">终端</button><button id="backup-btn" type="button">备份</button>
+    </nav>
+    <button id="login-btn" hidden>登录 / 注册</button>
+    <button id="logout-btn" hidden>退出登录</button>
+    <button id="theme-btn" class="ghost" title="切换主题（红／黄／夜）">红</button>
+    <button id="drawer-btn" class="ghost">设置</button>
+    <button id="reading-menu" type="button">主菜单</button>
+  </div></header>
+
+  <main class="stage">
+    <div class="stage-inner">
+      <div class="scene-line" id="scene-line"></div>
+      <div id="stage-lines">
+      </div>
+      <div class="choices" id="choices"></div>
+      <div class="aux" id="aux"></div>
+    </div>
+  </main>
+
+  <footer class="composer">
+    <div class="composer-inner">
+      <textarea id="input" placeholder="写下你要说的话或采取的行动…" aria-label="你的行动" autocomplete="off"></textarea>
+      <div class="composer-row">
+        <button id="send" class="primary" disabled>发送行动</button>
+        <button id="regen" disabled>重新生成</button>
+        <button id="continue" disabled>继续上文</button>
+        <button id="stop" disabled>中断</button>
+        <button id="retry-save" hidden>重试保存原候选</button>
+        <span class="spacer"></span>
+      </div>
+      <div class="status-line" id="status-line">正在启动…</div>
+    </div>
+  </footer>
+
+  </div>
+
+  <div class="drawer" id="drawer" data-open="false">
+    <aside class="drawer-panel" role="dialog" aria-label="设置">
+      <div style="display:flex;align-items:center;gap:8px">
+        <strong>设置</strong>
+        <span class="spacer"></span>
+        <button id="drawer-close" class="ghost">关闭</button>
+      </div>
+
+      <div id="display-controls"><p>开始故事后可调整阅读方式、文字与声音。</p></div>
+      <div class="section-title">本机资源</div>
+      <div id="pack-controls"><p>开始故事后可查看已装载的资源包。</p></div>
+      <div id="session-content"><p>开始故事后可查看本局内容。</p></div>
+      <div class="section-title">本局信息</div>
+      <dl class="kv" id="gen-info"></dl>
+      <div class="section-title">故事与存档</div>
+      <button id="new-run" type="button">新建故事</button>
+      <button id="checkpoint" type="button">建立存档点</button>
+      <div id="save-list"></div>
+      <div id="save-controls"></div>
+      <div id="reply-controls"></div>
+      <div id="application-controls"></div>
+
+      <div class="section-title">模型</div>
+      <p id="parameter-warnings" role="status" hidden></p>
+      <form id="model-form">
+        <div class="field">
+          <label for="adapter">模型服务</label>
+          <select id="adapter" name="adapter">
+            <option value="openai-chat">openai-chat（OpenAI 兼容）</option>
+            <option value="claude-messages">claude-messages</option>
+            <option value="google-gemini">google-gemini</option>
+            <option value="cohere">cohere</option>
+            <option value="azure-openai">azure-openai</option>
+            <option value="workersai">workersai</option>
+            <option value="text-generic">text-generic</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="baseUrl">服务基地址</label>
+          <input id="baseUrl" name="baseUrl" placeholder="https://api.example.com/v1" autocomplete="off">
+        </div>
+        <div class="field"><label for="connection">连接位置</label><select id="connection" name="connection"><option value="default">公网模型</option><option value="lan">本机／内网模型</option></select></div>
+        <div class="field">
+          <label for="model">型号</label>
+          <input id="model" name="model" list="model-options" placeholder="例如 deepseek-chat" autocomplete="off"><datalist id="model-options"></datalist>
+        </div>
+        <div class="field">
+          <label for="apiKey">模型 Key</label>
+          <input id="apiKey" name="apiKey" type="password" autocomplete="off">
+        </div>
+        <label><input type="checkbox" name="rememberKey">在此设备记住密钥</label>
+        <button type="submit" class="primary">保存设置</button>
+        <button type="button" id="test-models">读取模型列表</button>
+        <button type="button" id="clear-key">清除密钥</button>
+      </form>
+
+      <div id="session-settings"></div>
+      <div id="prompt-inspector"></div>
+      <div class="section-title">数据库记忆</div>
+      <div id="memory-box" class="hint">此故事尚未建立长期记忆。</div>
+    </aside>
+  </div>
+
+  <script type="module" src="./web/app.mjs"></script>
+</body>
+</html>

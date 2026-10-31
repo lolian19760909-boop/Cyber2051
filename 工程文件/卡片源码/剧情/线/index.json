@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "lines": [
+    "q_main_pre_heist.json",
+    "q_main_heist.json",
+    "q_main_dual_soul.json",
+    "catalog-underpool-assault.json",
+    "catalog-underpool-theft.json",
+    "catalog-lowtown-police.json",
+    "catalog-lowtown-recovery.json"
+  ]
+}

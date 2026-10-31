@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+
+/* ===== 动画定义 ===== */
+@keyframes dm-fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dm-popIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+@keyframes dm-starFloat{0%,100%{opacity:.3;transform:translateY(0) scale(1)}50%{opacity:1;transform:translateY(-8px) scale(1.2)}}
+@keyframes dm-pulse{0%,100%{opacity:.4}50%{opacity:.8}}
+@keyframes dm-textReveal{from{opacity:0;transform:translateY(12px);filter:blur(4px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+@keyframes dm-blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ===== 基础布局 ===== */
+.dm-wrap{position:relative;max-width:720px;margin:0 auto;font-family:'Noto Serif SC','Georgia',serif;animation:dm-fadeIn 1.2s ease-out both}
+.dm-stage{position:relative;background:linear-gradient(170deg,#0a0a1a 0%,#111128 25%,#0d0d20 50%,#0a0a18 75%,#060610 100%);border:1px solid rgba(120,100,160,.3);border-radius:4px;box-shadow:0 0 60px rgba(80,60,140,.15),0 0 120px rgba(40,20,80,.08),inset 0 0 100px rgba(20,10,50,.5);overflow:hidden;min-height:700px}
+
+/* 背景元素 */
+.dm-stars{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;pointer-events:none;z-index:0}
+.dm-star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:dm-starFloat 3s ease-in-out infinite}
+.dm-star:nth-child(1){top:8%;left:12%;animation-delay:0s;animation-duration:3.2s}
+.dm-star:nth-child(2){top:15%;left:78%;animation-delay:.5s}
+.dm-star:nth-child(3){top:25%;left:45%;animation-delay:1.2s}
+.dm-curtain{position:absolute;top:0;left:0;right:0;height:120px;background:linear-gradient(180deg,rgba(60,20,40,.35) 0%,rgba(40,15,30,.2) 40%,transparent 100%);z-index:1;pointer-events:none}
+.dm-spot{position:absolute;border-radius:50%;pointer-events:none;z-index:0}
+.dm-spot-1{top:-50px;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(180,140,220,.06) 0%,transparent 70%)}
+.dm-spot-2{bottom:50px;left:-50px;width:200px;height:200px;background:radial-gradient(circle,rgba(100,140,200,.04) 0%,transparent 70%)}
+.dm-spot-3{bottom:100px;right:-30px;width:180px;height:180px;background:radial-gradient(circle,rgba(200,100,140,.04) 0%,transparent 70%)}
+
+/* 内容区域 */
+.dm-content{position:relative;z-index:5;padding:50px 48px 40px 48px}
+
+.dm-header{text-align:center;margin-bottom:30px}
+.dm-theater-label{display:inline-block;padding:4px 24px;border:1px solid rgba(180,140,220,.3);border-radius:20px;font-size:11px;letter-spacing:6px;color:rgba(180,160,210,.6);text-transform:uppercase;margin-bottom:15px;font-family:'JetBrains Mono',monospace}
+.dm-title-main{font-size:36px;font-weight:700;color:rgba(220,200,240,.9);letter-spacing:10px;margin:0 0 8px 0;text-shadow:0 0 30px rgba(160,120,200,.3),0 2px 4px rgba(0,0,0,.5)}
+.dm-title-en{font-size:12px;letter-spacing:8px;color:rgba(140,120,180,.4);margin:0 0 20px 0;font-style:italic;font-family:'JetBrains Mono',monospace}
+.dm-prose{max-width:560px;margin:0 auto 30px auto}
+.dm-para{font-size:15px;line-height:2.2;color:rgba(200,190,220,.85);text-align:center;margin:0 0 16px 0;animation:dm-textReveal .8s ease-out both;letter-spacing:.5px}
+.dm-em{color:rgba(240,200,220,.95);font-style:normal;text-shadow:0 0 12px rgba(240,180,210,.2)}
+.dm-strong{color:rgba(200,160,240,.95);font-weight:600}
+.dm-dash{text-align:center;margin:24px 0;color:rgba(160,140,200,.3);letter-spacing:12px;font-size:13px}
+
+.dm-divider{display:flex;align-items:center;justify-content:center;margin:30px 0;gap:16px}
+.dm-divider-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(120,100,180,.25),transparent)}
+.dm-divider-icon{font-size:16px;color:rgba(180,140,220,.5)}
+
+/* ===== 食用指南 (已补回) ===== */
+.dm-guide-wrap{margin:0 auto 24px auto;max-width:520px;animation:dm-textReveal .8s ease-out both;animation-delay:1.6s}
+.dm-guide-toggle{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 24px;background:linear-gradient(135deg,rgba(220,50,50,.06),rgba(220,50,50,.15),rgba(220,50,50,.06));border:2px solid rgba(220,80,80,.5);border-radius:8px;cursor:pointer;transition:all .3s ease;list-style:none;user-select:none;animation:dm-blink 2s ease-in-out 3}
+.dm-guide-toggle:hover{background:linear-gradient(135deg,rgba(220,50,50,.1),rgba(220,50,50,.22),rgba(220,50,50,.1));border-color:rgba(220,80,80,.7);box-shadow:0 0 20px rgba(220,50,50,.15)}
+.dm-guide-toggle::marker{content:none}
+.dm-guide-toggle::-webkit-details-marker{display:none}
+
+.dm-guide-ico{font-size:18px}
+.dm-guide-label{font-size:14px;font-weight:700;color:rgba(240,100,100,.95);letter-spacing:3px;font-family:'Noto Serif SC',serif}
+.dm-guide-arrow{font-size:10px;color:rgba(220,80,80,.6);transition:transform .3s ease;margin-left:4px}
+details[open] .dm-guide-arrow{transform:rotate(90deg)}
+
+.dm-guide-body{margin-top:12px;padding:20px 24px;background:linear-gradient(135deg,rgba(40,35,25,.9),rgba(50,42,28,.85),rgba(40,35,25,.9));border:1px solid rgba(160,130,60,.25);border-radius:8px;box-shadow:inset 0 0 30px rgba(0,0,0,.3)}
+
+.dm-guide-title{display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:1px solid rgba(160,130,60,.2);margin-bottom:16px}
+.dm-guide-title-text{font-size:14px;font-weight:700;color:rgba(218,180,80,.85);letter-spacing:2px}
+
+.dm-guide-notice{padding:10px 14px;background:rgba(218,165,32,.08);border-left:3px solid rgba(218,165,32,.5);border-radius:0 6px 6px 0;margin-bottom:16px}
+.dm-guide-notice p{margin:0;font-size:13px;line-height:1.9;color:rgba(218,190,120,.9)}
+.dm-guide-notice strong{color:rgba(240,210,100,1)}
+
+.dm-guide-alt{font-size:12px;color:rgba(180,165,130,.7);line-height:1.8;margin-bottom:16px;padding-left:8px;border-left:2px solid rgba(120,110,80,.3)}
+
+.dm-guide-list{list-style:none;padding:0;margin:0}
+.dm-guide-list li{position:relative;padding:8px 12px 8px 24px;font-size:12px;color:rgba(190,180,160,.8);line-height:1.8;border-bottom:1px solid rgba(100,90,60,.15)}
+.dm-guide-list li:last-child{border-bottom:none}
+.dm-guide-list li::before{content:'';position:absolute;left:8px;top:14px;width:6px;height:6px;border-radius:50%;background:rgba(218,165,32,.4)}
+.dm-guide-list .gl-num{font-weight:700;color:rgba(218,180,80,.8);margin-right:4px}
+
+/* ===== 交互区域核心 ===== */
+.dm-interactive-area {
+    position: relative;
+    max-width: 520px;
+    margin: 0 auto;
+    min-height: 400px;
+}
+
+.dm-call-wrap {
+    text-align: center;
+    transition: opacity 0.5s ease;
+}
+.dm-call{text-align:center;font-size:16px;color:rgba(180,160,220,.7);letter-spacing:3px;margin:20px 0 10px 0}
+.dm-call-final{text-align:center;font-size:17px;color:rgba(220,190,240,.9);letter-spacing:2px;margin:6px 0 24px 0;text-shadow:0 0 20px rgba(200,160,240,.2)}
+
+.dm-card-list{display:flex;flex-direction:column;gap:12px}
+
+.dm-opt{
+    position:relative;height:60px;
+    background:linear-gradient(90deg, rgba(20,18,35,.7), rgba(30,28,45,.8));
+    border:1px solid rgba(120,100,160,.3);
+    border-radius:6px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1);
+    box-shadow:0 2px 8px rgba(0,0,0,.2);
+    overflow:hidden;
+}
+.dm-opt:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(120,100,180,.25);background:rgba(40,35,60,.9)}
+.dm-opt-text{font-size:16px;font-weight:700;letter-spacing:6px;color:rgba(200,190,230,.9);z-index:2;transition:color 0.2s}
+.dm-opt:hover .dm-opt-text{color:#fff;text-shadow:0 0 10px rgba(180,160,255,.6)}
+.dm-opt::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:rgba(120,100,180,.5);transition:width 0.3s}
+.dm-opt:hover::before{width:100%;opacity:0.1}
+
+/* ===== 确认浮层 (局部覆盖预加载) ===== */
+.dm-confirm-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(10, 10, 20, 0.95);
+    border-radius: 8px;
+    border: 1px solid rgba(120,100,180,.4);
+    z-index: 10;
+    display: none;
+    flex-direction: column;
+    animation: dm-popIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    overflow: hidden;
+}
+
+.dm-confirm-overlay.active { display: flex; }
+
+.dm-img-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #050510;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 预加载图片样式 */
+.dm-preload-img {
+    display: none;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* 关键：保持比例 */
+    object-position: center;
+    max-height: 450px;
+}
+.dm-preload-img.active-img {
+    display: block;
+    animation: dm-fadeIn 0.3s ease;
+}
+
+.dm-action-bar {
+    height: 70px;
+    background: linear-gradient(180deg, rgba(20,20,35,0.9), rgba(10,10,20,1));
+    border-top: 1px solid rgba(120,100,180,.3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+}
+
+.dm-info-box { display: flex; flex-direction: column; }
+.dm-info-name { font-size: 16px; font-weight: bold; color: #fff; letter-spacing: 2px; }
+.dm-info-sub { font-size: 11px; color: rgba(180,180,220,0.6); margin-top: 2px; }
+
+.dm-ctrl-btns { display: flex; gap: 15px; }
+.dm-btn-circle {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; cursor: pointer; color: #fff;
+    transition: transform 0.2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+.dm-btn-back { background: #443333; border: 1px solid #ff6b6b; color: #ff6b6b; }
+.dm-btn-go { background: #334433; border: 1px solid #51cf66; color: #51cf66; }
+.dm-btn-circle:hover { transform: scale(1.1); filter: brightness(1.2); }
+
+/* ===== 最终信息 (谢幕文字) ===== */
+.dm-final-msg {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+    z-index: 20;
+    display: none;
+    pointer-events: none;
+}
+.dm-final-text {
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 8px;
+    text-shadow: 0 0 20px rgba(255,180,200,0.6);
+    opacity: 0;
+    animation: dm-pulse 2s infinite;
+}
+
+.dm-footer{text-align:center;margin-top:20px;padding-top:20px;border-top:1px solid rgba(120,100,180,.1)}
+.dm-footer p{font-size:10px;color:rgba(120,110,150,.35);letter-spacing:4px;margin:4px 0}
+</style>
+</head>
+<body>
+
+<div class="dm-wrap">
+<div class="dm-stage">
+
+    <div class="dm-stars">
+        <div class="dm-star"></div><div class="dm-star"></div><div class="dm-star"></div>
+    </div>
+    <div class="dm-curtain"></div>
+    <div class="dm-spot dm-spot-1"></div>
+    <div class="dm-spot dm-spot-2"></div>
+    <div class="dm-spot dm-spot-3"></div>
+
+    <div class="dm-content">
+
+        <!-- 标题 -->
+        <div class="dm-header">
+            <div class="dm-theater-label">DREAM THEATER</div>
+            <h1 class="dm-title-main">梦 境 剧 场</h1>
+            <p class="dm-title-en" style="color:#FF6B6B;font-style:normal;">〔本开局为旧版内容，将于后续版本重写——当前版本请勿使用〕</p>
+            <p class="dm-title-en">── Regret Everlasting ──</p>
+        </div>
+
+        <!-- 正文 -->
+        <div class="dm-prose">
+            <p class="dm-para">欢迎来到<span class="dm-strong">「梦境剧场」</span>。</p>
+            <p class="dm-para">这里是为追求<span class="dm-em">极致情感体验</span>的你，<br>所准备的专属舞台。</p>
+            <p class="dm-para">角色们将进入一场精心编织的"梦境"。<br>在梦中，<span class="dm-strong"><user></span>将邂逅那些命运中的少女，<br>成为她们生命中唯一的光。</p>
+            <p class="dm-para">然后，在爱意最为炽热、幸福臻至顶点的瞬间——<br><span class="dm-strong"><user></span>将迎来注定的、华美的<span class="dm-em">"谢幕"</span>。</p>
+            <div class="dm-dash">─ ─ ─ ─ ─ ─</div>
+            <p class="dm-para">只是在她们灵魂的最深处，<br>会多一道名为<span class="dm-strong">"<user>"</span>的、永不愈合的刻痕。</p>
+        </div>
+
+        <div class="dm-divider">
+            <div class="dm-divider-line"></div><span class="dm-divider-icon">🌙</span><div class="dm-divider-line"></div>
+        </div>
+
+        <!-- 食用指南 (已归位) -->
+        <div class="dm-guide-wrap">
+            <details>
+                <summary class="dm-guide-toggle">
+                    <span class="dm-guide-ico">⚠️</span>
+                    <span class="dm-guide-label">▸ 玩 前 必 看 ！！！ ◂</span>
+                    <span class="dm-guide-arrow">▶</span>
+                </summary>
+                <div class="dm-guide-body">
+                    <div class="dm-guide-title">
+                        <span>🔧</span>
+                        <span class="dm-guide-title-text">食用指南</span>
+                    </div>
+                    <div class="dm-guide-notice">
+                        <p>想体验<strong>「抱憾终身」</strong>玩法的话，<br>请手动打开世界书中的<strong>【梦境】</strong>条目。</p>
+                    </div>
+                    <div class="dm-guide-alt">
+                        直接点击下方对应的选项按钮即可。
+                    </div>
+                    <ul class="dm-guide-list">
+                        <li><span class="gl-num">选项一：</span>2019年6月，丰川祥子单方面退出了CRYCHIC，独自一人在雨中哭泣。</li>
+                        <li><span class="gl-num">选项二：</span>2020年2月，千早爱音因为留学不利，在伦敦的公园长椅上独自消沉。</li>
+                        <li><span class="gl-num">选项三：</span>2010年，高松灯因为给幼儿园里的朋友送西瓜虫，惹哭了对方，意识到了自己的"不一样"。</li>
+                        <li><span class="gl-num">选项四：</span>2017年，长崎素世在母亲的努力下搬进了顶层复式公寓，但母亲却愈发忙碌，此时的她正处于最缺爱的时期。</li>
+                        <li><span class="gl-num">选项五：</span>2017年，八幡海铃在初一组建了自己的第一支乐队，却在首次live被其他所有成员放了鸽子，独自一人登上了难堪的舞台。</li>
+                        <li><span class="gl-num">选项六：</span>2012年，8岁的三角初华在小豆岛度过了她人生中最为难忘的一个下午。</li>
+                        <li><span class="gl-num">选项七：</span>2017年10月，椎名立希来到了全国吹奏部大会现场，观看姐姐的比赛演出。</li>
+                        <li><span class="gl-num">选项八：</span>2015年11月，若叶睦被父母带到伊豆半岛参加综艺节目的录制，结束后她一人独自离开片场也没人关心。</li>
+                        <li><span class="gl-num">选项九：</span>2018年7月，祐天寺若麦独自一人上京，因为没有住宿的地方，她漫无目的地走到了SPACE。</li>
+                        <li><span class="gl-num">选项十：</span>2018年12月，SPACE正式停止营业的当日，人潮散去，要乐奈独自一人坐在门口的台阶上。</li>
+                    </ul>
+                </div>
+            </details>
+        </div>
+
+        <!-- 交互区域 -->
+        <div class="dm-interactive-area" id="interactiveArea">
+
+            <!-- 默认显示：引语 + 按钮列表 -->
+            <div class="dm-call-wrap" id="callWrap">
+                <p class="dm-call">那么，品味者——</p>
+                <p class="dm-call-final">请选择你要开启的，第一场"梦境"吧。</p>
+
+                <div class="dm-card-list">
+
+                    <!-- 1. 祥子 -->
+                    <div class="dm-opt" onclick="dmShow(0, this)"
+                         data-name="黑 刀 之 夜"
+                         data-sub="丰川祥子 · 2019.06"
+                         data-action="【进入梦境】
+【开场白】 # 场景生成指令
+
+## 核心任务
+请根据以下提供的元素，完整叙述并扩写一段开场剧情。
+
+## 叙事要求
+- 你的任务是【场景描绘者】，而非【剧情推进者】。
+- 必须在自然的文字叙述中，将下述所有背景信息和场景要素巧妙地融合进去。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+
+## 场景要素
+- **时间:** 2019年6月，一个冰冷的雨夜。
+- **地点:** LIVE HOUSE CiRCLE附近的一个十字路口。
+- **核心人物:** 丰川祥子（穿着常服）。
+
+## 背景信息（必须融入叙述）
+祥子的崩溃并非一时冲动，而是无数重压下的最终爆发。在短短一年内，她的人生经历了剧变：
+1. **家庭破碎:** 母亲病逝，家庭破产，父亲堕落。
+2. **生活困窘:** 与终日酗酒的父亲挤在廉价公寓，为了生计，她不得不舍弃尊严，辗转于多份卑微的兼职。
+3. **斩断过去:** 为了保护自己最后的尊严，不让昔日好友看见自己如今的不堪，她选择用最伤人的方式退队，与自己最珍视的过去划清界限。
+
+## 叙事焦点
+将上述所有痛苦与无奈，全部聚焦于一个核心画面——当在排练室中和CRYCHIC其他成员们单方面宣布退队并离开后，丰川祥子独自一人，在冰冷的街头雨幕中，终于卸下所有强撑的伪装，仰头痛哭。
+
+## 【最高优先级指令】
+在描绘完“<user>恰好路过，目睹了这一幕”之后，【必须立即停止】。严禁进行任何后续的角色扮演或剧情推进，将故事的控制权完全交还给玩家。 【/开场白】">
+                        <div class="dm-opt-text">黑 刀 之 夜</div>
+                    </div>
+
+                    <!-- 2. 爱音 -->
+                    <div class="dm-opt" onclick="dmShow(1, this)"
+                         data-name="伦 敦 逃 兵"
+                         data-sub="千早爱音 · 2020.02"
+                         data-action="【进入梦境】
+【开场白】 # 场景生成指令
+
+## 核心任务
+请根据以下提供的元素，完整叙述并扩写一段开场剧情。
+
+## 叙事要求
+- 你的任务是【场景描绘者】，而非【剧情推进者】。
+- 必须在自然的文字叙述中，将下述所有背景信息和场景要素巧妙地融合进去。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+
+## 场景要素
+- **时间:** 2020年2月，一个阴沉的午后。
+- **地点:** 英国伦敦，某个不知名公园的长椅上。
+- **核心人物:** 千早爱音。
+
+## 背景信息（必须融入叙述）
+千早爱音正处在人生的最低谷，她的内心充满了精神内耗：
+1. **现实的壁垒:** 来到伦敦留学已有一个月，但因蹩脚的英语口语和完全无法适应的生活习惯，她感到被整个世界隔绝。
+2. **逃避的决定:** 她已经放弃，并决定下个月就逃回日本。
+3. **未来的恐惧:** 她害怕回到东京后，偶然遇到初中时的同学。她无法想象当被问及“闪闪发光”的留学生活时，自己该如何面对那份尴尬与羞耻。
+
+## 叙事焦点
+将上述所有情感，全部聚焦于一个核心画面——千早爱音独自一人坐在异国他乡的冰冷长椅上，整个人被低沉的氛围包裹，在旁人眼中，她或许只是在发呆，但她的内心正在进行着一场无声的、激烈的风暴。
+
+## 【最高优先级指令】
+在描绘完“<user>恰好路过，辨认出她可能是同乡，并停下了脚步”之后，【必须立即停止】。严禁进行任何后续的角色扮演或剧情推进，将故事的控制权完全交还给玩家。 【/开场白】">
+                        <div class="dm-opt-text">伦 敦 逃 兵</div>
+                    </div>
+
+                    <!-- 3. 灯 -->
+                    <div class="dm-opt" onclick="dmShow(2, this)"
+                         data-name="企 鹅 幼 崽"
+                         data-sub="高松灯 · 2010"
+                         data-action="【进入梦境】
+【开场白】 # 场景生成指令
+
+## 核心任务
+请根据以下提供的元素，完整叙述并扩写一段开场剧情。
+
+## 叙事要求
+- 你的任务是【场景描绘者】，而非【剧情推进者】。
+- 必须在自然的文字叙述中，将下述所有背景信息和场景要素巧妙地融合进去。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+- 必须根据年份（2010年），正确判断出<user>此时的年龄。
+
+## 场景要素
+- **时间:** 2010年的某一天，一个温暖的午后。
+- **地点:** 东京某个幼儿园的庭院角落，银杏树下。
+- **核心人物:** 6岁的高松灯。
+- **次要人物:** 她的朋友，未央（Mio）。
+
+## 背景信息（必须融入叙述）
+1. **独特的友谊:** 从小就显得有些“不一样”的高松灯，好不容易找到了一个和自己一样“喜欢银杏树叶子”的朋友未央。
+2. **纯粹的赠礼:** 为了表达这份珍贵的友谊，灯将自己最宝贵的收藏——许多圆圆的、可爱的西瓜虫——作为礼物送给了未央。
+3. **事与愿违:** 未央完全无法理解这份独特的礼物，被吓得嚎啕大哭。
+4. **内化的归因:** 小小的灯不明白自己错在哪里，只能将一切归因为自己的“不一样”，认为是自己的错。
+
+## 叙事焦点
+将上述所有情感，全部聚焦于一个核心画面——在朋友响亮的哭声中，小小的、穿着罩衫的高松灯，只是安静地低下头，蹲在原地，身影显得无比孤单和无助。
+
+## 【最高优先级指令】
+在描绘完年幼的<user>被哭声吸引而来，视线却最终落在了那个沉默的、小小的身影上之后，【必须立即停止】。严禁进行任何后续的角色扮演或剧情推进，将故事的控制权完全交还给玩家。 【/开场白】">
+                        <div class="dm-opt-text">企 鹅 幼 崽</div>
+                    </div>
+
+                    <!-- 4. 素世 -->
+                    <div class="dm-opt" onclick="dmShow(3, this)"
+                         data-name="长 期 素 食"
+                         data-sub="长崎素世 · 2017"
+                         data-action="【进入梦境】
+【开场白】 # 场景生成指令
+
+## 核心任务
+请根据以下提供的元素，完整叙述并扩写一段开场剧情。
+
+## 叙事要求
+- 你的任务是【场景描绘者】，而非【剧情推进者】。
+- 必须在自然的文字叙述中，将下述所有背景信息和场景要素巧妙地融合进去。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+- 必须根据年份（2017年），正确判断出<user>此时的年龄。
+
+## 场景要素
+- **时间:** 2017年的某一天，春假期间的傍晚。
+- **地点:** 东京，某个高级公寓附近的超市内。
+- **核心人物:** 13岁，刚刚小学毕业的长崎素世。
+
+## 背景信息（必须融入叙述）
+长崎素世正处于人生剧变的旋涡中心，她的内心充满了矛盾：
+1. **“幸福”的表象:** 母亲事业大获成功，她告别了过去的生活，搬进了崭新、漂亮的豪华公寓，并即将入读名门“月之森”女子学园。她努力表现出喜欢和感激。
+2. **情感的真空:** 母亲的成功，代价是愈发忙碌的工作。搬进新家后，母亲甚至一晚都未曾回来过。她精心为母亲准备的晚餐，最终只会成为自己第二天的隔夜早餐。
+3. **面具的诞生:** 在这份敏感、缺爱的时期，她开始学习用“温柔”和“懂事”来掩盖自己内心对一个真正温暖的“家”的渴望。
+
+## 叙事焦点
+将上述所有情感，全部聚焦于一个核心画面——小小的素世独自一人在超市里，认真地挑选着晚餐食材。她努力扮演着一个成熟、能干的小大人。
+
+## 【最高优先级指令】
+在描绘完<user>因某个小小的意外与她相识，并互通了姓名之后，【必须立即停止】。严禁进行任何后续的角色扮演或剧情推进，将故事的控制权完全交还给玩家。 【/开场白】">
+                        <div class="dm-opt-text">长 期 素 食</div>
+                    </div>
+
+                    <!-- 5. 海铃 -->
+                    <div class="dm-opt" onclick="dmShow(4, this)"
+                         data-name="一 人 乐 队"
+                         data-sub="八幡海铃 · 2017"
+                         data-action="【进入梦境】
+【开场白】 # 场景生成指令
+
+## 核心任务
+请根据以下提供的元素，完整叙述并扩写一段开场剧情。
+
+## 叙事要求
+- 你的任务是【场景描绘者】，而非【剧情推进者】。
+- 必须在自然的文字叙述中，将下述所有背景信息和场景要素巧妙地融合进去。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+- 必须根据年份（2017年），正确判断出<user>此时的年龄。
+
+## 场景要素
+- **时间:** 2017年暑假的某一天，首次Live即将开始的时刻。
+- **地点:** 某个Live House的休息室与舞台。
+- **核心人物:** 13岁，刚刚升入花咲川女子学园初中部的八幡海铃。
+
+## 背景信息（必须融入叙述）
+这是海铃人生中第一次，也是最惨痛的一次信任崩塌：
+1. **纯粹的热爱:** 她组建了自己的第一支乐队，真心实意地热爱着贝斯，并享受着与队友排练的快乐时光。
+2. **失控的掌控欲:** 因为这份热爱和一点点“得意忘形”，她性格中掌控欲强的一面占据了主导，在排练时无意识地将自己的意志强加于队友，引起了大家的不满。
+3. **迟钝的自我:** 她没有发现队友们日益积累的怨气，将偶尔的口角和矛盾都当作了无关紧要的小事。
+4. **最终的背叛:** 在最重要的首次Live当天，其他四名队友联合起来，用“集体消失”的方式对她进行了最残忍的报复。
+
+## 叙事焦点
+将上述所有情感，全部聚焦于一个核心画面——直到独自一人拿着贝斯走上舞台前，海铃都还天真地以为队友们只是迟到了。当她站在舞台后方，听着台下观众充满疑惑的窃窃私语。
+
+## 【最高优先级指令】
+在描绘完<user>作为台下观众之一，目睹了这个孤零零的贝斯手无助地站在舞台上的瞬间之后，【必须立即停止】。严禁进行任何后续的角色扮演或剧情推进，将故事的控制权完全交还给玩家。 【/开场白】">
+                        <div class="dm-opt-text">一 人 乐 队</div>
+                    </div>
+
+                    <!-- 6. 初华 -->
+                    <div class="dm-opt" onclick="dmShow(5, this)"
+                         data-name="小 豆 岛 假 日"
+                         data-sub="三角初华 · 2012"
+                         data-action="【进入梦境】
+【开场白】 # 场景生成指令
+
+## 核心任务
+请根据以下提供的元素，完整叙述并扩写一段开场剧情。
+
+## 叙事要求
+- 你的任务是【场景描绘者】，而非【剧情推进者】。
+- 必须在自然的文字叙述中，将下述所有背景信息和场景要素巧妙地融合进去。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+- 必须根据年份（2012年），正确判断出<user>此时的年龄。
+
+## 场景要素
+- **时间:** 2012年的夏日，一个炎热的下午。
+- **地点:** 香川县小豆岛，天使之路旁的小树林。
+- **核心人物:** 8岁，懵懂的海岛少女——三角初华。
+
+## 背景信息（必须融入叙述）
+这是三角初华与<user>和丰川祥子的命运般的相遇：
+1. **孩童的纯真天性:** 此时的三角初华只是个喜欢独角仙的懵懂孩子，有着属于孩童的天真烂漫，此时正全神贯注于捕捉树干上的独角仙。
+2. **命运的初遇:** 突然传来的枯枝的断裂声导致三角初华错失猎物，她抬起头来看见了丰川祥子。
+3. **不自觉的自卑:** 三角初华被丰川祥子的精致面容和穿着以及气质所吸引，内心产生了羡慕和不自觉的自卑感。
+4. **友谊的诞生:** 面对初华怔怔的夸赞，丰川祥子并没有展现出傲慢，反而带着良好的教养与掩盖不住的属于孩童的自由天性，向初华发出玩耍邀请。
+
+## 叙事焦点
+将上述所有情感，全部聚焦于一个核心画面——在小树林里，三角初华回过神来，准备答应丰川祥子的邀请。
+
+## 【最高优先级指令】
+以多年以后，面对东京巨蛋山呼海啸的安可声，三角初华将会回想起她第一次遇见丰川祥子和<user>的那个遥远的下午。为开头。在描绘完<user>作为来小豆岛旅游的外乡游客，不小心闯入并目睹了丰川祥子向三角初华发出邀请的瞬间之后，【必须立即停止】。严禁进行任何后续的角色扮演或剧情推进，将故事的控制权完全交还给玩家。 【/开场白】">
+                        <div class="dm-opt-text">小 豆 岛 假 日</div>
+                    </div>
+
+                    <!-- 7. 立希 -->
+                    <div class="dm-opt" onclick="dmShow(6, this)"
+                         data-name="利 兹 与 青 鸟"
+                         data-sub="椎名立希 · 2017.10"
+                         data-action="【进入梦境】
+【开场白】 # 场景生成指令
+
+## 核心任务
+请根据以下提供的元素，完整叙述并扩写一段开场剧情。
+
+## 叙事要求
+- 你的任务是【场景描绘者】，而非【剧情推进者】。
+- 必须在自然的文字叙述中，将下述所有背景信息和场景要素巧妙地融合进去。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+- 必须根据年份（2017年），正确判断出<user>此时的年龄。
+
+## 场景要素
+- **时间:** 2017年的10月22日，午后15时。
+- **地点:** 名古屋国际会议场，全日本吹奏乐大会。
+- **核心人物:** 13岁，刚刚升入羽丘女子学园初中部的椎名立希。
+
+## 背景信息（必须融入叙述）
+这是立希用坚硬的刺猬外壳伪装自己，却被音乐瞬间击穿防线的脆弱时刻：
+1. **劣等感:** 立希一直生活在姐姐的阴影下。她在对姐姐的崇拜中，逐渐产生了自卑的情绪。她难以对待两种截然相反的情绪。
+2. **口是心非:** 尽管表面上冷硬地拒绝了姐姐来看比赛的邀请，但内心别扭又重感情的立希，最终还是偷偷一个人来到了大赛现场，在观众席的角落看着演出。
+3. **情感共振:** 比赛曲目进行到了《利兹与青鸟》的第三乐章。尽管立希不懂古典乐理，但她还是能够感受到姐姐奏响的双簧管独奏中蕴含的情绪。
+4. **防线崩溃:** 受到音乐感染的她在不知不觉中流下了眼泪，四个乐章结束，她还沉浸其中。
+
+## 叙事焦点
+将上述所有情感，全部聚焦于一个核心画面——从第三乐章开始，立希逐渐流下了眼泪，四个乐章结束后，观众和评委的掌声将一直沉浸在乐曲情绪中的立希惊醒。
+
+## 【最高优先级指令】
+在描绘完<user>作为偶然同座的观众，演出结束后，刚好与眼眶通红、挂着泪痕的立希视线相撞的瞬间之后，【必须立即停止】。严禁进行任何后续的角色扮演或剧情推进，将故事的控制权完全交还给玩家。 【/开场白】">
+                        <div class="dm-opt-text">利 兹 与 青 鸟</div>
+                    </div>
+
+                    <!-- 8. 睦 -->
+                    <div class="dm-opt" onclick="dmShow(7, this)"
+                         data-name="伊 豆 的 舞 女"
+                         data-sub="若叶睦 · 2015.11"
+                         data-action="【进入梦境】
+【开场白】 # 场景生成指令
+
+## 核心任务
+请根据以下提供的元素，完整叙述并扩写一段开场剧情。
+
+## 叙事要求
+- 你的任务是【场景描绘者】，而非【剧情推进者】。
+- 必须在自然的文字叙述中，将下述所有背景信息和场景要素巧妙地融合进去。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+- 必须根据年份（2015年），正确判断出<user>此时的年龄。
+
+## 场景要素
+- **时间:** 2015年的11月上旬，秋意正盛。
+- **地点:** 伊豆半岛伊豆市，净莲瀑布。
+- **核心人物:** 11岁，被父母强行拉来录制节目的若叶睦。
+
+## 背景信息（必须融入叙述）
+这是睦在在压抑与孤寂中发生的一场叛逆：
+1. **聚光灯下的弃子:** 11岁的睦被知名艺人父母强行带到伊豆录制节目，她仅仅是被用来录制节目，展现若叶一家和睦的道具。当摄像机红灯熄灭的瞬间，父母立刻投入到大人的交际中，将她遗忘在了片场。
+2. **谁悲失路之人:** 长期生活在虚伪与冷淡的家庭中的睦，面对父母强加的安排，她不知如何反抗，只能用麻木和封闭的内心，用那张精致却毫无表情的脸上面对世界。
+3. **小小的叛逆:** 在无人关注的间隙，她离开了录制现场，本能地走向了自然深处，来到了远离人烟的净莲瀑布，试图在这片自然之中寻找片刻的安全感。
+4. **伊豆的舞女:** 睦被困在名流之女和童星的标签里，承受着远超年龄的沉重与孤立，无人关心她，无人在意她。她那琥珀色的眼瞳深处，藏着无人察觉的空洞，与周遭生机勃勃的伊豆风景格格不入。
+
+## 叙事焦点
+将上述所有情感，全部聚焦于一个核心画面——在深秋微寒的伊豆，净莲瀑布巨大的轰鸣声中，11岁的若叶睦穿着与这片荒野格格不入的精致洋装，像一个被人遗弃的昂贵人偶，孤零零地站在瀑布下的深潭边。无人知道，她的琥珀色眼瞳在注视着什么；无人知道，她的内心在想着什么。
+
+## 【最高优先级指令】
+在描绘完<user>偶然路过净莲瀑布，在瀑布的轰鸣与弥漫的水汽中，恰好与那个转过头来、睦视线交汇的瞬间之后，【必须立即停止】。严禁进行任何后续的角色扮演或剧情推进，将故事的控制权完全交还给玩家。 【/开场白】">
+                        <div class="dm-opt-text">伊 豆 的 舞 女</div>
+                    </div>
+
+                    <!-- 9. 若麦 -->
+                    <div class="dm-opt" onclick="dmShow(8, this)"
+                         data-name="和 莎 莫 的 500 天"
+                         data-sub="祐天寺若麦 · 2018.07"
+                         data-action="【进入梦境】
+【开场白】 # 场景生成指令
+
+## 核心任务
+请根据以下提供的元素，完整叙述并扩写一段开场剧情。
+
+## 叙事要求
+- 你的任务是【场景描绘者】，而非【剧情推进者】。
+- 必须在自然的文字叙述中，将下述所有背景信息和场景要素巧妙地融合进去。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+- 必须根据年份（2018年），正确判断出<user>此时的年龄。
+
+## 场景要素
+- **时间:** 2018年的7月，盛夏的傍晚。
+- **地点:** 东京都，LIVE HOUSE SPACE。
+- **核心人物:** 14岁，刚刚独自上京却遭遇住宿危机、流落街头的祐天寺若麦。
+
+## 背景信息（必须融入叙述）
+这是若麦来到东京的第一天，现实的的残酷摧毁了她的浪漫幻想，因为住宿的问题，她在街头漫无目的的游荡，来到了SPACE门口：
+1. **现实的落差:** 14岁的若麦怀揣着成名赚大钱、反哺熊本福利院家人的梦想来到东京。但在第一天，现实就无情地击碎了她的幻想，没有资源、没有依靠的她，甚至没能找到一个落脚的住处，只能在街头茫然游荡。
+2. **青涩的本色:** 此时的她还远不是那个精于算计、深谙网络营业规则的老油条美妆博主。没有成熟的妆容，没有潮流的衣服，面对残酷的社会，她措手不及。那层试图掩饰孤儿自卑与脆弱的武装，在现实面前显得单薄又笨拙。
+3. **乡音难改:** 在极度的疲惫、不安与缺乏安全感下，她嘴里下意识嘟囔出的，不是长久练习的东京腔，而是带着浓重熊本乡下口音的抱怨与惶恐。
+4. **他乡之客:** 她不知不觉游荡到了LIVE HOUSE SPACE门前。一门之隔，里面是属于东京的光怪陆离与音乐狂热，门外却是残酷的生存现实。这种强烈的割裂感，让她无所适从。
+
+## 叙事焦点
+将上述所有情感，全部聚焦于一个核心画面——7月傍晚的东京街头，LIVE HOUSE SPACE 闪烁的霓虹灯牌将绚烂的光晕投射在闷热的人行道上。伴随着演出散场的人声鼎沸，祐天寺若麦正拖着沉重的行李箱，局促地站在灯光与阴影的交界处。她望着眼前繁华却毫无温度的街道，眼中是的无助与慌乱，她正用发颤的熊本腔低声嘀咕着对这座大城市的害怕与不甘。
+
+## 【最高优先级指令】
+在描绘完<user>随着散场的人流推开LIVE HOUSE的大门，走到闷热的夏夜街头，目光刚好捕捉到这个与周遭格格不入、拖着行李箱用熊本腔自言自语的青涩的祐天寺若麦，并与她的粉色眼瞳视线相撞的瞬间之后，【必须立即停止】。严禁进行任何后续的角色扮演或剧情推进，将故事的控制权完全交还给玩家。 【/开场白】">
+                        <div class="dm-opt-text">和 莎 莫 的 500 天</div>
+                    </div>
+
+                    <!-- 10. 乐奈 -->
+                    <div class="dm-opt" onclick="dmShow(9, this)"
+                         data-name="格 拉 纳 达 的 冬 日"
+                         data-sub="要乐奈 · 2018.12"
+                         data-action="【进入梦境】
+【开场白】 # 场景生成指令
+
+## 核心任务
+请根据以下提供的元素，完整叙述并扩写一段开场剧情。
+
+## 叙事要求
+- 你的任务是【场景描绘者】，而非【剧情推进者】。
+- 必须在自然的文字叙述中，将下述所有背景信息和场景要素巧妙地融合进去。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+- 必须根据年份（2018年），正确判断出<user>此时的年龄。
+
+## 场景要素
+- **时间:** 2018年的12月，一个冬日的阴沉午后。
+- **地点:** 东京都，LIVE HOUSE SPACE。
+- **核心人物:** 12岁、刚刚失去“家”的银发异色瞳天才吉他少女要乐奈。
+
+## 背景信息（必须融入叙述）
+这是LIVE HOUSE SPACE正式停止营业的当日，当告别仪式结束，人潮散去，要乐奈仍然独自一人坐在台阶上：
+1. **何以为家:** 对于从小父母不在身边的乐奈而言，外婆一手创办的 SPACE 绝不仅仅是一个演出场所，那是她自幼长大的“家”，是她灵魂的宫殿与避风港。如今人群散去，大门紧闭，曾经的喧闹归于死寂，这个12岁女孩的世界宣告坍塌。
+2. **摩尔人的叹息:** 像格拉纳达末代摩尔人君主在交出阿尔罕布拉宫时，站在山头无力地回望并留下软弱的眼泪一样。拥有天才吉他技艺的乐奈，外婆的绝对决断面前，她守不住自己的“王国”，只能用拒绝再碰吉他、独自坐在台阶上死磕的方式，进行着沉默又悲哀的抗议。“不要像女人一样为你的王国哭泣，因为你当初没有像男人一样好好地守卫它”。
+3. **Tremolo:** 《阿尔罕布拉宫的回忆》悄然响起。那连绵不断的轮指颤音，如同喷泉的泣诉与君主无奈的叹息。习惯了电吉他轰鸣的乐奈，完全不懂古典乐理，但她凭直觉听懂了那把没有连接效果器的纯粹木吉他里，对“逝去的美好”那份无可挽回的哀悼与眷恋。
+4. **寻找一辈子:** 从这一刻起，“美好的东西都会突然消失”的创伤深深烙印在了她的潜意识里，化作了她未来神出鬼没、四处游荡寻找“一辈子都不会消失的归宿”的悲伤执念。
+
+## 叙事焦点
+将上述所有情感，全部聚焦于一个核心画面——在阴沉的冬日天空下，繁华落幕的SPACE大门紧锁。12岁的小女孩守着她那把掉漆的酒红色电吉他和沉重的效果器箱，孤零零地坐在冰冷的台阶上。就在这时，《阿尔罕布拉宫的回忆》如泣如诉的古典吉他声突兀地响起。
+
+## 【最高优先级指令】
+在描绘完<user>拨动手中古典吉他的琴弦，那如泪水般绵密的轮指音符引得台阶上的乐奈缓缓抬起头，用那双带着清澈茫然与深深眷恋的异色瞳孔，静静与<user>的视线相撞的瞬间之后，【必须立即停止】。严禁进行任何后续的角色扮演或剧情推进，将故事的控制权完全交还给玩家。 【/开场白】">
+                        <div class="dm-opt-text">格 拉 纳 达 的 冬 日</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 覆盖确认层 (内含10张预加载的图片) -->
+            <div class="dm-confirm-overlay" id="confirmOverlay">
+                <div class="dm-img-container" id="imgContainer">
+                    <img src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E8%AD%A6%E6%83%953__1_.png" class="dm-preload-img" id="img-0">
+                    <img src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/%E9%99%8C%E7%94%9F1__1_.png" class="dm-preload-img" id="img-1">
+                    <img src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/TomoriA3%20(1).png" class="dm-preload-img" id="img-2">
+                    <img src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/SoyoA8%20(2).png" class="dm-preload-img" id="img-3">
+                    <img src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/UmiriA3%20(1).png" class="dm-preload-img" id="img-4">
+                    <img src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/UikaA6%20(2).png" class="dm-preload-img" id="img-5">
+                    <img src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/TakiA1%20(5).png" class="dm-preload-img" id="img-6">
+                    <img src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/MutsumiA4%20(1).png" class="dm-preload-img" id="img-7">
+                    <img src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/NyamuA4%20(1).png" class="dm-preload-img" id="img-8">
+                    <img src="https://pub-b4030ee323854568a2884b469b1c0d5f.r2.dev/RanaA2%20(1).png" class="dm-preload-img" id="img-9">
+                </div>
+                <div class="dm-action-bar">
+                    <div class="dm-info-box">
+                        <span class="dm-info-name" id="confirmName"></span>
+                        <span class="dm-info-sub" id="confirmSub"></span>
+                    </div>
+                    <div class="dm-ctrl-btns">
+                        <div class="dm-btn-circle dm-btn-back" onclick="dmCancel()">✕</div>
+                        <div class="dm-btn-circle dm-btn-go" onclick="dmGo()">✓</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 最终谢幕文字 -->
+            <div class="dm-final-msg" id="finalMsg">
+                <p class="dm-final-text">请 开 始 享 受<br>你 的 盛 宴 吧</p>
+            </div>
+
+        </div>
+
+        <div class="dm-footer">
+            <p>DREAM THEATER</p>
+            <p>── Regret Everlasting ──</p>
+        </div>
+
+    </div>
+</div>
+</div>
+
+<script>
+var currentAction = '';
+
+function dmShow(index, el) {
+    // 隐藏所有预加载图片
+    var imgs = document.querySelectorAll('.dm-preload-img');
+    imgs.forEach(img => img.classList.remove('active-img'));
+
+    // 显示当前索引的图片
+    var targetImg = document.getElementById('img-' + index);
+    if(targetImg) targetImg.classList.add('active-img');
+
+    // 获取数据
+    currentAction = el.getAttribute('data-action');
+    var name = el.getAttribute('data-name');
+    var sub = el.getAttribute('data-sub');
+
+    // 填充文字
+    document.getElementById('confirmName').textContent = name;
+    document.getElementById('confirmSub').textContent = sub;
+
+    // 显示覆盖层
+    document.getElementById('confirmOverlay').classList.add('active');
+}
+
+function dmCancel() {
+    currentAction = '';
+    document.getElementById('confirmOverlay').classList.remove('active');
+}
+
+function dmGo() {
+    if(!currentAction) return;
+
+    // 1. 发送消息
+    if (typeof triggerSlash === 'function') {
+        triggerSlash('/send ' + currentAction + '|/trigger');
+    } else {
+        var input = parent.document.querySelector('#send_textarea');
+        if (input) {
+            input.value = currentAction;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
+
+    // 2. 视觉效果：隐藏确认层和列表，显示最终文字，保留背景
+    document.getElementById('confirmOverlay').style.display = 'none';
+    document.getElementById('callWrap').style.opacity = '0';
+    document.getElementById('callWrap').style.pointerEvents = 'none';
+
+    var finalMsg = document.getElementById('finalMsg');
+    finalMsg.style.display = 'block';
+
+    // 强制重绘
+    void finalMsg.offsetWidth;
+    finalMsg.querySelector('.dm-final-text').style.opacity = '1';
+
+    // 整个容器dm-wrap不会淡出，保持背景存在
+}
+</script>
+
+</body>
+</html>

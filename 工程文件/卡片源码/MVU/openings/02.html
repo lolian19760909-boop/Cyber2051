@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>body {
+  font-family: var(--cxx-font-ui);
+}
+
+.sk-wrap {
+  position: relative;
+  max-width: 600px;
+  margin: 10px auto;
+  --cp-ink: var(--cxx-ink);
+  --cp-panel: var(--cxx-panel);
+  --cp-panel-hi: var(--cxx-raised);
+  --cp-line: var(--cxx-line);
+  --cp-cyan: var(--cxx-cyan);
+  --cp-red: var(--cxx-red);
+  --cp-amber: var(--cxx-yellow);
+  --cp-text: var(--cxx-text);
+  --cp-muted: var(--cxx-muted);
+  font-family: var(--cxx-font-ui);
+  color: var(--cp-text);
+}
+
+.sk-card {
+  position: relative;
+  overflow: hidden;
+  padding: 32px;
+  background: radial-gradient(ellipse at 50% -18%,color-mix(in srgb, var(--cxx-narrative-panel) 50%, transparent),transparent 62%),repeating-linear-gradient(0deg,transparent 0 31px,color-mix(in srgb, var(--cxx-red) 2.20%, transparent) 31px 32px),var(--cp-ink);
+  border: 1px solid var(--cp-line);
+  border-left: 3px solid var(--cp-red);
+  border-radius: 2px;
+  box-shadow: 0 18px 46px color-mix(in srgb, var(--cxx-shadow) 42%, transparent),inset 0 1px color-mix(in srgb, var(--cxx-red) 18.00%, transparent);
+}
+
+.sk-bg-img {
+  position: absolute;
+  top: -20px;
+  right: -60px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: .16;
+  mix-blend-mode: screen;
+  filter: saturate(.4) contrast(1.1) hue-rotate(-18deg);
+  mask-image: linear-gradient(to bottom,black 45%,transparent 92%);
+  height: 100%;
+  width: 300px;
+  object-fit: cover;
+  object-position: top;
+}
+
+.sk-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--cp-line);
+}
+
+.sk-date {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--cp-amber);
+  font-family: var(--cxx-font-mono);
+  font-style: normal;
+}
+
+.sk-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: color-mix(in srgb, var(--cxx-cyan) 8.00%, transparent);
+  color: var(--cp-cyan);
+  border: 1px solid var(--cp-line);
+  border-radius: 2px;
+}
+
+.sk-body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sk-polaroid {
+  align-self: flex-start;
+  padding: 8px 8px 24px 8px;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--cxx-shadow) 10%, transparent);
+  transform: rotate(-2deg);
+  border: 1px solid var(--cxx-line);
+  margin: 0 auto 10px auto;
+  transition: transform 0.3s ease;
+  background: color-mix(in srgb, var(--cxx-ink) 93%, transparent);
+  backdrop-filter: blur(3px);
+}
+
+.sk-polaroid:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+.sk-polaroid img {
+  display: block;
+  width: 200px;
+  height: auto;
+  filter: sepia(0.1);
+}
+
+.sk-tape {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 60px;
+  height: 20px;
+  background: color-mix(in srgb, var(--cxx-cyan) 40%, transparent);
+  transform: translateX(-50%) rotate(3deg);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--cxx-shadow) 10%, transparent);
+  color: var(--cp-cyan);
+  text-shadow: none;
+}
+
+.sk-text p {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  line-height: 1.8;
+  text-align: justify;
+  text-indent: 0;
+  color: var(--cp-text);
+}
+
+.sk-highlight {
+  font-weight: 700;
+  color: var(--cp-cyan);
+  border-bottom: 1px dotted var(--cp-cyan);
+}
+
+.sk-divider {
+  height: 1px;
+  margin: 8px 0 16px 0;
+  background: var(--cp-line);
+}
+
+.sk-btn-area {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.sk-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  color: var(--cp-ink);
+  background: var(--cp-cyan);
+  border: 1px solid var(--cp-cyan);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cxx-cyan) 22.00%, transparent);
+  text-shadow: none;
+}
+
+.sk-btn:hover {
+  transform: translateY(-2px);
+  background: var(--cxx-cyan);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--cxx-cyan) 12.00%, transparent),0 6px 20px color-mix(in srgb, var(--cxx-cyan) 15.00%, transparent);
+  color: var(--cp-ink);
+}
+
+.sk-btn:active {
+  transform: translateY(0);
+}
+
+.sk-card::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.sk-paper::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.sk-book::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.sk-board::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.sk-notebook::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.sk-container::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+.sk-journal::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent 15%,color-mix(in srgb, var(--cxx-red) 8.00%, transparent) 34%,color-mix(in srgb, var(--cxx-red) 75.00%, transparent) 50%,color-mix(in srgb, var(--cxx-cyan) 55.00%, transparent) 53%,transparent 68%);
+  background-size: 220% 100%;
+  animation: cp-alt-flow 12s linear infinite;
+}
+
+@keyframes cp-alt-flow {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .sk-wrap * {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .sk-wrap *::before {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+
+  .sk-wrap *::after {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+}
+
+.sk-text strong {
+  color: var(--cp-amber);
+}
+
+button.sk-btn {
+  font-family: inherit;
+  line-height: inherit;
+  appearance: none;
+  min-height: 44px;
+}
+
+.sk-btn:focus-visible {
+  outline: 2px solid var(--cp-cyan,var(--cxx-line));
+  outline-offset: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="sk-wrap">
+    <div class="sk-card">
+        <!-- 背景图 -->
+        <img class="sk-bg-img" src="https://cyber2051.top/img/%E4%B8%B0%E5%B7%9D%E7%A5%A5%E5%AD%90%2FSaki_%E5%8D%88%E5%A4%9C%E5%B0%8F%E5%B7%B7.png" alt="Saki-Background">
+
+        <!-- 顶部信息 -->
+        <div class="sk-header">
+            <span class="sk-date">December, 2050</span>
+            <div style="flex:1"></div>
+            <span class="sk-tag">#Scene 01</span>
+            <span class="sk-tag">#Sakiko</span>
+        </div>
+
+        <div class="sk-body">
+            <!-- 自然叙述文字 -->
+            <div class="sk-text">
+                <p><strong>23:47</strong>，赤羽的雨夜。</p>
+                <div class="sk-divider"></div>
+                <p>祥子拉紧兜帽，穿过霓虹灯下的小巷。确保没有人跟着后，她回到了自己的廉价出租屋，清点今天的收获。出租屋的墙上，祥子已经将丰川家的关系网画满了红线。她在筹备着Mujica的组建，也在思考着该如何一步步向丰川家复仇......</p>
+            </div>
+
+            <!-- 启动按钮 -->
+            <div class="sk-btn-area">
+                <button type="button" class="sk-btn" onclick="startSakikoScene()">
+                    ▶ 开始
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function startSakikoScene() {
+    // 已经更新为Master要求的详细剧情Prompt
+    const promptText = `【开始】【开场白】
+# 场景生成指令
+
+## 核心任务
+请根据以下提供的元素，完整叙述并扩写一段开场剧情。
+
+## 叙事要求
+- 你的任务是【场景描绘者】，而非【剧情推进者】。
+- 必须在自然的文字叙述中，将下述所有背景信息和场景要素巧妙地融合进去。
+- 本次输出正文字数上限不做限制，在保证行文节奏的基础上，直到创作完包含以下全部信息的开场白。
+
+## 场景要素
+- **时间:** 2050年12月末，深夜，23:47。
+- **地点:** 赤羽街区 → 廉价出租屋。
+- **核心人物:** 丰川祥子（无证黑户；2050年6月底退出CRYCHIC后，独自在赤羽的黑灰地带求生）。
+
+## 剧情走向（必须严格执行）
+1. **夜活归途:** 祥子做完一单搬运货物的小活，拉紧兜帽走进雨里，沿着霓虹下的巷口独自返程。
+2. **全程警戒:** 她不断扫过身后的人影，确认无人跟踪。对她这样的少女来说，警惕是活下来的本钱。
+3. **复仇名单:** 出租屋的墙上是她拼贴而成的丰川家的关系网，上面的名字已经被她用红线一个个圈过了。
+4. **冷静的决心:** 她心底有着清晰的目标：爬上东京都的顶端，向丰川家复仇。
+
+## 【最高优先级指令】
+在描绘完祥子的内心活动后，【必须立即停止】。严禁进行任何后续的角色扮演或剧情推进，将故事的控制权完全交还给玩家。【/开场白】`;
+
+    // 使用 |/trigger 触发自动回复
+    return parent.Cxx236OpeningHost.submitPreview(window, '/send ' + promptText + '|/trigger');
+}
+</script>
+</body>
+</html>

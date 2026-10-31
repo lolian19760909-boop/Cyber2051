@@ -1,0 +1,96 @@
+(function(root,factory){const value=factory();if(typeof module==='object'&&module.exports)module.exports=value;else root.CxxReroll=value;})(globalThis,function(){
+ 'use strict';
+ const MVU='07d0d1a7-897e-4a2d-adb4-e95d360e6ba2';
+ function create({api,top,runtime}){
+  const ctx=()=>api.SillyTavern.getContext(),scope=()=>JSON.stringify([ctx().characters?.[ctx().characterId]?.avatar,ctx().getCurrentChatId()]);
+  let flight=null,recovery=null,disposed=false,off;const menus=new Map(),Popover=api.CxxPopover||top.CxxPopover;let menuMode=top.CxxVariableMode?.read().mode;
+  function hideMenu(menu){const actions=menus.get(menu);if(!actions)return;Popover?.hide(actions);if(actions.parentNode!==menu)menu.append(actions);}
+  function showMenu(menu){const actions=menus.get(menu);if(!actions)return;for(const other of menus.keys())if(other!==menu&&other.open){other.open=false;hideMenu(other);}
+   if(!Popover?.show(actions))top.document.body.append(actions);
+   const vv=top.visualViewport,width=vv?.width||top.innerWidth,height=vv?.height||top.innerHeight,left=vv?.offsetLeft||0,offset=vv?.offsetTop||0,rect=menu.querySelector('summary').getBoundingClientRect(),w=Math.min(310,width-32);
+   Object.assign(actions.style,{position:'fixed',inset:'auto',margin:'0',boxSizing:'border-box',width:w+'px',maxHeight:Math.max(44,height-32)+'px',overflow:'auto',zIndex:'2147482000',left:Math.max(left+16,Math.min(left+width-w-16,rect.right-w))+'px'});
+   actions.style.top=Math.max(offset+16,Math.min(offset+height-actions.getBoundingClientRect().height-16,rect.bottom+6))+'px';
+  }
+  const dismiss=event=>{for(const [menu,actions]of menus)if(menu.open&&!menu.contains(event.target)&&!actions.contains(event.target)){menu.open=false;hideMenu(menu);}};
+  const escape=event=>{if(event.key!=='Escape')return;for(const menu of menus.keys())if(menu.open){menu.open=false;hideMenu(menu);menu.querySelector('summary')?.focus();event.preventDefault();}};
+  function clearMenus(){for(const [menu,actions]of menus){hideMenu(menu);actions.remove();menu.remove();}menus.clear();}
+  const style=top.document?.createElement('style');if(style)style.textContent=`
+  [data-cxx-reroll],.cxx-native-gal,.cxx-reroll-actions{--rr-accent:#ff4c78;--rr-bg:#17131c;--rr-line:#78304b;--rr-text:#f5edf1;font-family:Rajdhani,"Microsoft YaHei",sans-serif;font-size:15px;text-shadow:none;box-sizing:border-box}
+  html[data-cxx-theme="yellow"] :is([data-cxx-reroll],.cxx-native-gal,.cxx-reroll-actions){--rr-accent:#f3e63f;--rr-bg:#11120c;--rr-line:#716d27;--rr-text:#f5f3df}
+  html[data-cxx-theme="night"] :is([data-cxx-reroll],.cxx-native-gal,.cxx-reroll-actions){--rr-accent:#71d4d7;--rr-bg:#0c1218;--rr-line:#324b58;--rr-text:#dce8ed}
+  [data-cxx-reroll]{position:relative;color:var(--rr-text);text-align:left}
+  [data-cxx-reroll] summary{cursor:pointer;list-style:none;padding:9px 14px;min-height:44px;box-sizing:border-box;color:var(--rr-accent);border:1px solid var(--rr-line);background:var(--rr-bg)}
+  [data-cxx-reroll] summary::after{content:" ▾"} [data-cxx-reroll][open] summary::after{content:" ▴"}
+  .cxx-reroll-actions{position:absolute;right:0;z-index:20;width:min(310px,calc(100vw - 32px));padding:6px;background:var(--rr-bg);border:1px solid var(--rr-line);box-shadow:0 8px 28px #0009;display:grid;gap:4px;box-sizing:border-box}
+  [data-cxx-reroll] button,.cxx-reroll-actions button,.cxx-native-gal{appearance:none;cursor:pointer;min-height:44px;padding:10px 14px;border:1px solid var(--rr-line);background:var(--rr-bg);color:var(--rr-text);font:inherit;text-shadow:none;white-space:normal;text-align:left;line-height:1.5;border-radius:2px}
+  [data-cxx-reroll] button:hover,.cxx-reroll-actions button:hover,.cxx-native-gal:hover{border-color:var(--rr-accent);color:var(--rr-accent)}
+  [data-cxx-reroll] :focus-visible,.cxx-reroll-actions :focus-visible,.cxx-native-gal:focus-visible{outline:2px solid var(--rr-accent);outline-offset:2px}
+  [data-cxx-reroll] button:disabled,.cxx-reroll-actions button:disabled{opacity:.5;cursor:wait}.cxx-native-gal{display:block;margin:16px 0 6px;border-left:3px solid var(--rr-accent)}
+  @media(max-width:600px){.cxx-reroll-actions{position:fixed;right:16px;left:16px;bottom:80px;width:auto;max-height:60dvh;overflow:auto}[data-cxx-reroll] summary{padding:8px 10px}}
+  `;
+  function paintBusy(){for(const menu of (top.document?.querySelectorAll('[data-cxx-reroll]')||[])){menu.setAttribute('aria-busy',String(!!flight));menu.querySelector('summary').textContent=flight?'正在重跑…':'重跑';menu.querySelectorAll('button').forEach(b=>b.disabled=!!flight);}}
+  async function enterGal(){const prefs=top.Cxx236Preferences;if(!prefs||!top.__cxx_gal_g1__)throw Error('Gal 阅读正在准备，请稍后再试。');await prefs.save({...prefs.read(),gal:true});top.__cxx_gal_g1__.open();}
+
+  const current=key=>{if(disposed||key!==scope())throw Error('故事已切换，原操作结果不会写入新故事。');};
+  const idle=()=>{if(ctx().isGenerating||api.builtin?.duringGenerating?.())throw Error('正文或变量仍在处理，请先等待完成或使用酒馆停止。');};
+  async function run(kind,floor=ctx().chat.length-1){
+   if(flight)return flight;if(!Number.isInteger(floor))floor=ctx().chat.length-1;if(!['rewrite','mvu','reprocess'].includes(kind))throw Error('未知重跑操作。');
+   const work=async()=>{idle();let key=scope();const rows=ctx().chat,row=rows[floor];if(!row||row.is_user||row.is_system||floor<1)throw Error('请选择已有正文的助手楼层。');
+    const stories=top.__cxx_stories__;if(!stories)throw Error('存档服务尚未就绪，稍后重试。');
+    if(floor!==rows.length-1){if(!top.confirm('从第 '+floor+' 层创建新路线并重跑？原故事及后续正文保留。'))return false;await stories.store.branchAt(floor);key=scope();}
+    const target=ctx().chat.at(-1),oldSwipe=target.swipe_id||0;
+    // A disk-verified checkpoint exists before either host operation mutates a reply.
+    recovery={key,point:await stories.store.point('重跑前 · 第 '+floor+' 层')};current(key);
+    const receiptBefore=top.Cxx236VariableGuard?.state?.().receiptSequence||0;
+    let done=0;const event='mag_variable_update_ended',mark=()=>done++;api.eventOn?.(event,mark);
+    try{
+     if(kind==='rewrite'){
+      if(typeof ctx().swipe?.to!=='function')throw Error('当前宿主未提供回复分支接口，请使用原生重生成。');
+      const length=target.swipes?.length||1;
+      await ctx().swipe.to(null,'right',{forceSwipeId:length,forceDuration:0});current(key);
+      if(ctx().chat.at(-1)===target&&(target.swipe_id||0)===oldSwipe||!(ctx().chat.at(-1)?.mes||'').trim())throw Error('宿主未完成新回复，可重试；旧分支与恢复点均保留。');
+     }else{
+      const name=kind==='mvu'&&top.CxxVariableMode?.read().mode!=='main'?'重试额外模型解析':'重新处理变量';
+      const bridge=top.CxxMvuRepair;
+      if(bridge?.run)await bridge.run(name);
+      else {
+        const button=(api.getAllEnabledScriptButtons?.()||{})[MVU]?.find(x=>x.button_name===name);
+        if(!button?.button_id||!api.eventEmit)throw Error('MVU 恢复入口尚未就绪；请等待脚本加载，或检查运行诊断。');
+        await api.eventEmit(button.button_id);
+      }
+      current(key);
+     }
+     // Some hosts resolve native generation before their extra-model listener starts.
+     for(let i=0;i<3;i++){current(key);await new Promise(r=>top.setTimeout(r,150));}
+     if(!done)throw Error('正文操作已返回，但 MVU 未报告结算完成；请检查模型配置后仅重跑 MVU，或恢复重跑前存档。');
+     const guard=top.Cxx236VariableGuard?.state?.()||api.Cxx236VariableGuard?.state?.(),receipt=guard?.receipt;
+     if(receipt?.phase==='rejected')throw Error('变量结算尚未成功：'+receipt.message);
+     if(kind!=='rewrite'&&guard?.receiptSequence!==undefined&&(!receipt||receipt.revision<=receiptBefore||!['applied','saved'].includes(receipt.phase)))throw Error(receipt?.message||'未收到当前楼层本次变量处理的有效回执；重跑前存档已保留。');
+     if(!receipt&&guard?.lastError)throw Error('变量结算尚未成功：'+guard.lastError);
+     // Native generation can resolve before source persistence and the host's
+     // post-generation quiet period. Save only after those same-round writers finish.
+     const deadline=Date.now()+30000;
+     while(true){current(key);const bridge=top.CxxContextBridge?.status?.(),source=top.CxxContext?.status?.();if(bridge?.error)throw Error(bridge.error.message||'回复来源尚未保存，请核对保存结果。');
+      if(!top.Cxx233Updater?.host?.getContext?.().busy&&!bridge?.session&&!source?.pending)break;
+      if(Date.now()>=deadline)throw Error('本轮来源与保存仍在处理，请等待完成后核对保存；重跑前恢复点已保留。');
+      await new Promise(r=>top.setTimeout(r,100));
+     }
+     current(key);await stories.store.flush();current(key);runtime.invalidateSnapshots();runtime.scheduleMessages();top.dispatchEvent(new top.CustomEvent('cxx-content-changed'));
+     return {kind,floor:ctx().chat.length-1,swipe:ctx().chat.at(-1).swipe_id||0,recovery:recovery.point.chatId};
+    }finally{api.eventRemoveListener?.(event,mark);}
+   };
+   flight=(top.__cxx_operations__?top.__cxx_operations__.run('reroll',kind==='rewrite'?'重写本轮':kind==='mvu'&&top.CxxVariableMode?.read().mode!=='main'?'重新分析本层变量':'重新处理本层变量指令',work):work()).finally(()=>{flight=null;paintBusy();});paintBusy();return flight;
+  }
+  function attach(){if(disposed)return;for(const [menu,actions]of menus)if(!menu.isConnected){Popover?.hide(actions);actions.remove();menus.delete(menu);}const index=ctx().chat.length-1,row=ctx().chat[index];if(!row||row.is_user||index<1)return;const mes=top.document.querySelector('.mes[mesid="'+index+'"]'),parent=mes?.querySelector('.mes_buttons');if(!parent)return;
+   top.document.querySelectorAll('.cxx-native-gal').forEach(n=>{if(!mes.contains(n))n.remove();});
+   if(!mes.querySelector('.cxx-native-gal')){const gal=top.document.createElement('button');gal.type='button';gal.className='cxx-native-gal';gal.textContent='进入 Gal 阅读 →';gal.onclick=()=>{gal.disabled=true;void enterGal().catch(e=>top.toastr?.error(e.message,'阅读模式')).finally(()=>gal.disabled=false);};mes.querySelector('.mes_text')?.after(gal);}
+   if(parent.querySelector('[data-cxx-reroll]'))return;const menu=top.document.createElement('details');menu.dataset.cxxReroll='1';const title=top.document.createElement('summary');title.textContent='重跑';menu.append(title);const actions=top.document.createElement('div');actions.className='cxx-reroll-actions';menu.append(actions);
+   menus.set(menu,actions);menu.addEventListener('toggle',()=>menu.open?showMenu(menu):hideMenu(menu));
+   for(const [kind,label]of [['rewrite','重写本轮'],['reprocess','重新处理变量'],...(top.CxxVariableMode?.read().mode!=='main'?[['mvu','重新分析变量']]:[]),['restore','恢复重跑前']]){const b=top.document.createElement('button');b.type='button';b.textContent=label;b.onclick=()=>{if(flight)return;menu.open=false;hideMenu(menu);b.disabled=true;void (kind==='restore'?restore():run(kind,index)).catch(e=>top.toastr?.error(e.message,'重跑')).finally(()=>{b.disabled=false;paintBusy();});};actions.append(b);}parent.append(menu);paintBusy();}
+  async function restore(){if(flight)throw Error('请先停止并等待本次重跑结束。');if(!recovery||recovery.key!==scope())throw Error('本故事尚无重跑恢复点，请从存档页选择。');return top.__cxx_stories__.store.restore(recovery.point.chatId);}
+  const reposition=()=>{for(const menu of menus.keys())if(menu.open)showMenu(menu);};
+  const modeChanged=()=>{const next=top.CxxVariableMode?.read().mode;if(next===menuMode)return;menuMode=next;clearMenus();attach();};
+  const service={run,restore,busy:()=>!!flight,start(){top.document.head.append(style);top.CxxReroll=service;top.addEventListener("cxx-variable-mode-changed",modeChanged);top.document.addEventListener?.('pointerdown',dismiss,true);top.document.addEventListener?.('keydown',escape,true);top.addEventListener('resize',reposition);top.document.addEventListener?.('scroll',reposition,true);top.visualViewport?.addEventListener('resize',reposition);off=runtime.watchMessages(attach);attach();return service;},destroy(){disposed=true;clearMenus();style.remove();top.document.querySelectorAll('.cxx-native-gal').forEach(n=>n.remove());top.removeEventListener("cxx-variable-mode-changed",modeChanged);top.document.removeEventListener?.('pointerdown',dismiss,true);top.document.removeEventListener?.('keydown',escape,true);top.removeEventListener('resize',reposition);top.document.removeEventListener?.('scroll',reposition,true);top.visualViewport?.removeEventListener('resize',reposition);off?.();if(top.CxxReroll===service)delete top.CxxReroll;}};return service;
+ }
+ return {create,MVU};
+});

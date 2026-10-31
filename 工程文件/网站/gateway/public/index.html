@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>留言墙 · 东京都2051</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/workshop/theme.css?v=motion20261027"><script src="/workshop/theme-runtime.js?v=motion20261027"></script><script>CxxThemeRuntime.install(window);</script><link rel="stylesheet" href="/site.css?v=motion20261027"><link rel="stylesheet" href="/workshop/poster-system.css?v=motion20261027">
+<script src="/i18n.js?v=site-accounts-20261031"></script>
+<script src="/user.js?v=account-ui-20261031"></script>
+<script src="/workshop/site-ui.js?v=motion20261027" defer></script>
+<script src="/workshop/bug-report.js?v=bugfeedback20261006" defer></script>
+<style>
+.bug-report { margin-top:48px; padding:26px; }
+.bug-report textarea { min-height:220px; }
+.bug-previews { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:16px; margin:20px 0; }
+.bug-previews figure { margin:0; min-width:0; }
+.bug-previews img { width:100%; max-height:240px; object-fit:contain; }
+.bug-previews figcaption { font-size:12px; overflow-wrap:anywhere; margin-top:8px; }
+</style></head>
+<body class="site feedback-page poster-theme">
+<a class="skip-link" href="#main" data-ui-zh="跳到内容" data-ui-en="Skip to content" data-ui-ja="本文へ移動">跳到内容</a>
+<header class="site-header">
+  <div class="bar">
+    <a class="logo" href="/"><span class="cube"></span>TOKYO 2051</a>
+    <nav class="nav">
+      <a href="/" data-i18n="nav.home">首页</a><a href="/recent.html" data-ui-zh="近期详情" data-ui-en="Latest details" data-ui-ja="最近の情報">近期详情</a><a href="/play/" data-ui-zh="开始游玩" data-ui-en="Play now" data-ui-ja="プレイする">开始游玩</a>
+      <a href="/workshop.html" data-i18n="nav.ws">创意工坊</a>
+      <a class="on" href="/workshop/" data-i18n="nav.fb">留言墙</a>
+      <a href="/recent.html#download" data-i18n="nav.dl">卡下载</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+<div class="page-register" aria-hidden="true"><span>02 / COMMUNITY</span><span>TOKYO 2051</span></div>
+  <header class="page-masthead"><h1 class="page-title" data-i18n="fb.title">留言墙</h1>
+  <p data-ui-zh="留言审核后公开。" data-ui-en="Messages appear after review." data-ui-ja="メッセージは審査後に公開されます。">留言审核后公开。</p></header>
+  <div class="feedback-layout">
+    <section class="panel feedback-compose" aria-labelledby="write-title">
+      <h2 id="write-title" class="form-section-title" data-ui-zh="留下你的想法" data-ui-en="Leave a message" data-ui-ja="メッセージを書く">留下你的想法</h2>
+      <div id="fblogin" class="toolbar login-actions">
+        <span id="fb-loginstate" class="meta" role="status" aria-live="polite">正在检查登录状态……</span>
+        <button id="fbloginbtn" class="btn sm" data-i18n="sub.login.btn">登录 / 注册</button>
+        <button id="fb-cancel-login" class="btn sm ghost" hidden data-ui-zh="取消登录" data-ui-en="Cancel login" data-ui-ja="ログインを中止">取消登录</button>
+        <button id="fb-logout" class="btn sm ghost" hidden data-ui-zh="退出登录" data-ui-en="Sign out" data-ui-ja="ログアウト">退出登录</button>
+      </div>
+      <label class="fld" for="nick" data-i18n="fb.nick">昵称（可选，最多 24 字）</label>
+      <input id="nick" maxlength="24" autocomplete="nickname" data-ui-ph-zh="匿名" data-ui-ph-en="Anonymous" data-ui-ph-ja="匿名">
+      <label class="fld" for="body" data-i18n="fb.body">想说的话（必填，最多 500 字）</label>
+      <textarea id="body" maxlength="500" required data-ui-ph-zh="游玩体验、bug 报告、建议……" data-ui-ph-en="Play reports, bugs, suggestions…" data-ui-ph-ja="感想、不具合、ご要望など…"></textarea>
+      <div id="body-count" class="field-counter" aria-live="off">0 / 500</div>
+      <div class="toolbar"><button id="send" class="btn" data-i18n="fb.send" disabled>提交留言</button></div>
+      <p id="msg" class="msg" role="status" aria-live="polite"></p>
+      <p class="hint" data-i18n="fb.hint">每 10 分钟最多提交 3 条；请勿留下个人隐私。</p>
+    </section>
+    <section class="feedback-stream" aria-labelledby="wall-title">
+      <div class="list-toolbar"><h2 id="wall-title" class="form-section-title" data-ui-zh="最近留言" data-ui-en="Recent messages" data-ui-ja="最近のメッセージ">最近留言</h2><button id="wall-refresh" class="btn sm ghost" data-ui-zh="刷新" data-ui-en="Refresh" data-ui-ja="更新">刷新</button></div>
+      
+      <p id="wall-msg" class="msg" role="status" aria-live="polite"></p>
+      <button id="wall-retry" class="btn sm ghost" hidden data-i18n="common.retry">重试</button>
+      <div id="list" aria-busy="true"><div class="empty" data-i18n="common.reading">读取中……</div></div>
+      <nav class="pagination" aria-label="留言翻页 / Message pages / メッセージページ">
+        <button id="wall-prev" class="btn ghost" disabled data-ui-zh="上一页" data-ui-en="Previous" data-ui-ja="前へ">上一页</button>
+        <span id="wall-page" class="meta"></span>
+        <button id="wall-next" class="btn ghost" disabled data-ui-zh="下一页" data-ui-en="Next" data-ui-ja="次へ">下一页</button>
+      </nav>
+    </section>
+  </div>
+  <section id="bug-report" class="panel bug-report" aria-labelledby="bug-title">
+    <h2 id="bug-title" class="form-section-title" data-ui-zh="BUG 反馈收集" data-ui-en="Report a bug" data-ui-ja="不具合報告">BUG 反馈收集</h2>
+    <p data-ui-zh="反馈无需审核即可送达管理员。文本与图片仅管理员可见，不会显示在公开留言墙。" data-ui-en="Reports go directly to administrators without review. Your text and images are private and will not appear on the public wall." data-ui-ja="報告は審査なしで管理者に届きます。本文と画像は管理者のみ閲覧でき、公開ボードには表示されません。">反馈无需审核即可送达管理员。文本与图片仅管理员可见，不会显示在公开留言墙。</p>
+    <p id="bug-copy-hint" class="hint" data-ui-zh="请提交完整的 BUG 文本与图片。正文复制示例：点开小铅笔，将完整的标签内容一并复制。" data-ui-en="Please include the complete bug text and screenshots. To copy the response text: open the pencil edit button and copy the entire content, including all tags." data-ui-ja="不具合の全文と画像を添えてください。本文のコピー例：鉛筆の編集ボタンを開き、タグを含む内容をすべてコピーしてください。">请提交完整的 BUG 文本与图片。正文复制示例：点开小铅笔，将完整的标签内容一并复制。</p>
+    <p id="bug-login-note" class="hint"><a href="#fblogin" data-ui-zh="请先使用上方的 登录 / 注册，再提交 BUG 反馈。" data-ui-en="Sign in above to submit a bug report." data-ui-ja="上部からログインして不具合を報告してください。">请先使用上方的 登录 / 注册，再提交 BUG 反馈。</a></p>
+    <form id="bug-form">
+      <label class="fld" for="bug-body" data-ui-zh="BUG 描述与完整文本（必填，最多 100000 字）" data-ui-en="Bug description and complete text (required, up to 100000 characters)" data-ui-ja="不具合の説明と全文（必須、100000文字まで）">BUG 描述与完整文本（必填，最多 100000 字）</label>
+      <textarea id="bug-body" rows="10" maxlength="100000" required aria-describedby="bug-copy-hint"></textarea>
+      <div id="bug-count" class="field-counter">0 / 100000</div>
+      <label class="fld" for="bug-images" data-ui-zh="BUG 图片（可选，最多 4 张）" data-ui-en="Screenshots (optional, up to 4)" data-ui-ja="不具合の画像（任意、4枚まで）">BUG 图片（可选，最多 4 张）</label>
+      <input id="bug-images" type="file" accept="image/png,image/jpeg,image/webp" multiple aria-describedby="bug-image-hint">
+      <p id="bug-image-hint" class="hint" data-ui-zh="支持 PNG、JPG、WebP；每张最多 5 MiB，合计最多 12 MiB。每 10 分钟最多提交 3 条反馈。" data-ui-en="PNG, JPG or WebP; up to 5 MiB per image and 12 MiB total. Up to 3 reports per 10 minutes." data-ui-ja="PNG・JPG・WebP対応。1枚5MiB、合計12MiBまで。報告は10分間に3件までです。">支持 PNG、JPG、WebP；每张最多 5 MiB，合计最多 12 MiB。每 10 分钟最多提交 3 条反馈。</p>
+      <div id="bug-previews" class="bug-previews"></div>
+      <button id="bug-send" class="btn" type="submit" disabled data-ui-zh="提交私密 BUG 反馈" data-ui-en="Submit private bug report" data-ui-ja="非公開の不具合報告を送信">提交私密 BUG 反馈</button>
+      <p id="bug-message" class="msg" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="fline"><span data-i18n="footer.line">CYBER2051.TOP · 粉丝二创作品，与官方无关</span></div>
+</footer>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const feedbackStrings=new Map();
+const FL=(zh,en,ja)=>{const lang=window.CXXI18N?.current()||'zh';const value=window.CXXUI?.t?window.CXXUI.t(zh,en,ja):lang==='en'?en:lang==='ja'?ja:zh;feedbackStrings.set(value,[zh,en,ja]);return value;};
+let fbName=null,fbLoginPending=false,sending=false,listLoading=false,listItems=[],pageIndex=0,nextCursor=false,listRequest=0,listAbort;
+function say(message,kind=''){$('msg').textContent=message;$('msg').className='msg '+kind;}
+function renderLogin(){
+  $('fb-loginstate').textContent=fbName?FL('已登录：','Signed in: ','ログイン中：')+fbName:FL('登录后可提交；游客可以浏览和先写草稿。','Sign in to submit. Visitors can browse and write a draft.','提出にはログインが必要です。閲覧と下書きはログインなしでできます。');
+  $('fbloginbtn').hidden=Boolean(fbName);$('fb-logout').hidden=!fbName;$('send').disabled=sending||!fbName;
+}
+function renderList(){
+  const box=$('list');box.replaceChildren();
+  if(!listItems.length){const e=document.createElement('div');e.className='empty';e.textContent=FL('还没有已展示的留言。欢迎留下第一条。','No published messages yet. Leave the first one.','公開メッセージはまだありません。最初の投稿をどうぞ。');box.append(e);}
+  const visible=listItems.slice(pageIndex*24,(pageIndex+1)*24);
+  nextCursor=(pageIndex+1)*24<listItems.length;
+  for(const it of visible){
+    const card=document.createElement('article');card.className='card feedback-card';
+    const meta=document.createElement('div');meta.className='meta';meta.textContent=(it.nickname||FL('匿名','Anonymous','匿名'))+' · '+String(it.created_at||'').slice(0,10);
+    const body=document.createElement('p');body.className='feedback-body';body.style.whiteSpace='pre-wrap';body.textContent=String(it.body||'');card.append(meta,body);box.append(card);
+  }
+  $('wall-page').textContent=FL('第 '+(pageIndex+1)+' 页 · 本页 '+visible.length+' 条','Page '+(pageIndex+1)+' · '+visible.length+' messages',(pageIndex+1)+' ページ · '+visible.length+' 件');
+  $('wall-prev').disabled=listLoading||pageIndex===0;$('wall-next').disabled=listLoading||!nextCursor;
+}
+async function loadList(){
+  const request=++listRequest;listAbort?.abort();listAbort=new AbortController();listLoading=true;
+  $('list').setAttribute('aria-busy','true');$('wall-refresh').disabled=true;$('wall-prev').disabled=true;$('wall-next').disabled=true;
+  $('wall-msg').textContent=FL('正在读取留言……','Loading messages…','メッセージを読み込んでいます…');$('wall-retry').hidden=true;
+  try{
+    const r=await fetch('/api/workshop/feedback',{cache:'no-store',signal:listAbort.signal}),j=await r.json();
+    if(!r.ok||!j.ok||!Array.isArray(j.items))throw Error('read_failed');
+    if(request!==listRequest)return;
+    listItems=j.items;pageIndex=Math.min(pageIndex,Math.max(0,Math.ceil(listItems.length/24)-1));renderList();$('wall-msg').textContent='';
+  }catch(e){if(request!==listRequest||e.name==='AbortError')return;$('wall-msg').textContent=FL('留言读取失败，已显示的内容仍保留。','Could not load messages. Previously loaded content is kept.','読み込めませんでした。表示済みの内容は保持しています。');$('wall-msg').className='msg err';$('wall-retry').hidden=false;}
+  finally{if(request===listRequest){listLoading=false;$('list').setAttribute('aria-busy','false');$('wall-refresh').disabled=false;$('wall-prev').disabled=pageIndex===0;$('wall-next').disabled=!nextCursor;}}
+}
+$('wall-prev').addEventListener('click',()=>{if(!listLoading&&pageIndex>0){pageIndex--;renderList();}});
+$('wall-next').addEventListener('click',()=>{if(!listLoading&&nextCursor){pageIndex++;renderList();}});
+$('wall-refresh').addEventListener('click',loadList);
+$('wall-retry').addEventListener('click',loadList);
+$('body').addEventListener('input',()=>{$('body-count').textContent=$('body').value.length+' / 500';});
+$('fbloginbtn').addEventListener('click',async()=>{
+  if(fbLoginPending)return;fbLoginPending=true;$('fbloginbtn').disabled=true;$('fb-cancel-login').hidden=false;
+  try{const user=await CXXUser.login({onState:state=>{$('fb-loginstate').textContent=state.message;}});fbName=user.displayName;renderLogin();}
+  catch(e){$('fb-loginstate').textContent=e.message;}
+  finally{fbLoginPending=false;$('fbloginbtn').disabled=false;$('fb-cancel-login').hidden=true;}
+});
+$('fb-cancel-login').addEventListener('click',()=>CXXUser.cancelLogin());
+$('fb-logout').addEventListener('click',()=>{CXXUser.logout();fbName=null;renderLogin();});
+document.addEventListener('cxx-user-changed',e=>{fbName=e.detail.account?.displayName||null;if(!fbLoginPending)renderLogin();});
+$('send').addEventListener('click',async()=>{
+  if(sending||!fbName)return;
+  const body=$('body').value.trim();
+  if(!body){say(FL('想说的话不能为空。','Enter a message first.','メッセージを入力してください。'),'err');$('body').focus();return;}
+  sending=true;renderLogin();say(FL('提交中……','Submitting…','送信中…'));
+  try{
+    const r=await fetch('/api/workshop/feedback',{method:'POST',headers:CXXUser.headers({'Content-Type':'application/json'}),body:JSON.stringify({nickname:$('nick').value.trim()||undefined,body})}),j=await r.json().catch(()=>({}));
+    if(r.status===201){say(FL('已提交！审核通过后才会公开，暂时不会出现在下方。','Submitted! It appears below after approval.','提出しました。承認後に下へ公開されます。'),'ok');$('body').value='';$('body-count').textContent='0 / 500';}
+    else if(r.status===401){CXXUser.logout();say(FL('登录已过期，请重新登录；留言草稿仍保留。','Login expired. Sign in again; your draft is kept.','ログイン期限切れです。下書きは保持しています。再ログインしてください。'),'err');}
+    else if(r.status===429)say(FL('提交太频繁，稍后再试；草稿仍保留。','Too many messages. Retry later; your draft is kept.','投稿が多すぎます。下書きは保持しています。後で再試行してください。'),'err');
+    else if(r.status===400&&j.error==='body_too_long')say(FL('超过 500 字上限。','The message exceeds 500 characters.','500 文字以内にしてください。'),'err');
+    else say(FL('提交未成功，请稍后重试；草稿仍保留。','Submission failed. Retry later; your draft is kept.','提出できませんでした。下書きは保持しています。後で再試行してください。'),'err');
+  }catch{say(FL('网络中断，未确认是否提交成功；草稿仍保留，请稍后确认。','Connection interrupted; the result is unconfirmed. Your draft is kept.','接続が途切れて提出結果を確認できません。下書きは保持しています。'),'err');}
+  finally{sending=false;renderLogin();}
+});
+document.addEventListener('cxx-lang-changed',()=>{if(!fbLoginPending)renderLogin();if(listItems.length||!listLoading)renderList();for(const id of ['msg','wall-msg']){const el=$(id),value=feedbackStrings.get(el.textContent);if(value)el.textContent=FL(...value);}});
+CXXUser.check().then(user=>{fbName=user?.displayName||null;renderLogin();}).catch(()=>{renderLogin();$('fb-loginstate').textContent=FL('登录状态暂不可用，请重试登录。','Login status unavailable. Retry login.','ログイン状態を確認できません。再度ログインしてください。');});
+loadList();
+</script>
+</body>
+</html>

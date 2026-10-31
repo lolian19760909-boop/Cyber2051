@@ -1,0 +1,180 @@
+.atlas-map-shell {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--cxx-canvas);
+  color: var(--cxx-text);
+  font: 16px/1.5 var(--cxx-font-ui);
+}
+
+.atlas-map-shell[hidden] {
+  display: none;
+}
+
+/* Region tabs and load status (DESIGN.md 10.14); in the city map they sit in the tool bar. */
+.atlas-map-selector {
+  display: flex;
+  flex: 1;
+  align-items: stretch;
+  gap: 16px;
+  min-width: 0;
+}
+
+.atlas-map-shell>.atlas-map-selector {
+  flex: none;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--cxx-line);
+  background: var(--cxx-panel);
+}
+
+.atlas-map-regions {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  min-width: 0;
+}
+
+.atlas-map-regions::before,
+.atlas-map-regions::after {
+  align-self: center;
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  border: 1px solid var(--cxx-on-canvas-muted);
+  color: var(--cxx-on-canvas-muted);
+  font: var(--cxx-weight-latin) 13px/1 var(--cxx-font-latin);
+}
+
+.atlas-tool-controls .atlas-map-regions::before {
+  content: "Q";
+  margin-right: 6px;
+}
+
+.atlas-tool-controls .atlas-map-regions::after {
+  content: "E";
+  margin-left: 6px;
+}
+
+.atlas-map-regions button {
+  position: relative;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  background: none;
+  color: var(--cxx-on-canvas-muted);
+  font: 16px/1.4 var(--cxx-font-ui);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color .16s;
+}
+
+.atlas-map-regions button small {
+  margin-left: 6px;
+  color: var(--cxx-on-canvas-muted);
+  font-size: 12px;
+}
+
+.atlas-map-regions button[aria-pressed=true] {
+  color: var(--cxx-on-canvas);
+  box-shadow: inset 0 -2px var(--cxx-structure);
+}
+
+@media (hover:hover) and (pointer:fine) {
+  .atlas-map-regions button:hover {
+    color: var(--cxx-on-canvas);
+  }
+}
+
+.atlas-map-load-status {
+  flex: none;
+  align-self: center;
+  margin-left: auto;
+  color: var(--cxx-on-canvas-muted);
+  font: var(--cxx-weight-latin) 13px/1.4 var(--cxx-font-label);
+  letter-spacing: var(--cxx-track);
+}
+
+.atlas-map-load-status[data-renderer=canvas2d] {
+  color: var(--cxx-attention);
+}
+
+.atlas-map-stage {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.atlas-map-loading{position:absolute;inset:0;z-index:2;overflow:auto;background:var(--cxx-canvas)}
+.atlas-map-loading[hidden]{display:none}
+.atlas-map-loading>.cxx-boot{min-height:100%}
+.atlas-map-load-status[data-renderer=canvas2d]{color:var(--cxx-attention)}
+
+.atlas-map-stage>iframe,
+.atlas-map-stage>#metropolitan-atlas {
+  display: block;
+  border: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: var(--cxx-canvas);
+}
+
+.atlas-shell-page {
+  margin: 0;
+  height: 100vh;
+  height: 100dvh;
+  background: var(--cxx-canvas);
+  overflow: hidden;
+}
+
+.atlas-shell-page>#map-shell-root {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+@media (max-width:700px) {
+  .atlas-map-selector {
+    gap: 8px;
+  }
+
+  .atlas-map-regions {
+    flex: 1;
+  }
+
+  .atlas-map-regions button {
+    flex: 1;
+    padding: 0 8px;
+  }
+
+  .atlas-map-load-status {
+    display: none;
+  }
+
+  .atlas-tool-controls .atlas-map-regions::before,
+  .atlas-tool-controls .atlas-map-regions::after {
+    content: none;
+  }
+}
+
+/* The ASCII city flight replaces the plugin noise behind the loading log. */
+.cxx-boot-log-frame[data-ascii=true] .cxx-boot-noise {
+  display: none;
+}
+
+.cxx-ascii-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
