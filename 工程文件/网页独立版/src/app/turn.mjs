@@ -61,7 +61,11 @@ export function createTurnCoordinator({ports,rules,identity,parser=null,now=()=>
       // 截断回复按酒馆保留正文；协议有缺口的补丁不落库，等玩家续写后整层重算。
       const incomplete=turn.complete===false;
       if(!turn.parsed.supported||(!incomplete&&turn.parsed.protocol.issues.length))throw new TurnError('protocol_invalid',turn.parsed.protocol.issues.join('；')||'协议解析不可用');
-      if(!turn.parsed.display.paragraphs.some(row=>String(row.text||'').trim()))throw new TurnError('empty_response','回复没有可保存的正文');
+      if(!turn.parsed.display.paragraphs.some(row=>String(row.text||'').trim())){
+       const reasoning=turn.processing?.response?.reasoning,reasoningLength=typeof reasoning==='string'?reasoning.length:0;
+       if(!String(turn.parsed.raw||'').length&&reasoningLength)throw new TurnError('empty_reasoning_only',`模型只输出了思考（${reasoningLength} 字符），未输出正文`,{reasoningLength});
+       throw new TurnError('empty_response','回复没有可保存的正文');
+      }
       const patches=incomplete&&turn.parsed.protocol.issues.length?[]:turn.parsed.protocol.patches||[];
       let settled=rules.settle({before:turn.beforeState,patches,raw:turn.parsed.raw,nodeId:turn.nodeId,parentNodeId:turn.parentNodeId,actorBinding:turn.actorBinding,attemptId:turn.attemptId,preparedContext:turn.preparedContext});
       if(finalize)settled=await finalize({before:turn.beforeState,proposal:settled,preparedContext:turn.preparedContext,raw:turn.parsed.raw,nodeId:turn.nodeId,actorBinding:turn.actorBinding});
