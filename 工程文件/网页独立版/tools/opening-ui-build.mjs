@@ -15,7 +15,7 @@ export function buildOpeningUI(){
  const assets=[...Object.values(manifest.controls),manifest.map,manifest.logo,manifest.city,manifest.loading,...manifest.music.map(row=>row.file),...Object.values(manifest.sfx)];
  const rows=[];
  for(const name of [...files,...assets.map(name=>'assets/'+name),'reading-shell.mjs','reading.css']){
-  const source=path.join(name.startsWith('reading')?integration:built,name),target=path.join(OPENING_OUTPUT,name),bytes=fs.readFileSync(source);
+  const override=path.join(WEB,'web/opening-ui',name),source=fs.existsSync(override)?override:path.join(name.startsWith('reading')?integration:built,name),target=path.join(OPENING_OUTPUT,name),bytes=fs.readFileSync(source);
   fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,bytes);
   rows.push({path:name,bytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')});
  }
