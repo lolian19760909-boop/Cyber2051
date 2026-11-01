@@ -58,15 +58,18 @@ export function createTurnCoordinator({ports,rules,identity,parser=null,now=()=>
     status('validating',{proposal:null});const owner=turn;
     try{
       assertLive();
-      // 截断回复按酒馆保留正文；协议有缺口的补丁不落库，等玩家续写后整层重算。
+      // 酒馆式宽容：截断回复与带协议瑕疵的回复都保留正文；解析有缺口时补丁不落库（变量本回合
+      // 不结算，与酒馆变量失败仅丢更新一致），瑕疵作为警告随回执可见，原文始终可编辑重解析。
       const incomplete=turn.complete===false;
-      if(!turn.parsed.supported||(!incomplete&&turn.parsed.protocol.issues.length))throw new TurnError('protocol_invalid',turn.parsed.protocol.issues.join('；')||'协议解析不可用');
+      const protocolIssues=!turn.parsed.supported?['协议解析不可用']:(!incomplete?turn.parsed.protocol.issues:[]);
+      if(!turn.parsed.supported&&!String(turn.parsed.raw||'').length)throw new TurnError('protocol_invalid','协议解析不可用');
       if(!turn.parsed.display.paragraphs.some(row=>String(row.text||'').trim())){
        const reasoning=turn.processing?.response?.reasoning,reasoningLength=typeof reasoning==='string'?reasoning.length:0;
        if(!String(turn.parsed.raw||'').length&&reasoningLength)throw new TurnError('empty_reasoning_only',`模型只输出了思考（${reasoningLength} 字符），未输出正文`,{reasoningLength});
        throw new TurnError('empty_response','回复没有可保存的正文');
       }
-      const patches=incomplete&&turn.parsed.protocol.issues.length?[]:turn.parsed.protocol.patches||[];
+      const patches=protocolIssues.length?[]:turn.parsed.protocol.patches||[];
+      if(protocolIssues.length)turn.parameterWarnings=[...(turn.parameterWarnings||[]),...protocolIssues.map(issue=>'协议警告（正文已保存，变量未结算）：'+issue)];
       let settled=rules.settle({before:turn.beforeState,patches,raw:turn.parsed.raw,nodeId:turn.nodeId,parentNodeId:turn.parentNodeId,actorBinding:turn.actorBinding,attemptId:turn.attemptId,preparedContext:turn.preparedContext});
       if(finalize)settled=await finalize({before:turn.beforeState,proposal:settled,preparedContext:turn.preparedContext,raw:turn.parsed.raw,nodeId:turn.nodeId,actorBinding:turn.actorBinding});
       assertLive(owner);if(!settled?.state||!Array.isArray(settled.patches))throw new TurnError('finalize_invalid','玩法结算没有返回有效状态和回执');
