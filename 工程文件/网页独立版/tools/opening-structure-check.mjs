@@ -67,14 +67,17 @@ await check('command 开场派发：指令先行、转储随指令走 user、场
  assert.equal(dispatch[4].content,'神秘问');
  assert.equal(dispatch[6].content,'尾部指令');
  assert.ok(!dispatch.some(row=>row.content.includes(SCENE)));
- // 第二轮：历史=[指令,第一轮正文]，转储回到世界书条目配置的 system。
+ // 第二轮：历史=[指令,第一轮正文]，转储同样随玩家输入走 user。
  assert.ok(second.some(row=>row.role==='assistant'&&row.content.includes('合成正文')));
  const dumpSecond=second.find(row=>row.content.includes('<status_current_variable>'));
- assert.equal(dumpSecond.role,'system');
+ const inputIndex=second.indexOf(second.find(row=>row.content==='玩家行动'));
+ assert.equal(dumpSecond.role,'user','第二轮转储随输入走 user');
+ assert.equal(second.indexOf(dumpSecond),inputIndex+1,'转储紧随玩家输入');
+ assert.ok(!second.some(row=>row.content.includes(SCENE)));
  assert.ok(!second.some(row=>row.content.includes(SCENE)));
 });
 
-await check('direct 开场与旧存档（无标记）保留场景行、转储维持 system',async()=>{
+await check('direct 开场与旧存档（无标记）保留场景行，转储同样 user 随输入',async()=>{
  for(const message of [
   {role:'assistant',kind:'opening',raw:SCENE,display:[],input:null,openingAction:'请顺着上面的开场继续'},
   {role:'assistant',kind:'opening',raw:SCENE,display:[],input:null,openingCommand:false,openingAction:INSTRUCTION}
@@ -84,7 +87,7 @@ await check('direct 开场与旧存档（无标记）保留场景行、转储维
   const instructionRow=dispatch.find(row=>row.content===INSTRUCTION);
   assert.ok(instructionRow,'指令行存在');
   const dumpRow=dispatch.find(row=>row.content.includes('<status_current_variable>'));
-  assert.equal(dumpRow.role,'system');
+  assert.equal(dumpRow.role,'user','转储在所有正文回合随输入走 user');
   assert.ok(dispatch.indexOf(dumpRow)>dispatch.indexOf(instructionRow));
  }
 });
