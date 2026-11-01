@@ -3,9 +3,9 @@ import { clone, assertOwner, lineage, stateAt, prepareCommit,prepareProfileCommi
 import { newId } from '../core/ids.mjs';
 import {attachStorageAudit} from './audit.mjs';
 import {SAVE_TABLES,prepareImportedSnapshot} from './backup.mjs';
-export const DB_NAME='cxx2051-web', DB_VERSION=2;
-export const STORES=Object.freeze(Object.fromEntries(['runs','nodes','states','receipts','tasks','checkpoints','settings','media','branches','drafts','memories','summaries','indices','leases'].map(name=>[name,name])));
-const KEYS={runs:'runId',nodes:['runId','nodeId'],states:['runId','branchId'],receipts:['runId','operationId'],tasks:['runId','taskId'],checkpoints:['runId','checkpointId'],settings:'key',media:['runId','mediaId'],branches:['runId','branchId'],drafts:['runId','id'],memories:['runId','id'],summaries:['runId','id'],indices:['runId','id'],leases:'runId'};
+export const DB_NAME='cxx2051-web', DB_VERSION=3;
+export const STORES=Object.freeze(Object.fromEntries(['runs','nodes','states','receipts','tasks','checkpoints','settings','media','branches','drafts','memories','summaries','indices','leases','backups'].map(name=>[name,name])));
+const KEYS={runs:'runId',nodes:['runId','nodeId'],states:['runId','branchId'],receipts:['runId','operationId'],tasks:['runId','taskId'],checkpoints:['runId','checkpointId'],settings:'key',media:['runId','mediaId'],branches:['runId','branchId'],drafts:['runId','id'],memories:['runId','id'],summaries:['runId','id'],indices:['runId','id'],leases:'runId',backups:['runId','id']};
 const request=q=>new Promise((resolve,reject)=>{q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error);});
 const completed=tx=>new Promise((resolve,reject)=>{tx.oncomplete=resolve;tx.onabort=()=>reject(tx.error||new Error('事务被中止'));tx.onerror=()=>{};});
 export class ConflictError extends Error {constructor(current){super('修订号冲突');this.code='conflict';this.current=current;}}
@@ -73,7 +73,7 @@ export function createIdbStatePort(options={}){
     async deleteCheckpoint(runId,checkpointId){return tx(['runs','checkpoints'],'readwrite',async t=>{await run(t,runId);const store=t.objectStore('checkpoints');if(!(await request(store.get([runId,checkpointId]))))throw new Error('存档点不存在');store.delete([runId,checkpointId]);return {deleted:checkpointId};});},
     async deleteRun(runId){return tx(['runs','settings','leases',...SAVE_TABLES],'readwrite',async t=>{const current=await run(t,runId);assertOwner(current,owner);for(const name of SAVE_TABLES)for(const row of await list(t,name,runId))t.objectStore(name).delete(KEYS[name].map(k=>row[k]));t.objectStore('runs').delete(runId);t.objectStore('leases').delete(runId);t.objectStore('settings').delete('story:'+runId);t.objectStore('settings').delete('agent:'+runId);return {deleted:runId};});},
     async listTasks(runId,status='pending'){return (await listRecords('tasks',runId)).filter(row=>!status||row.status===status);},
-    async putRecords(name,runId,records){if(!['tasks','drafts','memories','summaries','indices','media'].includes(name))throw new Error('不可写记录类型');return tx(['runs',name],'readwrite',async t=>{await run(t,runId);for(const record of records){const row={...record,runId};if(name==='tasks')row.taskId??=row.id;if(name==='media')row.mediaId??=row.id;t.objectStore(name).put(row);}});},
+    async putRecords(name,runId,records){if(!['tasks','drafts','memories','summaries','indices','media','backups'].includes(name))throw new Error('不可写记录类型');return tx(['runs',name],'readwrite',async t=>{await run(t,runId);for(const record of records){const row={...record,runId};if(name==='tasks')row.taskId??=row.id;if(name==='media')row.mediaId??=row.id;t.objectStore(name).put(row);}});},
     async commit(operation){
       const {runId,branchId,operationId}=operation;
       if(owner&&operation.accountId!==owner)throw Object.assign(new Error('存档身份不匹配'),{code:'account_mismatch'});

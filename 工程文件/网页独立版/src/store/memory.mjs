@@ -4,7 +4,7 @@ import { newId } from '../core/ids.mjs';
 import {attachStorageAudit} from './audit.mjs';
 import {SAVE_TABLES,SAVE_KEYS,prepareImportedSnapshot} from './backup.mjs';
 export function createMemoryStatePort({ accountId } = {}) {
-  const tables=Object.fromEntries(['runs','nodes','states','receipts','tasks','branches','checkpoints','drafts','memories','summaries','indices','media','settings'].map(name=>[name,new Map()]));
+  const tables=Object.fromEntries(['runs','nodes','states','receipts','tasks','branches','checkpoints','drafts','memories','summaries','indices','media','backups','settings'].map(name=>[name,new Map()]));
   let queue=Promise.resolve(), generating=false;
   const key=(run,id)=>JSON.stringify([run,id]);
   const getRun=runId=>{const run=tables.runs.get(runId);assertOwner(run,accountId);return run;};
@@ -36,7 +36,7 @@ export function createMemoryStatePort({ accountId } = {}) {
     listTasks:async(runId,status='pending')=>{getRun(runId);return clone(rows('tasks',runId).filter(row=>!status||row.status===status));},
     listRecords:async(name,runId)=>{getRun(runId);return clone(rows(name,runId));},
     readRecord:async(name,runId,id)=>{getRun(runId);return clone(tables[name].get(key(runId,id))||null);},
-    putRecords:async(name,runId,records)=>serial(()=>{getRun(runId);if(!['tasks','drafts','memories','summaries','indices','media'].includes(name))throw new Error('不可写记录类型');for(const row of records)tables[name].set(key(runId,row.id||row.taskId||row.mediaId),clone({...row,runId}));}),
+    putRecords:async(name,runId,records)=>serial(()=>{getRun(runId);if(!['tasks','drafts','memories','summaries','indices','media','backups'].includes(name))throw new Error('不可写记录类型');for(const row of records)tables[name].set(key(runId,row.id||row.taskId||row.mediaId),clone({...row,runId}));}),
     async commit(operation){return serial(()=>{
       const {runId,branchId,operationId}=operation,current=getRun(runId);assertOwner(current,operation.accountId);
       if(accountId&&accountId!==operation.accountId)throw Object.assign(new Error('存档身份不匹配'),{code:'account_mismatch'});
