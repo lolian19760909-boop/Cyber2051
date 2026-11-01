@@ -21,7 +21,9 @@ export function createNativeReader({stage,parser,onEdit,onDelete,onVersion,busy=
   function paragraph(item){
     const p=doc.createElement('p');
     if(item.speaker||item.characterId||item.dialogueText!==undefined||/^「[\s\S]*」$/.test(item.text.trim())){
-      const person=globalThis.Cxx238Dialogue.portraits.find(c=>c.id===item.characterId||c.name===item.speaker),wrap=n('span',null,p,'bdc bdc-cxx bde-'+globalThis.Cxx238Dialogue.expression(item.expression)+(item.kind==='thought'?' bdc-thought':''));
+      const person=globalThis.Cxx238Dialogue.portraits.find(c=>c.id===item.characterId||c.name===item.speaker);
+      // 气泡运行时按角色 id 查 BDA_META/立绘差分，这里必须发角色类而不是无名 cxx（issue #28）。
+      const wrap=n('span',null,p,'bdc bdc-'+(person?person.id.toLowerCase():'cxx')+' bde-'+globalThis.Cxx238Dialogue.expression(item.expression)+(item.kind==='thought'?' bdc-thought':''));
       if(person)p.classList.add('bda-'+person.id.toLowerCase());
       const speaker=item.speaker||person?.name||item.characterId;if(speaker)n('span',speaker+'：',wrap,'bda-speaker');else wrap.classList.add('cxx-native-unattributed');if(item.kind==='thought')n('span','心声',wrap,'cxx-dialogue-mode');wrap.append(doc.createTextNode(item.text));
     }else p.textContent=item.text;
