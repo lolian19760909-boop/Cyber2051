@@ -421,25 +421,26 @@ async function doLogin() {
   }
 }
 
-/** 旧存档热更提醒：restore 后对比存档版本与当前内容版本，弹窗由玩家决定更新或暂不（issue #28）。 */
+/** 旧存档热更提醒：restore 后对比存档版本与当前内容版本，进入游戏前弹窗由玩家决定（issue #28）。 */
 async function maybeOfferSaveUpdate(){
-  try{
-    if(state.mode==='tavern'||!state.manifest?.contentVersion||!state.session)return;
-    const run=await state.statePort.readRun?.(state.session.identity.runId);
-    const plan=updatePlan({from:run?.contentVersion,to:state.manifest.contentVersion});
-    if(!plan)return;
-    state.saveUpdateUI?.close?.();
-    state.saveUpdateUI=mountSaveUpdate({
-      from:plan.from,to:plan.to,highlights:plan.highlights,steps:plan.steps,
-      brandUrl:document.querySelector('.game-wordmark')?.src,
-      onUpdate:async()=>{
-        try{await state.session.applySaveUpdate({to:state.manifest.contentVersion});setStatus('存档已更新到 '+plan.to+'（已自动备份）。','ok');}
-        catch(error){setStatus('存档更新失败，原档未受影响：'+error.message,'error');}
-        state.saveUpdateUI=null;
-      },
-      onSkip:()=>{state.saveUpdateUI=null;},
-    });
-  }catch{/* 版本提醒是附加能力；读取失败时按无更新处理，不打断开局 */ return;}
+ try{
+  if(state.mode==='tavern'||!state.manifest?.contentVersion||!state.session)return;
+  const run=await state.statePort.readRun?.(state.session.identity.runId);
+  const plan=updatePlan({from:run?.contentVersion,to:state.manifest.contentVersion});
+  if(!plan)return;
+  state.saveUpdateUI?.close?.();
+  let updated=false;
+  await new Promise(resolve=>{
+   state.saveUpdateUI=mountSaveUpdate({
+    from:plan.from,to:plan.to,highlights:plan.highlights,steps:plan.steps,
+    brandUrl:document.querySelector('.game-wordmark')?.src,
+    onUpdate:async()=>{await state.session.applySaveUpdate({to:state.manifest.contentVersion});updated=true;},
+    onSkip:()=>{state.saveUpdateUI=null;resolve();},
+    onEnter:()=>{state.saveUpdateUI=null;resolve();},
+   });
+  });
+  if(updated)setStatus('存档已更新到 '+plan.to+'（已自动备份）。','ok');
+ }catch{/* 版本提醒是附加能力；读取失败时按无更新处理，不打断开局 */ return;}
 }
 
 async function startSession({ accountId, runId, fromOpening=true }) {
@@ -505,9 +506,10 @@ async function startSession({ accountId, runId, fromOpening=true }) {
   mark('restore:begin');
   const restored=await state.session.restore();
   mark('restore:done');
-  state.savesUI=mountSaveControls({parent:document.getElementById('save-controls'),session:state.session,statePort,accountId,mode:state.mode,onSwitch:runId=>startSession({accountId,runId}),onError:error=>setStatus(error.message,'error')});
   if(sequence!==startSequence)return;
-  void maybeOfferSaveUpdate();
+  // 存档热更弹窗是进入游戏前的一道闸：更新或暂不之后才继续装配界面。
+  await maybeOfferSaveUpdate();
+  state.savesUI=mountSaveControls({parent:document.getElementById('save-controls'),session:state.session,statePort,accountId,mode:state.mode,onSwitch:runId=>startSession({accountId,runId}),onError:error=>setStatus(error.message,'error')});
   if(state.mode!=='tavern')safeStorage()?.setItem(lastRunKey,runId);
   mark('head:begin');
   const head = await statePort.readHead(state.session.identity.runId);
