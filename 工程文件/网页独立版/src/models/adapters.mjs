@@ -176,6 +176,7 @@ export function buildRequest({operation,adapter,baseUrl,credential,payload={}}){
     }
   }
   url.pathname=pathname;
+  if(body&&typeof body==='object')delete body.thinking_contract;
   const warnings=operation==='chat'&&!payload.phase?[...new Set([...parameterNotes(payload,body,family,source),...notes])]:[];
   if(url.hostname==='api.deepseek.com'&&operation==='chat'){const thinking=(body.thinking?.type||payload.thinking?.type)!=='disabled'&&payload.reasoning_effort!=='none';for(const key of ['frequency_penalty','presence_penalty'])if(source==='deepseek'&&meaningful(key,payload[key]))warnings.push('DeepSeek 不使用 '+key+'，原预设配置保留。');if(thinking&&meaningful('temperature',payload.temperature))warnings.push('DeepSeek 思考模式不使用 temperature。');if(!thinking&&meaningful('top_p',payload.top_p))warnings.push('DeepSeek 非思考模式不使用 top_p。');else if(thinking&&payload.top_p!==undefined&&payload.top_p<0.95)warnings.push('DeepSeek 思考模式会把 top_p 下限按 0.95 处理。');}
   return {url:url.toString(),method,headers,...(vertexServiceAccount?{vertexServiceAccount}:{}),body:body===undefined?undefined:JSON.stringify(body),family,sourceId:selected.sourceId,operation,warnings,parameterWarnings:warnings,stream:body?.stream===true||/generate-stream|generate\/stream|:streamGenerateContent$/.test(pathname)};

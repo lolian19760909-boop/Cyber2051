@@ -15,7 +15,7 @@ export function withMacroHost(context,action){
  const fields=context.fields||{};name1=fields.userName||'旅行者';name2=fields.charName||'';
  chat_metadata=context.chatMetadata??{};chat=context.history?.map(row=>({...row,mes:row.mes??row.content??'',is_user:row.is_user??row.role==='user',is_system:row.is_system??row.role==='system'}))||[];
  main_api=context.mainApi||'openai';selected_group=fields.groupName||null;
- power_user={instruct:context.instruct||{},sysprompt:context.sysprompt||{},context:context.contextTemplate||{}};
+ power_user={instruct:context.instruct||{},sysprompt:context.sysprompt||{},context:context.contextTemplate||{},prefer_character_prompt:context.preferCharacterPrompt!==false};
  extension_prompts=Object.fromEntries(Object.entries(context.outlets||{}).map(([key,value])=>['customWIOutlet_'+key,{value:Array.isArray(value)?value.join('\n'):String(value)}]));
  try{return action();}finally{({current,chat_metadata,chat,main_api,extension_prompts,power_user,selected_group,name1,name2}=previous);}
 }
