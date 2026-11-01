@@ -34,8 +34,10 @@ const results={
  plainDisabled:await capture(makePreset({showThoughts:false})),
  foldRuntimeOverride:await capture(foldPreset,{promptOptions:{sampling:{include_reasoning:true}}}),
  moonshotFold:await capture(foldPreset,{},'chat:moonshot','https://api.moonshot.cn/v1'),
- moonshotPlain:await capture(makePreset({}),{},'chat:moonshot','https://api.moonshot.cn/v1')
+ moonshotPlain:await capture(makePreset({}),{},'chat:moonshot','https://api.moonshot.cn/v1'),
+ modelOnFold:await capture(foldPreset,{model:{adapter:'chat:deepseek',model:'deepseek-flash',include_reasoning:true}}),
+ modelOffPlain:await capture(makePreset({}),{model:{adapter:'chat:deepseek',model:'deepseek-flash',include_reasoning:false}})
 };
-const ok=results.foldDefault==='disabled'&&results.foldInheritedShowThoughts==='disabled'&&results.plainDefault==='enabled'&&results.plainInheritedShowThoughts==='enabled'&&results.plainDisabled==='disabled'&&results.foldRuntimeOverride==='enabled'&&results.moonshotFold==='enabled'&&results.moonshotPlain==='enabled';
+const ok=results.foldDefault==='disabled'&&results.foldInheritedShowThoughts==='disabled'&&results.plainDefault==='enabled'&&results.plainInheritedShowThoughts==='enabled'&&results.plainDisabled==='disabled'&&results.foldRuntimeOverride==='enabled'&&results.moonshotFold==='enabled'&&results.moonshotPlain==='enabled'&&results.modelOnFold==='enabled'&&results.modelOffPlain==='disabled';
 console.log(JSON.stringify({results,ok}));
 if(!ok)process.exit(1);
