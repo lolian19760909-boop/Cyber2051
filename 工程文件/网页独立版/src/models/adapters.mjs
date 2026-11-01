@@ -4,6 +4,7 @@ import { CHAT_SOURCES, TEXT_SOURCES, EXTRA_MAIN_SOURCES, PROTOCOL_FAMILIES } fro
 import {providerRequest} from './provider-requests.mjs';
 import {textRequest,textPrompt as nativeTextPrompt} from './text-requests.mjs';
 import {novelRequest} from './novelai.mjs';
+import {requestBodyOptions} from './request-body.mjs';
 import {nativeKoboldBody,kai_settings} from './native/kobold.mjs';
 export class AdapterError extends Error{constructor(code,message){super(message||code);this.code=code;}}
 export const OPERATIONS=Object.freeze(['models','chat','embeddings','rerank','tokenize']);
@@ -22,7 +23,7 @@ const samplingFields=['temperature','top_p','top_k','top_a','min_p','frequency_p
 const neutral={temperature:1,top_p:1,top_k:0,top_a:0,min_p:0,frequency_penalty:0,presence_penalty:0,repetition_penalty:1,seed:-1};
 const meaningful=(key,value)=>value!==undefined&&value!==null&&value!==''&&value!=='auto'&&(!Array.isArray(value)||value.length>0)&&value!==neutral[key];
 function stopList(value){if(value===undefined||value===null)return undefined;const list=Array.isArray(value)?value:[value];if(list.some(item=>typeof item!=='string'))throw new AdapterError('bad_parameter','停止词须为文字或文字数组');return list;}
-function parameterNotes(payload,body,family,source){
+function parameterNotes(payload,body,family,source,{bodyOverrides={},bodyOmissions=[]}={}){
  const mapped=key=>{if(['google-gemini','vertex-ai'].includes(family)){const aliases={temperature:'temperature',top_p:'topP',top_k:'topK',max_tokens:'maxOutputTokens',stop:'stopSequences',stop_sequences:'stopSequences',frequency_penalty:'frequencyPenalty',presence_penalty:'presencePenalty',seed:'seed'};return body?.generationConfig?.[aliases[key]];}
   if(family==='claude-messages')return body?.[key==='stop'?'stop_sequences':key];
   if(family==='cohere')return body?.[({top_p:'p',top_k:'k',stop:'stop_sequences'})[key]||key];
@@ -31,7 +32,7 @@ function parameterNotes(payload,body,family,source){
   if(['novelai','horde'].includes(family))return (body?.parameters||body?.params)?.[key==='max_tokens'?'max_length':key];
   if(family==='kobold-classic')return body?.[({max_tokens:'max_length',repetition_penalty:'rep_pen',stop:'stop_sequence',stop_sequences:'stop_sequence'})[key]||key];
   return body?.[key]??(key==='max_tokens'?body?.max_completion_tokens:undefined);};
- return samplingFields.filter(key=>meaningful(key,payload[key])&&mapped(key)===undefined).map(key=>'当前 '+family+' 请求没有发送 '+key+'；预设配置仍保留。');
+ return samplingFields.filter(key=>!Object.hasOwn(bodyOverrides,key)&&!bodyOmissions.includes(key)&&meaningful(key,payload[key])&&mapped(key)===undefined).map(key=>'当前 '+family+' 请求没有发送 '+key+'；预设配置仍保留。');
 }
 function modelId(value,slashes=false){const text=String(value||'');if(!text||text.length>300||text.split('/').some(part=>['.','..'].includes(part))||!new RegExp(slashes?'^[a-zA-Z0-9@_.:/-]+$':'^[a-zA-Z0-9@_.:-]+$').test(text))throw new AdapterError('model_required','请填写有效的型号／部署名称');return slashes?text.split('/').map(encodeURIComponent).join('/'):encodeURIComponent(text);}
 function messagesOf(payload){if(!Array.isArray(payload.messages)||!payload.messages.length)throw new AdapterError('messages_required','生成需要对话内容');return payload.messages.map(row=>{if(!['system','developer','user','assistant','tool'].includes(row.role)||!(typeof row.content==='string'||Array.isArray(row.content)||row.content===null&&Array.isArray(row.tool_calls)))throw new AdapterError('bad_message','消息角色或内容无效');return structuredClone(pick(row,['role','content','name','tool_calls','tool_call_id','reasoning_content','reasoning','reasoning_signature','tool_signatures']));});}
@@ -39,6 +40,7 @@ function messagesOf(payload){if(!Array.isArray(payload.messages)||!payload.messa
 export function buildRequest({operation,adapter,baseUrl,credential,payload={}}){
   if(!OPERATIONS.includes(operation))throw new AdapterError('bad_operation','不支持的模型操作');
   const selected=resolveAdapter(adapter||'openai-chat'),family=selected.family,source=selected.id,notes=[];
+  const bodyOptions=operation==='chat'&&!payload.phase?requestBodyOptions(payload):{};
   payload={...payload};if(payload.verbosity==='auto')delete payload.verbosity;if(payload.reasoning_effort==='auto')delete payload.reasoning_effort;if(payload.seed===-1)delete payload.seed;if(payload.generationType==='quiet'||payload.type==='quiet')payload.stream=false;
   let vertexServiceAccount;
   if(family==='vertex-ai'){
@@ -177,7 +179,8 @@ export function buildRequest({operation,adapter,baseUrl,credential,payload={}}){
   }
   url.pathname=pathname;
   if(body&&typeof body==='object')delete body.thinking_contract;
-  const warnings=operation==='chat'&&!payload.phase?[...new Set([...parameterNotes(payload,body,family,source),...notes])]:[];
+  if(operation==='chat'&&!payload.phase){body={...body,...bodyOptions.bodyOverrides};for(const key of bodyOptions.bodyOmissions)delete body[key];}
+  const warnings=operation==='chat'&&!payload.phase?[...new Set([...parameterNotes(payload,body,family,source,bodyOptions),...notes])]:[];
   if(url.hostname==='api.deepseek.com'&&operation==='chat'){const thinking=(body.thinking?.type||payload.thinking?.type)!=='disabled'&&payload.reasoning_effort!=='none';for(const key of ['frequency_penalty','presence_penalty'])if(source==='deepseek'&&meaningful(key,payload[key]))warnings.push('DeepSeek 不使用 '+key+'，原预设配置保留。');if(thinking&&meaningful('temperature',payload.temperature))warnings.push('DeepSeek 思考模式不使用 temperature。');if(!thinking&&meaningful('top_p',payload.top_p))warnings.push('DeepSeek 非思考模式不使用 top_p。');else if(thinking&&payload.top_p!==undefined&&payload.top_p<0.95)warnings.push('DeepSeek 思考模式会把 top_p 下限按 0.95 处理。');}
   return {url:url.toString(),method,headers,...(vertexServiceAccount?{vertexServiceAccount}:{}),body:body===undefined?undefined:JSON.stringify(body),family,sourceId:selected.sourceId,operation,warnings,parameterWarnings:warnings,stream:body?.stream===true||/generate-stream|generate\/stream|:streamGenerateContent$/.test(pathname)};
 }
