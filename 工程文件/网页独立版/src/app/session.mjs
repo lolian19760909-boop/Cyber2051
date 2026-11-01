@@ -194,7 +194,7 @@ async function prepareSelection(turnInput={}){
   if(ports.state.writeMacroGlobals)await ports.state.writeMacroGlobals(globalVars.snapshot());
   return value;
  }
- function rememberPrompt(purpose,payload,report){const preview={purpose,attemptedAt:now(),nodeId:coordinator.context.nodeId||head.headNodeId,branchId:coordinator.context.identity?.branchId||identity.branchId,model:payload.body?.model||null,adapter:payload.adapter,messages:clone(payload.body?.messages||[]),report:clone(report)};lastPromptAttempt=preview;if(purpose==='body')lastBodyPromptAttempt=preview;}
+ function rememberPrompt(purpose,payload,report){const preview={purpose,attemptedAt:now(),nodeId:coordinator.context.nodeId||head.headNodeId,branchId:coordinator.context.identity?.branchId||identity.branchId,model:payload.body?.model||null,adapter:payload.adapter,messages:clone(payload.body?.messages||[]),body:clone(payload.body||{}),report:clone(report)};lastPromptAttempt=preview;if(purpose==='body')lastBodyPromptAttempt=preview;}
  async function requestPurpose(purpose,messages,options={}){
   if(!PURPOSES.has(purpose))throw new PromptError('model_purpose','未登记的模型用途');if(disposed)throw new TurnError('session_disposed','当前故事已经关闭');
   const purposeKey=purpose==='summary'?'compact':purpose==='archive'?'memory':purpose,selected={...model,...promptOptions.purposes[purposeKey]},maxTokens=options.maxTokens??options.responseTokens??2048,window=selected.contextSize||promptOptions.contextSize,budget=contextBudget({contextSize:window,outputTokens:maxTokens});
