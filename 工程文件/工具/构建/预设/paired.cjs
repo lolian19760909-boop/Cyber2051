@@ -47,6 +47,9 @@ function build({write=false}={}){
    // stops before writing any body (deterministic empty body, replay-proven 2026-11-01, issue #28).
    // The site preset ships without the suppression tail; the CoT scaffold stays authoritative.
    toggle('3beb259e-7516-41c9-8657-fd56cac8e628',false);
+   // Author-validated replacement (2026-11-01): the assistant-side quick-CoT opener keeps the
+   // auxiliary thinking scaffold and dialogue bubbles working without the suppression tail.
+   toggle('64f1335c-52cd-4d6c-93d1-77cc99b0c76c',true);
    // The tavern capture of the working opening request carries a single squashed system block
    // instead of the preset's ~20 scattered system messages (issue #23).
    set(['squash_system_messages'],true);
