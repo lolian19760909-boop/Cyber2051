@@ -41,7 +41,15 @@ export async function* iterateSSE(response){
   }finally{if(!ended)await reader.cancel().catch(()=>{});reader.releaseLock();}
 }
 async function* events(response){let event='',data=[];for await(const line of iterateSSE(response)){if(line===''){if(data.length)yield {event,data:data.join('\n')};event='';data=[];}else if(line.startsWith('event:'))event=line.slice(6).trim();else if(line.startsWith('data:'))data.push(line.slice(5).trimStart());}if(data.length)yield {event,data:data.join('\n')};}
-async function readJson(response,onRead){const lines=[];for await(const line of iterateSSE(response))lines.push(line);const text=lines.join('\n');onRead?.({characters:text.length});try{return JSON.parse(text);}catch{throw new ModelError('bad_response','模型响应不是完整 JSON');}}
+async function readText(response,onRead){const lines=[];for await(const line of iterateSSE(response))lines.push(line);const text=lines.join('\n');onRead?.({characters:text.length});return text;}
+async function readJson(response,onRead){const text=await readText(response,onRead);try{return JSON.parse(text);}catch{throw new ModelError('bad_response','模型响应不是完整 JSON');}}
+function responseErrorDetail(detail,text,request){
+ const value=typeof detail==='string'?detail:detail?.error?.message??detail?.message??detail?.detail??detail?.error_description??(typeof detail?.error==='string'?detail.error:undefined);
+ let message=typeof value==='string'?value:Array.isArray(value)?value.map(row=>typeof row==='string'?row:row?.msg||row?.message||'').filter(Boolean).join('；'):detail===undefined?text:'';
+ message=String(message||'').replace(/\s+/g,' ').trim();
+ for(const name of ['authorization','x-api-key','api-key','x-goog-api-key','apikey']){const secret=request.headers[name]?.replace(/^Bearer\s+/i,'');if(secret)message=message.split(secret).join('[密钥已隐藏]');}
+ return message.length>500?message.slice(0,500)+'…':message;
+}
 function frame(value,event,family,source,diagnostics,reply){
   diagnostics.report.frames++;diagnostics.report.payloadCharacters+=value.length;
   if(value==='[DONE]'){diagnostics.report.doneMarker=true;return {done:true,text:''};}
@@ -117,7 +125,18 @@ function makePort(kind,transport){
     const identity={adapter:selected.id,protocol:selected.family,provider:new URL(request.url).hostname,connection:kind,modelCredentialPresent:Boolean(request.headers.authorization||request.headers['x-api-key']||request.headers['api-key']||request.headers['x-goog-api-key']||request.headers.apikey||request.vertexServiceAccount),model:String(payload.body?.model||'').slice(0,160),request:requestDiagnostics(request)};
     let response;try{response=await transport(operation,payload,{...options,preparedRequest:request});}catch(error){if(operation==='chat')error.diagnostics={schema:1,...identity,httpStatus:null,format:'unavailable',stage:'transport'};throw error;}
 
-    if(!response.ok){const diagnostic=responseDiagnostics(response,{family:selected.family,source:selected.id});let detail;try{detail=await readJson(response,summary=>{diagnostic.report.errorBodyCharacters=summary.characters;});diagnostic.observe(detail);diagnostic.report.format='json';diagnostic.report.frames=1;diagnostic.report.payloadCharacters=JSON.stringify(detail).length;}catch{diagnostic.report.format='unreadable';}const marker=response.headers.get('x-cxx-error-origin'),origin=['gateway','upstream','transport'].includes(marker)?marker:kind==='direct'?'upstream':'unknown';diagnostic.report.responseOrigin=origin;diagnostic.report.errorBodyState=diagnostic.report.format==='json'?'json':diagnostic.report.errorBodyCharacters===0?'empty':diagnostic.report.errorBodyCharacters>0?'not_json':'read_failed';await response.body?.cancel().catch(()=>{});const auth=[401,403].includes(response.status),code=auth?(origin==='gateway'?'site_auth':origin==='upstream'?'model_auth':'auth_unknown'):response.status===429?'rate_limited':'model_request_failed';const message=auth?(origin==='gateway'?(response.status===401?'本站登录已失效，请重新登录；模型配置已保留。':'本站账号当前无权调用模型转发服务；模型配置已保留。'):origin==='upstream'?'模型接口拒绝鉴权（'+response.status+'），请核对该接口使用的 API Key；本站登录与模型密钥是两套凭据。':'请求被拒绝（'+response.status+'），响应未标明来自本站还是模型服务；模型配置已保留。'):origin==='gateway'&&typeof detail?.message==='string'?detail.message:'模型请求失败（'+response.status+'）';throw new ModelError(code,message,{origin,status:response.status,warnings,parameterWarnings:warnings,diagnostics:{...diagnostic.report,...identity,stage:'http'}});}
+    if(!response.ok){
+      const diagnostic=responseDiagnostics(response,{family:selected.family,source:selected.id});let detail,text='';
+      try{text=await readText(response,summary=>{diagnostic.report.errorBodyCharacters=summary.characters;});detail=JSON.parse(text);diagnostic.observe(detail);diagnostic.report.format='json';diagnostic.report.frames=1;diagnostic.report.payloadCharacters=text.length;}catch{diagnostic.report.format='unreadable';}
+      const marker=response.headers.get('x-cxx-error-origin'),origin=['gateway','upstream','transport'].includes(marker)?marker:kind==='direct'?'upstream':'unknown';
+      diagnostic.report.responseOrigin=origin;diagnostic.report.errorBodyState=diagnostic.report.format==='json'?'json':diagnostic.report.errorBodyCharacters===0?'empty':diagnostic.report.errorBodyCharacters>0?'not_json':'read_failed';
+      const errorDetail=responseErrorDetail(detail,text,request);if(errorDetail)diagnostic.report.errorDetail=errorDetail;
+      await response.body?.cancel().catch(()=>{});
+      const auth=[401,403].includes(response.status),code=auth?(origin==='gateway'?'site_auth':origin==='upstream'?'model_auth':'auth_unknown'):response.status===429?'rate_limited':'model_request_failed';
+      const summary=auth?(origin==='gateway'?(response.status===401?'本站登录已失效，请重新登录；模型配置已保留。':'本站账号当前无权调用模型转发服务；模型配置已保留。'):origin==='upstream'?'模型接口拒绝鉴权（'+response.status+'），请核对该接口使用的 API Key；本站登录与模型密钥是两套凭据。':'请求被拒绝（'+response.status+'），响应未标明来自本站还是模型服务；模型配置已保留。'):origin==='gateway'&&errorDetail?errorDetail:'模型请求失败（'+response.status+'）';
+      const message=errorDetail&&summary!==errorDetail?summary+'：'+errorDetail:summary;
+      throw new ModelError(code,message,{origin,status:response.status,warnings,parameterWarnings:warnings,diagnostics:{...diagnostic.report,...identity,stage:'http'}});
+    }
     let result;try{result=operation!=='chat'||selected.family==='horde'?(operation==='chat'?await readJson(response):normalizeResult(operation,await readJson(response))):await decodeReply(response,{family:selected.family,source:selected.id,onDelta:options.onDelta,onReasoning:options.onReasoning,onUsage:options.onUsage,onProgress:options.onProgress,signal:options.signal,stream:request.stream});}catch(error){if(error.diagnostics)Object.assign(error.diagnostics,identity);throw error;}
     if(result.diagnostics)Object.assign(result.diagnostics,identity);
     return {...result,warnings,parameterWarnings:warnings};
