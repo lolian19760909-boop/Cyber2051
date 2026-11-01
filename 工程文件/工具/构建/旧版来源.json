@@ -1,0 +1,546 @@
+{
+ "format": 1,
+ "sources": [
+  {
+   "name": "赛博小祥2051-V2.0.45-r1.json",
+   "sha256": "e7f22a41d91d4ce3d1c2c392c3c763a126cb1e70510f66e41d823c2ebd578976"
+  },
+  {
+   "name": "赛博小祥2051-V2.0.45-r2.json",
+   "sha256": "e7f22a41d91d4ce3d1c2c392c3c763a126cb1e70510f66e41d823c2ebd578976"
+  },
+  {
+   "name": "赛博小祥2051-V2.0.45.json",
+   "sha256": "e7f22a41d91d4ce3d1c2c392c3c763a126cb1e70510f66e41d823c2ebd578976"
+  },
+  {
+   "name": "赛博小祥2051-V2.0.46-r1.json",
+   "sha256": "61426068198660c19d19ab61f42c90a2a2544d330ca360f4ea3898e38612abed"
+  },
+  {
+   "name": "赛博小祥2051-V2.0.46.json",
+   "sha256": "61426068198660c19d19ab61f42c90a2a2544d330ca360f4ea3898e38612abed"
+  },
+  {
+   "name": "赛博小祥2051-V2.0.47.json",
+   "sha256": "61426068198660c19d19ab61f42c90a2a2544d330ca360f4ea3898e38612abed"
+  },
+  {
+   "name": "赛博小祥2051-V2.0.48.json",
+   "sha256": "61426068198660c19d19ab61f42c90a2a2544d330ca360f4ea3898e38612abed"
+  },
+  {
+   "name": "赛博小祥2051-V2.0.49-r1-移动端修复.json",
+   "sha256": "61426068198660c19d19ab61f42c90a2a2544d330ca360f4ea3898e38612abed"
+  },
+  {
+   "name": "赛博小祥2051-V2.0.49.json",
+   "sha256": "61426068198660c19d19ab61f42c90a2a2544d330ca360f4ea3898e38612abed"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.0-r1-Gal立绘修复.json",
+   "sha256": "61426068198660c19d19ab61f42c90a2a2544d330ca360f4ea3898e38612abed"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.0.json",
+   "sha256": "61426068198660c19d19ab61f42c90a2a2544d330ca360f4ea3898e38612abed"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.1-r1-开局保存修复.json",
+   "sha256": "61426068198660c19d19ab61f42c90a2a2544d330ca360f4ea3898e38612abed"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.1.json",
+   "sha256": "61426068198660c19d19ab61f42c90a2a2544d330ca360f4ea3898e38612abed"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.10-终端字号修复.json",
+   "sha256": "235349304f285163cc7f12a7bffee893cd141cc4583b358bbfb36cf972c1060a"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.11-文风平实提示.json",
+   "sha256": "235349304f285163cc7f12a7bffee893cd141cc4583b358bbfb36cf972c1060a"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.12-装配与逐轮战斗.json",
+   "sha256": "00b0da0ac123511a7e2f19283d0f941c19b3ba06ad1bd9bf6bdd7214a88ad726"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.15-阅读性能修复.json",
+   "sha256": "5e2d768835b3b6d6326bde7929b21cb1418d9020b711b765e95d25b8eea3b576"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.16-地图云端加载.json",
+   "sha256": "5e2d768835b3b6d6326bde7929b21cb1418d9020b711b765e95d25b8eea3b576"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.17-地图缩放修复.json",
+   "sha256": "5e2d768835b3b6d6326bde7929b21cb1418d9020b711b765e95d25b8eea3b576"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.18-界面与装配校验.json",
+   "sha256": "5e2d768835b3b6d6326bde7929b21cb1418d9020b711b765e95d25b8eea3b576"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.19-战斗联动修复.json",
+   "sha256": "5e2d768835b3b6d6326bde7929b21cb1418d9020b711b765e95d25b8eea3b576"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.2.json",
+   "sha256": "61426068198660c19d19ab61f42c90a2a2544d330ca360f4ea3898e38612abed"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.20-正文战斗联动.json",
+   "sha256": "5e2d768835b3b6d6326bde7929b21cb1418d9020b711b765e95d25b8eea3b576"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.21-快捷栏与物品参考.json",
+   "sha256": "5e2d768835b3b6d6326bde7929b21cb1418d9020b711b765e95d25b8eea3b576"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.22-战斗双模式.json",
+   "sha256": "5e2d768835b3b6d6326bde7929b21cb1418d9020b711b765e95d25b8eea3b576"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.23-正式版.json",
+   "sha256": "5e2d768835b3b6d6326bde7929b21cb1418d9020b711b765e95d25b8eea3b576"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.24-身份与续玩修复.json",
+   "sha256": "36c0c18b031a2919f862e2b1412c23f54df030207be4bcf331d42b8c25473ec8"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.25-战斗与加点修复-候选.json",
+   "sha256": "36c0c18b031a2919f862e2b1412c23f54df030207be4bcf331d42b8c25473ec8"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.26-界面与电台修复-候选.json",
+   "sha256": "36c0c18b031a2919f862e2b1412c23f54df030207be4bcf331d42b8c25473ec8"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.27-正式版.json",
+   "sha256": "c2fce7818005149d211c4742c86b07b473af50b5ba527a7c52eaac16582169fd"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.27-综合修复-候选.json",
+   "sha256": "c2fce7818005149d211c4742c86b07b473af50b5ba527a7c52eaac16582169fd"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.27R3-浏览器兼容修订.json",
+   "sha256": "bad839b9c1c0f00048cda1e881f1fa630df641d700c2cdc48b28d433e379ff3d"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.27R4-总结修复-候选.json",
+   "sha256": "bad839b9c1c0f00048cda1e881f1fa630df641d700c2cdc48b28d433e379ff3d"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.28-存档战斗-候选.json",
+   "sha256": "a866f9aa1705f83836e8e2988d7d93f6964f42a05e08cb1a3ce17bb1a7fd5417"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.28R1-义体战斗界面-候选.json",
+   "sha256": "9f06b6de10e032249f8de331c6a5d6fa3f1c1a1d5eabde7f722fed91c88a2084"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.3.json",
+   "sha256": "61426068198660c19d19ab61f42c90a2a2544d330ca360f4ea3898e38612abed"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.4.json",
+   "sha256": "8df570ff892ea43cb98eb5c5065518bf1503fdf057690f5382ffdead11987f89"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.5-r1-正文与心声修复.json",
+   "sha256": "d80e6b010bd9c259c3c0839b69cb5af6c3f634f708877f64c73bc2847b3b7c03"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.5.json",
+   "sha256": "d80e6b010bd9c259c3c0839b69cb5af6c3f634f708877f64c73bc2847b3b7c03"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.6-更新与存档.json",
+   "sha256": "e3f0c303094028038123157d5fc8c7016f08a006f3cff140753ca3ee3f19dfdf"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.7-统一开场.json",
+   "sha256": "e3f0c303094028038123157d5fc8c7016f08a006f3cff140753ca3ee3f19dfdf"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.8-终端与地图.json",
+   "sha256": "235349304f285163cc7f12a7bffee893cd141cc4583b358bbfb36cf972c1060a"
+  },
+  {
+   "name": "赛博小祥2051-V2.1.9-开场与正文修复.json",
+   "sha256": "235349304f285163cc7f12a7bffee893cd141cc4583b358bbfb36cf972c1060a"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.0-镜译接入-候选.json",
+   "sha256": "d9fcb20f273db197cefbea34464b2e2d92794611a3f3c52d6754175175ec495f"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.0-镜译接入-版本显示修正.json",
+   "sha256": "e3fca4484141b8e916261948764d6c25e9054aeb49bb1579907b31f33c44e488"
+  },
+  {
+   "name": "镜译测试/东京都2051-V2.1.28-通讯开发预览.json",
+   "sha256": "2c1dca2fc2c27e920bc0b3156e30c36597755472b9f3fb853deda874901514ed"
+  },
+  {
+   "name": "镜译测试/联调准备-20261010/东京都2051-V2.1.28-通讯联调预览-r1.json",
+   "sha256": "2c1dca2fc2c27e920bc0b3156e30c36597755472b9f3fb853deda874901514ed"
+  },
+  {
+   "name": "当前/赛博小祥2051-V2.2.1-阅读通讯与存档修订候选.json",
+   "sha256": "84285faa07ab911d9e696b09d1f070ea0f747e66c619f200986210a98dd41de3"
+  },
+  {
+   "name": "当前/赛博小祥2051-V2.2.2-主菜单与镜译引导候选.json",
+   "sha256": "452f6f200076969f5d8c6d6f1e29e9634ac13d85bd85cfef38f6126fd31619cd"
+  },
+  {
+   "name": "同版修订/赛博小祥2051-V2.2.3-首轮统一界面候选.json",
+   "sha256": "c06fedf1ef5bc757ac0df367dd4787bb2811c0bb2be3ab03efbb39b5159c70ef"
+  },
+  {
+   "name": "同版修订/赛博小祥2051-V2.2.3-统一游戏界面-0a078.json",
+   "sha256": "e5313ef1801c373d3b926a89874ac82947709e621170f1c7b548d4576d4a84ff"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.3-菜单人物UI修订候选.json",
+   "sha256": "c9f72088e67f0934f1efb85845c4bb3dd4b9dc012a936191204f98ad925d7fa0"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.4-排错交互迭代候选.json",
+   "sha256": "2814e868799263bb2c16541e611b6e23913c1883218b856ecaa0bcc66fe733fb"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.5-.json",
+   "sha256": "d2d29576d7b2c01f216c4e07ec64d4970b1f7e151b5d1385294eb083024d9008"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.5-在线资源接通候选.json",
+   "sha256": "d2d29576d7b2c01f216c4e07ec64d4970b1f7e151b5d1385294eb083024d9008"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.5-联通交互与Live2D候选.json",
+   "sha256": "00b4e83b2749c4b4fdddb2cbbac2752c2c8951a70c7877990e885be345c6c279"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.6.json",
+   "sha256": "1d061f8d403293a03fb3c0390431e34375ddb20ff985f303cb6ef8c80791fce8"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.6-地区事实同步候选.json",
+   "sha256": "e7d37d0108630e03861dad6c4ffd2531471254e9fb0a2d032fdd30eb13620123"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.6-盗芯之夜接入候选.json",
+   "sha256": "e7d37d0108630e03861dad6c4ffd2531471254e9fb0a2d032fdd30eb13620123"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.6-流量与诊断修复候选.json",
+   "sha256": "01c0061734356d79f4b4749b0fcc97dafdba5e5ac395350fb532912ea5b169e7"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.6-标题资源与公告修复候选.json",
+   "sha256": "9847226e848eac9474b5f4b12bdf92afda49aef48b0c9a6e382d53b67e74b445"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.7.json",
+   "sha256": "e0df36db2ee65f665f43e400978b584c75ca0999e43be8d955949b7290ab79c8"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.7-人物关系机制修订候选.json",
+   "sha256": "208cd28241800fb4af17e77777b826b5dcaf86ca9b15b1058a4732a833b1d625"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.7-资源核对与高清标题修复候选.json",
+   "sha256": "03b0e44dff200e29cf0df9a2c0591dd28ad88b4e258881c1126ca291be725739"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.7-人物创建与诊断修复候选.json",
+   "sha256": "03300bd18a915754ad0a13a5555317561d6ccbd0779459247c9f2ecce6d9bad1"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.7-构建核对与启动诊断修复候选.json",
+   "sha256": "6f437cac5c33f90a6001f3aac5b7eabf5d383a4d3d31261e1383b5a36657d095"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.8.json",
+   "sha256": "87316e30b825df0f8fb0b682e3d062e28f6a2b82685d22823111a4fab3658087"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.8-缓存核对恢复修复候选.json",
+   "sha256": "9488d1dc77321758f0970f71ba7d4751d3bc782d2758fd5095032dd29592cbfe"
+  },
+  {
+   "name": "赛博小祥2051-V2.2.8-开局与变量配置修复候选.json",
+   "sha256": "48020d8e551553d0a1910816699f3db25b992374d8253c3f4e3266b0acee29ee"
+  },
+  {
+   "name": "东京都2051-V2.2.8-R1.json",
+   "sha256": "edecc56af81cb3fd5df9e33ab21b29e6bc16947caf98af948ecb49615d0e8fda"
+  },
+  {
+   "name": "东京都2051-V2.2.9.json",
+   "sha256": "48cff99109e41bbbff640f5fb002ff90f51c30e05d519f9e35b2a9e2c2d3e919"
+  },
+  {
+   "name": "东京都2051-V2.2.9-R1.json",
+   "sha256": "b9e05502b8eb56934ec2e98841175b943e610d19fb04db2423b44819abf98682"
+  },
+  {
+   "name": "东京都2051-V2.2.10.json",
+   "sha256": "abe3e88d11e7563e6248e2b8204271365e01e699b9cc77a11564b399e1d0ea69"
+  },
+  {
+   "name": "东京都2051-V2.2.10-R1.json",
+   "sha256": "f24e374e5b795eb33fb4b10eba788b7e16e484bbcdb3d4d927cfbbdb0583229a"
+  },
+  {
+   "name": "诊断/2.2.10-竖屏与人物创建验收/东京都2051-V2.2.10-修复验收候选.json",
+   "sha256": "5e2a7cf8d6504426342aed0b585d0d21be3387f1825f0416c2acc20a6257a1bb"
+  },
+  {
+   "name": "诊断/2.2.10-TT导入与自检验收/东京都2051-V2.2.10-TT导入与自检验收候选.json",
+   "sha256": "3770f016932b3a70922206ebf782ee4e6a5e1e67318567bd252fce6863f82291"
+  },
+  {
+   "name": "赛博小祥2051-V2.3.0-20261017-b555272e.json",
+   "sha256": "05179dcce510139e5fc5e49efc1573fc1bb0cab302d5493b16fc28a6bc96c8b0"
+  },
+  {
+   "name": "东京都2051-V2.3.0-b4d14c0a1c21.json",
+   "sha256": "b21c754182109cdae70c066e8fc64ba74e62b5ddacbcecdc8cefad9beb9be41f"
+  },
+  {
+   "name": "东京都2051-V2.3.0-e9553b4ff3f2.json",
+   "sha256": "d3659fa493aa9281f6c890d43f5b989bb307977f2ce4cd3d54ed783bbc5bfe1f"
+  },
+  {
+   "name": "东京都2051-V2.3.1-621e2cda0fb9.json",
+   "sha256": "49217375f6648db987aa87f7e938e1cdcdf8662ac03b4c34efe0ac90254adeaf"
+  },
+  {
+   "name": "东京都2051-V2.3.1-37c3785b4c22.json",
+   "sha256": "5cedd7e9dee2e55b1dce784006426a271f1dd2aa16c8b072fc1911f4103a5caa"
+  },
+  {
+   "name": "东京都2051-V2.3.1-9f9fe39c1304.json",
+   "sha256": "a76bbbbc0e90144fcd369465d4ad99eb9ae937d0c16658a2b4149c933ddf2a86"
+  },
+  {
+   "name": "东京都2051-V2.3.1-c59d091fe5c4.json",
+   "sha256": "274e3ae402ce605ee3c927f35ecaac30b7412a7fbb9b18e627a30ef47e56e3cc"
+  },
+  {
+   "name": "东京都2051-V2.3.0-9a501dbe47f7.json",
+   "sha256": "d49789895b11472cf29aaa69869e266c672ba23ed208c9a0d304d6cb2b4e5f06"
+  },
+  {
+   "name": "东京都2051-V2.3.1-16f4fbee62a5.json",
+   "sha256": "729a5b80dddcbeb2ca4e20179bb6e9e355cf8832a78249032bc61fc57947f5eb"
+  },
+  {
+   "name": "东京都2051-V2.3.1-4fb76a77b852.json",
+   "sha256": "ebf5415e325ca9e4d6a377c739614101747db89d895fa0b77916f53c3cd8d576"
+  },
+  {
+   "name": "东京都2051-V2.3.0-0670ecf2e091.json",
+   "sha256": "0d3856ea7b969f7e58b173993066503b340cd117b27217268d5ed05728a0cc9d"
+  },
+  {
+   "name": "东京都2051-V2.3.1-44eea036c23c.json",
+   "sha256": "077bcade83ce9e634c8309c56664ab2494420f6ebb7f7c8fe6f92d6a08386a7e"
+  },
+  {
+   "name": "东京都2051-V2.3.1-2fdd401f5d11.json",
+   "sha256": "09ef3b35d85a7164fe2870e6c0f2957eae35ec7909e3a3178a9a2bc2f27b68f1"
+  },
+  {
+   "name": "东京都2051-V2.3.1-eb06aa0c8d10.json",
+   "sha256": "cdc165e9e3135289c3bda4a97e71bfaadd3f91d9da1fbd9cb75314aea25eef6a"
+  },
+  {
+   "name": "东京都2051-V2.3.1-e71c2a19bc23.json",
+   "sha256": "e8d85010a90fd6268222e9c66df04bac1c52683c717bb22f82fbd6d0497662e6"
+  },
+  {
+   "name": "东京都2051-V2.3.1-f8f99c5e1f46.json",
+   "sha256": "be2725248a702752597b4a0a3729e2ae564804b964b24ffd4ef52a3198fa7013"
+  },
+  {
+   "name": "东京都2051-V2.3.1-b4302099d205.json",
+   "sha256": "cf9df43a36d6b6887beb744ea5689b0c2b9a27ce0e8d46fbca092d8e3846e00c"
+  },
+  {
+   "name": "东京都2051-V2.3.1-932638fc58bd.json",
+   "sha256": "89b8b540e30a1673ef9f3643b402a39fc4f72a6adc08b98e41fd5c4c72dd8057"
+  },
+  {
+   "name": "东京都2051-V2.3.1-1cb70eb7f3bb.json",
+   "sha256": "b55f23b46bba01b885946daf7db5b8139b494fc4a44d7862047e4e035138613d"
+  },
+  {
+   "name": "东京都2051-V2.3.2-62c7af628abc.json",
+   "sha256": "1ca0a4392815bc1628a5e08216ac55943311c9d626ce0d8857c185a570cdeabf"
+  },
+  {
+   "name": "东京都2051-V2.3.2-e42559c07940.json",
+   "sha256": "75436b15e20c82455c97824947a0c69fc593e8e1aa1d3adeddec11d9dfb551af"
+  },
+  {
+   "name": "东京都2051-V2.3.3-0f79ba4862fd.json",
+   "sha256": "9d8f80a27c62c6d17971ea33427f427dab380a8f9279e65e3e81afe0c9e5ef02"
+  },
+  {
+   "name": "东京都2051-V2.3.4-67c626c55d03.json",
+   "sha256": "c9e1480ea399c3ef7d6256fdd820764718da390b8ce7f32485bceb73cd068862"
+  },
+  {
+   "name": "东京都2051-V2.3.4-e9c0f808d1f4.json",
+   "sha256": "810f01cdab0e3f648e2508584641aa4e92d003ea039413c3d9bedad97b1f688d"
+  },
+  {
+   "name": "东京都2051-V2.3.4-b4cb45655c7c.json",
+   "sha256": "3f49a3037b653867f8a717171179d17f983bbbc05e07e148d555ccd1b8ec359e"
+  },
+  {
+   "name": "东京都2051-V2.3.4-2f432dd0b5bc.json",
+   "sha256": "446c69bc4d193e2f5cd88f51a472df3dab56bc18daa7a4a5bd6d956e2251979a"
+  },
+  {
+   "name": "东京都2051-V2.3.5-9be996b6e9fa.json",
+   "sha256": "4d4394481d93f858df69c2ee7ed16cd3e03535f13270307613f0e86d83a13381"
+  },
+  {
+   "name": "东京都2051-V2.3.6-0d919949bb0f.json",
+   "sha256": "4744fed24246d63758a3aac6f9f67ffa6f6bd8f99cbd5b737e239577667ad657"
+  },
+  {
+   "name": "东京都2051-V2.3.7-ad3b85f682b1.json",
+   "sha256": "a1622fcbee571f886efb842dc49561c677ced267e59455c112f499fcbc44e156"
+  },
+  {
+   "name": "东京都2051-V2.3.8-eb2893d4e194.json",
+   "sha256": "b5dc31a5c30637cda463b8b1909df0ab722cef3ec272c86f964c391189c19120"
+  },
+  {
+   "name": "东京都2051-V2.3.8-022556f4be3e.json",
+   "sha256": "d25bca0512b1d7dd25f53d791d12b130ae3c4fd6cc2bfdd3c804546a2609cc57"
+  },
+  {
+   "name": "东京都2051-V2.3.8-12ba7245cbc4.json",
+   "sha256": "98f689a3b99574e3cb435f4bb1e327265cc855a87edf6ef133ab3e3ea6b1c2fb"
+  },
+  {
+   "name": "东京都2051-V2.3.8-3393f181635e.json",
+   "sha256": "20303ee5ac46a427f6645dd6b02731743065e07f77ef849f96dd94a659fea3c5"
+  },
+  {
+   "name": "东京都2051-V2.3.9-b3cceb83a762.json",
+   "sha256": "b348bb192e028bf5367d5ccc9ba6058768abd13c18336834692f2d10dc34f353"
+  },
+  {
+   "name": "东京都2051-V2.3.9-80e607a3671b.json",
+   "sha256": "03b54f92d2e3d3e90d98667b905f511327290aabe548db88016de53c0b265b7a"
+  },
+  {
+   "name": "东京都2051-V2.3.10-2d33f9952ad7.json",
+   "sha256": "615cba962457e0d58c5d1814a315030dc666d2c3a7e175e616a8d8381b9e0f90"
+  },
+  {
+   "name": "东京都2051-V2.3.10-60116b7d1654.json",
+   "sha256": "cec2075e448d7f50683f09a140d63883e822757e70320ffb09e62b8ed25f8550"
+  },
+  {
+   "name": "东京都2051-V2.3.11-6319553ab3ca.json",
+   "sha256": "7c1f389a67e1bbd6a605766db4f63c3b59949ebd6959b050b380d49ead12fd7d"
+  },
+  {
+   "name": "东京都2051-V2.3.12-ab81602998b7.json",
+   "sha256": "225599746792229b4cbf1fa3983a451d02a3b2ac05a324526b086df66b79c268"
+  },
+  {
+   "name": "东京都2051-V2.3.13-79f7d3b925b8.json",
+   "sha256": "47180951ab72f7284d73f9ffc513fed1f5b4c967c19d668d7cfdeae516732cec"
+  },
+  {
+   "name": "东京都2051-V2.3.14-eb8e30ae139b.json",
+   "sha256": "fca9dd002e18f15e38355eab69da320a4abd3ec7e8b02e587fb985b6a4d23ae5"
+  },
+  {
+   "name": "东京都2051-V2.3.15-a16e78454fe4.json",
+   "sha256": "74a45ce73a03ba67ff11009cbd927c704757aaa09efb00fa2a2def668ee68ea1"
+  },
+  {
+   "name": "东京都2051-V2.3.16-4f05fb8076ff.json",
+   "sha256": "59047642521a368367610be4eb2ea8c8ed7ad78564dfae85a33cb6ea04e3e3fe"
+  },
+  {
+   "name": "东京都2051-V2.3.17-09035ba4df62.json",
+   "sha256": "46ac384c530862741f36db094ef284b241a6cf37c729ac8b95ee6fe0fb3d186a"
+  },
+  {
+   "name": "东京都2051-V2.3.18-2be3b7164660.json",
+   "sha256": "4f316c9a246137aa1fcad5d9c8c6c3c820c1880c265aeb8f9decf00788bf8f1f"
+  },
+  {
+   "name": "东京都2051-V2.3.19-33a7e4bdaef0.json",
+   "sha256": "571e3aae594360afa3bc1d1fd722fa605b915238787f68456d21739cbbca0bee"
+  },
+  {
+   "name": "东京都2051-V2.3.20-710de52d5e68.json",
+   "sha256": "21422c6fa76f3f325b9a74a48619c3771741e45bf18c5d3d9b247b73e2e1595f"
+  },
+  {
+   "name": "东京都2051-V2.3.21-b94cb1b12e3e.json",
+   "sha256": "8a30322a9e164903a31396acd0a6adae16f6b38644a11b22bb87c6673e2edf18"
+  },
+  {
+   "name": "东京都2051-V2.3.22-d292e94f4641.json",
+   "sha256": "7340e0d79293074d02e03b2f0ce91e9588aece7990fbc60e8d7570f2c0852e1a"
+  },
+  {
+   "name": "东京都2051-V2.3.23-5cf1f77c47c9.json",
+   "sha256": "d9b453be421884c469ffd259d67a4c9ec0d6f6c3aee9bbbde6b457069bc14ec1"
+  },
+  {
+   "name": "东京都2051-V2.3.24-aa2947c101b0.json",
+   "sha256": "61e76ac2e739dac421cbbc03d8fd47e153a02e201d4b03578c1b5f3a059b7a59"
+  },
+  {
+   "name": "东京都2051-V2.3.25-a839073800fb.json",
+   "sha256": "9eecc198433ccbc0ac652dbcaa58202b8be4c60901aaf34aa40459156bba3d5c"
+  },
+  {
+   "name": "东京都2051-V2.3.26-c095c02d677d.json",
+   "sha256": "e18652fb6d8d0c4dc2d3684fb5e2e615e5b5bc9168f78e65f03c01d4d9c81ea5"
+  },
+  {
+   "name": "东京都2051-V2.3.26-7cf506b76236.json",
+   "sha256": "dd2cec5f981483b05ea413cdc6ebd04ac54ca706c195145f4cc4435019e5d527"
+  },
+  {
+   "name": "东京都2051-V2.3.28-176aa300a692.json",
+   "sha256": "ad76aa6130146a576a20c90e476e2fd8d5f157d1e0c583068852316819128f89"
+  },
+  {
+   "name": "东京都2051-V2.3.29-bfd7b668ea95.json",
+   "sha256": "ba23f5587378dcddfb7d14ff283848b7a1381126d5c569c71f348ea8ed5db5e8"
+  },
+  {
+   "name": "东京都2051-V2.3.30-d690171aa369.json",
+   "sha256": "22cdf13fb8db6c71d82b893ff9fe37f5cf5d1ab317977cba3adbfa111f46cd70"
+  },
+  {
+   "name": "东京都2051-V2.3.31-96863ec07461.json",
+   "sha256": "ff1fa81ceaf4154c12f12774368fc04e5254caf104d3edb0bafee4ba2afb05a9"
+  },
+  {
+   "name": "东京都2051-V2.3.32-962840701921.json",
+   "sha256": "9cd73b7d6b095bd225cdf643785a8209231c5ac354d6a79ae58206e25d49c3ce"
+  }
+ ],
+ "seedValues": []
+}
