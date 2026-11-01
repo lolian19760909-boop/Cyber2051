@@ -8,6 +8,7 @@ import {createMedia} from './media.mjs';
 import {displayProjection,normalizeThinkingTags} from '../app/parse.mjs';
 import {createCombat} from './combat.mjs';
 import {createNativeReader} from './native-reader.mjs';
+import {mountRawEditor} from './raw-editor.mjs';
 import {mountDatabaseTables} from './database-tables.mjs';
 import {prepareTerminal2x} from './terminal-2x.mjs';
 import {phone2xStyle,nativeFontStyle} from './phone-2x.mjs';
@@ -19,7 +20,7 @@ let modulesReady;
 export async function prepareGameplay(){if(!modulesReady)modulesReady=(async()=>{await Promise.all([sourceScripts(modules,{adapted}),phone2xStyle()]);for(const name of ['Gal/style.css','运行时/combat-view.css','共享/radio.css'])await sourceStyle(name);})().catch(error=>{modulesReady=null;throw error;});return modulesReady;}
 const copy=value=>structuredClone(value);
 
-export async function mountGameplay({session,statePort,database,card,host,assets,foundation,stage,composer,input,send,stop,regenerate,status,busy=()=>false,openSettings,openWorkshop,openMainMenu,editBody,deleteBody,openStories,savePoint,backupStory,temporary}){
+export async function mountGameplay({session,statePort,database,card,host,assets,foundation,stage,composer,input,send,stop,regenerate,status,busy=()=>false,openSettings,openWorkshop,openMainMenu,onEdited,deleteBody,openStories,savePoint,backupStory,temporary}){
   await prepareGameplay();let disposed=false,messages=[],nodes=[],floorVersions={},switchingVersion=false,revision=0,selectedBody=null,playerViews=new Set(),gal=null,terminal=null,atlas=null,atlasFlight=null,terminalHost=null,terminalStop=null,terminalChrome=null,combat=null;
   const listeners=new Set(),historyState=new Map(),historyLoads=new Map(),scope=()=>session.identity.accountId+':'+session.identity.runId+':'+session.identity.branchId;
   const emit=kind=>{for(const fn of [...listeners])fn(kind);};
@@ -93,7 +94,8 @@ export async function mountGameplay({session,statePort,database,card,host,assets
   async function openTerminal(route={}){const app=await ensureTerminal();app.open(route);if(!terminalHost.open)terminalHost.showModal();}
   globalThis.Cxx233Terminal={openPage:page=>openTerminal({page}),close:()=>terminal?.close(),captureReturn:()=>()=>openTerminal({page:terminal?.page||'city'}),get frame(){return terminal?{contentWindow:window}:null;}};
   const resolveSprite=(id,expression,options)=>{const url=globalThis.CxxGalSprites.sprite(id,'https://cyber2051.top',expression,standing,options);return url?assets.resolve(url):null;};
-  const nativeReader=createNativeReader({stage,parser:viewParser,sprite:resolveSprite,onEdit:editBody,onDelete:deleteBody,onVersion:(nodeId,targetId)=>switchVersion(nodeId,targetId).catch(error=>notify(error.message)),busy:()=>busy()||session.running||switchingVersion,preferences:preferenceService.read});
+  const rawEditor=mountRawEditor({session,busy:()=>busy()||session.running||switchingVersion,onSaved:async result=>{await update();status('原文已校验保存为新路线，可用「上一版／下一版」切换。','ok');onEdited?.(result);},onError:error=>notify(error.message)});
+  const nativeReader=createNativeReader({stage,parser:viewParser,sprite:resolveSprite,onEdit:nodeId=>{const node=nodes.find(row=>row.nodeId===nodeId);if(node)rawEditor.open(node);else notify('未找到该层的原文');},onDelete:deleteBody,onVersion:(nodeId,targetId)=>switchVersion(nodeId,targetId).catch(error=>notify(error.message)),busy:()=>busy()||session.running||switchingVersion,preferences:preferenceService.read});
   const openNative=()=>{if(gal.active){const pos=gal.position;gal.close();nativeReader.select(pos.floor,pos.index);}preferenceService.set({gal:false});};
   const openGal=()=>{preferenceService.set({gal:true});const pos=nativeReader.position();gal.open({floor:pos.floor,paragraph:pos.index});};
   const playControls=mountPlayControls({parent:document.getElementById('display-controls'),preferences:preferenceService,openGal,openNative,openReading:()=>reading.settings({floor:nativeReader.position().floor}),save:savePoint,stories:openStories,temporary});
