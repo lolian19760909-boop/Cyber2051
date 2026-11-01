@@ -1,7 +1,7 @@
 'use strict';
 const fs = require('node:fs');
 const path = require('node:path');
-const acorn = require('D:/SillyTavern/node_modules/acorn');
+const acorn = require('acorn');
 const {sha} = require('../lib/card-ast.cjs');
 const {inlineSource} = require("../lib/inline-source.cjs");
 const Theme = require('../lib/ui-theme.cjs');
