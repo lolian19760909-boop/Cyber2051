@@ -17,6 +17,7 @@ const shoot=(page,name)=>{const file='shot-'+name+'.png';return page.screenshot(
 try{
  browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
  const page=await (await browser.newContext({viewport:{width:1280,height:900}})).newPage();page.setDefaultTimeout(20000);
+ await page.route('**/api/workshop/announcements',route=>route.fulfill({json:{ok:true,items:[]}}));
  page.on('pageerror',e=>report.errors.push(e.message));
  page.on('dialog',dialog=>dialog.accept());
  await page.goto(base+'/?mode=local',{waitUntil:'domcontentloaded'});

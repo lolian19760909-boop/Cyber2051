@@ -1,0 +1,81 @@
+  <dialog class="cxx-bulletin" id="cxx-bulletin" aria-labelledby="cxx-bulletin-title">
+    <header class="cxx-bulletin-header">
+      <div class="cxx-bulletin-heading">
+        <span data-bulletin-brand></span>
+        <h1 id="cxx-bulletin-title">公告与指南</h1>
+      </div>
+      <div class="cxx-header-actions">
+        <details class="cxx-theme-picker" id="cxx-theme" data-current-theme="red">
+          <summary aria-label="切换界面主题，当前为红色" aria-controls="cxx-theme-options">
+            <span class="cxx-theme-swatch" aria-hidden="true"></span>
+            <span class="cxx-theme-name"><span class="cxx-lettering-ink" aria-hidden="true"></span><span class="cxx-sr-only" id="cxx-theme-name">红</span></span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg>
+          </summary>
+          <div class="cxx-theme-options" id="cxx-theme-options" role="group" aria-label="选择界面主题">
+            <button type="button" class="cxx-theme-choice" data-theme-option="red" data-theme-name="红色" aria-pressed="true">
+              <span class="cxx-theme-swatch" aria-hidden="true"></span><span class="cxx-theme-word" data-word="red"><span class="cxx-lettering-ink" aria-hidden="true"></span><span class="cxx-sr-only">红色</span></span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>
+            </button>
+            <button type="button" class="cxx-theme-choice" data-theme-option="yellow" data-theme-name="黄色" aria-pressed="false">
+              <span class="cxx-theme-swatch" aria-hidden="true"></span><span class="cxx-theme-word" data-word="yellow"><span class="cxx-lettering-ink" aria-hidden="true"></span><span class="cxx-sr-only">黄色</span></span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>
+            </button>
+            <button type="button" class="cxx-theme-choice" data-theme-option="night" data-theme-name="黑灰" aria-pressed="false">
+              <span class="cxx-theme-swatch" aria-hidden="true"></span><span class="cxx-theme-word" data-word="night"><span class="cxx-lettering-ink" aria-hidden="true"></span><span class="cxx-sr-only">黑灰</span></span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>
+            </button>
+          </div>
+        </details>
+        <button type="button" class="cxx-icon-button" data-close aria-label="关闭公告与指南">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <nav class="cxx-bulletin-tabs" aria-label="内容分类" role="tablist">
+      <button type="button" role="tab" id="cxx-tab-notices" aria-controls="cxx-bulletin-panel" aria-selected="true" data-tab="notices" tabindex="0">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v12H9l-5 4V5Z"/><path d="M8 9h8M8 13h5"/></svg><span class="cxx-tab-lettering"><span class="cxx-lettering-ink" aria-hidden="true"></span><span class="cxx-sr-only">最新公告</span></span>
+      </button>
+      <button type="button" role="tab" id="cxx-tab-updates" aria-controls="cxx-bulletin-panel" aria-selected="false" data-tab="updates" tabindex="-1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h11M4 12h8M4 17h11M17 10V4m-3 3 3-3 3 3M17 14v6m-3-3 3 3 3-3"/></svg><span class="cxx-tab-lettering"><span class="cxx-lettering-ink" aria-hidden="true"></span><span class="cxx-sr-only">更新记录</span></span>
+      </button>
+      <button type="button" role="tab" id="cxx-tab-letters" aria-controls="cxx-bulletin-panel" aria-selected="false" data-tab="letters" tabindex="-1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3zM3 6l9 7 9-7"/></svg><span class="cxx-tab-lettering"><span class="cxx-lettering-ink" aria-hidden="true"></span><span class="cxx-sr-only">作者来信</span></span>
+      </button>
+      <button type="button" role="tab" id="cxx-tab-guide" aria-controls="cxx-bulletin-panel" aria-selected="false" data-tab="guide" tabindex="-1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6C9 3 5 3 3 4v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-2-1-6-1-9 2Zm0 0v14"/></svg><span class="cxx-tab-lettering"><span class="cxx-lettering-ink" aria-hidden="true"></span><span class="cxx-sr-only">游玩指南</span></span>
+      </button>
+    </nav>
+
+    <section class="cxx-bulletin-panel" id="cxx-bulletin-panel" role="tabpanel" aria-labelledby="cxx-tab-notices" data-list-open="false">
+      <button type="button" class="cxx-mobile-index" id="cxx-mobile-index" aria-expanded="false" aria-controls="cxx-bulletin-index">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <span id="cxx-mobile-label">公告目录</span>
+        <svg class="cxx-index-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg>
+      </button>
+
+      <aside class="cxx-bulletin-index" id="cxx-bulletin-index" aria-label="文章目录">
+        <label class="cxx-search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
+          <span class="cxx-sr-only">搜索当前分类</span>
+          <input id="cxx-search" type="search" placeholder="搜索公告" autocomplete="off">
+        </label>
+        <div class="cxx-index-list" id="cxx-index-list"></div>
+        <div class="cxx-index-end"><span id="cxx-result-count"></span></div>
+      </aside>
+
+      <div class="cxx-document" id="cxx-document" tabindex="0" aria-label="正文阅读区">
+        <article id="cxx-article"></article>
+      </div>
+    </section>
+
+    <footer class="cxx-bulletin-footer">
+      <label class="cxx-remember"><input id="cxx-notice-remember" type="checkbox">下次不再自动显示</label><button class="cxx-action" id="cxx-notice-refresh" type="button">刷新</button>
+      <div class="cxx-pager" aria-label="切换文章">
+        <button type="button" class="cxx-icon-button" id="cxx-previous" aria-label="上一篇"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg></button>
+        <output id="cxx-page-count" aria-live="polite"></output>
+        <button type="button" class="cxx-icon-button" id="cxx-next" aria-label="下一篇"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg></button>
+      </div>
+      <button type="button" class="cxx-action cxx-footer-close" data-close>关闭</button>
+    </footer>
+  </dialog>
