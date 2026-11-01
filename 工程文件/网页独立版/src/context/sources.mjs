@@ -16,7 +16,11 @@ export async function sourceRows({nodes,identity,actorId='player',versions={},pr
   const binding=node.message?.binding||(!node.native?{actorId:'player',viewpointActorId:'player',evidence:'legacy-web-before-actor-controls'}:null);if(!binding||binding.viewpointActorId!==actorId)continue;
   const common={nodeId:node.nodeId,replyId:node.message?.attemptId||node.nodeId,branchId:node.branchId,actorId};
   const input=node.message?.input,inputs=Array.isArray(input?.messages)?input.messages.map((row,index)=>['user',row.content,'u'+index]):[['user',input?.text,'u']];
-  for(const [role,text,suffix]of [...inputs,['assistant',raw,'a']]){
+  // A command opening mirrors the card's tavern flow: /send commits the instruction as the first
+  // history row and the prebuilt scene text never enters the prompt (issue #23). The instruction
+  // itself arrives with the dispatch turn's own node input.
+  const emitted=[...inputs,...(node.message?.openingCommand===true?[]:[['assistant',raw,'a']])];
+  for(const [role,text,suffix]of emitted){
    if(!text)continue;const projection=projectText?projectText(text,role,node):{text:String(text)},native={role,content:String(typeof projection==='string'?projection:projection.text)},old=reusable?cached.roles[suffix]:null;
    const digest=old?.source===text?old.digest:await semanticHash({role,text}),projectionDigest=old?.content===native.content?old.projectionDigest:await semanticHash(native.content);
    saved.roles[suffix]={source:text,content:native.content,digest,projectionDigest};

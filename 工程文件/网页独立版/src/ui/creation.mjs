@@ -42,7 +42,7 @@ export async function mountCreation({parent,session,statePort,contentVersion,gam
       const opening=String(selection.openingText??authoredText).replaceAll('{{user}}',profile.name);
       if(!opening.trim())throw new Error('所选开场没有正文');
       const parsed=parseReply('<cxx-story>'+opening+'</cxx-story>',{parser:session.coordinator.context.parsed?.parser||globalThis.CxxGalParser});
-      const result=await statePort.commit({...session.identity,operationId,expectedRevision:head.revision,nodeId,parentNodeId:null,profile,media,contentVersion,stateAfter:initial,beforeState:session.rules.emptyRoot(),message:{role:'assistant',kind:'opening',raw:parsed.raw,display:parsed.display,input:null,creationId:selection.creationId,...(gameSetup?{gameSetup:structuredClone(gameSetup)}:{}),openingAction:openingAction({command:selection.draft.pendingCommand,direct:Flow.isDirect(selection.draft.scenario)})},receipt:{kind:'creation',creationId:selection.creationId},createdAt:new Date().toISOString()});
+      const command=selection.draft.pendingCommand,result=await statePort.commit({...session.identity,operationId,expectedRevision:head.revision,nodeId,parentNodeId:null,profile,media,contentVersion,stateAfter:initial,beforeState:session.rules.emptyRoot(),message:{role:'assistant',kind:'opening',raw:parsed.raw,display:parsed.display,input:null,creationId:selection.creationId,...(gameSetup?{gameSetup:structuredClone(gameSetup)}:{}),...(command?{openingCommand:true}:{}),openingAction:openingAction({command,direct:Flow.isDirect(selection.draft.scenario)})},receipt:{kind:'creation',creationId:selection.creationId},createdAt:new Date().toISOString()});
       if(result.status==='conflict')throw new Error('另一页面已建立开局，请重新读取');
       createdNode=result.nodeId;
     },

@@ -42,6 +42,9 @@ function build({write=false}={}){
    patchPrompt(ids.izumiThought,{content:read('卡片源码/预设/提示词/心理描写.txt').trimEnd()});
    toggle(ids.world,false);
    toggle(ids.izumiSummary,true);
+   // The tavern capture of the working opening request carries a single squashed system block
+   // instead of the preset's ~20 scattered system messages (issue #23).
+   set(['squash_system_messages'],true);
    // A disabled optional output switch is still safe to enable later.
    patchPrompt(ids.izumiOptions,{name:'⏩选项栏｜2051五选项',content:'【行动选项｜必须五个，写在 xuan 内】\n主剧情结束后给出五个行动选项，全部放在 <xuan>…</xuan> 内用「- 」逐条列出：简洁、合理、衔接当前剧情，保留不同走向，不替玩家执行。\n禁止：另生成 <options>／<option>；把选项写进正文或 <ztl>；预先写出玩家尚未选择的行动结果。'});
    for(const id of ['4c369a25-bf59-47bc-bcf5-510d02d6326d','b9f51abf-13ad-4d57-aa1e-2a04a456ce98','a542e188-70c5-4364-9ef8-ffd78a39dd90','7dbe5b2a-72ca-4ebc-a5ba-e0291c9bf210','7ea9ba2c-1fb0-403c-b62b-0425792734a8'])patchRegex(id,{disabled:true});
