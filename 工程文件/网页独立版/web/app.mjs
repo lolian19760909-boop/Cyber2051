@@ -71,6 +71,7 @@ const els = {
 };
 
 const settings = {
+  thinking: 'default',
   adapter: 'chat:openai',
   baseUrl: '',
   model: '',
@@ -229,6 +230,7 @@ function modelConfig() {
     provider:settings.provider||{},
     family: settings.adapter,
     connection:settings.connection,
+    ...(settings.thinking==='on'?{include_reasoning:true}:settings.thinking==='off'?{include_reasoning:false}:{}),
   };
 }
 
@@ -380,20 +382,20 @@ function safeStorage() {
 
 function connectionKey(){return 'cxx2051:connection:'+state.mode+':'+state.accountId;}
 function syncModelForm(){
-  for(const name of ['adapter','baseUrl','model','apiKey','connection']){const field=els.modelForm.elements.namedItem(name);if(field)field.value=settings[name]||'';}
+  for(const name of ['adapter','baseUrl','model','apiKey','connection','thinking']){const field=els.modelForm.elements.namedItem(name);if(field)field.value=settings[name]||'';}
   els.modelForm.elements.namedItem('rememberKey').checked=settings.rememberKey;modelConnection?.sync(settings);
 }
 async function persistSettings(){
-  const {adapter,baseUrl,model,connection,rememberKey,apiKey,serviceAccount,provider}=settings;
+  const {adapter,baseUrl,model,connection,rememberKey,apiKey,serviceAccount,provider,thinking}=settings;
   const storage=safeStorage();if(!storage)throw new Error('此浏览器暂时不能保存设置');
-  storage.setItem(connectionKey(),JSON.stringify({adapter,baseUrl,model,connection,provider,rememberKey,...(rememberKey?{apiKey,serviceAccount}:{})}));
+  storage.setItem(connectionKey(),JSON.stringify({adapter,baseUrl,model,connection,provider,rememberKey,thinking,...(rememberKey?{apiKey,serviceAccount}:{})}));
   if(apiKey)sessionStorage.setItem(connectionKey()+':key',apiKey);else sessionStorage.removeItem(connectionKey()+':key');sessionStorage.removeItem(connectionKey()+':service-account');
   if(serviceAccount)sessionStorage.setItem(connectionKey()+':service-account',serviceAccount);else sessionStorage.removeItem(connectionKey()+':service-account');
 }
 function loadSettings(){
   const scope=connectionKey();if(connectionSettingsScope===scope)return;connectionSettingsScope=scope;
-  Object.assign(settings,{adapter:'chat:openai',baseUrl:'',model:'',apiKey:'',serviceAccount:'',provider:{},rememberKey:false,connection:'default'});
-  try{const saved=JSON.parse(safeStorage()?.getItem(connectionKey())||'{}');for(const name of ['adapter','baseUrl','model','connection','provider'])if(saved[name])settings[name]=saved[name];settings.serviceAccount=sessionStorage.getItem(connectionKey()+':service-account')||(saved.rememberKey?saved.serviceAccount||'':'');settings.rememberKey=saved.rememberKey===true;settings.apiKey=sessionStorage.getItem(connectionKey()+':key')||(settings.rememberKey?saved.apiKey||'':'');}catch{}
+  Object.assign(settings,{adapter:'chat:openai',baseUrl:'',model:'',apiKey:'',serviceAccount:'',provider:{},rememberKey:false,connection:'default',thinking:'default'});
+  try{const saved=JSON.parse(safeStorage()?.getItem(connectionKey())||'{}');for(const name of ['adapter','baseUrl','model','connection','provider'])if(saved[name])settings[name]=saved[name];settings.thinking=['on','off'].includes(saved.thinking)?saved.thinking:'default';settings.serviceAccount=sessionStorage.getItem(connectionKey()+':service-account')||(saved.rememberKey?saved.serviceAccount||'':'');settings.rememberKey=saved.rememberKey===true;settings.apiKey=sessionStorage.getItem(connectionKey()+':key')||(settings.rememberKey?saved.apiKey||'':'');}catch{}
 }
 let siteUserPromise;
 function loadSiteUser(){
