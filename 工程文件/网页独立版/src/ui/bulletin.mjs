@@ -47,7 +47,7 @@ export function createBulletin({win=window,assets}){
    });
    syncTheme(host.dataset.cxxTheme);holder.unsubscribe=win.CxxTheme?.subscribe?.(syncTheme);
    const art=[...content.css.matchAll(/url\("([^"]+)"\)/g)].map(match=>match[1]).filter(url=>/\.(?:svg|png|webp)$/i.test(url));
-   void Promise.all([...new Set(art)].map(url=>new Promise(resolve=>{const image=new win.Image();let settled=false;const timer=win.setTimeout(()=>finish(false),8000);function finish(ok){if(settled)return;settled=true;win.clearTimeout(timer);image.onload=image.onerror=null;resolve(ok);}image.onload=()=>finish(true);image.onerror=()=>finish(false);image.src=url;}))).then(loaded=>{if(current===holder&&loaded.every(Boolean))container.dataset.artReady='true';});
+   void Promise.all([...new Set(art)].map(url=>new Promise(resolve=>{const image=new win.Image();let settled=false;const timer=win.setTimeout(()=>finish(false),8000);function finish(ok){if(settled)return;settled=true;win.clearTimeout(timer);image.onload=image.onerror=null;resolve(ok);}image.onload=()=>finish(true);image.onerror=()=>finish(false);if(/\.svg$/i.test(url))image.crossOrigin='anonymous';image.src=url;}))).then(loaded=>{if(current===holder&&loaded.every(Boolean))container.dataset.artReady='true';});
    if(feed.error){const error=doc.createElement('p');error.className='cxx-load-error';error.setAttribute('role','status');error.textContent='公告读取失败，请刷新重试。';scope.getElementById('cxx-article').prepend(error);}
   })().finally(()=>{flight=null;});
   return flight;
