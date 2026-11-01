@@ -42,6 +42,11 @@ function build({write=false}={}){
    patchPrompt(ids.izumiThought,{content:read('卡片源码/预设/提示词/心理描写.txt').trimEnd()});
    toggle(ids.world,false);
    toggle(ids.izumiSummary,true);
+   // The squashed post-history block pairs this anti-native-thinking tail with the preset's own
+   // <Chain_of_Thought> scaffold; with native thinking forced on, DeepSeek ends thinking and
+   // stops before writing any body (deterministic empty body, replay-proven 2026-11-01, issue #28).
+   // The site preset ships without the suppression tail; the CoT scaffold stays authoritative.
+   toggle('3beb259e-7516-41c9-8657-fd56cac8e628',false);
    // The tavern capture of the working opening request carries a single squashed system block
    // instead of the preset's ~20 scattered system messages (issue #23).
    set(['squash_system_messages'],true);
