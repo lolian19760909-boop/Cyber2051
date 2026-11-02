@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/数值引擎/adapters/mvu.js; source SHA256 a3d4ec3e1e9b2df1d586d2f89b8cb9c093a01260fb8f3b7c16cb3fb8db46cedc. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/数值引擎/adapters/mvu.js; source SHA256 64b22b078a84d0fcdb2e00639714a2c887801b51bb82fd2731986e4cf300c822. Rebuild with tools/p3a-adapt-views.mjs. */
 (function(root,factory){const local=typeof module==='object'&&module.exports;const value=factory(local?require('../src/engine.js'):root.CxxNumericEngine);if(local)module.exports=value;else root.CxxNumericMvu=value;})(globalThis,function(engine){
   'use strict';
  const cloneAPI=()=>{const local=typeof module==='object'&&module.exports?require('../../共享/data-clone.js'):null;const api=local||globalThis.CxxDataClone;if(api&&typeof api.clone==='function')return api;if(typeof structuredClone==='function')return {clone:value=>structuredClone(value)};return {clone:value=>JSON.parse(JSON.stringify(value))};};const clone=value=>cloneAPI().clone(value);
@@ -19,7 +19,8 @@
       const event=clone(value);if(!/^[a-zA-Z][a-zA-Z0-9_-]{0,79}$/.test(event.id||''))event.id='event_'+engine.loadout.hash(JSON.stringify([options.source||options.factBatch,at,event.kind]));
       for(const key of ['amount','quantity','xp','attributePoints','perkPoints'])if(typeof event[key]==='string'&&event[key].trim())event[key]=Number(event[key]);
       if(typeof event.quote==='string'&&!event.reason)event.reason=event.quote;delete event.quote;
-      if(['resource','achievement'].includes(event.kind)&&!event.reason)event.reason='模型登记的剧情变化';
+      if((['resource','achievement'].includes(event.kind)||engine.loadout.eventKinds.has(event.kind))&&!event.reason)event.reason='模型登记的剧情变化';
+      if(['cyberware-install','cyberware-remove'].includes(event.kind)&&event.completed===undefined)event.completed=true;
       events.push({event,path:at});
      }
     }
@@ -27,8 +28,6 @@
     // Do not combine a computed child update with an unrelated parent replacement.
     for(const p of ordinary)if(['/terminal','/terminal/gameplay'].includes(p.path))throw Error('数值事件不能与整层替换同时保存');
     const game=stat.terminal.gameplay,values=events.map(row=>row.event),gains=values.filter(e=>e.kind==='item-gain'),wallet=ordinary.filter(p=>p.path==='/terminal/wallet'||p.path.startsWith('/terminal/wallet/'));
-    const seenBatch=options.factBatch&&game.loadout?.factBatches?.[options.factBatch],issues=seenBatch?[]:engine.loadout.qualityIssues(game,values);
-    if(issues.length){const id='pending_'+engine.loadout.hash(JSON.stringify([options.source||options.factBatch,inputs[0].value]));const before=game.loadout,after={...clone(before||{}),pendingTransactions:{...clone(before?.pendingTransactions||{}),[id]:{id,events:clone(inputs[0].value),issues,wallet:clone(wallet),walletBefore:clone(stat.terminal.wallet||{}),source:clone(options.source||null),factBatch:options.factBatch||null}}};const change={path:['terminal','gameplay','loadout'],missing:before===undefined,before:before===undefined?null:clone(before),after};return {patches:[...clone(ordinary.filter(p=>!wallet.includes(p))),{op:change.missing?'add':'replace',path:'/terminal/gameplay/loadout',value:after}],changes:[change],applied:[],duplicates:[],pending:id,withheld:wallet};}
     const accepted=[];let result=engine.settle(game,[],options);
     for(const {event,path:at}of events)try{const next=engine.settle(game,[...accepted,event],options);accepted.push(event);result=next;}catch(error){ignored.push({path:at,reason:error.message+'（该项保留原值）'});}
     const duplicateGains=gains.filter(e=>result.duplicates.includes(e.id));if(wallet.length&&duplicateGains.length&&duplicateGains.length!==gains.length)throw Error('同次购买混有已结算与新物品，请核对购买记录后重新处理。');

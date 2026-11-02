@@ -18,7 +18,8 @@
       const event=clone(value);if(!/^[a-zA-Z][a-zA-Z0-9_-]{0,79}$/.test(event.id||''))event.id='event_'+engine.loadout.hash(JSON.stringify([options.source||options.factBatch,at,event.kind]));
       for(const key of ['amount','quantity','xp','attributePoints','perkPoints'])if(typeof event[key]==='string'&&event[key].trim())event[key]=Number(event[key]);
       if(typeof event.quote==='string'&&!event.reason)event.reason=event.quote;delete event.quote;
-      if(['resource','achievement'].includes(event.kind)&&!event.reason)event.reason='模型登记的剧情变化';
+      if((['resource','achievement'].includes(event.kind)||engine.loadout.eventKinds.has(event.kind))&&!event.reason)event.reason='模型登记的剧情变化';
+      if(['cyberware-install','cyberware-remove'].includes(event.kind)&&event.completed===undefined)event.completed=true;
       events.push({event,path:at});
      }
     }
@@ -26,8 +27,6 @@
     // Do not combine a computed child update with an unrelated parent replacement.
     for(const p of ordinary)if(['/terminal','/terminal/gameplay'].includes(p.path))throw Error('数值事件不能与整层替换同时保存');
     const game=stat.terminal.gameplay,values=events.map(row=>row.event),gains=values.filter(e=>e.kind==='item-gain'),wallet=ordinary.filter(p=>p.path==='/terminal/wallet'||p.path.startsWith('/terminal/wallet/'));
-    const seenBatch=options.factBatch&&game.loadout?.factBatches?.[options.factBatch],issues=seenBatch?[]:engine.loadout.qualityIssues(game,values);
-    if(issues.length){const id='pending_'+engine.loadout.hash(JSON.stringify([options.source||options.factBatch,inputs[0].value]));const before=game.loadout,after={...clone(before||{}),pendingTransactions:{...clone(before?.pendingTransactions||{}),[id]:{id,events:clone(inputs[0].value),issues,wallet:clone(wallet),walletBefore:clone(stat.terminal.wallet||{}),source:clone(options.source||null),factBatch:options.factBatch||null}}};const change={path:['terminal','gameplay','loadout'],missing:before===undefined,before:before===undefined?null:clone(before),after};return {patches:[...clone(ordinary.filter(p=>!wallet.includes(p))),{op:change.missing?'add':'replace',path:'/terminal/gameplay/loadout',value:after}],changes:[change],applied:[],duplicates:[],pending:id,withheld:wallet};}
     const accepted=[];let result=engine.settle(game,[],options);
     for(const {event,path:at}of events)try{const next=engine.settle(game,[...accepted,event],options);accepted.push(event);result=next;}catch(error){ignored.push({path:at,reason:error.message+'（该项保留原值）'});}
     const duplicateGains=gains.filter(e=>result.duplicates.includes(e.id));if(wallet.length&&duplicateGains.length&&duplicateGains.length!==gains.length)throw Error('同次购买混有已结算与新物品，请核对购买记录后重新处理。');
