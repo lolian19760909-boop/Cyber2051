@@ -73,6 +73,7 @@ export function createNativeReader({stage,parser,onEdit,onDelete,onVersion,busy=
     },
     stream(raw){if(!streamView){const row=n('section',null,list,'mes cxx-native-floor cxx-native-candidate');n('header','正在生成',row,'cxx-native-floor-title');streamView={row,parentNodeId:nodes.at(-1)?.nodeId,body:n('article',null,row,'mes_text cxx-native-prose')};const marker=n('span',null,streamView.body);marker.dataset.cxxBdaStyle='r4';marker.hidden=true;}streamView.row.querySelector('header').textContent='正在生成';paint(streamView,raw,true);if(follow)scroll.scrollTop=scroll.scrollHeight;},
     finish(){if(streamView){streamView.row.querySelector('header').textContent='未保存的回复';paint(streamView,streamView.raw);}refreshBusy();},
+    clearCandidate(){if(streamView){streamView.prose?.destroy();streamView.row.remove();streamView=null;}refreshBusy();},
     select,position,refreshBusy,destroy(){dead=true;cancelAnimationFrame(frame);scroll.removeEventListener('scroll',onScroll);for(const view of views.values())view.prose?.destroy();streamView?.prose?.destroy();views.clear();stage.replaceChildren();}
   };
 }
