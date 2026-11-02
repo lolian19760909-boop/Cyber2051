@@ -20,10 +20,12 @@ export async function mountStoryArchive({parent,session,statePort,accountId,onPl
   if(temporary)button('跨设备续玩',temporary,foot,'subtle');
   if(session?.narrativeNode)button('保存当前进度',async()=>{await session.createCheckpoint('存档 '+new Date().toLocaleString('zh-CN'));await load('points');},foot,'primary');
   const imports=n('details',null,foot,'story-import-tools');n('summary','导入与导出',imports);const toolParent=n('div',null,imports);tools=await mountTools(toolParent);
-  async function act(fn){if(working||busy())return;working=true;root.setAttribute('aria-busy','true');try{await fn();}catch(error){status.textContent=error.message;onError(error);}finally{working=false;root.removeAttribute('aria-busy');}}
+  function showError(error){if(disposed)return;status.textContent=error.message;onError?.(error);}
+  async function act(fn){if(working||busy())return;working=true;root.setAttribute('aria-busy','true');try{await fn();}catch(error){showError(error);}finally{working=false;root.removeAttribute('aria-busy');}}
   const cover=location=>(covers.find(c=>c.aliases?.some(alias=>String(location).includes(alias)))||covers[0])?.src;
   function picture(where,row){const wrap=n('div',null,where,'story-image'),image=n('img',null,wrap);image.alt='';image.loading='lazy';image.src=cover(row.location)||'';}
   async function load(next=tab){tab=next;for(const [id,b]of tabButtons)b.setAttribute('aria-selected',String(id===tab));
+    if(!statePort)throw Error('存档读取尚未就绪，请稍后刷新列表。');
     const runs=await statePort.listRuns(accountId);rows=[];
     for(const run of runs){if(tab==='stories')rows.push({id:run.runId,runId:run.runId,title:run.profile?.name||run.title||'未命名故事',location:run.profile?.origin?.name||'',date:run.updatedAt||run.createdAt,creating:!run.headNodeId,open:()=>onPlay(run.runId)});
       else for(const [index,item] of (await statePort[tab==='branches'?'listBranches':'listCheckpoints'](run.runId)).entries())rows.push({id:run.runId+':'+(tab==='branches'?item.branchId:item.checkpointId),runId:run.runId,branchId:tab==='branches'?item.branchId:null,checkpointId:tab==='points'?item.checkpointId:null,title:item.label||((run.profile?.name||'故事')+' · 路线 '+(index+1)),date:item.updatedAt||item.createdAt,headNodeId:item.nodeId||item.headNodeId,open:async()=>{const result=tab==='branches'?await statePort.selectBranch(run.runId,item.branchId,(await statePort.readHead(run.runId)).revision):await statePort.restoreCheckpoint(run.runId,item.checkpointId);if(result.status==='conflict')throw Error('故事已有更新，请刷新后选择。');await onPlay(run.runId);}});
@@ -38,6 +40,6 @@ export async function mountStoryArchive({parent,session,statePort,accountId,onPl
       if(tab==='points'&&row.checkpointId)button('删除此存档点',async()=>{if(!window.confirm('删除存档点「'+row.title+'」？此操作无法恢复。'))return;await statePort.deleteCheckpoint(row.runId,row.checkpointId);selected=null;status.textContent='存档点已删除。';await load('points');},aside,'subtle');
     }
   }
-  const onKey=event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();onClose();}};root.addEventListener('keydown',onKey);await load();
+  const onKey=event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();onClose();}};root.addEventListener('keydown',onKey);try{await load();}catch(error){showError(error);}
   return {destroy(){disposed=true;tools?.destroy();root.removeEventListener('keydown',onKey);root.remove();}};
 }
