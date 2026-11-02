@@ -1390,7 +1390,7 @@ own(publish('Cxx233Gameplay',{CxxGameplayActions,CxxGameplayHost}));
 
 
 await waitGlobalInitialized('Cxx233Updater');if(ended||!cxxRunCurrent())return;
-const handoff=CxxUpdaterHandoff.create({api:globalThis,Core:CxxUpdateCore,requirement:getVariables({type:'script'}).__cxx_required_updater,active:()=>!ended&&cxxRunCurrent(),reload:()=>parent.location.reload(),notify:message=>parent.toastr?.info(message,'正在完成卡内更新')});
+const handoff=CxxUpdaterHandoff.create({api:globalThis,Core:CxxUpdateCore,requirement:__CXX_REQUIRED_UPDATER__,active:()=>!ended&&cxxRunCurrent(),reload:()=>parent.location.reload(),notify:message=>parent.toastr?.info(message,'正在完成卡内更新')});
 if(await handoff.ensure()!==true||ended||!cxxRunCurrent())return;
 const updater=parent.Cxx233Updater;
 const gameplay=CxxGameplayHost.create({api:globalThis,host:updater.host,backup:updater.backup,getSeed:updater.readSeed,waitForInstall:()=>updater.whenIdle(),core:CxxUpdateCore,content:CxxContent});
