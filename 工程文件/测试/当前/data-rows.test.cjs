@@ -6,6 +6,17 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..', '..');
 const Rows = require(path.join(root, '卡片源码/数据/rows.js'));
 
+test('当前人物引用与vitals结构投影出实际生命、SAN和玩家装备', () => {
+  const E = require('../../卡片源码/数值引擎/src/engine.js'), A = require('../../卡片源码/运行时/ensemble-state.js');
+  let game = E.loadout.base();game.growth=E.growth.initialize({level:1,xp:0,attributes:{body:4,reflexes:4,intelligence:4,technical:4,cool:4},attributePoints:0,perkPoints:0},'rows');game.numeric=E.initialNumeric(game);
+  game=E.settle(game,[{id:'gain',kind:'item-gain',item:{template:'pistol',tier:2},reason:'获得手枪'},{id:'equip',kind:'item-equip',itemId:'pistol_t2',slot:'weapon_1',active:true,reason:'装备手枪'},{id:'wound',kind:'resource',resource:'hp',amount:-3,reason:'受伤'}]).state;game.sanity={value:72};
+  const saved=A.initialize({terminal:{wallet:{yen:138,earned:138,spent:0},gameplay:game}},{profiles:[]}),before=structuredClone(saved),projected=Rows.projectAll(saved.terminal,2),player=projected.cxx_actor_stat.find(r=>r.actor_key==='player');
+  assert.equal(player.hp,game.numeric.vitals.hp);assert.equal(player.sanity,72);assert.equal(player.yen,138);
+  assert(projected.cxx_inventory.some(r=>r.actor_key==='player'&&r.item_key==='pistol_t2'));
+  assert(projected.cxx_equipment.some(r=>r.actor_key==='player'&&r.slot==='weapon_1'&&r.item_key==='pistol_t2'));
+  assert.deepEqual(saved,before);
+});
+
 function terminal() {
   return {
     wallet: { id: 'wallet', yen: 120 },
