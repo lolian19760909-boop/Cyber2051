@@ -4,7 +4,7 @@ const B=require('../../lib/card-ast.cjs'),{fs,path,assert,acorn,root,read,sha}=B
 const Bubble=require('./bubbles.cjs');
 const originals=path.join(root,'卡片源码/预设/原版'),outDir=path.join(root,'.cache/build');
 const profiles=[
- {key:'izumi',file:'Izumi-1022.json',hash:'afbc32364c42ac5a58d88e72550ab32872e13a526de6b24642a9d32f324435c2',name:'Izumi_东京都2051改版V0.12'},
+ {key:'izumi',file:'Izumi-1022.json',hash:'afbc32364c42ac5a58d88e72550ab32872e13a526de6b24642a9d32f324435c2',name:'Izumi_东京都2051改版V0.13'},
  {key:'reborn',file:'喵赛亚-1.5.json',hash:'b0df2772a2a6152c8ad0f20d99dbe12c66b3bb0a8b2ce72463406a9599990d6d',name:'喵赛亚1.5_东京都2051适配V1.1'},
 ];
 const ids={world:'f2bd9e18-e94f-401a-9fec-a96f03b72f6a',izumiCustom:'d6d69788-6791-4813-98db-6286e43858a3',izumiThought:'a901d88f-484c-4448-988a-b60ab0414f32',izumiSummary:'060464e2-cc75-4984-82c6-6dc1702db61a',izumiOptions:'e8d8ed8b-99f5-465e-91ba-895ff28322b5',rebornGame:'f65144f0-d39e-43e6-84e7-5c1d78a1a23d',rebornOptions:'046af93d-0c63-4561-b0b2-052cd265fecd',rebornSummary:'3867af9e-9bad-4fdf-9ef8-83ca07d8c68e',rebornThought:'eb65ec28-14a7-401c-887a-e6e22c3295c9',rebornTool:'3df19ba7-b44d-4d46-b17a-de514d86e5d5',rebornPrefill:'91918c0a-bfc6-4101-9796-5421aab6fae8',rebornMarker:'a00fb1fe-9907-4709-b230-43ae0d236529'};

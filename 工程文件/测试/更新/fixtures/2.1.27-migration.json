@@ -1,0 +1,8 @@
+{
+  "sourceName": "赛博小祥2051-V2.1.27-综合修复-候选.json",
+  "updaterSHA256": "c2fce7818005149d211c4742c86b07b473af50b5ba527a7c52eaac16582169fd",
+  "migration": {
+    "buildId": "card:f8a252973936f35f1073710c0d6a97cb2c4513da0d8f5a0252101a57aa3e7705",
+    "saveSchema": 1
+  }
+}

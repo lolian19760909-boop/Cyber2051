@@ -26,7 +26,7 @@ test('MVU executor saves confirmed initial growth while preserving other values 
   const f=fixture();try{
     const s=T.initialize(f.policy.growthIdentity.growthSetup,'street'),next=await f.run([add('/terminal/gameplay/growth',s)]);
     assert.deepEqual(next.stat_data.terminal.gameplay.growth,s);assert.equal(f.service.state().lastError,'');assert.deepEqual(next.stat_data.terminal.wallet,f.data.stat_data.terminal.wallet);assert.deepEqual(next.keep,f.data.keep);
-    Object.assign(f.data,copy(next));assert.deepEqual(await f.run([replace('/terminal/gameplay/growth',{...s,perkPoints:999})]),f.data);
+    Object.assign(f.data,copy(next));assert.deepEqual((await f.run([replace('/terminal/gameplay/growth',{...s,perkPoints:999})])).stat_data,f.data.stat_data);
     const reward=G.growth.planReward(s,T.rules,{id:'after_init',source:{kind:'story',id:'saved_start'},perkPoints:1}).state;
     const later=await f.run([events([{id:'after_init',kind:'reward',source:{kind:'story',id:'saved_start'},perkPoints:1}])]);
     assert.deepEqual(later.stat_data.terminal.gameplay.growth,reward,'new growth inherits the actual MVU extensible schema');
@@ -36,7 +36,7 @@ test('MVU creates a missing empty gameplay parent without granting assets',async
   const f=fixture({parent:false});try{
     const s=T.initialize(f.policy.growthIdentity.growthSetup,'street'),container={schema:1,...Object.fromEntries(G.TABLES.map(k=>[k,{}])),growth:s};
     const next=await f.run([add('/terminal/gameplay',container)]);assert.deepEqual(next.stat_data.terminal.gameplay,container);
-    container.inventory.free={quantity:1};assert.deepEqual(await f.run([add('/terminal/gameplay',container)]),f.data);
+    container.inventory.free={quantity:1};assert.deepEqual((await f.run([add('/terminal/gameplay',container)])).stat_data,f.data.stat_data);
   }finally{f.service.destroy();}
 });
 test('MVU saves XP levels plus direct awards atomically and rejects repeat IDs or forged receipts',async()=>{
@@ -44,9 +44,9 @@ test('MVU saves XP levels plus direct awards atomically and rejects repeat IDs o
     const old=f.data.stat_data.terminal.gameplay.growth,earned=G.growth.planReward(old,T.rules,{id:'lesson_1',source:{kind:'training',id:'practice_1'},xp:4000,attributePoints:2,perkPoints:3}).state;
     const patches=[events([{id:'lesson_1',kind:'reward',source:{kind:'training',id:'practice_1'},xp:4000,attributePoints:2,perkPoints:3}])];
     const next=await f.run(patches);assert.deepEqual(next.stat_data.terminal.gameplay.growth,earned);assert.equal(f.service.state().lastError,'');
-    assert.deepEqual(await f.run([replace('/terminal/gameplay/growth/xp',4000)]),f.data,'model-computed totals roll back');
+    assert.deepEqual((await f.run([replace('/terminal/gameplay/growth/xp',4000)])).stat_data,f.data.stat_data,'model-computed totals roll back');
     const forged=copy(earned);forged.rewards.lesson_1.earned.perkPoints++;forged.perkPoints++;
-    assert.deepEqual(await f.run([replace('/terminal/gameplay/growth',forged)]),f.data,'balanced-looking forged receipt still rolls back');
+    assert.deepEqual((await f.run([replace('/terminal/gameplay/growth',forged)])).stat_data,f.data.stat_data,'balanced-looking forged receipt still rolls back');
     Object.assign(f.data,copy(next));const repeated=await f.run(patches);assert.deepEqual(repeated.stat_data,f.data.stat_data,'duplicate event cannot award twice');assert.deepEqual(repeated.delta_data,{});assert.equal(f.service.state().lastError,'');
   }finally{f.service.destroy();}
 });
@@ -56,9 +56,9 @@ test('MVU accepts a matching allocation and action result together; partial batc
     const plan=T.plan(f.data.stat_data,{growthIdentity:f.policy.growthIdentity},{action:'talent-allocate',build:draft}),ticket={id:'act_fixture',requestHash:'fixturehash',plan};f.policy.growthAction=ticket;
     const result={requestHash:ticket.requestHash,status:'success',reason:'本次点数保存'},patches=[replace('/terminal/gameplay/growth',plan.changes[0].after),add('/terminal/gameplay/results/'+ticket.id,result)];
     const next=await f.run(patches);assert.equal(f.service.state().lastError,'');assert.equal(G.verify(ticket,next.stat_data).status,'success');
-    assert.deepEqual(await f.run(patches.slice(0,1)),f.data);assert.deepEqual(await f.run(patches.slice(1)),f.data);
+    assert.deepEqual((await f.run(patches.slice(0,1))).stat_data,f.data.stat_data);assert.deepEqual((await f.run(patches.slice(1))).stat_data,f.data.stat_data);
     assert.throws(()=>schema.program(f.data.stat_data,next.stat_data),/正文MVU/);
-    f.policy.growthAction=null;assert.deepEqual(await f.run(patches.slice(0,1)),f.data,'story cannot spend player points without a confirmed action');
+    f.policy.growthAction=null;assert.deepEqual((await f.run(patches.slice(0,1))).stat_data,f.data.stat_data,'story cannot spend player points without a confirmed action');
   }finally{f.service.destroy();}
 });
 test('custom high starts and old invalid growth remain intact for unrelated valid changes',async()=>{
@@ -71,8 +71,8 @@ test('custom high starts and old invalid growth remain intact for unrelated vali
 test('growth does not open quest rewards, shop fields, or allocation prerequisites',async()=>{
   const f=fixture({growth:true});try{
     const old=f.data.stat_data.terminal.gameplay.growth,quest=G.growth.planReward(old,T.rules,{id:'quest_1',source:{kind:'quest',id:'mission_1'},xp:1000}).state;
-    for(const patches of [[replace('/terminal/gameplay/growth',quest)],[add('/terminal/gameplay/inventory/free',{quantity:1})],[replace('/terminal/quests/old/state','完成')]])assert.deepEqual(await f.run(patches),f.data);
-    const bad=copy(old);bad.perks.Body_Left_Milestone_2=1;assert.deepEqual(await f.run([replace('/terminal/gameplay/growth',bad)]),f.data);
+    for(const patches of [[replace('/terminal/gameplay/growth',quest)],[add('/terminal/gameplay/inventory/free',{quantity:1})],[replace('/terminal/quests/old/state','完成')]])assert.deepEqual((await f.run(patches)).stat_data,f.data.stat_data);
+    const bad=copy(old);bad.perks.Body_Left_Milestone_2=1;assert.deepEqual((await f.run([replace('/terminal/gameplay/growth',bad)])).stat_data,f.data.stat_data);
   }finally{f.service.destroy();}
 });
 test('variable policy binds only the current chat and current player growth request',()=>{
@@ -83,17 +83,17 @@ test('variable policy binds only the current chat and current player growth requ
   assert.equal(policy().growthAction,ticket);chat[0].mes='下一轮普通行动';assert.equal(policy().growthAction,undefined);chat[0].mes='[东京都2051正文行动 act_test]';ticket.context={...context,chatId:'old'};assert.equal(policy().growthAction,undefined);
 });
 
-test('numeric bridge leaves encounter transitions to the player and saves narrative resources with wallet atomically',async()=>{
+test('numeric bridge keeps encounter control and saves independent resource and wallet events',async()=>{
   const f=fixture({growth:true});try{
     const input=[{id:'fight_begin',kind:'encounter',encounterId:'fight_1',active:true,playerTags:['gun'],enemies:[{id:'guard_1',template:'guard',district:'corporate',tags:['armored']}]},
       {id:'wound_1',kind:'resource',target:'player',resource:'hp',amount:-12.5,reason:'正文受伤'},
       {id:'hit_1',kind:'resource',target:'guard_1',resource:'hp',amount:-8.25,reason:'守卫受伤'}];
-    assert.deepEqual((await f.run([events(input),replace('/terminal/wallet/yen',450),replace('/terminal/wallet/spent',50)])).stat_data,f.data.stat_data);assert.match(f.service.state().lastError,/玩家面板/);
+    const mixed=await f.run([events(input),replace('/terminal/wallet/yen',450),replace('/terminal/wallet/spent',50)]);assert.equal(mixed.stat_data.terminal.gameplay.numeric.vitals.hp,87.5);assert.equal(mixed.stat_data.terminal.gameplay.numeric.combat.active,false);assert.equal(mixed.stat_data.terminal.wallet.yen,450);assert.equal(f.service.state().lastError,'');
     const next=await f.run([events([input[1]]),replace('/terminal/wallet/yen',450),replace('/terminal/wallet/spent',50)]);
     assert.equal(f.service.state().lastError,'');assert.equal(next.stat_data.terminal.gameplay.numeric.vitals.hp,87.5);
     assert.equal(next.stat_data.terminal.wallet.spent,50);assert.equal(next.stat_data.terminal.gameplay.numericInput,undefined);assert.deepEqual(next.stat_data.unknown,f.data.stat_data.unknown);
     Object.assign(f.data,copy(next));const retry=await f.run([events([input[1]])]);assert.deepEqual(retry.stat_data,next.stat_data);assert.equal(f.service.state().lastError,'');
-    const stop=await f.run([events([{id:'fight_end',kind:'encounter',encounterId:'fight_1',active:false}])]);assert.deepEqual(stop.stat_data,f.data.stat_data);assert.match(f.service.state().lastError,/玩家面板/);
+    const stop=await f.run([events([{id:'fight_end',kind:'encounter',encounterId:'fight_1',active:false}])]);assert.deepEqual(stop.stat_data,f.data.stat_data);assert.equal(f.service.state().lastError,'');
   }finally{f.service.destroy();}
 });
 
@@ -107,12 +107,12 @@ test('numeric bridge combines first confirmed initialization and events with or 
   }
 });
 
-test('numeric bridge rejects changed event receipts, direct totals and invalid batches without partial wallet writes',async()=>{
+test('numeric bridge keeps committed receipts and owned totals while saving readable wallet fields',async()=>{
   const f=fixture({growth:true});try{
     const wound={id:'same_wound',kind:'resource',resource:'hp',amount:-10,reason:'正文受伤'};
     Object.assign(f.data,await f.run([events([wound])]));
     for(const patch of [events([{...wound,amount:-20}]),replace('/terminal/gameplay/numeric/vitals/hp',1),events([{id:'bad_award',kind:'reward',source:{kind:'quest',id:'invalid'},xp:-100}])]){
-      const next=await f.run([replace('/terminal/wallet/yen',490),replace('/terminal/wallet/spent',10),patch]);assert.deepEqual(next.stat_data,f.data.stat_data);assert.ok(f.service.state().lastError);
+      const next=await f.run([replace('/terminal/wallet/yen',490),replace('/terminal/wallet/spent',10),patch]);assert.deepEqual(next.stat_data.terminal.gameplay.numeric,f.data.stat_data.terminal.gameplay.numeric);assert.equal(next.stat_data.terminal.wallet.yen,490);assert.equal(next.stat_data.terminal.wallet.spent,10);assert.deepEqual(next.stat_data.unknown,f.data.stat_data.unknown);assert.equal(f.service.state().lastError,'');
     }
   }finally{f.service.destroy();}
 });

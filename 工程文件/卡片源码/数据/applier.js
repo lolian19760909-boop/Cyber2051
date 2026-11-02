@@ -26,16 +26,16 @@
   const EDIT_OPS = ['add', 'replace', 'remove'];
   const engineOnly = new Set(['test', 'move', 'copy']);
 
-  /** 空状态骨架：没有终端时给界面一个能读的形状，而不是 undefined。 */
+  /** 开局状态骨架沿人物服务建立玩家身份和控制记录。 */
   function emptyRoot() {
-    return {
+    const actors = local ? require('../运行时/ensemble-state.js') : root.CxxEnsembleState;
+    return actors.initialize({
       terminal: {
         wallet: { yen: 0, earned: 0, spent: 0 },
         quests: {},
-        ensemble: { control: { actorId: 'player' }, actors: {} },
         gameplay: { location: { mapId: '', placeId: '' } },
       },
-    };
+    }, {profiles: []});
   }
 
   /** JSON Pointer 分段：优先用 schema.js 的 pathOf，保证与校验层口径完全一致。 */

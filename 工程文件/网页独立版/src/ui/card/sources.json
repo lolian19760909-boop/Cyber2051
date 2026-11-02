@@ -205,7 +205,7 @@
   },
   {
     "source": "卡片源码/数据/applier.js",
-    "sha256": "0b4280be109605c1a82f1ab184d8923db233d65101cb9e34c7e355301b112045",
+    "sha256": "bd41c909af560a97e48d65c42d756315e13d05051c672c2aedfbe5eb7160c1fa",
     "target": "src/ui/card/数据/applier.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },

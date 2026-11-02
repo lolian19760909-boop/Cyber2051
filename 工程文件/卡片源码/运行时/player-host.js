@@ -109,8 +109,12 @@
     function guard236(){try{return top.Cxx236VariableGuard||null;}catch(error){return null;}}
     // 本地状态层（数据库表快照）——MVU 已被卡内解析器取代，开局就绪看这里，而不是宿主的 variables[].stat_data。
     function localState(){const g=guard236();try{return g&&typeof g.localState==='function'?g.localState():null;}catch(error){return null;}}
-    function localRoot(row,target){const local=localState();if(local&&local.terminal)return local;
-      const stat=row?.variables?.[target]?.stat_data;return stat&&stat.terminal?{terminal:stat.terminal}:null;}
+    function localRoot(row,target){
+      const stat=row?.variables?.[target]?.stat_data;if(stat?.terminal)return stat;
+      const local=localState();if(local&&!local.empty&&local.terminal)return local;
+      if(row&&!mvuApi()&&!row.variables?.some(v=>v?.stat_data))return (typeof module==='object'&&module.exports?require('../数据/applier.js'):root.Cxx236Applier).emptyRoot();
+      return null;
+    }
     function initPending(row){return !localRoot(row,1)&&!row?.variables?.some(v=>v?.stat_data?.terminal);}
     async function reinitOpening(row,target){const mvu=mvuApi();
       if(mvu?.reloadInitVar){try{await mvu.reloadInitVar(mvu.getCurrentMvuData?.()||{});return "reloaded";}catch(error){return "reload-failed:"+String(error?.message||error);}}
@@ -118,8 +122,8 @@
       try{const r=await g.settle(row?.mes!==undefined?0:0);return r&&r.ok?"local-settled":"local-failed:"+String(r&&r.reason||"unknown");}catch(error){return "local-failed:"+String(error?.message||error);}}
     function openingReport(row,reinit,target){const list=Array.isArray(row?.variables)?row.variables:[];const ready=list.filter(v=>v?.stat_data?.terminal).length;const mvu=!!mvuApi();const local=localState();
       return "（Mvu 接口"+(mvu?"已加载":"未加载")+"；变量服务"+(guard236()?"已就绪":"未就绪")+"；本地状态 "+(local&&local.terminal?"已就绪":"未就绪")+"；已初始化分支 "+ready+"/"+list.length+" 条；本分支 "+(localRoot(row,target)?"有":"无")+"基础变量；消息 "+String(ctx().chat?.length??0)+" 条；补初始化 "+reinit+"）";}
-    // MVU initializes every greeting and applies its static patches once.
-    // Warm those existing variables, never fabricate another starting state.
+    // Existing greetings retain their saved variables. Fresh local creation uses
+    // the card-owned initial state; the confirmed opening writes its selected swipe.
     // 旧版存档（MVU 把整棵 stat_data 写进每个 swipe）不再接管：状态已改存数据库表，
 // 旧档里的 variables[*].stat_data.terminal 只读不回写，避免同一项数值两处写。
 function legacySave236(row){
@@ -170,12 +174,14 @@ function prepareOpening(value,target=1){
         if(preferences){choice.openingScenario=targetRequested;if(openingText!==undefined)choice.openingKind='written';else delete choice.openingKind;}
         const row=ctx().chat[0],from=row.swipe_id||0,target=swipe??(resume?from:1);
         if(!Number.isInteger(target)||target<1||target>(resume?23:11)||!row.swipes?.[target])throw Error('请选择有效的剧情开场。');
-        const base=copy(row.variables?.[target]);if(!base?.stat_data?.terminal)throw Error('此开场的 MVU 基础变量尚未就绪，请稍后重试。');
+        const originalBase=copy(row.variables?.[target]),initial=originalBase?.stat_data||localRoot(row,target);
+        if(!initial?.terminal)throw Error('此开场的基础状态尚未就绪，请稍后重试。');
+        const base={...originalBase,stat_data:copy(initial)};
         if(profile){if(!root.CxxStoryProfile)throw Error('故事人物服务未就绪。');dirty(s);await root.CxxStoryProfile.bind(top,{...profile,origin:{id:choice.id,name:choice.name,background:choice.background}},{art:Art,assertCurrent:()=>assertCurrent(s)});assertCurrent(s);}if(from===target&&s.signature===localSignature()&&base.stat_data.terminal.gameplay?.growth&&(openingText===undefined||row.mes===openingText))return read.local();
         const request={action:'initialize'},operation={request,identity:choice,newChat:true,startGame:copy(row.variables?.[from]?.stat_data?.terminal?.gameplay)};
         const applied=applyVariables(base,request,operation);
         if(!same(identity(),choice)||preferences)await api.updateVariablesWith(v=>{assertCurrent(s);if(ctx().chat[0]!==row||(row.swipe_id||0)!==from)throw Error('开场分支已变化。');const next={...v,__cxx_identity:choice};if(preferences){next.__cxx_ui_preferences={...v.__cxx_ui_preferences,schemaVersion:1,effects:preferences.level,device:preferences.device,...(preferences.mirror===undefined?{}:{mirror:preferences.mirror,mirrorGuidePending:preferences.mirror===true}),...(preferences.nsfw===undefined?{}:{nsfw:preferences.nsfw}),...(preferences.nsfwChosen===undefined?{}:{nsfwChosen:preferences.nsfwChosen}),...(preferences.battleMode===undefined?{}:{battleMode:preferences.battleMode}),setupVersion:1,completed:true};next.__cxx_gal_mode={...v.__cxx_gal_mode,schemaVersion:1,enabled:preferences.gal};}return next;},{type:'chat'});
-        assertCurrent(s);if(ctx().chat[0]!==row||(row.swipe_id||0)!==from||!same(row.variables[target],base))throw Error('开场分支已变化，请重新操作。');
+        assertCurrent(s);if(ctx().chat[0]!==row||(row.swipe_id||0)!==from||!same(row.variables?.[target],originalBase))throw Error('开场分支已变化，请重新操作。');
         const data=Array.from({length:row.swipes.length},(_,i)=>i===target?applied:copy(row.variables?.[i]||{}));
         // affected: ST refreshOneMessage / TT refreshManagedChatSurface.
         // A committed opening is no longer an untouched greeting. ST uses this flag

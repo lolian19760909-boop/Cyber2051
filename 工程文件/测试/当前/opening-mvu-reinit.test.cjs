@@ -52,32 +52,22 @@ test('an initialized chat never triggers another initvar reload', async () => {
   } finally { f.cleanup(); }
 });
 
-test('a missing Mvu interface is reported instead of silently waiting', async () => {
-  const f = fixture({ timeout: 300 });
-  delete global.Mvu;
-  try {
-    await assert.rejects(f.player.prepareOpening(undefined, 1), error => {
-      assert.match(error.message, /开局状态尚未就绪/);
-      assert.match(error.message, /Mvu 接口未加载/);
-      assert.match(error.message, /本地状态 未就绪/);
-      assert.match(error.message, /补初始化 (guard-missing|mvu-missing|local-failed)/);
-      assert.match(error.message, /已初始化分支 0\/1 条/);
-      return true;
-    });
-  } finally { f.cleanup(); }
+test('a fresh local opening uses the card-owned initial state while preserving the draft', async () => {
+  const f = fixture({ timeout: 300 });delete global.Mvu;
+  try { assert.equal(await f.player.prepareOpening(undefined, 1), true);assert.equal(f.reloads(),0);assert.deepEqual(f.row.variables,[{}]); } finally { f.cleanup(); }
 });
 
-test('without any Mvu interface the card-local guard initialises the opening itself', async () => {
+test('an available card-local state prepares without replaying greeting patches', async () => {
   const f = fixture({ timeout: 800 });
   delete global.Mvu;
   let settled = 0;
   global.Cxx236VariableGuard = {
     validateProgram: (a, b, o) => O.validate(a, b, o.engineOperation),
-    localState: () => (settled ? { terminal: { wallet: { yen: 500 } } } : null),
+    localState: () => ({ terminal: { wallet: { yen: 500 } } }),
     settle: async () => { settled++; return { ok: true, status: 'applied' }; }
   };
   try {
     assert.equal(await f.player.prepareOpening(undefined, 1), true, '本地结算后应通过开局就绪');
-    assert.equal(settled, 1, '无 Mvu 时应调用卡内 settle 补初始化一次');
+    assert.equal(settled, 0, '已有本地状态直接用于开局准备');
   } finally { f.cleanup(); }
 });
