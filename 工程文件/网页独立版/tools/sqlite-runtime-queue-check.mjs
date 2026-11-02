@@ -1,15 +1,16 @@
 import assert from 'node:assert/strict';
 import {pathToFileURL,fileURLToPath} from 'node:url';
+import {cardModule} from '../src/reuse/card.mjs';
 const web=fileURLToPath(new URL('../',import.meta.url));
 const {createMemoryStatePort}=await import(pathToFileURL(web+'src/store/memory.mjs').href);
-const id={accountId:'synthetic',runId:'synthetic-db',branchId:'main',mode:'local'},base=createMemoryStatePort({accountId:id.accountId}),state={terminal:{turn:1}};
+const id={accountId:'synthetic',runId:'synthetic-db',branchId:'main',mode:'local'},base=createMemoryStatePort({accountId:id.accountId}),state={terminal:{turn:1,gameplay:{equipment:{weapon_1:{itemId:'restored-pistol'},cyber_nervous_1:{itemId:'restored-implant'}}},ensemble:{actors:{player:{actorId:'player',stateRef:{kind:'legacy-player'}}}}}};
 await base.commit({...id,nodeId:'root',operationId:'root-op',parentNodeId:null,expectedRevision:0,beforeState:{},stateAfter:state,message:{raw:'<cxx-story>只包含合成数据的数据库队列检查。</cxx-story>'}});
-let savedCallback,sqlRows=[],puts=0,failOnce=true;
+let savedCallback,savedPreparation,sqlRows=[],puts=0,failOnce=true;
 const snapshot={rows:[],metadata:{},settings:{},worldbooks:{'cxx-story':{entries:{}}}};
-const host={context:{chatId:''},api:{importTableAsJson:async()=>true,exportTableAsJson:()=>({})},snapshot:()=>structuredClone(snapshot),sqlState:{replace:rows=>{sqlRows=structuredClone(rows);},read:()=>structuredClone(sqlRows)},bind:async value=>{savedCallback=value.save;host.context.chatId=value.chatId;snapshot.rows=structuredClone(value.rows);},prompt:async m=>m};
+const host={context:{chatId:''},api:{importTableAsJson:async()=>true,exportTableAsJson:()=>({})},snapshot:()=>structuredClone(snapshot),sqlState:{replace:rows=>{sqlRows=structuredClone(rows);},read:()=>structuredClone(sqlRows)},bind:async value=>{savedCallback=value.save;savedPreparation=value.prepareTables;host.context.chatId=value.chatId;snapshot.rows=structuredClone(value.rows);},prompt:async m=>m};
 globalThis.document={createElement:tag=>tag==='iframe'?{contentWindow:{CxxDatabaseHost:host}}:{},head:{append:script=>queueMicrotask(()=>script.onload())},body:{append:frame=>queueMicrotask(()=>frame.onload())}};
 globalThis.fetch=async()=>({ok:true,json:async()=>({})});
-globalThis.CxxDataStore={create:()=>({})};globalThis.CxxDataSync={create:()=>({pushAll:async()=>({ok:true})})};globalThis.CxxDataWrite={create:()=>({apply:async()=>({ok:true})})};globalThis.CxxDataRows={equipmentRows:()=>[],factRow:()=>({})};
+globalThis.CxxDataStore={...cardModule('数据/store.js'),create:()=>({})};globalThis.CxxDataSync={create:()=>({pushAll:async()=>({ok:true})})};globalThis.CxxDataWrite={create:()=>({apply:async()=>({ok:true})})};globalThis.CxxDataRows={...cardModule('数据/rows.js'),factRow:()=>({})};
 const wrapped={...base,putRecords:async(name,runId,rows)=>{if(rows.some(r=>r.kind==='database-floor')){puts++;if(failOnce){failOnce=false;throw Error('synthetic transient write failure');}}return base.putRecords(name,runId,rows);}};
 const {attachDatabase}=await import(pathToFileURL(web+'src/database/runtime.mjs').href),{database}=await attachDatabase({statePort:wrapped,...id});
 database.connect({currentState:state,profile:{name:'合成'}});await database.restore({nodes:await base.readLineage(id.runId),state});
@@ -17,4 +18,5 @@ let failures=0;const check=async(name,fn)=>{try{await fn();console.log('PASS '+n
 await check('First save still rejects to its caller and performs one write attempt',async()=>{await assert.rejects(savedCallback,/synthetic transient write failure/);assert.equal(puts,1);});
 await check('Second explicit save succeeds and really retries persistence',async()=>{await savedCallback();assert.equal(puts,2);const rows=await base.listRecords('drafts',id.runId);assert.equal(rows.filter(r=>r.kind==='database-floor').length,1);});
 await check('Restore continues after the rejected save and successful retry',async()=>{assert.deepEqual(await database.restore({nodes:await base.readLineage(id.runId),state}),state);});
-console.log(JSON.stringify({scope:'Actual runtime module, synthetic host/API/sqlState and MemoryStatePort; no browser or SQLite engine',checks:3,failures,puts}));if(failures)process.exitCode=1;
+await check('Cold restore rebuilds legacy equipment rows before the shared DDL upgrade',async()=>{const legacy=structuredClone(cardModule('数据/schema.js')),sheet=legacy.sheet_cxx_equipment;sheet.sourceData.ddl=sheet.sourceData.ddl.replace('CHECK(length(slot) > 0)',"CHECK(slot IN ('主手', '副手', '头部', '躯干', '腿部', '义体'))");sheet.content.push([7,'player','主手','stale-item',1,1]);const prepared=savedPreparation(legacy);assert.deepEqual(prepared.sheet_cxx_equipment.content.slice(1).map(row=>row[3]).sort(),['restored-implant','restored-pistol']);assert.equal(legacy.sheet_cxx_equipment.content[1][3],'stale-item');});
+console.log(JSON.stringify({scope:'Actual runtime module/legacy preparation; synthetic host/API/sqlState and MemoryStatePort; no browser or SQLite engine',checks:4,failures,puts}));if(failures)process.exitCode=1;

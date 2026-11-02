@@ -164,6 +164,28 @@
       ? { key, ddl: ddl.replace(LEGACY_EQUIPMENT_CHECK, 'CHECK(length(slot) > 0)') } : null;
   }
 
+  function schemaUpgrades(document, template) {
+    const equipment = equipmentUpgrade(document, template);
+    const upgrades = equipment ? [{ ...equipment, logical: 'cxx_equipment' }] : [];
+    const tables = tablesOf({ exportTableAsJson: () => document }, template);
+    for (const logical of ['cxx_actor_stat', 'cxx_wallet']) {
+      const key = tables[logical]?.key, ddl = document?.[key]?.sourceData?.ddl;
+      if (typeof ddl !== 'string') continue;
+      const next = ddl.replace(/CHECK\s*\(\s*yen\s*>=\s*0\s*\)/gi, '');
+      if (next !== ddl) upgrades.push({ key, ddl: next, logical });
+    }
+    return upgrades;
+  }
+
+  // Both the native template import and the web SQLite restore use this policy.
+  function upgradeSchema(document, template) {
+    const upgrades = schemaUpgrades(document, template);
+    if (!upgrades.length) return document;
+    const result = { ...document };
+    for (const { key, ddl } of upgrades) result[key] = { ...document[key], sourceData: { ...document[key].sourceData, ddl } };
+    return result;
+  }
+
   async function ensureSchema(api, template, options) {
     if (!template || template.mate?.type !== 'chatSheets') return { ok: false, reason: '模板不是 chatSheets' };
     if (typeof api.importTemplateFromData !== 'function') return { ok: false, reason: '宿主没有 importTemplateFromData' };
@@ -175,19 +197,20 @@
       // Preserve this chat's keys and data, update the shipped slot constraint, and add missing tables.
       const exported = api.exportTableAsJson?.();
       const existing = tablesOf({ exportTableAsJson: () => exported }, template);
-      if (TABLES.every(logical => existing[logical]?.content[0]?.length) && !equipmentUpgrade(exported, template) && !missingTableIds(exported).length) return { ok: true, attempts: 0, tables: existing };
+      if (TABLES.every(logical => existing[logical]?.content[0]?.length) && !schemaUpgrades(exported, template).length && !missingTableIds(exported).length) return { ok: true, attempts: 0, tables: existing };
       const current = typeof api.getTableTemplate === 'function' ? await api.getTableTemplate({ scope: 'chat' }) : exported;
       const target = JSON.parse(JSON.stringify(current && Object.keys(current).some(key => /^sheet_/.test(key)) ? current : template));
       const existingTemplateKeys = new Set(Object.keys(target));
       target.mate ||= JSON.parse(JSON.stringify(template.mate));
-      for (const [key, sheet] of Object.entries(exported || {})) if (/^sheet_/.test(key) && !target[key]) target[key] = JSON.parse(JSON.stringify(sheet));
+      // A saved template may omit optional display/export settings which the live
+      // table already owns. Preserve them when changing our DDL; absence keeps data.
+      for (const [key, sheet] of Object.entries(exported || {})) if (/^sheet_/.test(key)) target[key] = { ...JSON.parse(JSON.stringify(sheet)), ...target[key] };
       for (const key of Object.keys(template).filter(key => /^sheet_/.test(key))) {
         const wanted = template[key];
         const exists = Object.entries(target).some(([savedKey, saved]) => /^sheet_/.test(savedKey) && (savedKey === key || saved?.uid === wanted.uid || saved?.name === wanted.name));
         if (!exists) target[key] = JSON.parse(JSON.stringify(wanted));
       }
-      const upgrade = equipmentUpgrade(target, template);
-      if (upgrade) target[upgrade.key].sourceData.ddl = upgrade.ddl;
+      for (const upgrade of schemaUpgrades(target, template)) target[upgrade.key].sourceData.ddl = upgrade.ddl;
       for (const key of missingTableIds(target)) target[key].uid = key;
       for (const key of existingTemplateKeys) if (/^sheet_/.test(key) && Array.isArray(target[key]?.content)) target[key].content = target[key].content.slice(0, 1);
       imported = await api.importTemplateFromData(target, { scope: 'chat', dataMode: 'seed' });
@@ -197,6 +220,7 @@
     let missing = TABLES.slice();
     let empty = [];
     let legacyEquipment = false;
+    let legacyBalance = false;
     let missingIds = [];
     for (let attempt = 0; attempt < wait; attempt += 1) {
       await sleep(step);
@@ -206,11 +230,13 @@
       const tables = tablesOf({ exportTableAsJson: () => snapshot }, template);
       missing = TABLES.filter(logical => !tables[logical]);
       empty = TABLES.filter(logical => tables[logical] && !tables[logical].header.length);
-      legacyEquipment = !!equipmentUpgrade(snapshot, template);
+      const upgrades = schemaUpgrades(snapshot, template);
+      legacyEquipment = upgrades.some(upgrade => upgrade.logical === 'cxx_equipment');
+      legacyBalance = upgrades.some(upgrade => upgrade.logical !== 'cxx_equipment');
       missingIds = missingTableIds(snapshot);
-      if (!missing.length && !empty.length && !legacyEquipment && !missingIds.length) return { ok: true, attempts: attempt + 1, tables };
+      if (!missing.length && !empty.length && !legacyEquipment && !legacyBalance && !missingIds.length) return { ok: true, attempts: attempt + 1, tables };
     }
-    return { ok: false, attempts: wait, missing, emptyHeader: empty, reason: legacyEquipment ? '装备表仍保留旧槽位约束，模板更新尚未完成。' : missingIds.length ? '模板更新后仍有 ' + missingIds.length + ' 张表缺少稳定标识。' : '建表后读不全：缺 ' + missing.join('/') };
+    return { ok: false, attempts: wait, missing, emptyHeader: empty, reason: legacyEquipment ? '装备表仍保留旧槽位约束，模板更新尚未完成。' : legacyBalance ? '余额表仍保留旧非负约束，模板更新尚未完成。' : missingIds.length ? '模板更新后仍有 ' + missingIds.length + ' 张表缺少稳定标识。' : '建表后读不全：缺 ' + missing.join('/') };
   }
 
   async function refresh(api) {
@@ -367,5 +393,5 @@
     return { detect: () => detect(scope), ensureSchema: options2 => ensureSchema(bind(), template, options2), read, readAll, insert, updateRow, remove, replaceTables, refresh: () => refresh(bind()), tables: TABLES, template };
   }
 
-  return { TABLES, chainOf, hostOf, detect, tablesOf, resolveKey, ddlNames, rowFor, ensureSchema, refresh, create };
+  return { TABLES, chainOf, hostOf, detect, tablesOf, resolveKey, ddlNames, rowFor, upgradeSchema, ensureSchema, refresh, create };
 });

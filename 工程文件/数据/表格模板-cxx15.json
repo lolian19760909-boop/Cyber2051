@@ -92,7 +92,7 @@
       "insertNode": "新增角色时由引擎同时插入本行；缺行时读取按默认值补齐，不写空行。\nSQL示例: INSERT INTO cxx_actor_stat (row_id, actor_key, hp, sanity, fatigue, yen, extra_json, updated_turn) VALUES ((SELECT COALESCE(MAX(row_id), 0) + 1 FROM cxx_actor_stat), 'wb_118', 80, 100, 0, 3200, NULL, 3);",
       "updateNode": "任何数值变化都由引擎更新对应列，不整行替换。\nSQL示例: UPDATE cxx_actor_stat SET fatigue = fatigue + 10, updated_turn = 7 WHERE actor_key = 'wb_118';",
       "deleteNode": "角色被永久移除时连同档案一起删除；否则不删。\nSQL示例: DELETE FROM cxx_actor_stat WHERE actor_key = 'wb_900';",
-      "ddl": "CREATE TABLE cxx_actor_stat ( -- 角色数值表\n  row_id INTEGER PRIMARY KEY, -- 行号\n  actor_key TEXT NOT NULL UNIQUE, -- 角色键\n  hp INTEGER NOT NULL DEFAULT 80 CHECK(hp >= 0), -- 生命\n  sanity INTEGER NOT NULL DEFAULT 100 CHECK(sanity BETWEEN 0 AND 100), -- 理智\n  fatigue INTEGER NOT NULL DEFAULT 0 CHECK(fatigue BETWEEN 0 AND 100), -- 疲劳\n  yen INTEGER NOT NULL DEFAULT 0 CHECK(yen >= 0), -- 金钱\n  extra_json TEXT, -- 扩展数值\n  updated_turn INTEGER NOT NULL DEFAULT 0 CHECK(updated_turn >= 0) -- 更新回合\n);"
+      "ddl": "CREATE TABLE cxx_actor_stat ( -- 角色数值表\n  row_id INTEGER PRIMARY KEY, -- 行号\n  actor_key TEXT NOT NULL UNIQUE, -- 角色键\n  hp INTEGER NOT NULL DEFAULT 80 CHECK(hp >= 0), -- 生命\n  sanity INTEGER NOT NULL DEFAULT 100 CHECK(sanity BETWEEN 0 AND 100), -- 理智\n  fatigue INTEGER NOT NULL DEFAULT 0 CHECK(fatigue BETWEEN 0 AND 100), -- 疲劳\n  yen INTEGER NOT NULL DEFAULT 0, -- 金钱\n  extra_json TEXT, -- 扩展数值\n  updated_turn INTEGER NOT NULL DEFAULT 0 CHECK(updated_turn >= 0) -- 更新回合\n);"
     },
     "content": [
       [
@@ -576,7 +576,7 @@
     "name": "钱包表",
     "note": "- 表: cxx_wallet\n- 列1: scope_key - 作用域键\n- 列2: yen - 余额\n- 列3: earned - 累计收入\n- 列4: spent - 累计支出\n- 列5: updated_turn - 更新回合",
     "sourceData": {
-      "ddl": "CREATE TABLE cxx_wallet ( -- 钱包表\n  row_id INTEGER PRIMARY KEY, -- 行号\n  scope_key TEXT NOT NULL DEFAULT '' UNIQUE, -- 作用域键\n  yen INTEGER NOT NULL DEFAULT 0 CHECK(yen >= 0), -- 余额\n  earned INTEGER NOT NULL DEFAULT 0 CHECK(earned >= 0), -- 累计收入\n  spent INTEGER NOT NULL DEFAULT 0 CHECK(spent >= 0), -- 累计支出\n  updated_turn INTEGER NOT NULL DEFAULT 0 CHECK(updated_turn >= 0) -- 更新回合\n);",
+      "ddl": "CREATE TABLE cxx_wallet ( -- 钱包表\n  row_id INTEGER PRIMARY KEY, -- 行号\n  scope_key TEXT NOT NULL DEFAULT '' UNIQUE, -- 作用域键\n  yen INTEGER NOT NULL DEFAULT 0, -- 余额\n  earned INTEGER NOT NULL DEFAULT 0 CHECK(earned >= 0), -- 累计收入\n  spent INTEGER NOT NULL DEFAULT 0 CHECK(spent >= 0), -- 累计支出\n  updated_turn INTEGER NOT NULL DEFAULT 0 CHECK(updated_turn >= 0) -- 更新回合\n);",
       "note": "- 表: cxx_wallet\n- 列1: scope_key - 作用域键\n- 列2: yen - 余额\n- 列3: earned - 累计收入\n- 列4: spent - 累计支出\n- 列5: updated_turn - 更新回合",
       "initNode": "开局确认时无需写行。",
       "insertNode": "每次结算成功后写一行；同一事实键重复写入必须被忽略。\nSQL示例: INSERT INTO cxx_fact (row_id, fact_key, turn_no, kind, payload, receipt) VALUES ((SELECT COALESCE(MAX(row_id), 0) + 1 FROM cxx_fact), 'fact_20261025_01', 7, '购买', '买入手枪 -800', 'ab12cd34');",
