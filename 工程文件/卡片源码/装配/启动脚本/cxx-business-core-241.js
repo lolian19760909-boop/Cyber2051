@@ -1290,7 +1290,7 @@ function stat236(){
   const stat=mvuStat236();
   if(stat)return stat;
   const state=state236();
-  return state&&state.ok&&state.terminal?{terminal:state.terminal}:{};
+  return state&&state.ok&&!state.empty&&state.terminal?{terminal:state.terminal}:{};
 }
 // 数值／背包／装备的权威读数：表里的这一行优先，shadow 模式下交回 null 让消费者自己走变量。
 function vitals236(actorKey){

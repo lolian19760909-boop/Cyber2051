@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/数据/applier.js; source SHA256 0b4280be109605c1a82f1ab184d8923db233d65101cb9e34c7e355301b112045. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/数据/applier.js; source SHA256 bd41c909af560a97e48d65c42d756315e13d05051c672c2aedfbe5eb7160c1fa. Rebuild with tools/p3a-adapt-views.mjs. */
 /*! 东京都2051 · 变量程序应用器（Cxx236Applier / CxxProgramApplier）
  *  作用：取代远端 MVU 的「解析 → 执行 → 落库」三段。卡内自己从正文抽出 <UpdateVariable> 的 JSONPatch，
  *        交给本地校验层（MVU/schema.js + zod-lite）出事务，再按 JSONPointer 写进状态树，最后经
@@ -27,16 +27,16 @@
   const EDIT_OPS = ['add', 'replace', 'remove'];
   const engineOnly = new Set(['test', 'move', 'copy']);
 
-  /** 空状态骨架：没有终端时给界面一个能读的形状，而不是 undefined。 */
+  /** 开局状态骨架沿人物服务建立玩家身份和控制记录。 */
   function emptyRoot() {
-    return {
+    const actors = local ? require('../运行时/ensemble-state.js') : root.CxxEnsembleState;
+    return actors.initialize({
       terminal: {
         wallet: { yen: 0, earned: 0, spent: 0 },
         quests: {},
-        ensemble: { control: { actorId: 'player' }, actors: {} },
         gameplay: { location: { mapId: '', placeId: '' } },
       },
-    };
+    }, {profiles: []});
   }
 
   /** JSON Pointer 分段：优先用 schema.js 的 pathOf，保证与校验层口径完全一致。 */

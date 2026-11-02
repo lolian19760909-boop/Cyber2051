@@ -35,7 +35,7 @@ test('ordinary closed cases do not reopen; rediscovery resets unfinished search'
  s=await run(s,[event('hide_again','hide',{caseId:'harm'})],baseTime+12,'hide');
  s=await run(s,[],baseTime+31,'later');assert.equal(P.view(s).stars,1);
  s=await run(s,[],baseTime+32,'done');assert.equal(P.view(s).stars,0);assert.equal(s.terminal.police.cases.harm.ordinary,false);
- await assert.rejects(run(s,[event('old_seen','locate',{caseId:'harm',recognition:'visual'})],baseTime+33,'old'),/已结束/);
+ const closed=await run(s,[event('old_seen','locate',{caseId:'harm',recognition:'visual'})],baseTime+33,'old');assert.equal(closed.terminal.police.cases.harm.ordinary,false);assert.equal(P.view(closed).stars,0);
 });
 test('same case max, independent fines sum, one payment, civilian NPC ownership',async()=>{
  let s=A.initialize(state());s=await run(s,[report('one',{charges:[{category:'assault',struck:true,harm:'injury'},{category:'robbery',threat:true}]}),report('two',{actorId:'wb_6',district:'underpool'}),event('fine_one','assess-fine',{caseId:'one'}),event('fine_two','assess-fine',{caseId:'two',actorId:'wb_6'})]);
@@ -53,13 +53,13 @@ test('registered archived cases count once toward a persistent 30-day warrant',a
 test('zero ordinary coverage is real; retries retain the same roll; unknown crimes are rejected',async()=>{
  let s=await run(state(),[report('underground',{placeId:'ring-basement-bar',district:'underpool',knownVia:'report'})]);assert.equal(s.terminal.police.cases.underground.probability,0);assert.equal(P.view(s).stars,0);
  const roll=s.terminal.police.cases.underground.roll;s=await run(s,[report('underground',{placeId:'ring-basement-bar',district:'underpool',knownVia:'report'})]);assert.equal(s.terminal.police.cases.underground.roll,roll);
- await assert.rejects(run(state(),[report('secret',{knownVia:'guess'})]),/警方须先/);
+ const unknown=await run(state(),[report('secret',{knownVia:'guess'})]);assert.equal(unknown.terminal.police?.cases?.secret,undefined);
  for(const charge of [{category:'theft',taken:false,owner:'other',permission:false},{category:'theft',taken:true,owner:'other',permission:false,loot:true},{category:'intrusion',domain:'digital',action:'remained',authorization:'revoked'}])assert.throws(()=>P.classify(charge));
 });
 test('seizure and normal release move exact inventory once without re-equipping',async()=>{
  let s=await run(state(),[report('custody'),event('detain','detain',{detentionId:'detention',caseIds:['custody'],facility:'荒川警署',durationMinutes:30}),event('seize','seize',{caseId:'custody',detentionId:'detention',keeper:'荒川警署保管柜',items:[{itemId:'pistol_t1',quantity:1,type:'ordinary'}]})]);
  assert.equal(s.terminal.gameplay.inventory.pistol_t1.quantity,0);assert.equal(s.terminal.gameplay.equipment.weapon_1,null);
- await assert.rejects(run(s,[event('early','release',{detentionId:'detention',basis:'term'})],baseTime+1,'early'),/刑期未满/);
+ const early=await run(s,[event('early','release',{detentionId:'detention',basis:'term'})],baseTime+1,'early');assert.deepEqual(early.terminal.police.detentions,s.terminal.police.detentions);assert.equal(early.terminal.gameplay.inventory.pistol_t1.quantity,0);
  const release=event('released','release',{detentionId:'detention',basis:'term'});s=await run(s,[release],baseTime+30,'release');assert.equal(s.terminal.gameplay.inventory.pistol_t1.quantity,1);assert.equal(s.terminal.gameplay.equipment.weapon_1,null);
  assert.deepEqual(await run(s,[release],baseTime+30,'release'),s);
 });

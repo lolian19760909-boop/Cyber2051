@@ -9,7 +9,7 @@ const plot = lines => require('../../卡片源码/长期记忆/plot.js').create(
 const engine = lines => Engine.create(lines || [F.line]);
 const source = (floor = 2, swipe = 0) => ({floor, swipe, story: 'fixture-' + floor + '-' + swipe});
 const patch = events => ({op: 'add', path: '/terminal/quests/sample_parcel/events', value: events});
-const schema = Schema.build(require('D:/SillyTavern/node_modules/zod'));
+const schema = Schema.build(require('../../独立制卡器/node_modules/zod'));
 function policy(p, floor = 2, swipe = 0, body = F.body) {
   return {plot: p, questDefinition: id => p.definition(id), questRegistered: id => p.owns(id),
     mapIndex: {tokyo: ['shop', 'station']}, numericOptions: {factBatch: 'line_' + floor + '_' + swipe, source: source(floor, swipe), storyText: body}};
@@ -87,15 +87,15 @@ test('one transaction supports sequential cross-line facts and preserves unrelat
     {op: 'add', path: '/terminal/quests/sample_followup/events', value: [F.event('F1', ['checked'])]}], p);
   assert.equal(s.terminal.quests.sample_followup.state, '完成'); assert.deepEqual(s.future, F.state().future);
 });
-test('only sourced happened events are accepted; invalid batches are atomic', () => {
+test('invalid quest event groups retain saved records while valid groups advance', () => {
   const p = plot(), before = F.state(), snapshot = structuredClone(before);
   for (const kind of ['plan', 'memory', 'denied', 'thought', 'hypothesis', 'option']) {
     const event = {...F.event('P1', ['agreed']), kind};
-    assert.throws(() => schema.prepare([patch([event])], before, policy(p)), /只登记本轮/);
+    assertIgnored(() => schema.prepare([patch([event])], before, policy(p)), /只登记本轮/);
   }
-  assert.throws(() => schema.prepare([patch([F.event('P1', ['agreed'])])], before, policy(p, 2, 0, '玩家没有答应调查包裹，只是想了想。')), /引文/);
-  for (const leaf of ['state', 'knownFacts', 'line', 'line/nodes']) assert.throws(() => schema.prepare([{op: 'add', path: '/terminal/quests/sample_parcel/' + leaf, value: {}}], before, policy(p)), /事实事件/);
-  assert.throws(() => schema.prepare([patch([F.event('P1', ['agreed']), F.event('missing', ['found'])])], before, policy(p)), /未登记/);
+  assertIgnored(() => schema.prepare([patch([F.event('P1', ['agreed'])])], before, policy(p, 2, 0, '玩家没有答应调查包裹，只是想了想。')), /引文/);
+  for (const leaf of ['state', 'knownFacts', 'line', 'line/nodes']) assertIgnored(() => schema.prepare([{op: 'add', path: '/terminal/quests/sample_parcel/' + leaf, value: {}}], before, policy(p)), /事实事件|尚未接取|程序维护/);
+  assertIgnored(() => schema.prepare([patch([F.event('P1', ['agreed']), F.event('missing', ['found'])])], before, policy(p)), /未登记/);
   assert.deepEqual(before, snapshot);
 });
 test('duplicate receipts, correction, reload and two reply branches preserve their own results', async () => {
@@ -157,3 +157,5 @@ test('line-level pause/resume and abandonment use the existing operation journal
   const abandoned=act(resumed,'abandon','leave_line');assert.equal(abandoned.terminal.quests.sample_parcel.line.ending,undefined);assert(Q.available(abandoned,p.definition(F.line.id),'accept',p.definitions));
 });
 module.exports = {plot, run, policy};
+
+function assertIgnored(prepare,reason){const tx=prepare();assert.deepEqual(tx.patches,[]);assert.match(tx.ignored.map(row=>row.reason).join('\n'),reason);}

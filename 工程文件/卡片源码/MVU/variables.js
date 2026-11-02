@@ -228,7 +228,7 @@
     if(webChat())try{const messages=context().chat;for(let i=messages.length-1;i>=0;i--){const row=messages[i];if(row.is_user||row.is_system)continue;const raw=String(win.CxxSource?.sync?.(i)??rawAt(i)),v=floorValue(row);if(nativeCommit(i,row,raw,false)&&v.stat_data?.terminal){stateComplete=true;return copy(v.stat_data);}const owned=webCommit(row,v);if(owned?.fingerprint===textKey(raw)&&v.stat_data){stateComplete=true;return copy(v.stat_data);}}}catch{}
     // A web-owned selected swipe carries the native authoritative state. Old table projections may lag.
     try{const c=context();for(let i=c.chat.length-1;i>=0;i--){const row=c.chat[i],v=row?.variables?.[row.swipe_id||0];if(webCommit(row,v)&&v.stat_data){stateComplete=true;return copy(v.stat_data);}if(v?.stat_data)break;}}catch{}
-    try{const snap=readOf()?.snapshot?.({});if(snap&&snap.ok!==false&&snap.terminal)return copy(snap);}catch{}
+    try{const snap=readOf()?.snapshot?.({});if(snap&&snap.ok!==false&&!snap.empty&&snap.terminal)return copy(snap);}catch{}
     try{const c=context();for(let i=c.chat.length-1;i>=0;i--){const data=c.chat[i]?.variables?.[c.chat[i].swipe_id||0]?.stat_data;if(data)return copy(data);}}catch{}
     return null;
   }

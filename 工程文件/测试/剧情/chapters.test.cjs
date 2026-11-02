@@ -11,7 +11,7 @@ const root = path.resolve(__dirname, '../../卡片源码');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 const detection = JSON.parse(read('长期记忆/detection.json'));
 const quests = JSON.parse(read('终端/content/quests.json')).quests.filter(q => q.id !== 'q_heist');
-const chapters = Data.load(read), schema = Schema.build(require('D:/SillyTavern/node_modules/zod'));
+const chapters = Data.load(read), schema = Schema.build(require('../../独立制卡器/node_modules/zod'));
 const state = () => ({terminal: {quests: {}, wallet: {yen: 100, earned: 100, spent: 0}}, future: {keep: true}});
 const source = (floor = 3, swipe = 0) => ({floor, swipe, story: 'chapter-' + floor + '-' + swipe});
 const event = (action, stage, facts) => ({event: action, stage, kind: 'happened', evidence: facts.map(fact => ({fact, quote: '伙伴当场核实了这一项事实已经完成，记录编号为' + fact + '。'}))});
@@ -109,6 +109,8 @@ test('invalid chapter data, future record schemas and malformed events leave inp
   stat.terminal.quests.q_chip_night = {state: '进行中', chapter: {schema: 2, stage: 1}};
   const before = structuredClone(stat); assert.throws(() => plot.entries(stat), /版本/); assert.deepEqual(stat, before);
   const fresh = state(), wrong = event('accept', 1, ['invitation']); wrong.kind = 'plan';
-  assert.throws(() => schema.prepare([{op: 'add', path: '/terminal/quests/q_chip_night/events', value: [wrong]}], fresh, policy(plot, 3, body([wrong]))), /只登记本轮/);
+  assertIgnored(() => schema.prepare([{op: 'add', path: '/terminal/quests/q_chip_night/events', value: [wrong]}], fresh, policy(plot, 3, body([wrong]))), /只登记本轮/);
   assert.deepEqual(fresh, state());
 });
+
+function assertIgnored(prepare,reason){const tx=prepare();assert.deepEqual(tx.patches,[]);assert.match(tx.ignored.map(row=>row.reason).join('\n'),reason);}

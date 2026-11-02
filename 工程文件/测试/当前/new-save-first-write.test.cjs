@@ -6,10 +6,38 @@ const test = require('node:test');
 const assert = require('node:assert');
 const fs = require('node:fs');
 const path = require('node:path');
+const vm = require('node:vm');
 
 const root = path.resolve(__dirname, '../..');
 const Write = require(path.join(root, '卡片源码/数据/write.js'));
 const core = fs.readFileSync(path.join(root, '卡片源码/装配/启动脚本/cxx-business-core-241.js'), 'utf8');
+
+test('空数据库投影保持未初始化，已有楼层状态完整返回', () => {
+  const chat = [], empty = { ok: true, empty: true, terminal: { ensemble: { actors: {} }, scene: {}, wallet: null } };
+  const context = { parent: { SillyTavern: { getContext: () => ({chat}) } },
+    read236: { snapshot: () => empty, counts: () => ({counts: {}}) }, dataStoreMode236: () => 'on' };
+  vm.createContext(context);
+  const start = core.indexOf('function mvuStat236(){'), end = core.indexOf('// 数值／背包／装备的权威读数');
+  assert(start >= 0 && end > start);
+  vm.runInContext(core.slice(start, end), context);
+  assert.deepEqual(JSON.parse(JSON.stringify(context.stat236())), {});
+  const saved = { terminal: { gameplay: {growth: {level: 3}}, ensemble: {schema: 1, actors: {}, control: {actorId: 'player', revision: 0}} }, future: {keep: true} };
+  chat.push({variables: [{stat_data: saved}], swipe_id: 0});
+  assert.equal(context.stat236(), saved);
+});
+
+test('变量服务跳过空表投影，新开局使用规范的玩家控制记录', () => {
+  const Guard = require('../../卡片源码/MVU/variables.js'), Schema = require('../../卡片源码/MVU/schema.js');
+  const A = require('../../卡片源码/运行时/ensemble-state.js'), V = require('../../卡片源码/数据/validator.js');
+  const service = Guard.create({ api: {eventOn() {}, eventRemoveListener() {}, SillyTavern: {getContext: () => ({chat: [], eventTypes: {}})}},
+    win: {}, runtime: {key: () => 'new-story'}, schema: Schema.build(V.z),
+    reader: {snapshot: () => ({ok: true, empty: true, terminal: {ensemble: {actors: {}}}})} });
+  try { assert.equal(service.localState(), null); } finally { service.destroy(); }
+  const root = require('../../卡片源码/数据/applier.js').emptyRoot();
+  assert.equal(A.binding(root, 'player').actorId, 'player');
+  assert.equal(root.terminal.ensemble.control.revision, 0);
+  assert.equal(root.terminal.wallet.yen, 0);
+});
 
 function emptyStore() {
   const data = { cxx_fact: [], cxx_pending_tx: [] };

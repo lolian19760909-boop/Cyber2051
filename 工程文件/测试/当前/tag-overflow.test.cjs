@@ -24,7 +24,7 @@ test('wrong numeric/input stays unchanged and schema rejects it without redirect
 });
 test('field errors remain schema errors; malformed and nested syntax stays inert',()=>{
  const entries=structuredClone(f.fixed);entries[2].value={kind:'item-gain'};assert.equal(invalid(f.update(entries)),false);
- const adapter=require('../../卡片源码/数值引擎/adapters/mvu.js');assert.throws(()=>adapter.prepare({terminal:{gameplay:{}}},[entries[2]]),/事件数组/);
+ const adapter=require('../../卡片源码/数值引擎/adapters/mvu.js');const tx=adapter.prepare({terminal:{gameplay:{}}},[entries[2]]);assert.match(tx.ignored[0].reason,/事件数组/);assert.equal(tx.applied.length,0);
  for(const raw of [f.valid.replace('[{','[invalid{'),'<UpdateVariable>'+f.valid+'</UpdateVariable>']){assert.equal(invalid(raw),true,raw);assert(parser.variableUpdates(raw).issues.length);const x=rendering();assert.match(x.render(raw),/cxx-update-diagnostic/);x.stop();}
  const repeated=f.valid+'\n'+f.valid;assert.equal(invalid(repeated),false);assert.equal(parser.variableUpdates(repeated).patches.length,f.fixed.length*2);
 });

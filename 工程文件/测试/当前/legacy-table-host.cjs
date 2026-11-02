@@ -1,0 +1,28 @@
+'use strict';
+// Actual isolated ST/plugin check using the equipment template extracted from the delivered 2.3.33 card.
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const {chromium}=require('playwright'),B=require('../../工具/构建/当前/build.cjs'),{extract}=require('../../工具/lib/script-modules.cjs');
+const workspace=path.resolve(B.root,'..'),out=process.env.CXX_EVIDENCE||path.join(workspace,'.cache/feedback-batch1-20261101/tavern-legacy-table');fs.mkdirSync(out,{recursive:true});
+const oldFile=path.join(B.root,'交付/当前/2.3.33-终端状态来源修复-20261025/东京都2051-V2.3.33.json'),bytes=fs.readFileSync(B.output),oldBytes=fs.readFileSync(oldFile),card=JSON.parse(bytes),old=JSON.parse(oldBytes),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const box={module:{exports:{}},console};vm.createContext(box);const oldCore=old.data.extensions.tavern_helper.scripts.find(s=>s.id==='cxx-business-core-241').content;vm.runInContext(extract(oldCore,['CxxDataSchema'])[0].source,box);const legacy=JSON.parse(JSON.stringify(box.module.exports));
+const report={scope:'Isolated real ST and installed database plugin, synthetic old tables',cardSHA256:sha(bytes),oldCardSHA256:sha(oldBytes),errors:[],modelRequests:0,checks:[]};
+(async()=>{const browser=await chromium.launch({channel:'msedge',headless:true}),p=await browser.newPage({viewport:{width:1280,height:900}});p.setDefaultTimeout(60000);p.on('pageerror',e=>report.errors.push(e.message));await p.route('**/api/backends/**',r=>{report.modelRequests++;return r.abort();});try{
+ const url='http://127.0.0.1:6948',avatar='legacy-300-'+Date.now()+'.png';report.avatar=avatar;await p.goto(url,{waitUntil:'domcontentloaded'});await p.waitForFunction(()=>window.SillyTavern&&window.TavernHelper&&!document.querySelector('#preloader'));const token=(await(await p.request.get(url+'/csrf-token')).json()).token;
+ const imported=await p.request.post(url+'/api/characters/import',{headers:{'X-CSRF-Token':token},multipart:{file_type:'json',preserved_name:avatar,avatar:{name:'legacy-check.json',mimeType:'application/json',buffer:bytes}}});assert(imported.ok());
+ void p.evaluate(async({avatar,book,name})=>{const c=SillyTavern.getContext(),w=await import('/scripts/world-info.js');await w.saveWorldInfo(name,w.convertCharacterBook(book),true);await c.getCharacters();await c.selectCharacterById(c.characters.findIndex(x=>x.avatar===avatar));},{avatar,book:card.data.character_book,name:card.data.extensions.world}).catch(e=>report.errors.push(e.message));
+ await p.waitForFunction(()=>{document.querySelector('.cxx-announcement button')?.click();for(const d of document.querySelectorAll('dialog[open],.popup'))if(/World\/Lorebook|[Ww]orld [Ii]nfo|世界书|already exists|内置正则|嵌入式脚本|bundled regex/.test(d.innerText))d.querySelector('.popup-button-ok')?.click();return !!window.AutoCardUpdaterAPI&&!!document.querySelector('iframe[id$="--cxx-business-core-241"]')?.contentWindow?.CxxDataStore;});
+ report.result=await p.evaluate(async({legacy,current})=>{
+  const api=AutoCardUpdaterAPI,frame=document.querySelector('iframe[id$="--cxx-business-core-241"]').contentWindow;
+  const missing=Object.keys(legacy).filter(k=>k.startsWith('sheet_')&&!legacy[k].uid);for(const k of missing)legacy[k].uid=k;
+  legacy.sheet_cxx_equipment.content.push([41,'player','主手','old_pistol',1,3]);
+  const imported=await api.importTemplateFromData(legacy,{scope:'chat',presetName:'2.3.33旧表验证'});if(!imported.success)throw Error(imported.message||'旧表导入失败');
+  const tables=api.exportTableAsJson(),key=Object.keys(tables).find(k=>tables[k]?.name==='装备表');if(!tables[key].sourceData.ddl.includes('CHECK(slot IN'))throw Error('旧约束未载入');
+  const before=JSON.stringify(tables[key].content),store=frame.CxxDataStore.create({scope:window,template:current});
+  const terminal={wallet:{yen:100,earned:100,spent:0},ensemble:{actors:{player:{actorId:'player',name:'旧表验证者',controllable:true,gameplay:{equipment:{weapon_1:{itemId:'old_pistol'},cyber_nervous_1:{itemId:'implant_a'}}}}}}};
+  const priorWrite=await store.replaceTables(frame.CxxDataRows.projectAll(terminal,4),['cxx_equipment']);if(!priorWrite.ok&&JSON.stringify(api.exportTableAsJson()[key].content)!==before)throw Error('拒存改变旧行');const restored=await api.importTableAsJson(JSON.stringify(tables));if(restored!==true)throw Error('旧行恢复失败');
+  const migrated=await store.ensureSchema();if(!migrated.ok)throw Error(migrated.reason);if(JSON.stringify(api.exportTableAsJson()[key].content)!==before)throw Error('迁移改变旧行');
+  const saved=await frame.CxxDataSync.create({store,rows:frame.CxxDataRows}).pushAll(terminal,4);if(!saved.ok)throw Error(saved.reason);
+  const slots=api.exportTableAsJson()[key].content.slice(1).map(r=>r[2]);return {missingTemplateUids:missing.length,beforeWriteAccepted:priorWrite.ok,beforeReason:priorWrite.reason,oldRowsPreserved:true,afterSaved:true,slots};
+ },{legacy,current:require('../../卡片源码/数据/schema.js')});
+ assert(report.result.slots.includes('weapon_1'));assert(report.result.slots.includes('cyber_nervous_1'));report.checks.push('old slot template loaded through installed plugin','schema migration preserves the old equipment row','new slot rows save and read back through installed plugin');report.pass=true;await p.screenshot({path:path.join(out,'saved.png')});
+ }catch(e){report.failure=e.stack;process.exitCode=1;await p.screenshot({path:path.join(out,'failure.png')}).catch(()=>{});}finally{await browser.close();fs.writeFileSync(path.join(out,'host.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report));}})().catch(e=>{console.error(e);process.exitCode=1;});

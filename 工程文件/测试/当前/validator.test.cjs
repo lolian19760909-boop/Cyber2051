@@ -104,15 +104,15 @@ test('validator：能撑起 MVU/schema.js 的 build 与事务三件套', () => {
   after.terminal.wallet.spent = 100;
   assert.equal(built.check(tx, before, after), true);
 
-  assert.throws(() => built.prepare([{ op: 'replace', path: '/terminal/nope', value: 1 }], before, policy), /该字段由程序维护或尚未开放/);
-  assert.throws(() => built.prepare([{ op: 'replace', path: '/terminal/wallet/yen', value: '不是数字' }], before, policy), /需要数字/);
-  assert.throws(() => built.prepare([{ op: 'remove', path: '/terminal/wallet/yen' }], before, policy), /只接受 replace 和限定字段的 add/);
+  assertIgnored(() => built.prepare([{ op: 'replace', path: '/terminal/nope', value: 1 }], before, policy), /该字段由程序维护或尚未开放/);
+  assertIgnored(() => built.prepare([{ op: 'replace', path: '/terminal/wallet/yen', value: '不是数字' }], before, policy), /需要数字/);
+  assertIgnored(() => built.prepare([{ op: 'remove', path: '/terminal/wallet/yen' }], before, policy), /add 或 replace/);
 
   const unpaid = JSON.parse(JSON.stringify(before));
   unpaid.terminal.wallet.yen = 950;
   assert.throws(() => built.check(tx, before, unpaid), /未完整执行本批更新/);
 
-  // 值写对了但收支不平：yen 少 100、earned 却多 100，守恒检查必须拦下。
+  // 可读的模型金额分别保存，收支推导由模型完成。
   const drifted = built.prepare([
     { op: 'replace', path: '/terminal/wallet/yen', value: 900 },
     { op: 'replace', path: '/terminal/wallet/earned', value: 100 },
@@ -120,5 +120,8 @@ test('validator：能撑起 MVU/schema.js 的 build 与事务三件套', () => {
   const driftedAfter = JSON.parse(JSON.stringify(before));
   driftedAfter.terminal.wallet.yen = 900;
   driftedAfter.terminal.wallet.earned = 100;
-  assert.throws(() => built.check(drifted, before, driftedAfter), /钱包余额与本轮累计收入、支出不一致/);
+  assert.equal(built.check(drifted, before, driftedAfter), true);assert.equal(driftedAfter.terminal.wallet.earned,100);
+
+function assertIgnored(prepare,reason){const tx=prepare();assert.deepEqual(tx.patches,[]);assert.match(tx.ignored.map(row=>row.reason).join('\n'),reason);}
+
 });
