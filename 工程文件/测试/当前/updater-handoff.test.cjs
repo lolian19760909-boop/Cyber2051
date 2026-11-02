@@ -22,3 +22,19 @@ test('self replacement may abort the old call only when the new service and exac
 test('a stuck old installer yields an explicit error instead of an endless startup wait',async()=>{const f=await fixture();f.setBusy(true);f.config.wait=async()=>{};await assert.rejects(H.create(f.config).ensure(),{code:'updater-waiting'});assert.deepEqual(f.calls,['notice']);});
 
 test('legacy iframe rejection waits for the exact new controller to be published',async()=>{const f=await fixture();let ticks=0;f.service.online=()=>({read:()=>({busy:false}),apply:async()=>{f.setSource('new updater');throw Error('old iframe unloaded');}});f.config.wait=async()=>{ticks++;f.top.Cxx233Updater={runtimeHash:()=>Core.sha256('new updater')};};assert.equal(await H.create(f.config).ensure(),false);assert.equal(ticks,1);assert.equal(f.calls.at(-1),'reload');});
+
+test('the frozen 2.3.33 installer retains player data while the packed business code starts against its target updater',async()=>{
+ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),B=require('../../工具/构建/当前/build.cjs'),{extract}=require('../../工具/lib/script-modules.cjs');
+ const card=process.env.CXX_TEST_CARD?JSON.parse(fs.readFileSync(process.env.CXX_TEST_CARD)):(await B.build({write:false})).card;
+ const scripts=card.data.extensions.tavern_helper.scripts,business=scripts.find(s=>s.id==='cxx-business-core-241'),updater=scripts.find(s=>s.id==='cf33c692-7a41-444d-b8b7-6a70163e0104');
+ const old=JSON.parse(fs.readFileSync(path.join(__dirname,'../../交付/当前/2.3.33-终端状态来源修复-20261025/东京都2051-V2.3.33.json'))),legacyUpdater=old.data.extensions.tavern_helper.scripts.find(s=>s.id===updater.id),legacyBusiness=old.data.extensions.tavern_helper.scripts.find(s=>s.id===business.id);
+ const legacy={};vm.runInNewContext(extract(legacyUpdater.content,['CxxReleaseSafety'])[0].source,legacy);
+ const local={...business,content:'previous business code',data:{...legacyBusiness.data,playerExtension:{zero:0,keep:true}}},before={worldbook:{internalName:'old',entries:[]},regex:{scripts:[]},scripts:{trees:[local]}};
+ const installed=await legacy.CxxReleaseSafety.prepare({before,incoming:{...before,scripts:{trees:[business]}},previous:{worldbook:[],regex:[],scripts:[business.id]},baseline:await Core.fingerprints(before),Core,updaterId:updater.id});
+ assert.equal(installed.conflicts.length,0);const merged=installed.after.scripts.trees[0];assert.deepEqual(JSON.parse(JSON.stringify(merged.data.playerExtension)),{zero:0,keep:true});assert.equal(merged.data.__cxx_required_updater.sha256,legacyBusiness.data.__cxx_required_updater.sha256);
+ const f=await fixture();f.setSource(updater.content);f.setRuntime(updater.content);let config;
+ const call=merged.content.match(/const handoff=CxxUpdaterHandoff\.create\([^\n]+\);/);assert(call,'packed handoff call');
+ vm.runInNewContext(call[0],{...f.config.api,CxxUpdateCore:Core,CxxUpdaterHandoff:{create:value=>{config=value;return {};}},getVariables:()=>merged.data,ended:false,cxxRunCurrent:()=>true});
+ assert.equal(config.requirement.version,card.data.character_version);assert.equal(config.requirement.sha256,await Core.sha256(updater.content));
+ assert.equal(await H.create({...config,wait:f.config.wait}).ensure(),true);assert.deepEqual(f.calls,[]);
+});

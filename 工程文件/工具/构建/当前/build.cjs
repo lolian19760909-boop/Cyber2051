@@ -488,8 +488,11 @@ async function build({write = false, assemblyFile = input, includeResources = fa
   bootstrapScript.content = replaceSlot(bootstrapScript.content, '__CXX_CARD_BUILD__', cardBuild);
   const menuContent = 'globalThis.CxxGameMenuBuild=' + JSON.stringify(cardBuild) + ';' + scripts[menuScript].content;
   set(['data', 'extensions', 'tavern_helper', 'scripts', menuScript, 'content'], menuContent);
+  // The legacy installer retains script data for player extensions. Bind this
+  // code dependency after the updater receives its derived menu build marker.
   const businessIndex=scripts.findIndex(s=>s.id==='cxx-business-core-241');
-  set(['data','extensions','tavern_helper','scripts',businessIndex,'data'],{...scripts[businessIndex].data,__cxx_required_updater:{version,sha256:sha(scripts[si].content)}});
+  const handoffRequirement={version,sha256:sha(scripts[si].content)};
+  set(['data','extensions','tavern_helper','scripts',businessIndex,'content'],replaceSlot(scripts[businessIndex].content,'__CXX_REQUIRED_UPDATER__',JSON.stringify(handoffRequirement)));
   seed.baseline = await Core.fingerprints(componentsOf(card.data));
   seed.migration.buildId = 'card:' + await Core.sha256(seed.baseline);
   seed.release = {
@@ -509,7 +512,6 @@ async function build({write = false, assemblyFile = input, includeResources = fa
   restored.data.extensions.tavern_helper.scripts.pop();
   assert.deepEqual(restored, original, 'Unrelated R1 fields preserved');
   scripts.unshift(scripts.pop());
-  const handoffRequirement=scripts.find(s=>s.id==='cxx-business-core-241').data.__cxx_required_updater;
   assert.equal(handoffRequirement.version,version,'Business updater requirement version');
   assert.equal(handoffRequirement.sha256,sha(scripts.find(s=>s.id===Release.UPDATER).content),'Business gate must target the final packed updater code');
   seed.baseline = await Core.fingerprints(componentsOf(card.data));
