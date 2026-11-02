@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/终端/terminal.js; source SHA256 45b22a7cd1f5253d3dfe7a271ec0d509004bfc125fb02b016de8457d1afff400. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/终端/terminal.js; source SHA256 7bc8c4187fcdff611eea98206aa9303448d4611a4e19223480ed969ee3b56b2a. Rebuild with tools/p3a-adapt-views.mjs. */
 (() => {
   'use strict';
   const document=window.CxxWebTerminal.document;
@@ -553,7 +553,7 @@
         else if (!turns.length) scroll.append(element('p', 'net-note', snap.selected === c.id ? '还没有往来记录。打开私聊后可以发消息或拨打语音。' : '打开私聊后，可以查看与' + c.name + '的往来记录。'));
         else { const log = element('div', 'net-log'); log.setAttribute('aria-label', '最近往来'); for (const t of turns) { if (t.input) log.append(element('p', 'net-msg is-mine', t.input)); const reply = element('p', 'net-msg'); reply.append(element('b', '', c.name), document.createTextNode(t.reply || t.error || '等待回复')); log.append(reply); } scroll.append(log); }
         scroll.append(status);
-        const actions = element('div', 'sec-actions'), open = async dial => { await service.select(c.id); service.open?.('chat'); if (dial) await service.dial(); };
+        const actions = element('div', 'sec-actions'), open = async dial => { await service.select(c.id); closeTerminal(); service.open?.('chat'); if (dial) await service.dial(); };
         const call = button('拨打语音', 'sec-button', () => run(() => open(true), status)); call.disabled = !c.active || !snap.caps?.text || !snap.caps?.call || snap.busy; if (call.disabled && c.active) call.title = '需要先在通讯器设置中配置镜译的通话与声音。';
         const chat = button('打开私聊', 'sec-button is-primary', () => run(() => open(false), status)); chat.disabled = !c.active;
         actions.append(call, chat); detail.append(scroll, actions);

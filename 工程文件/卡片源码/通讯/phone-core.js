@@ -13,16 +13,19 @@
   function contactActive(contact,rows){return contact.unlocks?.some(u=>active(u,rows));}
   function unlocks(raw,parser,aliases){
     const text=String(raw||''),story=source(text,parser);if(!story)return [];
-    const roots=parser.inspect(text).roots.filter(r=>r.kind==='ztl'&&r.valid&&r.complete);if(roots.length!==1)return [];
-    let obj;try{obj=JSON.parse(text.slice(roots[0].start,roots[0].end).replace(/^<ztl>|<\/ztl>$/g,''));}catch{return [];}
-    if(!Array.isArray(obj.phone_contacts))return [];
-    const protectedMask=parser.inspect(story).protection.all;
-    const spoken=story.replace(/<cxx-say\b[^>]*>[\s\S]*?<\/cxx-say>/gi,m=>' '.repeat(m.length)).split('').map((c,i)=>protectedMask[i]?' ':c).join('').replace(/<[^>]+>/g,'');
-    return obj.phone_contacts.slice(0,20).flatMap(item=>{try{const person=identity(item.name,aliases),quote=clean(item.evidence),names=Object.keys(aliases).filter(n=>aliases[n].id===person.id);names.push(person.name);
-      if(quote.length<6||quote.length>500||!spoken.includes(quote)||!names.some(n=>quote.includes(n))||!/(?:联系方式|通讯号|通信号|电话号码|手机号|通讯录|通信录|好友|号码|联络方式)/.test(quote)||!/(?:交换了|加上了|添加了|加入了|存入了|收到了|记下了|给了|交给了|递给了|发送了|发给了)/.test(quote)||/(?:没有|未曾|拒绝|不愿|打算|准备|想要|如果|假如|以后|明天|声称|谎称|传闻|听说|说过|梦见|幻想|尚未|并未|没把|并非)/.test(quote))return [];
-      return [{...person,evidence:quote}];}catch{return [];}});
+    const contacts=new Map();
+    for(const root of parser.inspect(text,{scenePayload:true}).roots.filter(r=>r.kind==='ztl'&&r.complete)){
+      let obj;try{obj=JSON.parse(text.slice(root.bodyStart,root.closeStart));}catch{continue;}
+      if(!Array.isArray(obj?.phone_contacts))continue;
+      for(const item of obj.phone_contacts){
+        const name=typeof item==='string'?item:item?.name;if(typeof name!=='string')continue;
+        let person;try{person=identity(name,aliases);}catch{continue;}
+        contacts.set(person.id,{...person,evidence:typeof item?.evidence==='string'?clean(item.evidence):''});
+      }
+    }
+    return [...contacts.values()];
   }
-  function addContact(store,person,at,method='manual'){let c=store.contacts.find(c=>c.id===person.id);if(!c){c={...person,unlocks:[]};delete c.evidence;store.contacts.push(c);}if(!c.unlocks.some(u=>u.anchor.chain===at.chain&&u.anchor.floor===at.floor&&u.method===method))c.unlocks.push({anchor:copy(at),method,evidence:person.evidence||'玩家补录旧档联系人'});return c;}
+  function addContact(store,person,at,method='manual'){let c=store.contacts.find(c=>c.id===person.id);if(!c){c={...person,unlocks:[]};delete c.evidence;store.contacts.push(c);}if(!c.unlocks.some(u=>u.anchor.chain===at.chain&&u.anchor.floor===at.floor&&u.method===method))c.unlocks.push({anchor:copy(at),method,evidence:person.evidence||(method==='manual'?'玩家补录旧档联系人':'正文模型登记联系人')});return c;}
   function recent(items,budget,render){const result=[];let left=budget;for(let i=items.length-1;i>=0;i--){const text=render(items[i]);if(!text)continue;if(text.length>left){if(!result.length)result.unshift(text.slice(-left));break;}result.unshift(text);left-=text.length;}return result.join('\n');}
   const format=t=>`[${t.mode==='call'?'通话':'私聊'} ${t.id}] 玩家：${t.input}\n${t.name}：${t.reply}`;
   function complete(store,rows,id){return store.turns.filter(t=>(!id||t.contactId===id)&&t.status==='complete'&&active(t,rows));}

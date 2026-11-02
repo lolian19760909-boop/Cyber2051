@@ -301,7 +301,7 @@
   },
   {
     "source": "卡片源码/通讯/phone-ui.js",
-    "sha256": "e940bae7bb7a2feea7d67a91fcf31a2da48680cf97f71a3a59351ffa55effa7e",
+    "sha256": "1935272b16ce90a39f3939c6a9f39fed99fe104942024af6df89aea772d06da4",
     "target": "src/ui/card/通讯/phone-ui.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -331,7 +331,7 @@
   },
   {
     "source": "卡片源码/终端/terminal.js",
-    "sha256": "45b22a7cd1f5253d3dfe7a271ec0d509004bfc125fb02b016de8457d1afff400",
+    "sha256": "7bc8c4187fcdff611eea98206aa9303448d4611a4e19223480ed969ee3b56b2a",
     "target": "src/ui/card/终端/terminal.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
