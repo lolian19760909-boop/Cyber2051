@@ -155,6 +155,15 @@
     return row;
   }
 
+  const LEGACY_EQUIPMENT_CHECK = "CHECK(slot IN ('主手', '副手', '头部', '躯干', '腿部', '义体'))";
+  const missingTableIds = document => Object.entries(document || {}).filter(([key, sheet]) => /^sheet_/.test(key) && sheet && typeof sheet === 'object' && !(typeof sheet.uid === 'string' && sheet.uid.trim())).map(([key]) => key);
+  function equipmentUpgrade(document, template) {
+    const key = tablesOf({ exportTableAsJson: () => document }, template).cxx_equipment?.key;
+    const ddl = document?.[key]?.sourceData?.ddl;
+    return typeof ddl === 'string' && ddl.includes(LEGACY_EQUIPMENT_CHECK)
+      ? { key, ddl: ddl.replace(LEGACY_EQUIPMENT_CHECK, 'CHECK(length(slot) > 0)') } : null;
+  }
+
   async function ensureSchema(api, template, options) {
     if (!template || template.mate?.type !== 'chatSheets') return { ok: false, reason: '模板不是 chatSheets' };
     if (typeof api.importTemplateFromData !== 'function') return { ok: false, reason: '宿主没有 importTemplateFromData' };
@@ -162,13 +171,14 @@
     const step = (options && options.step) || DEFAULT_STEP;
     let imported;
     try {
-      // ACU's dataMode merges rows, but absent template sheets become hidden.
-      // Keep this chat's existing schemas/keys unchanged and add only our missing tables.
+      // ACU seed mode retains baseline rows while reconciling schema changes.
+      // Preserve this chat's keys and data, update the shipped slot constraint, and add missing tables.
       const exported = api.exportTableAsJson?.();
       const existing = tablesOf({ exportTableAsJson: () => exported }, template);
-      if (TABLES.every(logical => existing[logical]?.content[0]?.length)) return { ok: true, attempts: 0, tables: existing };
+      if (TABLES.every(logical => existing[logical]?.content[0]?.length) && !equipmentUpgrade(exported, template) && !missingTableIds(exported).length) return { ok: true, attempts: 0, tables: existing };
       const current = typeof api.getTableTemplate === 'function' ? await api.getTableTemplate({ scope: 'chat' }) : exported;
       const target = JSON.parse(JSON.stringify(current && Object.keys(current).some(key => /^sheet_/.test(key)) ? current : template));
+      const existingTemplateKeys = new Set(Object.keys(target));
       target.mate ||= JSON.parse(JSON.stringify(template.mate));
       for (const [key, sheet] of Object.entries(exported || {})) if (/^sheet_/.test(key) && !target[key]) target[key] = JSON.parse(JSON.stringify(sheet));
       for (const key of Object.keys(template).filter(key => /^sheet_/.test(key))) {
@@ -176,20 +186,31 @@
         const exists = Object.entries(target).some(([savedKey, saved]) => /^sheet_/.test(savedKey) && (savedKey === key || saved?.uid === wanted.uid || saved?.name === wanted.name));
         if (!exists) target[key] = JSON.parse(JSON.stringify(wanted));
       }
-      imported = await api.importTemplateFromData(target, { scope: 'chat', dataMode: 'merge', conflictPolicy: 'overwrite' });
+      const upgrade = equipmentUpgrade(target, template);
+      if (upgrade) target[upgrade.key].sourceData.ddl = upgrade.ddl;
+      for (const key of missingTableIds(target)) target[key].uid = key;
+      for (const key of existingTemplateKeys) if (/^sheet_/.test(key) && Array.isArray(target[key]?.content)) target[key].content = target[key].content.slice(0, 1);
+      imported = await api.importTemplateFromData(target, { scope: 'chat', dataMode: 'seed' });
     }
     catch (error) { return { ok: false, reason: '建表失败：' + String(error?.message || error) }; }
     if (imported === false || imported?.success === false) return { ok: false, reason: '建表失败：' + (imported?.error || imported?.message || '数据库未确认模板导入') };
     let missing = TABLES.slice();
     let empty = [];
+    let legacyEquipment = false;
+    let missingIds = [];
     for (let attempt = 0; attempt < wait; attempt += 1) {
       await sleep(step);
-      const tables = tablesOf(api, template);
+      let snapshot;
+      try { snapshot = api.exportTableAsJson(); }
+      catch (error) { return { ok: false, reason: '模板提交后读取失败：' + String(error?.message || error) }; }
+      const tables = tablesOf({ exportTableAsJson: () => snapshot }, template);
       missing = TABLES.filter(logical => !tables[logical]);
       empty = TABLES.filter(logical => tables[logical] && !tables[logical].header.length);
-      if (!missing.length && !empty.length) return { ok: true, attempts: attempt + 1, tables };
+      legacyEquipment = !!equipmentUpgrade(snapshot, template);
+      missingIds = missingTableIds(snapshot);
+      if (!missing.length && !empty.length && !legacyEquipment && !missingIds.length) return { ok: true, attempts: attempt + 1, tables };
     }
-    return { ok: false, attempts: wait, missing, emptyHeader: empty, reason: '建表后读不全：缺 ' + missing.join('/') };
+    return { ok: false, attempts: wait, missing, emptyHeader: empty, reason: legacyEquipment ? '装备表仍保留旧槽位约束，模板更新尚未完成。' : missingIds.length ? '模板更新后仍有 ' + missingIds.length + ' 张表缺少稳定标识。' : '建表后读不全：缺 ' + missing.join('/') };
   }
 
   async function refresh(api) {

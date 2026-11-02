@@ -19,15 +19,15 @@ test('建表等待原插件异步 ACK 后才开始读回，保留其余表', asy
   const kept = structuredClone(tables.sheet_private);
   const api = {
     async importTemplateFromData(doc, options) {
-      assert.equal(options.scope, 'chat'); assert.equal(options.dataMode, 'merge');
+      assert.equal(options.scope, 'chat'); assert.equal(options.dataMode, 'seed');
       await new Promise(resolve => setTimeout(resolve, 10));
-      for (const key of Object.keys(doc).filter(key => key.startsWith('sheet_'))) tables[key] = structuredClone(doc[key]);
+      for (const key of Object.keys(doc).filter(key => key.startsWith('sheet_'))) tables[key] = { ...structuredClone(doc[key]), content: structuredClone(tables[key]?.content || doc[key].content) };
       return { success: true, runtimeReady: true };
     },
     exportTableAsJson() { return structuredClone(tables); }
   };
   const result = await Store.ensureSchema(api, template, { wait: 1, step: 1 });
-  assert.equal(result.ok, true, result.reason); assert.deepEqual(tables.sheet_private, kept);
+  assert.equal(result.ok, true, result.reason); assert.deepEqual(tables.sheet_private, { ...kept, uid: 'sheet_private' });
 });
 
 test('建表失败返回真实插件拒绝原因，不继续用缺表轮询覆盖 ACK', async () => {
@@ -67,10 +67,12 @@ test('真实 ACU 缺席隐藏语义下仍保留原生未知表、拼音业务键
     getTableTemplate(options) { assert.deepEqual(options, { scope: 'chat' }); return structuredClone(saved); },
     exportTableAsJson() { return structuredClone(runtime); },
     async importTemplateFromData(target, options) {
-      assert.equal(options.dataMode, 'merge'); calls++;
+      assert.equal(options.dataMode, 'seed'); calls++;
       // ACU reconcile removes absent sheets from the current visible runtime,
       // even without hard deletion. Object.assign would hide this regression.
-      runtime = structuredClone(target);
+      const next = structuredClone(target);
+      for (const key of Object.keys(next)) if (runtime[key]?.content) next[key].content = structuredClone(runtime[key].content);
+      runtime = next;
       return { success: true };
     }
   };
@@ -120,12 +122,13 @@ function mockHost(options = {}) {
     exportTableAsJson: () => snapshot(),
     importTemplateFromData(doc, config) {
       assert.equal(doc.mate.type, 'chatSheets');
-      assert.equal(config.dataMode, 'merge');
+      assert.equal(config.dataMode, 'seed');
       const created = {};
       for (const key of Object.keys(doc)) {
         if (!/^sheet_/.test(key)) continue;
         const sheet = doc[key];
-        created[PINYIN[key.slice(6)]] = { name: sheet.name, content: [(sheet.content || [])[0] || []] };
+        const actualKey = PINYIN[key.slice(6)] || key;
+        created[actualKey] = { ...structuredClone(sheet), uid: actualKey, content: [(sheet.content || [])[0] || []] };
       }
       // 导入异步：下一次导出才看到表
       state.pending = () => { Object.assign(state.tables, created); };
