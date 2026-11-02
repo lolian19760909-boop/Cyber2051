@@ -45,6 +45,7 @@ files.push(path.join(root,'测试/当前/plugin-check-mvu.test.cjs'));
 files.push(path.join(root,'测试/当前/script-self-contained.test.cjs'));
 files.push(path.join(root,'测试/当前/data-probe.test.cjs'));
 files.push(path.join(root,'测试/当前/data-store.test.cjs'));
+files.push(path.join(root,'测试/当前/data-legacy-template.test.cjs'));
 files.push(path.join(root,'测试/当前/data-rows.test.cjs'));
 files.push(path.join(root,'测试/当前/data-sync.test.cjs'));
 files.push(path.join(root,'测试/当前/data-read-write.test.cjs'));
