@@ -258,9 +258,16 @@ test('批量导入拒绝或ACK后读回错误均不签成功；异步切聊天�
   const base = { exportTableAsJson: () => structuredClone(template), importTemplateFromData() {} };
   const rejected = Store.create({ scope: { AutoCardUpdaterAPI: { ...base, async importTableAsJson() { return false; } } }, template });
   const values = { cxx_wallet: [{ scope_key: 'player', yen: 17 }] };
-  assert.equal((await rejected.replaceTables(values, ['cxx_wallet'])).ok, false);
+  const rejection = await rejected.replaceTables(values, ['cxx_wallet']);
+  assert.equal(rejection.ok, false); assert.match(rejection.reason, /回执 false，类型 boolean/);
   const notReadBack = Store.create({ scope: { AutoCardUpdaterAPI: { ...base, async importTableAsJson() { return true; } } }, template });
   assert.match((await notReadBack.replaceTables(values, ['cxx_wallet'])).reason, /读回不一致/);
+  let corrupted;
+  const changedCell = Store.create({ scope: { AutoCardUpdaterAPI: { ...base,
+    exportTableAsJson: () => structuredClone(corrupted || template),
+    async importTableAsJson(json) { corrupted = JSON.parse(json); corrupted.sheet_cxx_wallet.content[1][2] = 99; return true; }
+  } }, template });
+  assert.match((await changedCell.replaceTables(values, ['cxx_wallet'])).reason, /cxx_wallet，第 1 行，第 3 列/);
   let changed = false;
   const switched = Store.create({ scope: { AutoCardUpdaterAPI: { ...base, async importTableAsJson() { changed = true; return true; } } }, template });
   await assert.rejects(switched.replaceTables(values, ['cxx_wallet'], { assertCurrent() { if (changed) throw Error('聊天已切换'); } }), /聊天已切换/);

@@ -329,12 +329,16 @@
       try { const prepared=options.prepareTables?options.prepareTables(target):target;saved = await host.importTableAsJson(JSON.stringify(prepared),options.persist===false?{mode:'restore',persist:false}:undefined); }
       catch (error) { return { ok: false, reason: '整库镜像提交失败：' + error.message }; }
       check();
-      if (saved !== true) return { ok: false, reason: '数据库未确认整库镜像提交。' };
+      if (saved !== true) return { ok: false, reason: '数据库未确认整库镜像提交（回执 ' + String(saved) + '，类型 ' + typeof saved + '）。' };
       const actual = tablesOf(host, template);
       for (const logical of list) {
         const a = actual[logical]?.content, b = expected[logical];
-        if (!a || a.length !== b.length || b.some((row, index) => index > 0 && row.some((cell, column) => column > 0 && text(a[index]?.[column]) !== text(cell)))) {
-          return { ok: false, reason: '整库镜像读回不一致：' + logical };
+        if (!a) return { ok: false, reason: '整库镜像读回不一致：' + logical + '（表未读回）' };
+        if (a.length !== b.length) return { ok: false, reason: '整库镜像读回不一致：' + logical + '（预期 ' + (b.length - 1) + ' 行，读回 ' + (a.length - 1) + ' 行）' };
+        for (let row = 1; row < b.length; row += 1) {
+          for (let column = 1; column < b[row].length; column += 1) {
+            if (text(a[row]?.[column]) !== text(b[row][column])) return { ok: false, reason: '整库镜像读回不一致：' + logical + '，第 ' + row + ' 行，第 ' + (column + 1) + ' 列（' + b[0][column] + '）' };
+          }
         }
       }
       return { ok: true, refreshed: true, results: list.map(table => ({ table, ok: true, rows: expected[table].length - 1 })) };
