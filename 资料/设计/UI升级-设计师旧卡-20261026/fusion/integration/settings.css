@@ -1,0 +1,159 @@
+/* Shared palette and controls for the web settings screen and the current card settings center. */
+.cx77-settings,.cxx-game-menu.cx77 .cxx-settings-center {
+  --settings-bg:#0c0c10;--settings-field:#08151b;--settings-accent:#ff5b4f;
+  --settings-active:#5ef6ff;--settings-text:#ece5e6;--settings-muted:#bda09f;
+  --settings-line:#693632;--settings-soft:#321a1c;--settings-on-active:#091215;
+  color:var(--settings-text);font:16px/1.6 var(--cxx-font-ui);color-scheme:dark;
+  caret-color:var(--settings-active);scrollbar-color:var(--settings-accent) var(--settings-bg);
+}
+[data-cxx-theme=yellow] .cx77-settings,[data-cxx-theme=yellow] .cxx-game-menu.cx77 .cxx-settings-center {
+  --settings-bg:#111008;--settings-field:#17160e;--settings-accent:#e9d042;
+  --settings-active:#efe17c;--settings-text:#f1edda;--settings-muted:#bdb58d;
+  --settings-line:#655c29;--settings-soft:#2f2b14;--settings-on-active:#141207;
+}
+[data-cxx-theme=night] .cx77-settings,[data-cxx-theme=night] .cxx-game-menu.cx77 .cxx-settings-center {
+  --settings-bg:#101114;--settings-field:#17191d;--settings-accent:#d8dde3;
+  --settings-active:#f0f2f5;--settings-text:#e8e9ed;--settings-muted:#afb5bf;
+  --settings-line:#4c535e;--settings-soft:#252a31;--settings-on-active:#101114;
+}
+.cx77-settings *,.cxx-game-menu.cx77 .cxx-settings-center *{box-sizing:border-box}
+.cx77-lettering{display:inline-block;position:relative;vertical-align:middle;line-height:1;white-space:nowrap}
+.cx77-lettering-ink{display:block;height:1.5em;background:currentColor;mask:var(--lettering-image) center/100% 100% no-repeat;filter:drop-shadow(0 0 .55px currentColor)}
+.cx77-lettering-text{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.cx77-settings-header .cx77-lettering-ink{filter:drop-shadow(1px 0 color-mix(in srgb,var(--settings-accent) 35%,transparent))}
+.cx77-settings-stamp{position:absolute;bottom:28px;left:34px;width:142px;height:33px;background:var(--settings-accent);mask:var(--stamp-image) center/contain no-repeat;opacity:.35;pointer-events:none}
+.cx77-settings ::selection,.cxx-game-menu.cx77 .cxx-settings-center ::selection{background:var(--settings-active);color:var(--settings-on-active)}
+.cx77-settings.drawer {
+  position:fixed;inset:0;width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;
+  background:transparent;overflow:hidden;opacity:1;transition:none;
+}
+.cx77-settings.drawer:popover-open {display:block;opacity:1}
+.cx77-settings::backdrop {background:transparent}
+.cx77-settings-veil{position:absolute;inset:0;background:#04040866;pointer-events:none}
+.cx77-settings-particles{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
+.cx77-settings .drawer-panel {
+  position:absolute;inset:0 auto 0 0;width:min(950px,calc(100vw - 180px));height:100%;padding:32px 28px 24px 34px;
+  display:grid;grid-template-columns:152px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;column-gap:28px;row-gap:0;border:0;overflow:hidden;
+  background:linear-gradient(155deg,var(--settings-soft),transparent 32%),var(--settings-bg);
+  border-right:1px solid var(--settings-accent);box-shadow:24px 0 60px #0008;
+  color:var(--settings-text);font:inherit;animation:none;transform:none;transition:none;
+}
+.cx77-settings-header {grid-column:1/-1;display:flex;align-items:center;gap:14px;padding:0 0 26px;margin-bottom:28px;border-bottom:1px solid var(--settings-accent)}
+.cx77-settings-header h1 {font:700 30px/1.15 var(--cxx-font-ui);letter-spacing:.1em;color:var(--settings-accent);margin:0 auto 0 0}
+.cx77-settings-mark{display:block;width:32px;height:28px;color:var(--settings-accent)}
+.cx77-settings-mark svg{display:block;width:100%;height:100%}
+.cx77-settings-themes {display:flex;gap:4px}
+.cx77-settings-themes button {min-width:52px;padding-inline:12px;font-size:14px}
+.cx77-settings .cx77-settings-themes button[aria-pressed=true]{background:var(--settings-accent);border-color:var(--settings-accent);color:var(--settings-on-active)}
+.cx77-settings .cx77-settings-themes button[data-theme=red]{--swatch:#ff5b4f}
+.cx77-settings .cx77-settings-themes button[data-theme=yellow]{--swatch:#e9d042}
+.cx77-settings .cx77-settings-themes button[data-theme=night]{--swatch:#bec5ce}
+.cx77-settings-themes button::before{content:'';display:inline-block;width:5px;height:14px;margin-right:7px;vertical-align:-2px;background:var(--swatch)}
+.cx77-settings-themes button[aria-pressed=true]::before{background:currentColor}
+.cx77-settings #drawer-close {min-width:72px;margin-left:12px}
+.cx77-settings-tabs {display:flex;flex-direction:column;gap:6px;overflow:auto;min-height:0;align-self:stretch;padding:0;scrollbar-width:thin}
+.cx77-settings .cx77-settings-tabs button {display:flex;align-items:center;gap:10px;flex:none;min-height:60px;border:1px solid transparent;background:transparent;color:var(--settings-muted);font-size:14px;font-weight:600;letter-spacing:.02em;padding:12px 10px;text-align:left}
+.cx77-settings-tab-icon{display:block;flex:none;width:24px;height:24px}
+.cx77-settings-tab-icon svg{display:block;width:100%;height:100%}
+.cx77-settings .cx77-settings-tabs button[aria-selected=true]{color:var(--settings-on-active);background:var(--settings-active);border-color:var(--settings-active)}
+.cx77-settings-content {min-height:0;min-width:0;overflow:auto;overscroll-behavior:contain;padding:0 6px 24px 0;scrollbar-gutter:stable;scrollbar-width:thin}
+.cx77-settings-page {margin:0}
+.cxx-session-content>div{display:grid;gap:16px}.cx77-settings .cxx-session-content textarea{min-height:300px;resize:vertical;font:14px/1.7 Consolas,"Microsoft YaHei UI",monospace;tab-size:2}
+.cxx-session-content nav [aria-pressed=true]{color:var(--settings-on-active);background:var(--settings-active);border-color:var(--settings-active)}
+.cx77-settings-page h2,.cx77-settings #session-settings h3,.cxx-game-menu.cx77 .cxx-settings-detail h3 {
+  font-size:18px;line-height:1.5;font-weight:600;color:var(--settings-text);margin:0 0 12px;padding:10px 12px;border:0;border-top:1px solid var(--settings-active);background:var(--settings-field);
+}
+.cx77-settings button,.cxx-game-menu.cx77 .cxx-settings-center button {
+  min-height:44px;padding:9px 18px;border:1px solid var(--settings-line);border-radius:0;
+  background:var(--settings-field);color:var(--settings-active);font:inherit;line-height:1.4;
+  box-shadow:none;text-shadow:none;cursor:pointer;transition:background 120ms,color 120ms,border-color 120ms;
+  clip-path:polygon(0 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%);
+}
+.cx77-settings button:hover,.cxx-game-menu.cx77 .cxx-settings-center button:hover {background:var(--settings-soft);border-color:var(--settings-active);color:var(--settings-active);transform:none}
+.cx77-settings button:disabled,.cxx-game-menu.cx77 .cxx-settings-center button:disabled{opacity:.45;cursor:default}
+.cx77-settings button.primary {background:var(--settings-active);border-color:var(--settings-active);color:var(--settings-on-active);font-weight:600}
+.cx77-settings :is(button,input,select,textarea,summary):focus-visible,.cxx-game-menu.cx77 .cxx-settings-center :is(button,input,select,textarea,summary):focus-visible{outline:2px solid var(--settings-active);outline-offset:3px;clip-path:none}
+.cx77-settings .field,.cx77-settings #session-settings>label,.cxx-game-menu.cx77 .cxx-settings-detail>label {
+  display:grid;grid-template-columns:minmax(100px,.38fr) minmax(0,1fr);align-items:center;gap:16px;
+  min-height:72px;margin:0;padding:12px 0;border-bottom:1px solid var(--settings-soft);color:var(--settings-accent);
+}
+.cx77-settings .field label{font-size:16px;line-height:1.5;color:var(--settings-accent)}
+.cx77-settings input:not([type=checkbox]),.cx77-settings select,.cx77-settings textarea,
+.cxx-game-menu.cx77 .cxx-settings-center input:not([type=checkbox]),.cxx-game-menu.cx77 .cxx-settings-center select,.cxx-game-menu.cx77 .cxx-settings-center textarea,
+.cx77-settings #session-settings input:not([type=checkbox]),.cx77-settings #session-settings select {
+  border:1px solid var(--settings-line);border-radius:0;background:var(--settings-field);color:var(--settings-active);
+  min-height:46px;max-width:100%;width:100%;font:inherit;line-height:1.5;padding:9px 14px;box-shadow:none;
+}
+.cx77-settings :is(input,textarea)::placeholder{color:var(--settings-muted);opacity:1}
+.cx77-settings select option,.cxx-game-menu.cx77 .cxx-settings-center select option{background:var(--settings-bg);color:var(--settings-text)}
+.cx77-settings input[type=checkbox],.cxx-game-menu.cx77 .cxx-settings-center input[type=checkbox]{appearance:none;width:20px;height:20px;margin:0;border:1px solid var(--settings-line);border-radius:0;background:var(--settings-field);flex:none;cursor:pointer}
+.cx77-settings input[type=checkbox]:checked,.cxx-game-menu.cx77 .cxx-settings-center input[type=checkbox]:checked{background:var(--settings-active);border:4px solid var(--settings-field);outline:1px solid var(--settings-active)}
+.cx77-settings-control{position:relative;min-width:0;color:var(--settings-line);background:var(--settings-field);clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px)}
+.cx77-settings-control>i{position:absolute;inset:0;pointer-events:none}
+.cx77-settings-control svg{display:block;width:100%;height:100%}
+.cx77-control-corners{color:var(--settings-accent)}
+#drawer.cx77-settings .cx77-settings-control input,#drawer.cx77-settings .cx77-settings-control select {
+  appearance:none;display:block;width:100%;height:48px;min-height:48px;padding:11px 14px;background:transparent;
+  border:0;border-radius:0;box-shadow:none;color:var(--settings-active);font:15px/1.5 var(--cxx-font-ui);outline:none;
+}
+#drawer.cx77-settings .cx77-settings-control select{padding-right:34px}
+.cx77-settings-control:focus-within{color:var(--settings-active);background:var(--settings-soft)}
+.cx77-settings-control:focus-within .cx77-control-corners{color:var(--settings-active)}
+.cx77-settings-control>.cx77-settings-select-arrow{inset:16px 14px 16px auto;width:10px;height:16px;color:var(--settings-active)}
+.cx77-settings-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:26px 0}
+.cx77-settings-actions>label{display:flex;align-items:center;gap:10px;width:100%;margin:0 0 10px;font-size:14px;color:var(--settings-muted)}
+.cx77-settings-actions>button{flex:1 1 auto;font-size:14px;padding-inline:14px}
+.cx77-settings #save-list:empty,.cx77-settings #save-controls:empty,.cx77-settings #reply-controls:empty,.cx77-settings #application-controls:empty {display:none}
+.cx77-settings :is(#save-controls,#reply-controls,#application-controls)>div {display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.cx77-settings :is(#save-controls,#reply-controls,#application-controls) button {margin:4px 6px 4px 0}
+.cx77-settings #session-settings>button{margin:22px 0}
+.cx77-settings details {border:0;border-top:1px solid var(--settings-line);margin:20px 0;padding:0;border-radius:0;background:transparent}
+.cx77-settings summary {padding:16px 0;color:var(--settings-accent);cursor:pointer;min-height:48px;font-weight:600}
+.cx77-settings #session-settings details>label,.cx77-settings #session-settings fieldset>label{display:grid;grid-template-columns:minmax(100px,.38fr) minmax(0,1fr);gap:16px;margin:0;padding:12px 0;color:var(--settings-text)}
+.cx77-settings #session-settings label:has(>input[type=checkbox]){display:flex;justify-content:space-between;gap:16px}
+.cx77-settings #session-settings fieldset{border:0;border-top:1px solid var(--settings-line);padding:20px 0;margin:24px 0}
+.cx77-settings #session-settings legend{color:var(--settings-accent);padding:0 14px 0 0;font-weight:600}
+.cx77-settings .hint,.cx77-settings p {color:var(--settings-muted);font-size:15px;overflow-wrap:anywhere}
+.cx77-settings .kv {display:grid;grid-template-columns:minmax(130px,25%) minmax(0,1fr);gap:0;font-size:15px}
+.cx77-settings .kv dt,.cx77-settings .kv dd{margin:0;padding:13px 10px;border-bottom:1px solid var(--settings-soft);overflow-wrap:anywhere}
+.cx77-settings .kv dt{color:var(--settings-accent)}
+.cx77-settings .kv dd{color:var(--settings-text);font-variant-numeric:tabular-nums}
+.cx77-settings #gen-info:not(:empty)+.cx77-settings-empty,.cx77-settings #session-settings:not(:empty)+.cx77-settings-empty{display:none}
+.cx77-settings .cx77-settings-empty {margin:24px 0}
+.cx77-settings-status {grid-column:1/-1;margin:0;min-height:0;max-height:min(25dvh,9rem);overflow:auto;padding:0;color:var(--settings-active);font-size:14px;white-space:pre-wrap}
+.cx77-settings-status:not(:empty){padding:14px 0 0;border-top:1px solid var(--settings-line)}
+.cx77-settings-status[data-tone=error]{color:var(--settings-accent)}
+
+/* The Tavern center keeps its existing categories, fields and callbacks. */
+.cxx-game-menu.cx77 .cxx-settings-center {padding:24px 32px;background:var(--settings-bg)}
+.cxx-game-menu.cx77 .cxx-settings-top {border-bottom:1px solid var(--settings-line);padding-bottom:20px}
+.cxx-game-menu.cx77 .cxx-settings-top h2 {color:var(--settings-accent);font-size:30px;margin:0}
+.cxx-game-menu.cx77 .cxx-settings-center[data-layout=wide] .cxx-settings-work {grid-template-columns:minmax(0,1fr);gap:28px}
+.cxx-game-menu.cx77 .cxx-settings-center[data-layout=wide] .cxx-settings-nav {flex-direction:row;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--settings-line);padding-bottom:12px}
+.cxx-game-menu.cx77 .cxx-settings-center[data-layout=wide] .cxx-settings-nav input {width:180px;order:1;margin-left:auto}
+.cxx-game-menu.cx77 .cxx-settings-nav button {text-align:center;color:var(--settings-muted);background:transparent;clip-path:none;border:0;border-bottom:2px solid transparent}
+.cxx-game-menu.cx77 .cxx-settings-nav button[aria-current=true]{color:var(--settings-active);border-bottom-color:var(--settings-active);background:var(--settings-field)}
+.cxx-game-menu.cx77 .cxx-settings-detail {max-width:1080px;width:100%;margin:0 auto;padding:6px 4px 24px}
+.cxx-game-menu.cx77 .cxx-settings-detail p {color:var(--settings-muted)}
+.cxx-game-menu.cx77 .cxx-settings-state {border-radius:0;border-color:var(--settings-line)}
+.cxx-game-menu.cx77 .cxx-settings-center button[aria-pressed=true]{background:var(--settings-active);color:var(--settings-on-active);border-color:var(--settings-active);box-shadow:none}
+.cxx-game-menu.cx77 .cxx-settings-center .cxx-settings-theme button {min-width:88px}
+@media(max-width:760px){
+  .cx77-settings .drawer-panel{width:100%;padding:20px 12px 18px;grid-template-columns:84px minmax(0,1fr);column-gap:14px;border-right:0}
+  .cx77-settings-stamp{left:12px;bottom:22px;width:82px;height:20px}
+  .cx77-settings-header{gap:10px;flex-wrap:wrap;padding-bottom:16px;margin-bottom:20px}
+  .cx77-settings-header h1{font-size:26px;flex:1}
+  .cx77-settings-mark{width:26px;height:24px}
+  .cx77-settings-themes{order:3;width:100%;margin-top:8px}
+  .cx77-settings-themes button{flex:1}
+  .cx77-settings #drawer-close{min-width:76px}
+  .cx77-settings .cx77-settings-tabs button{flex-direction:column;gap:7px;font-size:12px;min-height:74px;padding:10px 4px;text-align:center}
+  .cx77-settings-content{padding:0 2px 18px 0}
+  .cx77-settings .field,.cx77-settings #session-settings>label,.cx77-settings #session-settings details>label,.cx77-settings #session-settings fieldset>label{grid-template-columns:minmax(0,1fr);gap:10px;padding:16px 0}
+  .cx77-settings-actions>label{width:100%;padding:0 0 8px}
+  .cx77-settings-actions>button{flex:1 1 auto}
+  .cx77-settings .kv{grid-template-columns:minmax(90px,30%) minmax(0,1fr)}
+  .cxx-game-menu.cx77 .cxx-settings-center{padding:16px}
+}
+.cxx-game-menu.cx77 .cxx-settings-center[data-layout=compact] .cxx-settings-detail>label{display:flex;align-items:stretch;flex-direction:column;gap:10px}
+@media(prefers-reduced-motion:reduce){.cx77-settings,.cx77-settings::backdrop,.cx77-settings *{transition:none!important;animation:none!important}}

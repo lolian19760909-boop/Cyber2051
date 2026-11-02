@@ -68,7 +68,7 @@ export function activateWorldInfo(input={}){
  const finish=result=>{const activated=new Map([...result.allActivatedEntries].map(entry=>[entry.world+'.'+entry.uid,entry]));
  for(const key of attempted)if(!activated.has(key)&&!dropped.has(key)){const entry=identity.get(key);if(entry)dropped.set(key,{id:entry.id,comment:entry.comment,constant:entry.constant===true,reason:'budget'});}
  const used=[...activated].map(([key,native])=>({...identity.get(key),content:native.content,position:native.position,depth:native.depth??4,role:['system','user','assistant'][native.role??0]||'system'})).filter(entry=>entry.content.trim());
- const missing=[...managed].filter(id=>!entries.some(entry=>String(entry.id)===id));if(missing.length)warnings.push('选择方案指向未载入的条目（本轮跳过）：'+missing.join('、'));
+ const missing=[...managed].filter(id=>!entries.some(entry=>String(entry.id)===id));if(missing.length)warnings.push('选择方案有 '+missing.length+' 条目录未匹配（本轮跳过）');
  if(dropped.size)warnings.push('世界书 '+dropped.size+' 条未装入：'+[...dropped.values()].map(entry=>entry.comment||entry.id).join('、'));
  const effects={schema:2,...metadata.timedWorldInfo};
  return {before:result.worldInfoBefore,after:result.worldInfoAfter,injections:result.WIDepthEntries.map(row=>({role:['system','user','assistant'][row.role??0],depth:row.depth??4,order:100,content:row.entries.join('\n')})),anBefore:result.ANBeforeEntries,anAfter:result.ANAfterEntries,examplesBefore:result.EMEntries.filter(entry=>entry.position===0).map(entry=>entry.content),examplesAfter:result.EMEntries.filter(entry=>entry.position===1).map(entry=>entry.content),outlets:result.outletEntries,
