@@ -8,6 +8,11 @@ const accepted=()=>plan(start(),action(start(),'accept','q1'));
 const policy=(key='story_1')=>({questDefinition:id=>defs.find(d=>d.id===id),questRegistered:id=>defs.some(d=>d.id===id),numericOptions:{factBatch:key,source:{floor:3,swipe:0,story:key}}});
 function mvu(s,patches,p=policy()){const tx=schema.prepare(patches,s,p),after=structuredClone(s);for(const patch of tx.patches){const keys=patch.path.slice(1).split('/');let o=after;for(const k of keys.slice(0,-1))o=o[k];o[keys.at(-1)]=structuredClone(patch.value);}schema.check(tx,s,after);return after;}
 const patch=(path,value,op='replace')=>({op,path,value});
+test('paused commissions keep their slot and explain the actual way to accept another',()=>{
+ const definitions=[{id:'paused_job',title:'夜班采购',track:'commission'},{id:'next_job',title:'下一份委托',track:'commission'}],before=start();before.terminal.quests.paused_job={state:'暂离'};
+ const reason=Q.available(before,definitions[1],'accept',definitions);assert.match(reason,/夜班采购/);assert.match(reason,/完成或放弃/);assert.doesNotMatch(reason,/完成或暂离/);
+ before.terminal.quests.paused_job.state='已放弃';assert.equal(Q.available(before,definitions[1],'accept',definitions),'');
+});
 test('viewing creates nothing; accepting and starting are distinct and preserve unknown fields',()=>{let s=start();assert.equal(Q.record(s,'q1').state,'已发布');assert.deepEqual(s,start());s=plan(s,action(s,'accept','q1'));assert.equal(s.terminal.quests.q1.state,'已接取');assert.equal(s.terminal.wallet.yen,100);assert.equal(s.terminal.unknown.keep,true);assert.deepEqual(s.terminal.gameplay,{keep:7});s=plan(s,action(s,'start','q1'));assert.equal(s.terminal.quests.q1.state,'进行中');});
 test('same receipt retries idempotently; stale revisions and identifier reuse reject',()=>{const s=start(),req=action(s,'accept','q1'),a=plan(s,req);assert.deepEqual(plan(a,req),a);assert.throws(()=>plan(a,{...req,questId:'enemy'}),/编号/);assert.throws(()=>plan(a,action(s,'track','q1','later')),/已变化/);});
 test('one main slot, explicit conflicts, no ordinary difficulty restriction',()=>{let s=plan(start(),action(start(),'accept','main1'));assert.throws(()=>plan(s,action(s,'accept','main2')),/主线/);s=accepted();assert.throws(()=>plan(s,action(s,'accept','enemy')),/互斥/);});

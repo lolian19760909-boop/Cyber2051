@@ -157,7 +157,7 @@
   },
   {
     "source": "卡片源码/运行时/quests.js",
-    "sha256": "858895631a9914b56a0d4c463f569c717cb5e93c625dc8b46ab4bf7c254b6c27",
+    "sha256": "bea75d0943f6b8f1410f33a869c90f1a18d857ff189c0f629bbe5b5d2f16177a",
     "target": "src/ui/card/运行时/quests.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
