@@ -1,4 +1,4 @@
-/** Keep the original 1.3 plugin; adapt only its fixed host module locations and UI wait. */
+/** Adapt the pinned 1.3 plugin to the local host and repair its sql.js query stack lifetime. */
 import fs from 'node:fs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
@@ -9,6 +9,10 @@ export function buildDatabase(out){
  for(const row of receipt.files){const bytes=fs.readFileSync(path.join(source,row.file));if(createHash('sha256').update(bytes).digest('hex')!==row.sha256)throw Error('数据库维护文件指纹不符：'+row.file);fs.writeFileSync(path.join(target,row.file),bytes);}
  const stateBridge=fs.readFileSync(path.join(WEB,'src/database/sqlite-bridge.mjs'),'utf8').replace(/^export /gm,'');
  const rewrites=[
+  // The bundled exec allocates its tail pointer with stackAlloc(4). Each query
+  // consumes 16 aligned bytes until SQLite crosses the end of the WASM stack.
+  ['var s=null,l=null,g=null;try{g=l=fa(n);var u=xe(4);','var s=null,l=null,g=null,cxxStack=Ne();try{g=l=fa(n);var u=xe(4);'],
+  ['finally{l&&ve(l)}},e.prototype.Mb=','finally{l&&ve(l),Re(cxxStack)}},e.prototype.Mb='],
   ['return t.loadFromData(o.data||null)','return t.loadFromData(m.CxxDatabaseHost.prepareTables(o.data||null))'],
   ['l.loadFromData(t.data)','l.loadFromData(m.CxxDatabaseHost.prepareTables(t.data))'],
   ['m.AutoCardUpdaterAPI=$B','m.AutoCardUpdaterAPI=$B;'+stateBridge+`;attachSqlState(m.CxxDatabaseHost,()=>{const p=getActiveStorageProvider();if(p?.mode!=='sqlite'||!p.engine.db)throw Error('SQLite运行时尚未就绪');return p.engine.db})`],
@@ -29,5 +33,5 @@ export function buildDatabase(out){
  for(const name of ['world-info','extensions','script'])fs.copyFileSync(path.join(WEB,'src/database',name+'.mjs'),path.join(target,name+'.mjs'));
  const state=JSON.parse(fs.readFileSync(path.join(WEB,'../数据/表格模板-cxx15.json'))),memory=JSON.parse(fs.readFileSync(path.join(WEB,'generated/memory-contract.json')));
  fs.writeFileSync(path.join(target,'template.json'),JSON.stringify({...state,...memory.nativeTemplate})+'\n');
- fs.writeFileSync(path.join(target,'source.json'),JSON.stringify({...receipt,adaptation:{rewrites:rewrites.map(([from,to])=>({from,to})),chatChanged:'await the original 1200 ms delayed reload immediately; local story binding already owns complete saved rows',sha256:createHash('sha256').update(plugin).digest('hex'),scope:'browser-local host modules, explicit story lifecycle, lazy original admin UI, removal of fixed UI waits; original tables, CRUD, history, prompts and update engine retained'}})+'\n');
+ fs.writeFileSync(path.join(target,'source.json'),JSON.stringify({...receipt,adaptation:{rewrites:rewrites.map(([from,to])=>({from,to})),chatChanged:'await the original 1200 ms delayed reload immediately; local story binding already owns complete saved rows',sha256:createHash('sha256').update(plugin).digest('hex'),scope:'browser-local host modules, explicit story lifecycle, lazy original admin UI, removal of fixed UI waits, sql.js exec stack restored on success and failure; original tables, CRUD, history, prompts and update engine retained'}})+'\n');
 }
