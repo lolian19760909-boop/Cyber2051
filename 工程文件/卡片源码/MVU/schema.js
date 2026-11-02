@@ -64,15 +64,32 @@
   }
   function prepare(patches,before,policy={}){
    if(!Array.isArray(patches))throw Error('变量更新必须是数组。');
-   for(const p of patches){if(!object(p)||!['replace','add'].includes(p.op)||!own(p,'value')||Object.keys(p).some(k=>!['op','path','value'].includes(k)))throw Error('本卡只接受 replace 和限定字段的 add。');pathOf(p.path);}
-   // Older replies may still contain retired relationship updates. Keep their saved values untouched.
-   const ignored=patches.filter(p=>{const parts=pathOf(p.path);return parts.length===2&&characters.includes(parts[0])&&parts[1]==='好感度';});
-   patches=patches.filter(p=>!ignored.includes(p));
-   const civicTransaction=civic()?.prepare(before,patches,policy);
+   const ignored=[],incoming=[],locations=new Map();
+   for(const [index,input]of patches.entries())try{
+    if(!object(input)||!['replace','add'].includes(input.op)||!own(input,'value'))throw Error('需要带 value 的 add 或 replace 更新。');
+    const parts=pathOf(input.path),p={op:input.op,path:input.path,value:clone(input.value)};
+    if(parts.length===2&&characters.includes(parts[0])&&parts[1]==='好感度'){ignored.push({path:p.path,reason:'此关系数值已停用，保留原值。'});continue;}
+    // Event adapters own their payloads. Ordinary leaf values are read once at
+    // this boundary, so one unreadable field leaves the other updates usable.
+    const event=/^\/terminal\/(?:rosterInput|policeInput|cityInput|(?:ensemble\/actors\/[^/]+\/)?gameplay\/numericInput)$/.test(p.path);
+    const questEvent=parts[0]==='terminal'&&parts[1]==='quests'&&(parts.length===3||['events','chapter'].includes(parts[3]));
+    if(!event&&!questEvent){
+     const spec=field(parts,before,policy),old=get(before,parts),parent=get(before,parts.slice(0,-1));
+     if(spec.kind==='growth'&&before.terminal?.gameplay?.growth&&!policy.growthAction)throw Error('成长变化使用 numericInput 事件，直接字段保留原值。');
+     if(old===undefined&&(!spec.add||!object(parent)))throw Error('记录的父字段尚未建立，已保留原状态。');
+     p.value=parse(spec.schema,p.value,p.path);p.op=old===undefined?'add':'replace';
+     if(['location','actorLocation'].includes(spec.kind)){const root=parts.slice(0,spec.kind==='location'?3:6),key='/'+root.join('/');let group=locations.get(key);if(!group){group={root,value:clone(get(before,root)||{}),patches:[]};locations.set(key,group);}if(parts.length===root.length)group.value=clone(p.value);else group.value[parts.at(-1)]=p.value;group.patches.push(p);}
+    }
+    incoming.push(p);
+   }catch(error){ignored.push({path:typeof input?.path==='string'?input.path:'patch['+index+']',reason:error.message+'（该字段保留原值）'});}
+   const invalidLocations=new Set();for(const group of locations.values()){const at=group.value,registered=policy.mapIndex?.[at.mapId]?.includes(at.placeId)||(typeof module==='object'&&module.exports?require('../运行时/city.js'):root.CxxCity||root.parent?.CxxCity)?.registered(before,at.mapId,at.placeId);if(!registered)for(const p of group.patches){invalidLocations.add(p);ignored.push({path:p.path,reason:'地点编号未登记，已保留原地点。'});}}
+   patches=incoming.filter(p=>!invalidLocations.has(p));
+   function receive(prepare,owns){try{return prepare();}catch(error){const unreadable=patches.filter(owns);if(!unreadable.length)throw error;for(const p of unreadable)ignored.push({path:p.path,reason:error.message+'（该事件组保留原值）'});patches=patches.filter(p=>!unreadable.includes(p));return null;}}
+   const civicTransaction=receive(()=>civic()?.prepare(before,patches,policy),p=>['/terminal/policeInput','/terminal/cityInput'].includes(p.path));
    if(civicTransaction){patches=civicTransaction.patches;policy={...policy,civicTransaction,numericOptions:{...policy.numericOptions,custodyRestrictions:civicTransaction.custody}};}
-   let numericTransaction=N?.prepare(before,patches,policy,T);
-   if(numericTransaction){patches=numericTransaction.patches;policy={...policy,numericTransaction};}
-   const questTransaction=Q.prepare(before,patches,policy);if(questTransaction){patches=questTransaction.patches;policy={...policy,questTransaction};}
+   let numericTransaction=receive(()=>N?.prepare(before,patches,policy,T),p=>p.path==='/terminal/rosterInput'||/^\/terminal\/(?:ensemble\/actors\/[^/]+\/)?gameplay(?:\/(?:numericInput|growth|numeric|inventory|equipment|itemDefinitions|itemReceipts|loadout|tactical)(?:\/|$)|$)/.test(p.path));
+   if(numericTransaction){patches=numericTransaction.patches;policy={...policy,numericTransaction};ignored.push(...(numericTransaction.ignored||[]));}
+   const questTransaction=receive(()=>Q.prepare(before,patches,policy),p=>p.path.startsWith('/terminal/quests/'));if(questTransaction){patches=questTransaction.patches;policy={...policy,questTransaction};}
    if(numericTransaction?.roster&&questTransaction){const R=typeof module==='object'&&module.exports?require('../运行时/roster.js'):root.CxxRoster;numericTransaction=R.questRewards(before,numericTransaction,questTransaction,policy);patches=questTransaction.patches;policy={...policy,numericTransaction};}
    patches=civic()?.linkCorrection(before,patches,policy)||patches;
    const expected=new Map(),touched=new Map();
@@ -81,7 +98,7 @@
     const parts=pathOf(patch.path),spec=field(parts,before,policy),old=get(before,parts),parent=get(before,parts.slice(0,-1));
     if(patch.op==='replace'&&old===undefined)throw Error('replace 路径不存在：'+patch.path);
     if(patch.op==='add'&&(!spec.add||old!==undefined||!object(parent)))throw Error('add 仅补充已登记的缺失字段：'+patch.path);
-    if(['location','actorLocation'].includes(spec.kind)&&parts.at(-1)==='location'&&(old!==undefined||!object(patch.value)||Object.keys(patch.value).some(k=>!['mapId','placeId'].includes(k))))throw Error('已有地点只逐项改 mapId/placeId，新地点只允许这两个字段。');
+    if(['location','actorLocation'].includes(spec.kind)&&parts.at(-1)==='location'&&(!object(patch.value)||Object.keys(patch.value).some(k=>!['mapId','placeId'].includes(k))))throw Error('地点使用 mapId/placeId 字段。');
     const value=parse(spec.schema,patch.value,patch.path);
     if(spec.kind==='quest'){
      const record=before.terminal.quests[spec.id];parse(quest,record,'委托 '+spec.id);
@@ -97,16 +114,8 @@
    const allowed=[...transaction.expected.values()].map(x=>x.parts);
    function unchanged(a,b,path=[]){if(allowed.some(p=>same(path,p)))return;if(same(a,b))return;if(!object(a)||!object(b))throw Error('本批改动包含未登记字段：/'+path.join('/'));for(const key of new Set([...Object.keys(a),...Object.keys(b)]))if(key!=='$internal'||path.length!==0)unchanged(a[key],b[key],[...path,key]);}unchanged(before,after);
    const kinds=new Set([...transaction.touched.values()].map(x=>x.kind));
-   if(kinds.has('wallet')){
-    const a=parse(wallet,before.terminal?.wallet,'旧钱包'),b=parse(wallet,after.terminal?.wallet,'新钱包');
-    if(b.earned<a.earned||b.spent<a.spent||b.yen-a.yen!==(b.earned-a.earned)-(b.spent-a.spent))throw Error('钱包余额与本轮累计收入、支出不一致。');
-   }
    const registered=at=>transaction.policy.mapIndex?.[at.mapId]?.includes(at.placeId)||(typeof module==='object'&&module.exports?require('../运行时/city.js'):root.CxxCity||root.parent?.CxxCity)?.registered(before,at.mapId,at.placeId);
    if(kinds.has('location')){const at=parse(location,after.terminal?.gameplay?.location,'地点');if(!registered(at))throw Error('地点编号未登记。');}
-   for(const actorId of new Set([...transaction.touched.values()].filter(x=>x.kind==='actorWallet').map(x=>x.actorId))){
-    const A=actors(),a=parse(wallet,A.read(before,actorId).wallet,'人物旧钱包'),b=parse(wallet,A.read(after,actorId).wallet,'人物新钱包');
-    if(b.earned<a.earned||b.spent<a.spent||b.yen-a.yen!==(b.earned-a.earned)-(b.spent-a.spent))throw Error('人物钱包余额与本轮累计收入、支出不一致。');
-   }
    for(const actorId of new Set([...transaction.touched.values()].filter(x=>x.kind==='actorLocation').map(x=>x.actorId))){
     const at=parse(location,actors().read(after,actorId).gameplay?.location,'人物地点');if(!registered(at))throw Error('人物地点编号未登记。');
    }

@@ -85,7 +85,7 @@
   },
   {
     "source": "卡片源码/数值引擎/adapters/mvu.js",
-    "sha256": "80770e536c12f32fc4b9b700d2c287f2eaf34d2ea01c324850fac892911fdbd3",
+    "sha256": "a3d4ec3e1e9b2df1d586d2f89b8cb9c093a01260fb8f3b7c16cb3fb8db46cedc",
     "target": "src/ui/card/数值引擎/adapters/mvu.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -115,7 +115,7 @@
   },
   {
     "source": "卡片源码/运行时/ensemble-mvu.js",
-    "sha256": "aedf917f28c5af13c9e324afe52795005aaf2358a0c973ee898c5b9218898240",
+    "sha256": "017d4f3594e960ee1acc5c87dc438eebd15ffd18a5569169bc5be858107dfcbe",
     "target": "src/ui/card/运行时/ensemble-mvu.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -133,13 +133,13 @@
   },
   {
     "source": "卡片源码/运行时/roster.js",
-    "sha256": "07752bb16748bbb737660446eb68d2f99db623dbc22be3ba4deebe79f26f1071",
+    "sha256": "43407dac3facc9a460c0578f9f61bba3ede0b61acd4164a6fb2174a231c82c09",
     "target": "src/ui/card/运行时/roster.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
   {
     "source": "卡片源码/运行时/numeric-host.js",
-    "sha256": "6bb79bacef3f93012ab7440b4fe37debae52e1e2d39605f5169dd61ea738600a",
+    "sha256": "ff40e460b3be46bfc8029ac7efc25e69d01c08b3f25011700c9a17417266aff7",
     "target": "src/ui/card/运行时/numeric-host.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -199,7 +199,7 @@
   },
   {
     "source": "卡片源码/MVU/schema.js",
-    "sha256": "0faaa7bd7d29e7aa4d751c59738ee52036b1fb2c04cf875607fd9dc77fef8fc3",
+    "sha256": "ead1dbd9b7dbb517b0a620389959b8b3611c7b8379b3b837b5e7737883764053",
     "target": "src/ui/card/MVU/schema.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },

@@ -731,6 +731,8 @@ async function sendTurn(text, {regenerate=false,nodeId,continues=false}={}) {
     if(session!==state.session)return;
     await state.ui?.afterTurn(result);globalThis.__cxxTurnMark.push('after:'+Date.now());
     const parameterWarnings=document.getElementById('parameter-warnings');parameterWarnings.textContent=(result.parameterWarnings||[]).join('\n');parameterWarnings.hidden=!result.parameterWarnings?.length;
+    const stateWarnings=session.coordinator.context.proposal?.ignored||[];
+    if(result.status==='committed'&&stateWarnings.length)setStatus('已保存 · '+stateWarnings.length+' 项状态保留原值，设置中可查看原因','warn');
     document.getElementById('retry-save').hidden=!(result.status==='failed'&&result.error?.stage==='commit');
     if (result.parsed) {
       state.lastParsed = result.parsed;

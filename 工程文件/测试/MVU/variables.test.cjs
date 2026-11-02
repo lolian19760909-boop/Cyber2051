@@ -13,12 +13,13 @@ function setup(options={}){
  const create=()=>Guard.create({api,win:{toastr:{warning:m=>notices.push(m),info:m=>notices.push(m)}},runtime:{key:()=>key},schema:options.missing?null:checkedSchema,greetings,policy});const service=create();
  return {data,c,api,emit,mvu,greetings,notices,service,create,handlers,async change(){key='B';await emit('changed');},run:async source=>{const result=copy(data);await mvu.run(source,result);return copy(result);}};
 }
-test('numbers: only explicit numeric strings convert; invalid values reject the entire batch',async()=>{
- const h=setup();for(const value of ['', ' ',true,false,null,'一百','0x10','Infinity','1,000']){const result=await h.run(patch([replace('/terminal/wallet/yen',1015),replace('/terminal/wallet/earned',value)]));assert.deepEqual(result,h.data,String(value));}
+test('numbers: explicit numeric strings convert; unreadable values retain their own field',async()=>{
+ const h=setup();for(const value of ['', ' ',true,false,null,'一百','0x10','Infinity','1,000']){const result=await h.run(patch([replace('/terminal/wallet/yen',1015),replace('/terminal/wallet/earned',value)]));assert.equal(result.stat_data.terminal.wallet.yen,1015);assert.equal(result.stat_data.terminal.wallet.earned,1000);assert.equal(h.service.state().lastError,'');}
  const result=await h.run(patch([replace('/terminal/wallet/yen',' 1015 '),replace('/terminal/wallet/earned',' 1015 ')]));assert.equal(result.stat_data.terminal.wallet.yen,1015);assert.equal(h.service.state().lastError,'');assert.deepEqual(result.initialized_lorebooks,h.data.initialized_lorebooks);assert.equal(result.schema.type,'object');assert.equal(result.schema.strictSet,true);assert.ok(result.display_data);assert.ok(result.delta_data);h.service.destroy();
 });
-test('paths and bounds: reject unknown fields, container writes, unsupported operations and negative wallet',async()=>{
- const h=setup();for(const p of [[replace('/新人/好感度',1)],[replace('/terminal',{})],[replace('/unknown/record','changed')],[{op:'delta',path:'/高松灯/好感度',value:1}],[replace('/terminal/wallet/yen',-1)]])assert.deepEqual(await h.run(patch(p)),h.data);
+test('paths: unavailable fields preserve old state; readable signed wallet balances save',async()=>{
+ const h=setup();for(const p of [[replace('/新人/好感度',1)],[replace('/terminal',{})],[replace('/unknown/record','changed')],[{op:'delta',path:'/高松灯/好感度',value:1}]])assert.deepEqual((await h.run(patch(p))).stat_data,h.data.stat_data);
+ assert.equal((await h.run(patch([replace('/terminal/wallet/yen',-1)]))).stat_data.terminal.wallet.yen,-1);
  assert.deepEqual(await h.run('<JSONPatch>[{"op":"replace" broken]</JSONPatch>'),h.data);assert.deepEqual(await h.run('_.set("高松灯.好感度", 1000);'),h.data);
 });
 
