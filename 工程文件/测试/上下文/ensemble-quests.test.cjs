@@ -1,7 +1,7 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict');
 const A=require('../../卡片源码/运行时/ensemble-state.js'),Q=require('../../卡片源码/运行时/quests.js'),O=require('../../卡片源码/运行时/player-operations.js');
-const S=require('../../卡片源码/MVU/schema.js').build(require('../../.cache/dependencies/zod-4.4.3/index.cjs'));
+const S=require('../../卡片源码/MVU/schema.js').build(require('../../独立制卡器/node_modules/zod'));
 const Controller=require('../../卡片源码/终端/quest-controller.js');
 const {fixture}=require('../lib/fixture-loader.cjs')('../上下文/ensemble-save.test.cjs',['fixture']);
 const defs=[{id:'q1',title:'零件交付',goal:'确认交付',pay:500,requirements:{level:4}},{id:'q2',title:'街头跑腿',pay:300},{id:'q3',title:'第二单',pay:200}];
@@ -26,7 +26,7 @@ test('legacy unowned records stay with the original player; reads and reacceptan
   let s=initial();s.terminal.quests.q2={id:'q2',state:'已放弃',future:{keep:7}};s=switchTo(s,'wb_10');const before=structuredClone(s);
   assert.equal(Q.owner(s,'q2').actorId,'player');assert.deepEqual(s,before);
   assert.throws(()=>Q.plan(s,request(s,'accept','q2'),{questDefinitions:defs}),/玩家/);
-  assert.throws(()=>apply(s,[patch('/terminal/quests/q2/ownerActorId','wb_10','add')]),/公开进展|程序维护|尚未开放/);assert.deepEqual(s,before);
+  assert.equal(Q.owner(apply(s,[patch('/terminal/quests/q2/ownerActorId','wb_10','add')]).after,'q2').actorId,'player');assert.deepEqual(s,before);
   s.terminal.quests.q2.ownerActorId=null;assert.throws(()=>Q.owner(s,'q2'),/编号无效/);assert.throws(()=>A.selected(s,null),/编号无效/);
 });
 
@@ -42,10 +42,10 @@ test('mixed actor payments and numeric facts remain atomic, balanced and idempot
   assert.equal(A.read(refunded,'wb_10').wallet.spent,100);assert.equal(A.read(refunded,'wb_6').wallet.yen,2300);
 });
 
-test('one actor or the original wallet cannot cover another actors task payment; totals aggregate per owner',()=>{
-  const s=twoOwners();assert.throws(()=>apply(s,[patch('/terminal/quests/q1/paidYen',500),patch('/terminal/quests/q2/paidYen',300),patch(wallet('wb_6','yen'),2800),patch(wallet('wb_6','earned'),800)]),/接单人的钱包/);
-  assert.throws(()=>apply(s,[patch('/terminal/quests/q1/paidYen',500),patch('/terminal/wallet/yen',1277),patch('/terminal/wallet/earned',500)]),/接单人的钱包/);
-  const same=accept(switchTo(s,'wb_10'),'q3');assert.throws(()=>apply(same,[patch('/terminal/quests/q1/paidYen',500),patch('/terminal/quests/q3/paidYen',200),patch(wallet('wb_10','yen'),12500),patch(wallet('wb_10','earned'),500)]),/同一批/);
+test('unreadable task payment groups retain prior task values; readable wallet figures remain recordable',()=>{
+  const s=twoOwners(),result=apply(s,[patch('/terminal/quests/q1/paidYen',500),patch('/terminal/quests/q2/paidYen',300),patch(wallet('wb_6','yen'),2800),patch(wallet('wb_6','earned'),800)]);assert.equal(result.after.terminal.quests.q1.paidYen,s.terminal.quests.q1.paidYen);assert.equal(result.after.terminal.quests.q2.paidYen,s.terminal.quests.q2.paidYen);assert.equal(A.read(result.after,'wb_6').wallet.yen,2800);assert(result.tx.ignored.some(row=>row.reason.includes('接单人的钱包')));
+  const original=apply(s,[patch('/terminal/quests/q1/paidYen',500),patch('/terminal/wallet/yen',1277),patch('/terminal/wallet/earned',500)]);assert.equal(original.after.terminal.quests.q1.paidYen,s.terminal.quests.q1.paidYen);assert.equal(original.after.terminal.wallet.yen,1277);
+  const same=accept(switchTo(s,'wb_10'),'q3'),group=apply(same,[patch('/terminal/quests/q1/paidYen',500),patch('/terminal/quests/q3/paidYen',200),patch(wallet('wb_10','yen'),12500),patch(wallet('wb_10','earned'),500)]);assert.equal(group.after.terminal.quests.q3.paidYen,same.terminal.quests.q3.paidYen);assert(group.tx.ignored.some(row=>row.reason.includes('同一批')));
 });
 
 test('reversible payment receipt restores both actor wallets and keeps unknown data',()=>{

@@ -13,14 +13,12 @@
   function preparePlayer(before,patches,policy,T){
     const inputs=patches.filter(p=>p.path===M.inputPath),ordinary=patches.filter(p=>p.path!==M.inputPath),tacticalBase=policy.numericOptions?.tacticalBase;
     if(tacticalBase&&!inputs.length)inputs.push({op:'add',path:M.inputPath,value:[]});
-    if(inputs.length>1)throw Error('一次保存只提交一份数值事件数组。');
     const growth=ordinary.filter(p=>p.path==='/terminal/gameplay'||p.path==='/terminal/gameplay/growth'||p.path.startsWith('/terminal/gameplay/growth/'));
     if(ordinary.some(p=>['numeric','tactical'].some(k=>p.path==='/terminal/gameplay/'+k||p.path.startsWith('/terminal/gameplay/'+k+'/'))))throw Error('战况与资源由数值模块结算，请提交 numericInput 事件。');
     const old=before?.terminal?.gameplay?.growth;
     if(growth.length&&old!==undefined&&!policy.growthAction)throw Error('成长增量由数值模块结算；直接配点需要已确认的界面行动。');
     if(!inputs.length)return null;
     if(policy.growthAction)throw Error('本次为已确认配点，仅保存配置与行动结果，不追加数值事件。');
-    if(!['add','replace'].includes(inputs[0].op)||!Array.isArray(inputs[0].value)||Object.keys(inputs[0]).some(k=>!['op','path','value'].includes(k)))throw Error('numericInput 只接受本轮事件数组。');
     // The first story turn may initialize the confirmed origin and report an event together.
     const base=copy(before);
     if(tacticalBase){if(!tacticalBase.game?.tactical||!base.terminal?.gameplay)throw Error('战斗叙事接续记录不完整。');for(const k of ['growth','numeric','inventory','equipment','itemDefinitions','itemReceipts','loadout','tactical'])if(tacticalBase.game[k]!==undefined)base.terminal.gameplay[k]=copy(tacticalBase.game[k]);if(base.terminal.gameplay.tactical.encounter)base.terminal.gameplay.tactical.encounter.source=copy(tacticalBase.source);}

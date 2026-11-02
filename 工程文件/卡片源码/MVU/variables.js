@@ -183,7 +183,7 @@
       if(tacticalBase)options.numericOptions.tacticalBase=tacticalBase;
     }
     tx.transaction=schema.prepare(patches,tx.before.stat_data,options);win.CxxDiagnostics?.report({module:"MVU",stage:"指令解析",level:"info",message:"接收 "+patches.length+" 项变量更新",detail:JSON.stringify(patches)});
-    if(tx.transaction.ignored?.length)win.CxxDiagnostics?.report({module:'MVU',stage:'旧字段兼容',level:'info',message:'已跳过 '+tx.transaction.ignored.length+' 项停用的关系数值指令'});
+    if(tx.transaction.ignored?.length)win.CxxDiagnostics?.report({module:'MVU',stage:'字段接收',level:'warn',message:tx.transaction.ignored.length+' 项状态输入保留原值，其余更新继续',detail:tx.transaction.ignored.map(row=>row.path+'：'+row.reason).join('\n')});
     if(tx.transaction.policy.civicTransaction)(typeof module==='object'&&module.exports?require('../运行时/civic.js'):win.CxxCivic||globalThis.CxxCivic).extendSchema(data.schema);
     if(tx.transaction.policy.questTransaction)(typeof module==='object'&&module.exports?require('../运行时/quests.js'):win.CxxQuests||globalThis.CxxQuests).extendSchema(data.schema);
     if(tx.before.stat_data?.terminal?.ensemble||tx.transaction.policy.numericTransaction?.roster)(typeof module==='object'&&module.exports?require('../运行时/ensemble-state.js'):win.CxxEnsembleState||globalThis.CxxEnsembleState).extendSchema(data.schema);

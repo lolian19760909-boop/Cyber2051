@@ -71,6 +71,8 @@ export function createTurnCoordinator({ports,rules,identity,parser=null,now=()=>
       const patches=protocolIssues.length?[]:turn.parsed.protocol.patches||[];
       if(protocolIssues.length)turn.parameterWarnings=[...(turn.parameterWarnings||[]),...protocolIssues.map(issue=>'协议警告（正文已保存，变量未结算）：'+issue)];
       let settled=rules.settle({before:turn.beforeState,patches,raw:turn.parsed.raw,nodeId:turn.nodeId,parentNodeId:turn.parentNodeId,actorBinding:turn.actorBinding,attemptId:turn.attemptId,preparedContext:turn.preparedContext});
+      const stateWarnings=(settled.ignored||[]).filter(row=>row.reason).map(row=>row.reason.startsWith(row.path+'：')?row.reason:row.path+'：'+row.reason);
+      turn.parameterWarnings=[...new Set([...(turn.parameterWarnings||[]),...stateWarnings])];
       if(finalize)settled=await finalize({before:turn.beforeState,proposal:settled,preparedContext:turn.preparedContext,raw:turn.parsed.raw,nodeId:turn.nodeId,actorBinding:turn.actorBinding});
       assertLive(owner);if(!settled?.state||!Array.isArray(settled.patches))throw new TurnError('finalize_invalid','玩法结算没有返回有效状态和回执');
       return status('candidate',{proposal:settled,error:null});
@@ -85,7 +87,7 @@ export function createTurnCoordinator({ports,rules,identity,parser=null,now=()=>
     const tasks=turn.committedTasks||[];
     const operation={...turn.identity,operationId:turn.operationId,expectedRevision:turn.expectedRevision,nodeId:turn.nodeId,parentNodeId:turn.parentNodeId,fork:turn.fork,beforeState:turn.beforeState,profile:turn.profile,contentVersion:turn.contentVersion,preparedContext:turn.preparedContext,selection:turn.selection,
       message:{role:'assistant',raw:turn.parsed.raw,display:turn.parsed.display,input:turn.input,attemptId:turn.attemptId,...(turn.actorBinding?{binding:turn.actorBinding}:{}),...(turn.manualEdit?{manualEdit:true}:{}),...(turn.complete===false?{complete:false,completion:turn.completion}:{}),...(turn.processing?{processing:structuredClone(turn.processing)}:{})},stateAfter:turn.proposal.state,
-      receipt:{patches:turn.proposal.patches.map(p=>p.path),attemptId:turn.attemptId,...(turn.proposal.receipt?{program:turn.proposal.receipt}:{})},tasks,media:turn.committedMedia||[],createdAt:turn.createdAt||(turn.createdAt=now())};
+      receipt:{patches:turn.proposal.patches.map(p=>p.path),attemptId:turn.attemptId,...(turn.proposal.ignored?.length?{ignored:structuredClone(turn.proposal.ignored)}:{}),...(turn.proposal.receipt?{program:turn.proposal.receipt}:{})},tasks,media:turn.committedMedia||[],createdAt:turn.createdAt||(turn.createdAt=now())};
     assertOperation(operation);status('committing');
     const owner=turn;
     try{

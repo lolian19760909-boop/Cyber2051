@@ -90,26 +90,29 @@ test('applier：add / replace / remove / test 四个操作的执行结果正确�
   assert.equal(JSON.stringify(before), snapshot, '入参不得被就地改动');
 });
 
-test('applier：未知路径与类型不符被校验层拒绝，原因可读且不落库', async () => {
+test('applier：不可读字段保留原值并提供具体提示', async () => {
   const { applier, calls } = harness();
   const before = TERMINAL();
 
   const unknown = await applier.apply(block([{ op: 'replace', path: '/terminal/nope', value: 1 }]), { before, receipt: 'r-1', turn: 2 });
-  assert.equal(unknown.ok, false);
-  assert.equal(unknown.status, 'rejected');
-  assert.match(unknown.reason, /该字段由程序维护或尚未开放：\/terminal\/nope/);
+  assert.equal(unknown.ok, true);
+  assert.equal(unknown.status, 'applied');
+  assert.match(unknown.transaction.ignored[0].reason, /该字段由程序维护或尚未开放：\/terminal\/nope/);
+  assert.equal(unknown.root.terminal.nope, undefined);
 
   const typed = await applier.apply(block([{ op: 'replace', path: '/terminal/wallet/yen', value: '不是数字' }]), { before, receipt: 'r-2', turn: 2 });
-  assert.equal(typed.status, 'rejected');
-  assert.match(typed.reason, /需要数字/);
+  assert.equal(typed.status, 'applied');
+  assert.match(typed.transaction.ignored[0].reason, /需要数字/);
+  assert.equal(typed.root.terminal.wallet.yen, before.terminal.wallet.yen);
 
   const polluted = await applier.apply(block([{ op: 'add', path: '/terminal/__proto__/x', value: 1 }]), { before, receipt: 'r-3', turn: 2 });
   assert.equal(polluted.status, 'rejected');
   assert.match(polluted.reason, /不是可更新的状态|路径格式不正确/);
+  assert.equal({}.x, undefined);
 
-  assert.equal(calls.write.length, 0);
-  assert.equal(calls.sync.length, 0);
-  assert.deepEqual(before, TERMINAL(), '被拒绝的批次不得改动原状态');
+  assert.equal(calls.write.length, 2);
+  assert.equal(calls.sync.length, 2);
+  assert.deepEqual(before, TERMINAL(), '单项处理保留原始入参');
   applier.destroy();
 });
 
@@ -163,7 +166,7 @@ test('applier：落库失败要如实报错，不假装成功', async () => {
   applier.destroy();
 });
 
-test('applier：坏 JSON / 没有变量块 / 收支不平 都有明确结论', async () => {
+test('applier：坏 JSON 与无变量块有明确结论，收支偏差按提交数值记录', async () => {
   const { applier, calls } = harness();
 
   const broken = await applier.apply('<UpdateVariable><JSONPatch>[{op:replace,</JSONPatch></UpdateVariable>', { before: TERMINAL(), receipt: 'r-bad', turn: 1 });
@@ -178,10 +181,11 @@ test('applier：坏 JSON / 没有变量块 / 收支不平 都有明确结论', a
     { op: 'replace', path: '/terminal/wallet/yen', value: 900 },
     { op: 'replace', path: '/terminal/wallet/earned', value: 100 },
   ]), { before: TERMINAL(), receipt: 'r-lop', turn: 1 });
-  assert.equal(lopsided.status, 'rejected');
-  assert.match(lopsided.reason, /钱包余额与本轮累计收入、支出不一致/);
+  assert.equal(lopsided.status, 'applied');
+  assert.equal(lopsided.root.terminal.wallet.yen, 900);
+  assert.equal(lopsided.root.terminal.wallet.earned, 100);
 
-  assert.equal(calls.write.length, 0, '被拒绝的批次一律不落库');
+  assert.equal(calls.write.length, 1, '可读数值完成保存');
   applier.destroy();
 });
 
@@ -203,7 +207,7 @@ test('applier：抽块能穿过 JSONPatch 标签与代码围栏，destroy 后停
   assert.equal(applier.ready(), false);
 });
 
-test('applier：真实校验层下收支一致才落库，破坏守恒的批次整批拒绝', async () => {
+test('applier：真实校验层记录模型可读的收支数值，容纳算术偏差', async () => {
   const { applier, calls } = harness();
   const income = await applier.apply(block([
     { op: 'replace', path: '/terminal/wallet/yen', value: 1100 },
@@ -217,9 +221,10 @@ test('applier：真实校验层下收支一致才落库，破坏守恒的批次�
     { op: 'replace', path: '/terminal/wallet/yen', value: 900 },
     { op: 'replace', path: '/terminal/wallet/earned', value: 100 },
   ]), { before: TERMINAL(), receipt: 'r-broken', turn: 4 });
-  assert.equal(broken.ok, false);
-  assert.match(broken.reason, /钱包余额与本轮累计收入、支出不一致/);
-  assert.equal(calls.sync.length, 1, '被拒绝的批次一律不落库');
+  assert.equal(broken.ok, true);
+  assert.equal(broken.root.terminal.wallet.yen, 900);
+  assert.equal(broken.root.terminal.wallet.earned, 100);
+  assert.equal(calls.sync.length, 2, '两份可读模型记录各保存一次');
   applier.destroy();
 });
 

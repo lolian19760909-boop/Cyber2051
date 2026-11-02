@@ -8,22 +8,31 @@
   function isOwned(value){const p=parts(value);return p[0]==='terminal'&&p[1]==='gameplay'&&['growth','numeric','numericInput','inventory','equipment','itemDefinitions','itemReceipts','loadout','tactical'].includes(p[2]);}
   function prepare(stat,patches,options={}){
     if(!Array.isArray(patches))throw Error('MVU更新需要补丁数组');
-    const inputs=patches.filter(p=>p.path===inputPath);if(inputs.length>1)throw Error('一次保存只使用一份数值事件数组');
+    const inputs=patches.filter(p=>p.path===inputPath),ignored=[];
     const ordinary=patches.filter(p=>p.path!==inputPath);
     for(const p of ordinary){parts(p.path);if(isOwned(p.path))throw Error('成长和战况由数值模块计算；配点使用已确认行动接口');}
     if(!inputs.length)return {patches:clone(ordinary),changes:[],applied:[],duplicates:[]};
-    if(!['add','replace'].includes(inputs[0].op)||!Array.isArray(inputs[0].value))throw Error('numericInput只接受事件数组');
+    const events=[];let index=0;
+    for(const input of inputs){if(!Array.isArray(input.value)){ignored.push({path:inputPath,reason:'需要事件数组，已保留数值原值。'});continue;}
+     for(const value of input.value){const at=inputPath+'['+(index++)+']';if(!value||typeof value!=='object'||Array.isArray(value)){ignored.push({path:at,reason:'需要事件对象，已保留该项原值。'});continue;}
+      const event=clone(value);if(!/^[a-zA-Z][a-zA-Z0-9_-]{0,79}$/.test(event.id||''))event.id='event_'+engine.loadout.hash(JSON.stringify([options.source||options.factBatch,at,event.kind]));
+      for(const key of ['amount','quantity','xp','attributePoints','perkPoints'])if(typeof event[key]==='string'&&event[key].trim())event[key]=Number(event[key]);
+      if(typeof event.quote==='string'&&!event.reason)event.reason=event.quote;delete event.quote;
+      if(['resource','achievement'].includes(event.kind)&&!event.reason)event.reason='模型登记的剧情变化';
+      events.push({event,path:at});
+     }
+    }
     if(!stat?.terminal?.gameplay)throw Error('先建立已确认的成长起点');
     // Do not combine a computed child update with an unrelated parent replacement.
     for(const p of ordinary)if(['/terminal','/terminal/gameplay'].includes(p.path))throw Error('数值事件不能与整层替换同时保存');
-    const game=stat.terminal.gameplay,events=inputs[0].value,gains=events.filter(e=>e.kind==='item-gain'),wallet=ordinary.filter(p=>p.path==='/terminal/wallet'||p.path.startsWith('/terminal/wallet/'));
-    if(gains.length&&wallet.length){const before=stat.terminal.wallet||{},next=clone(before);for(const p of wallet){const key=p.path.split('/')[3];if(!['yen','earned','spent'].includes(key)||p.path!==('/terminal/wallet/'+key)||!['add','replace'].includes(p.op)||!Number.isSafeInteger(p.value)||p.value<0)throw Error('购买须同时提供余额、收入和支出的有效局部更新。');next[key]=p.value;}if(['yen','earned','spent'].some(k=>!Number.isSafeInteger(before[k])||!Number.isSafeInteger(next[k]))||next.yen-before.yen!==(next.earned-before.earned)-(next.spent-before.spent))throw Error('购买扣款与钱包收支不一致，物品和扣款均未入账。');}
-    const seenBatch=options.factBatch&&game.loadout?.factBatches?.[options.factBatch],issues=seenBatch?[]:engine.loadout.qualityIssues(game,events);
+    const game=stat.terminal.gameplay,values=events.map(row=>row.event),gains=values.filter(e=>e.kind==='item-gain'),wallet=ordinary.filter(p=>p.path==='/terminal/wallet'||p.path.startsWith('/terminal/wallet/'));
+    const seenBatch=options.factBatch&&game.loadout?.factBatches?.[options.factBatch],issues=seenBatch?[]:engine.loadout.qualityIssues(game,values);
     if(issues.length){const id='pending_'+engine.loadout.hash(JSON.stringify([options.source||options.factBatch,inputs[0].value]));const before=game.loadout,after={...clone(before||{}),pendingTransactions:{...clone(before?.pendingTransactions||{}),[id]:{id,events:clone(inputs[0].value),issues,wallet:clone(wallet),walletBefore:clone(stat.terminal.wallet||{}),source:clone(options.source||null),factBatch:options.factBatch||null}}};const change={path:['terminal','gameplay','loadout'],missing:before===undefined,before:before===undefined?null:clone(before),after};return {patches:[...clone(ordinary.filter(p=>!wallet.includes(p))),{op:change.missing?'add':'replace',path:'/terminal/gameplay/loadout',value:after}],changes:[change],applied:[],duplicates:[],pending:id,withheld:wallet};}
-    const result=engine.settle(game,inputs[0].value,options);
+    const accepted=[];let result=engine.settle(game,[],options);
+    for(const {event,path:at}of events)try{const next=engine.settle(game,[...accepted,event],options);accepted.push(event);result=next;}catch(error){ignored.push({path:at,reason:error.message+'（该项保留原值）'});}
     const duplicateGains=gains.filter(e=>result.duplicates.includes(e.id));if(wallet.length&&duplicateGains.length&&duplicateGains.length!==gains.length)throw Error('同次购买混有已结算与新物品，请核对购买记录后重新处理。');
     const withheld=wallet.length&&gains.length&&duplicateGains.length===gains.length?wallet:[];
-    return {withheld,patches:[...clone(ordinary.filter(p=>!withheld.includes(p))),...result.changes.map(c=>({op:c.missing?'add':'replace',path:path(c.path),value:clone(c.after)}))],changes:result.changes,applied:result.applied,duplicates:result.duplicates,...(options.context?{context:clone(options.context)}:{})};
+    return {ignored,withheld,patches:[...clone(ordinary.filter(p=>!withheld.includes(p))),...result.changes.map(c=>({op:c.missing?'add':'replace',path:path(c.path),value:clone(c.after)}))],changes:result.changes,applied:result.applied,duplicates:result.duplicates,...(options.context?{context:clone(options.context)}:{})};
   }
   function checkPrepared(transaction,before,after,context){
     if(transaction.context&&!engine.same(transaction.context,context))throw Error('聊天或回复分支已变化，旧结果不能写入当前分支');
