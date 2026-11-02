@@ -543,7 +543,7 @@ async function startSession({ accountId, runId, fromOpening=true }) {
   setStatus('正在准备阅读与终端界面…');
   state.ui=await mountGameplay({session:state.session,statePort,database:state.database,card:state.card,host:state.host,assets:state.assets,foundation:state.foundation,stage:els.stage,composer:document.querySelector('.composer'),input:els.input,send:sendTurn,stop:()=>{state.stopRequested=true;state.abort?.abort();state.session.cancel();},regenerate:nodeId=>sendTurn('',{regenerate:true,nodeId}),status:setStatus,busy:()=>state.busy,openSettings:()=>settingsSurface.open('play'),onEdited:async()=>{await state.ui.update();await refreshSaves();},deleteBody:nodeId=>deleteFloor(nodeId),openStories:()=>{settingsSurface.close();return openingPage.openStories();},savePoint:()=>document.getElementById('checkpoint').click(),backupStory:()=>exportCurrentStory(),temporary:state.mode==='public'?temporaryTransfer:null,openMainMenu:()=>openingPage.show(),openWorkshop:()=>window.open(state.mode==='public'?'/workshop.html':'https://cyber2051.top/workshop.html','_blank','noopener')});
   els.aux.replaceChildren();
-  if(sequence!==startSequence){state.ui?.destroy();return;}state.replyUI=mountReplyControls({parent:document.getElementById('reply-controls'),session:state.session,statePort,busy:()=>state.busy,onBusy:value=>{state.busy=value;els.stop.disabled=!value;els.send.disabled=value;els.regen.disabled=value||!canRegenerate();els.continueBtn.disabled=value||!state.session.narrativeNode;},onCommitted:async()=>{await state.ui.update();await refreshSaves();setStatus('正文已校验保存，旧路线保留。','ok');},onError:error=>setStatus(error.message,'error')});
+  if(sequence!==startSequence){state.ui?.destroy();return;}state.replyUI=mountReplyControls({parent:document.getElementById('reply-controls'),session:state.session,statePort,parser:state.chain.parser,openSettings:()=>settingsSurface.open('stories'),busy:()=>state.busy,onBusy:value=>{state.busy=value;els.stop.disabled=!value;els.send.disabled=value;els.regen.disabled=value||!canRegenerate();els.continueBtn.disabled=value||!state.session.narrativeNode;if(!value)state.ui?.finish();},onCommitted:async()=>{await state.ui.update();await refreshSaves();setStatus('正文已校验保存，旧路线保留。','ok');},onDiscarded:async result=>{if(result.clearedCurrent)state.ui.clearCandidate();await state.ui.update();setStatus('已丢弃待处理回复，可以继续行动。','ok');},onError:error=>setStatus(error.message,'error')});
   state.settingsUI=await mountSessionSettings({parent:document.getElementById('session-settings'),memoryParent:els.memoryBox,session:state.session,presets:state.presets,onSettings:async value=>{safeStorage()?.setItem(preferenceKey,JSON.stringify(value));await state.session.saveContentPreferences();await state.ui.update();},onError:error=>setStatus(error.message,'error')});
   state.contentUI=mountSessionContent({database:state.database,parent:document.getElementById('session-content'),session:state.session,onChanged:async()=>{await state.ui.update();await state.settingsUI.refreshContent();},onError:error=>setStatus(error.message,'error')});
   state.applicationUI=mountApplicationControls({parent:document.getElementById('application-controls'),session:state.session,statePort,manifest:state.manifest,mode:state.mode,busy:()=>state.busy||state.session.running,onError:error=>setStatus(error.message,'error')});
@@ -552,6 +552,8 @@ async function startSession({ accountId, runId, fromOpening=true }) {
   document.getElementById('play-nav').hidden=false;
   refreshGeneratorInfo(head);
   await refreshSaves();
+  await state.replyUI.ready;
+  if(state.replyUI.pendingCount){setStatus('有 '+state.replyUI.pendingCount+' 份回复已保留，可在设置的“故事与存档”中继续处理','warn');state.ui.finish();}
   const awaitingOpening=await pendingOpening({nodes:state.session.nodes,statePort:state.statePort,runId,draft:els.input.value});
   if(awaitingOpening){
     readingSurface.hide();const attempt=awaitingOpening.retryAttempt;
@@ -746,6 +748,7 @@ async function sendTurn(text, {regenerate=false,nodeId,continues=false}={}) {
       els.stage.appendChild(div);
     }
     if(result.error&&state.ui)setStatus('未保存：'+(result.error.message||result.error.code),'error');
+    if(['failed','interrupted','conflict'].includes(result.status))await state.replyUI?.showPending(result.operationId);
     if (result.error && !state.ui) {
       const div = document.createElement('div');
       div.className = 'line narration';

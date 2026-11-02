@@ -316,6 +316,14 @@ textarea:focus { outline: none; border-color: var(--accent); }
 .cxx-web-terminal::backdrop,.cxx-memory-dialog::backdrop{background:color-mix(in srgb,var(--cxx-scrim) 80%,transparent)}
 .cxx-memory-dialog{width:min(1000px,98vw);height:min(860px,96dvh);border:1px solid var(--cxx-line);border-top:3px solid var(--cxx-structure);padding:0;background:var(--cxx-canvas);color:var(--cxx-text)}
 .cxx-memory-dialog>div{height:100%;min-height:0}
+dialog.cxx-memory-dialog.cxx-pending-reply{box-sizing:border-box;width:min(720px,94vw);height:fit-content;max-height:92dvh;padding:20px;overflow:auto}
+.cxx-pending-reply h2{font-size:1.2rem;margin:0 0 12px}
+.cxx-pending-reply>p{max-height:18dvh;overflow:auto;overflow-wrap:anywhere;color:var(--cxx-text)}
+.cxx-pending-reply-body{max-height:48dvh;overflow:auto;overflow-wrap:anywhere;line-height:1.8;padding-block:8px}
+.cxx-pending-reply-body p{max-width:70ch;margin:0 0 1em}
+.cxx-pending-reply textarea{box-sizing:border-box;width:100%;min-height:9em;max-height:35dvh;font-size:1rem}
+.cxx-pending-reply-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.cxx-pending-reply-actions button{min-height:44px}
 .cxx-native-reading .mes_text{font:var(--cxx-reading-size,18px)/1.95 var(--cxx-font-ui);color:var(--cxx-text)}
 .cxx-native-reading .mes_text p{margin:0 0 1.5em;white-space:pre-wrap}
 .cxx-gal-audio-panel pre{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;max-height:50dvh;overflow:auto}
