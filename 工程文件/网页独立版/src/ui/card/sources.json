@@ -61,7 +61,7 @@
   },
   {
     "source": "卡片源码/运行时/item-model.js",
-    "sha256": "a06e4db38c2894320f7d061e4335e1f0eba90cf79a5e5a14dd4632334fbbb115",
+    "sha256": "68a71dc86160a06115680b87f2f0a2a4d668c5937cd2579ffba8b8e7c9fac581",
     "target": "src/ui/card/运行时/item-model.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -73,7 +73,7 @@
   },
   {
     "source": "卡片源码/运行时/loadout.js",
-    "sha256": "50c6fece6c1cd1d0728076aaeca8e31de521de5f2664489dfd4eb3b91aa56d82",
+    "sha256": "84245deb4e31edce98aae114ad138739b85bff43e92f414051bda871f808d8fb",
     "target": "src/ui/card/运行时/loadout.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -85,7 +85,7 @@
   },
   {
     "source": "卡片源码/数值引擎/adapters/mvu.js",
-    "sha256": "a3d4ec3e1e9b2df1d586d2f89b8cb9c093a01260fb8f3b7c16cb3fb8db46cedc",
+    "sha256": "64b22b078a84d0fcdb2e00639714a2c887801b51bb82fd2731986e4cf300c822",
     "target": "src/ui/card/数值引擎/adapters/mvu.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },

@@ -36,15 +36,11 @@ test('actor purchase debits its own wallet once and original wallet remains unch
   const after=await f.run(changes);assert.equal(f.guard.state().lastError,'');assert.equal(A.read(after.stat_data,'wb_6').wallet.yen,1500);assert.equal(A.read(after.stat_data,'wb_6').gameplay.inventory.pistol_t1.quantity,1);assert.deepEqual(after.stat_data.terminal.wallet,f.data.stat_data.terminal.wallet);
   assert.deepEqual((await f.run(changes.map(p=>p.path.endsWith('/yen')?{...p,value:1000}:p.path.endsWith('/spent')?{...p,value:1000}:p),after)).stat_data,after.stat_data);
 });
-test('unconfirmed actor item withholds only its own money and keeps other actor progress',async t=>{
-  const f=fixture(t),changes=[input('wb_6',[{id:'unknown_buy',kind:'item-gain',item:{name:'测试未登记型号',tier:2},reason:'合成交易'}]),patch(prefix('wb_6')+'/wallet/yen',1000),patch(prefix('wb_6')+'/wallet/spent',1000),input('wb_10',[event('other_damage',-5)])];
-  const after=await f.run(changes);assert.equal(f.guard.state().lastError,'');const pending=A.read(after.stat_data,'wb_6').gameplay.loadout.pendingTransactions;
-  assert.equal(Object.keys(pending).length,1);assert.deepEqual(A.read(after.stat_data,'wb_6').wallet,A.read(f.data.stat_data,'wb_6').wallet);assert.equal(A.project(after.stat_data,'wb_10').vitals.hp,120);
-  const id=Object.keys(pending)[0],definition={name:'测试未登记型号',category:'weapon',tier:2,description:'已确认的测试武器',numericEffects:[{kind:'powerFlat',value:12}]};
-  const request={action:'resolve-equipment',actorId:'wb_6',id,resolutions:{unknown_buy:definition}},options={request,actorBinding:A.binding(after.stat_data,'wb_6')};
-  const resolved=O.plan(after.stat_data,request,options);schema.program(after.stat_data,resolved,{engineOperation:options});
-  assert.equal(A.read(resolved,'wb_6').wallet.yen,1000);assert.equal(A.read(resolved,'wb_6').wallet.spent,1000);assert.deepEqual(resolved.terminal.wallet,f.data.stat_data.terminal.wallet);
-  assert.deepEqual(O.plan(resolved,request,{...options,actorBinding:A.binding(resolved,'wb_6')}),resolved);
+test('new actor equipment and its purchase commit directly while other actor progress stays independent',async t=>{
+  const f=fixture(t),changes=[input('wb_6',[{id:'unknown_buy',kind:'item-gain',item:{id:'actor_story_weapon',name:'测试未登记型号',category:'weapon',tier:2},reason:'合成交易'}]),patch(prefix('wb_6')+'/wallet/yen',1000),patch(prefix('wb_6')+'/wallet/spent',1000),input('wb_10',[event('other_damage',-5)])];
+  const after=await f.run(changes);assert.equal(f.guard.state().lastError,'');const actor=A.read(after.stat_data,'wb_6');assert.equal(actor.gameplay.inventory.actor_story_weapon.quantity,1);assert.equal(actor.gameplay.loadout.pendingTransactions,undefined);assert.equal(actor.wallet.yen,1000);assert.equal(actor.wallet.spent,1000);assert.equal(A.project(after.stat_data,'wb_10').vitals.hp,120);assert.deepEqual(after.stat_data.terminal.wallet,f.data.stat_data.terminal.wallet);
+  assert.deepEqual((await f.run(changes,after)).stat_data,after.stat_data);
+  const request={action:'equip',actorId:'wb_6',id:'actor_story_weapon',slot:'weapon_1'},options={request,actorBinding:A.binding(after.stat_data,'wb_6')},equipped=O.plan(after.stat_data,request,options);schema.program(after.stat_data,equipped,{engineOperation:options});assert.equal(A.read(equipped,'wb_6').gameplay.equipment.weapon_1.itemId,'actor_story_weapon');assert.deepEqual(A.read(equipped,'wb_10'),A.read(after.stat_data,'wb_10'));
 });
 test('actor locations accept registered values; unreadable owned fields retain their values',async t=>{
   const f=fixture(t),changes=[patch(prefix('wb_10')+'/gameplay/location',{mapId:'central',placeId:'clinic'},'add')],after=await f.run(changes);assert.equal(f.guard.state().lastError,'');assert.deepEqual(A.project(after.stat_data,'wb_10').location,{mapId:'central',placeId:'clinic'});

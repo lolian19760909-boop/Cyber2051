@@ -53,6 +53,7 @@ files.push(path.join(root,'测试/当前/legacy-save-unsupported.test.cjs'));
 files.push(path.join(root,'测试/当前/release-capabilities.test.cjs'));
 files.push(path.join(root,'测试/当前/new-save-first-write.test.cjs'));
 files.push(path.join(root,'测试/当前/native-state-persistence.test.cjs'));
+files.push(path.join(root,'测试/当前/story-items.test.cjs'));
 files.push(path.join(root,'测试/当前/announcement-live.test.cjs'));
 files.push(path.join(root,'测试/当前/mvu-remote-loader.test.cjs'));
 files.push(path.join(root,'测试/当前/guard-volatile-metadata.test.cjs'),path.join(root,'测试/当前/nsfw-scale.test.cjs'));
