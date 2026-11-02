@@ -37,7 +37,7 @@
   if(q.hidden===true&&!record(stat,q.id).discovered)return '尚未发现这份委托。';
   if((q.prerequisites||[]).some(id=>record(stat,id).state!=='完成'))return q.unlock&&q.unlock!=='无'?q.unlock:'尚未完成前置委托。';
   if(q.id==='q_heist'&&Object.entries(stat.terminal?.quests||{}).filter(([id,r])=>id!=='q_heist'&&r.state==='完成').length<2)return '完成2单任意委托';
-  if(q.track==='commission'&&!q.storyLine){const busy=Object.entries(stat?.terminal?.quests||{}).find(([id,r])=>id!==q.id&&active.includes(r.state)&&definitions.find(d=>d.id===id)?.track==='commission'&&!definitions.find(d=>d.id===id)?.storyLine);if(busy)return '当前还有进行中的委托：'+busy[0]+'。完成或暂离之后再接下一条。';}
+  if(q.track==='commission'&&!q.storyLine){const busy=Object.entries(stat?.terminal?.quests||{}).find(([id,r])=>id!==q.id&&active.includes(r.state)&&definitions.find(d=>d.id===id)?.track==='commission'&&!definitions.find(d=>d.id===id)?.storyLine);if(busy)return '当前还有未结束的委托：'+(definitions.find(d=>d.id===busy[0])?.title||busy[0])+'。完成或放弃后再接下一条。';}
   for(const other of definitions){if(other.id===q.id||!occupies(other,record(stat,other.id)))continue;if(!q.storyLine&&!other.storyLine&&q.track==='main'&&other.track==='main')return '先完成或放弃当前主线，再接取新的主线。';if(q.conflicts?.includes(other.id)||other.conflicts?.includes(q.id))return '与当前已接取的委托互斥。';}
   const req=q.requirements||{},g=actor(stat).gameplay;
   if(req.level&&Number(g?.growth?.level||0)<req.level)return '要求等级 '+req.level+'。';
