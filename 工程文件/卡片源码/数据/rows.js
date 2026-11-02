@@ -24,7 +24,10 @@
 
   function actorsOf(terminal) {
     const actors = pick(terminal, ['ensemble', 'actors'], {});
-    return actors && typeof actors === 'object' ? Object.entries(actors) : [];
+    return actors && typeof actors === 'object' ? Object.entries(actors).map(([key, actor]) =>
+      key === 'player' && actor?.stateRef?.kind === 'legacy-player'
+        ? [key, { ...actor, gameplay: terminal.gameplay, wallet: terminal.wallet }]
+        : [key, actor]) : [];
   }
 
   function actorRows(terminal, turn = 0) {
@@ -50,8 +53,8 @@
       if (pick(actor, ['gameplay', 'loadout']) !== undefined) extra.loadout = pick(actor, ['gameplay', 'loadout']);
       return {
         actor_key: text(actor?.actorId || key),
-        hp: Math.round(num(numeric?.hp, 80)),
-        sanity: Math.round(num(pick(actor, ['gameplay', 'sanity']), num(numeric?.sanity, 100))),
+        hp: Math.round(num(numeric?.vitals?.hp, num(numeric?.hp, 80))),
+        sanity: Math.round(num(pick(actor, ['gameplay', 'sanity', 'value']), num(pick(actor, ['gameplay', 'sanity']), num(numeric?.sanity, 100)))),
         fatigue: Math.round(num(numeric?.fatigue, 0)),
         yen: Math.round(yen),
         extra_json: Object.keys(extra).length ? JSON.stringify(extra) : null,

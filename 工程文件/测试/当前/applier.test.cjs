@@ -250,9 +250,9 @@ test('本地结算：MVU 缺席时 variables.js 自己抽块、校验、执行�
       { op: 'replace', path: '/terminal/wallet/earned', value: 100 },
     ]),
   }];
-  const seen = { write: 0, pushed: null, warned: [] };
+  const seen = { write: 0, saved: 0, pushed: null, warned: [] };
   const api = {
-    SillyTavern: { getContext: () => ({ chat, eventTypes: { CHAT_CHANGED: 'changed' } }) },
+    SillyTavern: { getContext: () => ({ chat, eventTypes: { CHAT_CHANGED: 'changed' }, saveChat: async () => { seen.saved++; } }) },
     eventOn: () => {},
     eventRemoveListener: () => {},
   };
@@ -272,7 +272,9 @@ test('本地结算：MVU 缺席时 variables.js 自己抽块、校验、执行�
   assert.equal(result.status, 'applied');
   assert.deepEqual(result.terminal.wallet, { yen: 100, earned: 100, spent: 0 });
   assert.equal(seen.write, 1);
-  assert.deepEqual(seen.pushed.terminal.wallet, { yen: 100, earned: 100, spent: 0 });
+  assert.deepEqual(seen.pushed.wallet, { yen: 100, earned: 100, spent: 0 });
+  assert.equal(seen.saved, 1);
+  assert.deepEqual(chat[0].variables[0].stat_data.terminal.wallet, { yen: 100, earned: 100, spent: 0 });
 
   const replay = await service.settle(0);
   assert.equal(replay.status, 'duplicate', '同层重放不重复落库');

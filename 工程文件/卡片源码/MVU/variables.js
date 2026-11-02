@@ -4,7 +4,7 @@
  *     这是 2.3.26 的行为，保留给迁移窗口与既有回归。
  *  B. 本地结算（没有 Mvu，或 dataStore 已切到 on）：卡内用 Gal/parser.js 抽 <UpdateVariable> 的
  *     JSONPatch，本地校验层（MVU/schema.js + 数据/validator.js）出事务，数据/applier.js 执行并落库。
- *  两条路径共用 schema/policy/诊断，变量权威位置都是数据库表；A 路径是过渡，不是目标态。
+ *  两条路径共用 schema/policy。完整楼层状态供续玩与重放使用，数据库表保存镜像及事务票据。
  */
 (function(root,factory){const value=factory();if(typeof module==='object'&&module.exports)module.exports=value;else root.Cxx236Variables=value;})(globalThis,function(){
  'use strict';
@@ -82,7 +82,12 @@
     }return true;
   }
   function publicReceipt(r){if(!r)return null;const {row,raw,hostRaw,expected,...value}=r;return copy(value);}
-  function receiptAt(floor=context().chat.length-1){const r=receipts.get(floor);return matches(r,floor)?r:null;}
+  function receiptAt(floor=context().chat.length-1){
+    const cached=receipts.get(floor);if(matches(cached,floor))return cached;
+    const row=context().chat[floor],raw=rawAt(floor),saved=nativeCommit(floor,row,raw,false);if(!saved)return null;
+    const restored={...copy(saved),row,messageId:rowId(row),raw:normal(raw),hostRaw:normal(row?.mes),hostFingerprint:textKey(row?.mes),phase:'saved',message:'变量已保存并核对。',persisted:true,revision:++receiptSequence};
+    receipts.set(floor,restored);while(receipts.size>16)receipts.delete(receipts.keys().next().value);runtime.scheduleMessages?.(floor,false,'mvu-receipt');return restored;
+  }
   function verifySaved(r,attempt=0){
     clearTimeout(saveTimer);saveTimer=null;
     const content=api.CxxContent||win.CxxContent;if(!content?.savedEventMedia||ended||receiptAt(r.floor)!==r||r.phase!=='applied')return;
@@ -215,7 +220,7 @@
     if(engine)return engine;
     const A=Applier();if(!A||typeof A.create!=='function')return null;
     const nativeSync=win.CxxDataSync||api.CxxDataSync;
-    const sync=nativeSync&&typeof nativeSync.push==='function'?{push(root,turn){if(webChat()){const push=nativeSync.pushAll||nativeSync.push;return push.call(nativeSync,root.terminal,turn);}return nativeSync.push(root,turn);}}:nativeSync;
+    const sync=nativeSync&&typeof nativeSync.push==='function'?{push(root,turn){const push=nativeSync.pushAll||nativeSync.push;return push.call(nativeSync,root.terminal,turn);}}:nativeSync;
     engine=A.create({schema,parser:Parser,reader:readOf(),notify:report,report,policy:policyOf(),write:win.CxxDataWrite||api.CxxDataWrite,sync});
     return engine;
   }
@@ -228,13 +233,13 @@
     if(webChat())try{const messages=context().chat;for(let i=messages.length-1;i>=0;i--){const row=messages[i];if(row.is_user||row.is_system)continue;const raw=String(win.CxxSource?.sync?.(i)??rawAt(i)),v=floorValue(row);if(nativeCommit(i,row,raw,false)&&v.stat_data?.terminal){stateComplete=true;return copy(v.stat_data);}const owned=webCommit(row,v);if(owned?.fingerprint===textKey(raw)&&v.stat_data){stateComplete=true;return copy(v.stat_data);}}}catch{}
     // A web-owned selected swipe carries the native authoritative state. Old table projections may lag.
     try{const c=context();for(let i=c.chat.length-1;i>=0;i--){const row=c.chat[i],v=row?.variables?.[row.swipe_id||0];if(webCommit(row,v)&&v.stat_data){stateComplete=true;return copy(v.stat_data);}if(v?.stat_data)break;}}catch{}
+    try{const c=context();for(let i=c.chat.length-1;i>=0;i--){const data=c.chat[i]?.variables?.[c.chat[i].swipe_id||0]?.stat_data;if(data?.terminal){stateComplete=!webChat();return copy(data);}}}catch{}
     try{const snap=readOf()?.snapshot?.({});if(snap&&snap.ok!==false&&!snap.empty&&snap.terminal)return copy(snap);}catch{}
-    try{const c=context();for(let i=c.chat.length-1;i>=0;i--){const data=c.chat[i]?.variables?.[c.chat[i].swipe_id||0]?.stat_data;if(data)return copy(data);}}catch{}
     return null;
   }
   function localReceipt(floor,row,raw){return [runtime.key(),floor,row?.swipe_id||0,textKey(raw)].join('|');}
   function recordLocal(floor,row,raw,result){
-    const r={scope:runtime.key(),floor,swipe:row?.swipe_id||0,messageId:rowId(row),raw:normal(raw),fingerprint:textKey(raw),hostRaw:normal(row?.mes),hostFingerprint:textKey(row?.mes),phase:result.ok?'applied':result.status==='skipped'?'missing':'rejected',message:result.reason||'',revision:++receiptSequence,patches:copy(result.patches||[]),persisted:!!result.persisted};
+    const r={scope:runtime.key(),floor,swipe:row?.swipe_id||0,row,messageId:rowId(row),raw:normal(raw),fingerprint:textKey(raw),hostRaw:normal(row?.mes),hostFingerprint:textKey(row?.mes),phase:result.floorSaved?'saved':result.ok||result.status==='snapshot-pending'?'applied':result.status==='skipped'?'missing':'rejected',message:result.reason||(result.floorSaved?'变量已保存并核对。':''),revision:++receiptSequence,patches:copy(result.patches||[]),persisted:!!result.persisted};
     receipts.set(floor,r);while(receipts.size>16)receipts.delete(receipts.keys().next().value);
     runtime.scheduleMessages?.(floor,false,'mvu-receipt');
     return r;
@@ -271,12 +276,12 @@
     if(webChat()&&!complete)return {ok:false,status:'snapshot-pending',reason:'此网页聊天缺少可验证的完整父状态，未用数据库显示投影继续结算。'};
     let result;
     try{
-      result=await runner.apply(raw,{state,policy:policyOf(),receipt:localReceipt(floor,row,raw),turn:floor,kind:'variable',recoverSync:webChat()});
+      result=await runner.apply(raw,{state,policy:policyOf(),receipt:localReceipt(floor,row,raw),turn:floor,kind:'variable',recoverSync:true});
     }catch(error){result={ok:false,status:'failed',reason:error&&error.message?error.message:String(error)};}
     if(result.ok&&result.root)rememberNative(floor,row,raw,result.root,result.receipt||localReceipt(floor,row,raw),state,result.patches,complete);
-    if(result.ok&&webChat()){
+    if(result.ok){
       const captured=captureNativeState({floor});if(!captured.ok||!captured.complete)result={...result,ok:false,status:'snapshot-pending',reason:captured.reason||'此楼没有完整父状态，未把显示投影保存为完整快照。'};
-      else try{await persistNative(floor,row,raw,captured);}catch(error){result={...result,ok:false,status:'snapshot-pending',reason:'原生表已结算，完整楼层快照保存待恢复：'+error.message};}
+      else try{await persistNative(floor,row,raw,captured);result={...result,floorSaved:true};}catch(error){result={...result,ok:false,status:'snapshot-pending',reason:'原生表已结算，完整楼层快照保存待恢复：'+error.message};}
     }
     recordLocal(floor,row,raw,result);
     if(result.ok){lastError='';}else if(result.status!=='skipped'&&result.status!=='duplicate'){report(result.reason);}
