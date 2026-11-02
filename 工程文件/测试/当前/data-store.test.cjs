@@ -7,6 +7,14 @@ const root = path.resolve(__dirname, '..', '..');
 const Store = require(path.join(root, '卡片源码/数据/store.js'));
 const template = require(path.join(root, '卡片源码/数据/schema.js'));
 
+test('余额迁移保留模板缺省而运行态已有的私人表配置', async () => {
+  const saved=structuredClone(template);saved.sheet_cxx_wallet.sourceData.ddl=saved.sheet_cxx_wallet.sourceData.ddl.replace('yen INTEGER NOT NULL DEFAULT 0','yen INTEGER NOT NULL DEFAULT 0 CHECK(yen >= 0)');
+  saved.sheet_private={uid:'sheet_private',name:'自用表',content:[['行号','备注'],[1,'保留']]};
+  let runtime=structuredClone(saved);runtime.sheet_private.updateConfig={enabled:false,playerOption:7};runtime.sheet_private.exportConfig={enabled:true,injectIntoWorldbook:false};const kept=structuredClone(runtime.sheet_private);
+  const api={exportTableAsJson:()=>structuredClone(runtime),getTableTemplate:()=>structuredClone(saved),async importTemplateFromData(target){assert.deepEqual(target.sheet_private.updateConfig,kept.updateConfig);assert.deepEqual(target.sheet_private.exportConfig,kept.exportConfig);for(const [key,sheet]of Object.entries(target))if(runtime[key]?.content)sheet.content=runtime[key].content;runtime=structuredClone(target);return {success:true};}};
+  const ready=await Store.ensureSchema(api,template,{wait:1,step:1});assert.equal(ready.ok,true,ready.reason);assert.deepEqual(runtime.sheet_private,kept);
+});
+
 test('正式模板每张业务表都有稳定唯一 uid，供真实 ACU 导入校验', () => {
   const keys = Object.keys(template).filter(key => key.startsWith('sheet_'));
   assert.equal(keys.length, 18);
