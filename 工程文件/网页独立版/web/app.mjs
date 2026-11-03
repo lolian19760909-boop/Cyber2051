@@ -443,7 +443,7 @@ async function maybeOfferSaveUpdate(){
  }catch{/* 版本提醒是附加能力；读取失败时按无更新处理，不打断开局 */ return;}
 }
 
-async function startSession({ accountId, runId, fromOpening=true }) {
+async function startSession({ accountId, runId, fromOpening=true, onRestored }) {
   const mark=step=>{state.phase=step;try{(globalThis.__cxxBootMark??=[]).push([Date.now(),step]);if(globalThis.__cxxBootMark.length>80)globalThis.__cxxBootMark.shift();}catch{}};
   mark('session:start');
   if(state.mode==='public'&&(!state.tokenStore?.get()||!accountId||globalThis.CXXUser?.current()?.publisherId!==accountId)){setStatus('请登录后进入故事。','warn');return;}
@@ -509,6 +509,7 @@ async function startSession({ accountId, runId, fromOpening=true }) {
   const restored=await state.session.restore();
   mark('restore:done');
   if(sequence!==startSequence)return;
+  onRestored?.();
   // 存档热更弹窗是进入游戏前的一道闸：更新或暂不之后才继续装配界面。
   await maybeOfferSaveUpdate();
   state.savesUI=mountSaveControls({parent:document.getElementById('save-controls'),session:state.session,statePort,accountId,mode:state.mode,onSwitch:runId=>startSession({accountId,runId}),onError:error=>setStatus(error.message,'error')});
@@ -891,7 +892,7 @@ window.addEventListener('cxx-web-open-stories',()=>{settingsSurface.open('storie
 globalThis.CxxWebApp={get session(){return state.session;},get ui(){return state.ui;},get statePort(){return state.statePort;},get settingsUI(){return state.settingsUI;},read:()=>({mode:state.mode,booted:state.booted,busy:state.busy,phase:state.phase,release:state.release,loader:loaderSummary({release:state.release,identity:state.hostIdentity,rows:loadRows}),identity:state.hostIdentity?{status:state.hostIdentity.status,buildId:state.hostIdentity.buildId,mismatches:state.hostIdentity.mismatches,card:state.hostIdentity.card?.ok}:null,world:state.session?.describe?.().world??null,agent:state.session?.agent?{mode:state.session.agent.mode,books:state.session.agent.books.length,journal:state.session.agent.journal}:null,applied:state.session?.applied?{status:state.session.applied.status,books:state.session.applied.books.map(row=>row.bookId),unknown:state.session.applied.unknown.length}:null,knowledge:state.knowledge?{status:state.knowledge.status,items:state.knowledge.verify?.items??null,groups:state.knowledge.verify?.groups??null,indexHash:state.knowledge.verify?.indexHash??null}:null,ui:state.ui?.read(),creation:state.creation?.flow.state()})};
 const openingPage=await mountWeb({actions:createWebAdapter({
   getState:()=>state,startSession,mountSaveControls,
-  mountArchive:(parent,onClose)=>mountStoryArchive({parent,session:state.session,statePort:state.statePort,accountId:state.accountId,mode:state.mode,temporary:state.mode==='public'?temporaryTransfer:null,busy:()=>state.busy,onPlay:runId=>{onClose();return startSession({accountId:state.accountId,runId});},onClose,onError:error=>setStatus(error.message,'error'),mountTools:(target,runId)=>state.session?mountSaveControls({parent:target,session:state.session,statePort:state.statePort,runId,mode:state.mode,accountId:state.accountId,onSwitch:runId=>{onClose();return startSession({accountId:state.accountId,runId});},onError:error=>setStatus(error.message,'error')}):null}),
+  mountArchive:(parent,onClose)=>mountStoryArchive({parent,session:state.session,statePort:state.statePort,accountId:state.accountId,mode:state.mode,temporary:state.mode==='public'?temporaryTransfer:null,busy:()=>state.busy,onPlay:runId=>startSession({accountId:state.accountId,runId,onRestored:onClose}),onClose,onError:error=>setStatus(error.message,'error'),mountTools:(target,runId)=>state.session?mountSaveControls({parent:target,session:state.session,statePort:state.statePort,runId,mode:state.mode,accountId:state.accountId,onSwitch:runId=>startSession({accountId:state.accountId,runId,onRestored:onClose}),onError:error=>setStatus(error.message,'error')}):null}),
   openSettings:page=>{refreshGeneratorInfo({revision:state.session?.coordinator.snapshot().revision||0});settingsSurface.open(page);},
   leave:()=>{if(state.mode==='tavern'){openingPage.hide();window.dispatchEvent(new Event('cxx-host-close'));}else location.assign(location.pathname.startsWith('/play/')?'/':'https://cyber2051.top/');},
   login:async()=>{await doLogin();openingPage.show();await openingPage.ready();}
