@@ -231,6 +231,7 @@
       else result.contentWarnings.push('已接任务的原始版本缺失：' + questId);
     }
     // The installed registry controls availability; accepted legacy definitions remain usable.
+    for (const [id, record] of Object.entries(records)) if (record?.definition?.source === 'story') quests.set(id, { ...copy(record.definition), id });
     result.quests = [...quests.values()];
     result.gallery.counts = {
       characters: characters.size,

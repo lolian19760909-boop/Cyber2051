@@ -46,7 +46,7 @@
    }
    if(parts.length===3&&parts[0]==='terminal'&&parts[1]==='wallet'&&['yen','earned','spent'].includes(parts[2]))return {schema:parts[2]==='yen'?balance:money,kind:'wallet'};
    if(parts.length===4&&parts[0]==='terminal'&&parts[1]==='quests'&&Q.leaves.includes(parts[3])){
-    const record=before.terminal?.quests?.[parts[2]];if(!record||!policy.questRegistered(parts[2],record))throw Error('委托尚未接取或编号未登记：'+parts[2]);
+    const record=before.terminal?.quests?.[parts[2]];if(!record||!Q.fromRecord(parts[2],record)&&!policy.questRegistered?.(parts[2],record))throw Error('委托尚未接取或编号未登记：'+parts[2]);
     return {schema:parts[3]==='state'?z.enum(states):['agreedYen','paidYen','refundedYen'].includes(parts[3])?money:parts[3]==='settled'?z.boolean():parts[3]==='chapter'?z.unknown():z.string().max(parts[3]==='knownFacts'?8000:2000),kind:'quest',id:parts[2],add:parts[3]!=='state'};
    }
    if(parts[0]==='terminal'&&parts[1]==='gameplay'&&parts[2]==='location'&&(parts.length===3||parts.length===4&&['mapId','placeId'].includes(parts[3])))return {schema:parts.length===3?location:text,kind:'location',add:true};

@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/运行时/quests.js; source SHA256 bea75d0943f6b8f1410f33a869c90f1a18d857ff189c0f629bbe5b5d2f16177a. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/运行时/quests.js; source SHA256 346da71813d4241d81e83ca75c6d68b0f0389d3a5726ec4ec3bff0526bc9eac9. Rebuild with tools/p3a-adapt-views.mjs. */
 /* Journal rules. Definitions are read from the installed/pinned content registry.
    Browsing never creates records; UI operations never award money or items. */
 (function(root,factory){const api=factory(root);if(typeof module==='object'&&module.exports)module.exports=api;else {root.CxxQuests=api;if(root)root.CxxQuests=api;}})(globalThis,function(root){
@@ -11,7 +11,38 @@
  const chapter=()=>typeof module==='object'&&module.exports?require('./chapter.js'):root.CxxChapter||root?.CxxChapter;
  const chapterId='q_chip_night',legacyStarted=stat=>['objective','knownFacts','rank','acceptedFloor','startedFloor','paidYen','refundedYen','settled'].some(k=>Boolean(record(stat,'q_heist')[k]))||record(stat,'q_heist').state!=='已发布';
  const idPattern=/^[a-zA-Z][a-zA-Z0-9_-]{0,79}$/;
+ const numberInput=v=>typeof v==='string'&&/^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$/.test(v.trim())?Number(v.trim()):v;
  const record=(stat,id)=>stat?.terminal?.quests?.[id]||{state:'已发布'};
+ const fromRecord=(id,r)=>r?.definition?.source==='story'?{...r.definition,id}:null;
+ function withDefinitions(stat,base=[]){
+  const all=new Map(base.map(q=>[q.id,q]));
+  for(const [id,r]of Object.entries(stat?.terminal?.quests||{})){
+   const q=fromRecord(id,r);if(q)all.set(id,q);
+  }
+  return [...all.values()];
+ }
+ function storyRecord(stat,id,input,source,base,previous){
+  if(!input||typeof input!=='object'||Array.isArray(input))throw Error('新委托需要名称与进度记录。');
+  const value={...copy(previous||{}),...copy(input)},declared=value.definition&&typeof value.definition==='object'&&!Array.isArray(value.definition)?value.definition:{},d={...copy(base||{}),...declared};
+  const text=(...values)=>values.find(v=>typeof v==='string'&&v.trim())?.trim()||'',money=(v,fallback=0)=>{const n=numberInput(v);return Number.isSafeInteger(n)&&n>=0?n:fallback;};
+  const title=text(input.definition?.title,input.title,input.name,d.title,value.objective)||'剧情委托',goal=text(input.definition?.goal,input.goal,d.goal,value.objective,value.description),pay=money(d.pay,money(value.agreedYen));
+  const aliases={'已接受':'已接取','接受':'已接取','进行':'进行中','已完成':'完成','可接取':'已发布'},state=states.includes(value.state)?value.state:Object.hasOwn(aliases,value.state)?aliases[value.state]:previous?.state||'已发布';
+  const next={
+   ...value,schema:previous?.schema||1,id,state,
+   ownerActorId:previous&&previous.state!=='已发布'?previous.ownerActorId||'player':input.ownerActorId||actor(stat).actorId,
+   definition:{...d,id,source:'story',route:'story',title,goal,brief:text(input.definition?.brief,input.description,d.brief,value.description,goal),track:d.track==='main'?'main':'commission',pay},
+   objective:text(value.objective,goal).slice(0,2000),knownFacts:text(value.knownFacts).slice(0,8000),rank:text(value.rank).slice(0,100),
+   agreedYen:money(value.agreedYen,money(previous?.agreedYen,pay)),
+   paidYen:Math.max(money(value.paidYen,money(previous?.paidYen)),money(previous?.paidYen)),
+   refundedYen:Math.max(money(value.refundedYen,money(previous?.refundedYen)),money(previous?.refundedYen)),
+   settled:value.settled===true
+  };
+  if(state!=='已发布')next.acceptedFloor=previous?.acceptedFloor??source.floor??0;
+  if(['进行中','完成','失败'].includes(state))next.startedFloor=previous?.startedFloor??source.floor??0;
+  if(state!=='完成'&&next.rank!==previous?.rank)next.rank=previous?.rank||'';
+  if(next.paidYen<next.agreedYen)next.settled=false;
+  return next;
+ }
  const journal=stat=>stat?.terminal?.questJournal||{schema:1,revision:0,tracked:'',receipts:{}};
  const actors=()=>typeof module==='object'&&module.exports?require('./ensemble-state.js'):root.CxxEnsembleState||root?.CxxEnsembleState;
  function actor(stat,actorId){
@@ -25,6 +56,7 @@
  const occupies=(q,r)=>active.includes(r.state)||(r.state==='完成'&&q?.releaseOn==='payment'&&!r.settled);
  function extendSchema(schema){const p=schema?.properties?.terminal?.properties;if(!p)return;for(const key of ['quests','questJournal']){p[key]={...(p[key]||{}),type:'object',extensible:true,recursiveExtensible:true,required:false};if(key==='quests')for(const r of Object.values(p[key].properties||{}))if(r?.type==='object'){r.extensible=true;r.recursiveExtensible=true;}}}
  function lock(stat,q,definitions=[]){
+  definitions=withDefinitions(stat,definitions);
   if(!q)return '这份旧记录的内容定义未加载；记录仍然保留。';
   if(definitions.some(item=>item.route==='author-20261018')){
    const M=typeof module==='object'&&module.exports?require('../剧情/line-model.js'):root.CxxPlot||root?.CxxPlot;
@@ -59,6 +91,7 @@
   return '不支持的委托操作。';
  }
  function plan(stat,request,{questDefinitions=[],questSource,questCalibration,actorBinding}={}){
+  questDefinitions=withDefinitions(stat,questDefinitions);
   if(!stat?.terminal)throw Error('当前剧情变量尚未就绪。');
   if(!idPattern.test(request.id||''))throw Error('委托操作编号无效。');
   const current=actor(stat);if(actorBinding){actors().assertBinding(stat,actorBinding);if(actorBinding.actorId!==current.actorId)throw Error('请从当前扮演人物处理委托。');}
@@ -101,16 +134,25 @@
   return next;
  }
  function prepare(before,patches,policy){
-  const proposed=patches.filter(p=>p.path.startsWith('/terminal/quests/'));
+  let proposed=patches.filter(p=>p.path.startsWith('/terminal/quests/'));
   const openings=policy.plot?.openings?.(before,policy.numericOptions?.source)||{};
   for(const [id,value]of Object.entries(openings))if(!own(before.terminal?.quests,id))value.ownerActorId=actor(before).actorId;
   if(!proposed.length&&!Object.keys(openings).length)return null;
-  patches=patches.map(p=>(walletPath(p.path)||/^\/terminal\/quests\/[^/]+\/(?:agreedYen|paidYen|refundedYen)$/.test(p.path))&&typeof p.value==='string'&&/^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$/.test(p.value.trim())?{...p,value:Number(p.value)}:p);
+  patches=patches.map(p=>walletPath(p.path)||/^\/terminal\/quests\/[^/]+\/(?:agreedYen|paidYen|refundedYen)$/.test(p.path)?{...p,value:numberInput(p.value)}:p);
   const key=policy.numericOptions?.factBatch,source=policy.numericOptions?.source;
   if(!key||!source)throw Error('委托更新缺少本轮正文来源。');
   const old=journal(before);if(old.schema!==1)throw Error('委托日志版本较新，请使用对应版本角色卡。');const seen=old.receipts?.[key];
   // Retrying this exact story branch cannot pay or advance it twice.
   if(seen)return {patches:patches.filter(p=>!p.path.startsWith('/terminal/quests/')&&!walletPath(p.path)),changes:[]};
+  const wholeRecords=new Set();
+  patches=patches.map(p=>{
+   const parts=p.path.split('/'),id=parts[3],previous=before.terminal?.quests?.[id];
+   if(parts.length!==4||parts[1]!=='terminal'||parts[2]!=='quests'||previous&&!fromRecord(id,previous)||policy.plot?.owns(id)||id===chapterId)return p;
+   if(!idPattern.test(id))throw Error('委托编号无效。');
+   const value=storyRecord(before,id,p.value,source,policy.questDefinition?.(id,previous||{}),previous);
+   wholeRecords.add(id);return {...p,op:previous?'replace':'add',value};
+  });
+  proposed=patches.filter(p=>p.path.startsWith('/terminal/quests/'));
   if(new Set(patches.map(p=>p.path)).size!==patches.length)throw Error('一批委托更新不能重复修改同一字段。');
   const plotRecords=new Set(Object.keys(openings)),plot=policy.plot;
   if(plot){
@@ -138,20 +180,21 @@
    for(const [field,value]of Object.entries({state:c.status==='complete'?'完成':c.status==='closed'?'已放弃':'进行中',objective:C.objective({chapter:c}),knownFacts:c.knownFacts}))if(!equal(r[field],value))patches.push({op:own(r,field)?'replace':'add',path:chapterPath+field,value});
   }else if(patches.some(p=>p.path.startsWith(chapterPath)&&['state','objective','knownFacts'].includes(p.path.slice(chapterPath.length))))throw Error('盗芯章节的阶段与进展通过chapter事件登记。');
   const next=copy(before),changes=[],ids=new Set();
-  const newQuestTable=plotRecords.size>0&&before.terminal?.quests===undefined;if(newQuestTable)next.terminal.quests={};
+  const newQuestTable=(plotRecords.size>0||wholeRecords.size>0)&&before.terminal?.quests===undefined;if(newQuestTable)next.terminal.quests={};
   for(const p of patches.filter(p=>p.path.startsWith('/terminal/quests/')||walletPath(p.path))){
    const parts=p.path.slice(1).split('/');let target=next;for(const k of parts.slice(0,-1))target=target?.[k];if(!target)throw Error('委托记录不存在，请先接单。');
    if(parts[1]==='quests'){
-    const id=parts[2],r=record(before,id),q=policy.questDefinition?.(id,r);ids.add(id);
-    if(!(parts.length===3&&plotRecords.has(id))&&(parts.length!==4||!idPattern.test(id)||!leaves.includes(parts[3])||!q||r.state==='已发布'))throw Error('只更新已接取、已登记委托的公开进展。');
+    const id=parts[2],r=record(before,id),q=fromRecord(id,r)||policy.questDefinition?.(id,r)||fromRecord(id,p.value);ids.add(id);
+    if(!(parts.length===3&&(plotRecords.has(id)||wholeRecords.has(id)))&&(parts.length!==4||!idPattern.test(id)||!leaves.includes(parts[3])||!q||r.state==='已发布'&&!fromRecord(id,r)))throw Error('只更新已接取、已登记委托的公开进展。');
     if(parts[3]==='chapter'&&(id!==chapterId||!eventPatch))throw Error('该委托没有章节事件定义。');
-    if(parts[3]==='state'&&p.value!==r.state){const allowed=r.state==='已接取'?['进行中','完成','失败','已放弃','已过期']:['进行中','暂离','搁置'].includes(r.state)?['进行中','暂离','完成','失败','已放弃','已过期']:[];if(!allowed.includes(p.value))throw Error('不能由正文接单、重新发布或重开已结束的委托。');}
+    if(parts[3]==='state'&&p.value!==r.state&&!fromRecord(id,r)){const allowed=r.state==='已接取'?['进行中','完成','失败','已放弃','已过期']:['进行中','暂离','搁置'].includes(r.state)?['进行中','暂离','完成','失败','已放弃','已过期']:[];if(!allowed.includes(p.value))throw Error('不能由正文接单、重新发布或重开已结束的委托。');}
     if(['paidYen','refundedYen'].includes(parts[3])&&(r[parts[3]]===undefined||p.value<r[parts[3]]))throw Error('旧账未核实或累计款项倒退；请核对原存档，不能补发历史收入。');
    }
    const leaf=parts.at(-1);changes.push({parts,missing:!own(target,leaf),before:own(target,leaf)?copy(target[leaf]):null,after:copy(p.value)});target[leaf]=copy(p.value);
   }
   const generated=[];
-  for(const id of ids){const a=record(before,id),b=record(next,id);if(!plotRecords.has(id)&&a.startedFloor===undefined&&(['进行中','完成','失败'].includes(b.state)&&b.state!==a.state||id===chapterId&&eventPatch)){const parts=['terminal','quests',id,'startedFloor'];b.startedFloor=source.floor;generated.push({op:'add',path:'/'+parts.join('/'),value:source.floor});changes.push({parts,missing:true,before:null,after:source.floor});}}
+  function metadata(id,field,value){const a=record(before,id),b=record(next,id);if(equal(a[field],value))return;const parts=['terminal','quests',id,field],missing=!own(a,field);b[field]=value;generated.push({op:missing?'add':'replace',path:'/'+parts.join('/'),value});changes.push({parts,missing,before:missing?null:copy(a[field]),after:value});}
+  for(const id of ids){const a=record(before,id),b=record(next,id);if(!wholeRecords.has(id)&&fromRecord(id,b)&&a.state==='已发布'&&b.state!=='已发布'){metadata(id,'ownerActorId',actor(before).actorId);metadata(id,'acceptedFloor',source.floor||0);}if(!plotRecords.has(id)&&!wholeRecords.has(id)&&a.startedFloor===undefined&&(['进行中','完成','失败'].includes(b.state)&&b.state!==a.state||id===chapterId&&eventPatch))metadata(id,'startedFloor',source.floor);}
   const payments=new Map();
   for(const id of ids){const a=record(before,id),b=record(next,id),recipient=owner(next,id),sum=payments.get(recipient.actorId)||{income:0,refund:0};sum.income+=(b.paidYen||0)-(a.paidYen||0);sum.refund+=(b.refundedYen||0)-(a.refundedYen||0);payments.set(recipient.actorId,sum);if(b.rank&&b.state!=='完成'&&b.rank!==a.rank)throw Error('完成之前不能写入完成评级。');if(b.settled===true&&a.settled!==true&&(!Number.isSafeInteger(b.paidYen)||!Number.isSafeInteger(b.agreedYen)||b.paidYen<b.agreedYen))throw Error('实际收款尚未达到当前约定，不能标记结清。');}
   for(const [actorId,{income,refund}]of payments){const a=actor(before,actorId).wallet||{},b=actor(next,actorId).wallet||{};
@@ -160,8 +203,12 @@
   if(newQuestTable){patches=patches.filter(p=>!p.path.startsWith('/terminal/quests/'));const value=copy(next.terminal.quests);patches.push({op:'add',path:'/terminal/quests',value});for(let i=changes.length-1;i>=0;i--)if(changes[i].parts[1]==='quests')changes.splice(i,1);changes.push({parts:['terminal','quests'],missing:true,before:null,after:value});}
   const value={...copy(old),schema:1,revision:(old.revision||0)+1,receipts:{...old.receipts,[key]:{kind:'narrative',actorId:actor(before).actorId,source:copy(source),revision:(old.revision||0)+1,questIds:[...ids],changes}}};
   const meta={op:before.terminal.questJournal?'replace':'add',path:'/terminal/questJournal',value};
-  return {patches:[...patches,...generated,meta],changes:[...patches.filter(p=>newQuestTable&&p.path==='/terminal/quests'||plotRecords.has(p.path.split('/')[3])&&p.path.split('/').length===4).map(p=>({path:p.path.slice(1).split('/'),after:p.value})),...generated.map(p=>({path:p.path.slice(1).split('/'),after:p.value})),{path:['terminal','questJournal'],after:value}]};
+  const recordChanges=patches.filter(p=>{
+   const parts=p.path.slice(1).split('/');
+   return newQuestTable&&p.path==='/terminal/quests'||parts.length===3&&(plotRecords.has(parts[2])||wholeRecords.has(parts[2]));
+  }).map(p=>({path:p.path.slice(1).split('/'),after:p.value}));
+  return {patches:[...patches,...generated,meta],changes:[...recordChanges,...generated.map(p=>({path:p.path.slice(1).split('/'),after:p.value})),{path:['terminal','questJournal'],after:value}]};
  }
  function correction(stat){const j=journal(stat);return Object.entries(j.receipts||{}).find(([,v])=>v.kind==='narrative'&&!v.reverted&&v.revision===j.revision)||null;}
- return {states,active,closed,leaves,record,journal,actor,owner,occupies,lock,available,plan,prepare,correction,extendSchema};
+ return {states,active,closed,leaves,record,fromRecord,definitions:withDefinitions,journal,actor,owner,occupies,lock,available,plan,prepare,correction,extendSchema};
 });

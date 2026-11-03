@@ -1,0 +1,28 @@
+'use strict';
+const assert=require('node:assert/strict'),path=require('node:path');
+module.exports=async function({page,select,diskRows,report,out}){
+ const id='q_native_rain_medicine';
+ async function turn(patches,text){
+  return page.evaluate(async({patches,text})=>{
+   const c=SillyTavern.getContext(),before=Cxx236State.stat(),raw='<cxx-story>'+text+'</cxx-story><UpdateVariable><JSONPatch>'+JSON.stringify(patches)+'</JSONPatch></UpdateVariable>';
+   await TavernHelper.createChatMessages([{role:'user',message:'动态委托验收',data:{stat_data:structuredClone(before)},extra:{}},{role:'assistant',message:raw,data:{stat_data:structuredClone(before)},extra:{}}],{refresh:'affected'});
+   const floor=c.chat.length-1,r=await Cxx236VariableGuard.settle(floor);return {floor,ok:r.ok,status:r.status,reason:r.reason,ignored:r.transaction?.ignored};
+  },{patches,text});
+ }
+ const stat=()=>page.evaluate(()=>structuredClone(Cxx236State.stat()));
+ const open=()=>page.evaluate(()=>{document.querySelector('.cxx-announcement button')?.click();__cxx_launcher__?.close();return Cxx233Terminal.openPage('operations');});
+ const shot=name=>page.screenshot({path:path.join(out,'quest-'+name+'.png')});
+ const patch=(path,value,op='replace')=>({op,path,value});
+ const offered=await turn([patch('/terminal/quests/'+id,{title:'雨夜送药',objective:'将冷藏药箱送到南街诊所',agreedYen:'300',future:{keep:7}},'add')],'医生提出雨夜送药的委托，送达后支付300日元。');assert(offered.ok,offered.reason);
+ report.storyQuestOffer=offered;let state=await stat();assert.equal(state.terminal.quests[id]?.state,'已发布',JSON.stringify(offered));assert.equal(state.terminal.quests[id].definition.title,'雨夜送药');assert.deepEqual((await diskRows())[offered.floor+1].variables[0].stat_data,state);report.checks.push('native story offer creates and saves its own definition with default published state');
+ await open();const ui=page.frameLocator('#cxx-shared-terminal-233');await ui.locator('[data-quest-id="'+id+'"]').click();await ui.getByRole('heading',{name:'雨夜送药',exact:true}).waitFor();await shot('01-offer');
+ await ui.getByRole('button',{name:'接取委托',exact:true}).click();await ui.locator('.journal-confirm').getByRole('button',{name:'确认接取',exact:true}).click();await page.waitForFunction(id=>Cxx236State.stat().terminal.quests[id].state==='已接取',id,{polling:250});await ui.locator('.cxx-journal[data-busy="false"]').waitFor();
+ await ui.getByRole('button',{name:'开始执行',exact:true}).click();await page.waitForFunction(id=>Cxx236State.stat().terminal.quests[id].state==='进行中',id,{polling:250});await ui.locator('.cxx-journal[data-busy="false"]').waitFor();await ui.getByRole('button',{name:'追踪',exact:true}).click();await page.waitForFunction(id=>Cxx236State.stat().terminal.questJournal.tracked===id,id,{polling:250});await ui.locator('.cxx-journal[data-busy="false"]').waitFor();await shot('02-tracked');state=await stat();assert.deepEqual((await diskRows())[offered.floor+1].variables[0].stat_data,state);report.checks.push('native real journal accepts, starts and tracks the dynamic task with disk confirmation');
+ await select(page);state=await stat();assert.equal(state.terminal.quests[id].state,'进行中');assert.equal(state.terminal.questJournal.tracked,id);await open();await ui.locator('[data-quest-id="'+id+'"]').click();await shot('03-reloaded');
+ const wallet=state.terminal.wallet,complete=await turn([patch('/terminal/quests/'+id,{state:'完成',objective:'药箱已交付',knownFacts:'医生确认药品无损',paidYen:300,settled:true}),patch('/terminal/wallet/yen',wallet.yen+300),patch('/terminal/wallet/earned',wallet.earned+300)],'你已交付药箱，医生支付了300日元。');assert(complete.ok,complete.reason);
+ state=await stat();assert.equal(state.terminal.quests[id].state,'完成');assert.equal(state.terminal.quests[id].paidYen,300);assert.equal(state.terminal.quests[id].future.keep,7);assert.equal(state.terminal.wallet.yen,wallet.yen+300);assert.deepEqual((await diskRows())[complete.floor+1].variables[0].stat_data,state);assert.equal((await page.evaluate(floor=>Cxx236VariableGuard.settle(floor),complete.floor)).status,'duplicate');
+ await select(page);state=await stat();assert.equal(state.terminal.quests[id].settled,true);assert.equal(state.terminal.wallet.yen,wallet.yen+300);await open();await ui.locator('[data-quest-id="'+id+'"]').click();await ui.getByText('报酬已结清。',{exact:true}).waitFor();await shot('04-completed');await page.setViewportSize({width:390,height:844});await shot('05-mobile');
+ report.checks.push('native completion and matching payment save once, retain unknown fields and reload in the actual journal');
+ const next=await turn([patch('/terminal/quests/'+id+'/knownFacts','医生再次道谢')],'下一回合，医生再次道谢。');assert(next.ok,next.reason);state=await stat();assert.equal(state.terminal.quests[id].knownFacts,'医生再次道谢');assert.equal(state.terminal.wallet.yen,wallet.yen+300);assert.deepEqual((await diskRows())[next.floor+1].variables[0].stat_data,state);report.checks.push('a following native turn keeps the completed task and pays no duplicate reward');
+ report.storyQuests={offered,complete,next,final:{state:state.terminal.quests[id].state,paidYen:300,yen:state.terminal.wallet.yen,tracked:id}};
+};
