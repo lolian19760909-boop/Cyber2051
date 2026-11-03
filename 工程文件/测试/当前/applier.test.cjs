@@ -298,3 +298,25 @@ test('本地坏JSON楼层保存完整父状态，刷新保持未结算并可继�
  }finally{service.destroy();}
 });
 
+test('策略读取失败保留正文与父状态，恢复后同楼完整结算一次', async()=>{
+ const Variables=require(path.join(root,'卡片源码/MVU/variables.js')),Policy=require(path.join(root,'卡片源码/MVU/variable-policy.js'));
+ const before=TERMINAL(),raw=block([{op:'replace',path:'/terminal/wallet/yen',value:125},{op:'replace',path:'/terminal/gameplay/location',value:{mapId:'m1',placeId:'p2'}}]);
+ const chat=[{is_user:false,swipe_id:0,mes:raw,variables:[{stat_data:before}]}],seen={writes:0,saved:0},context={chat,eventTypes:{},saveChat:async()=>{seen.saved++;}};
+ let seed=null;
+ const api={SillyTavern:{getContext:()=>context},getVariables:()=>({}),eventOn(){},eventRemoveListener(){}},win={Cxx233Updater:{readSeed:()=>seed},CxxDiagnostics:{report(){}},CxxDataWrite:{state:()=>null,apply:async()=>{seen.writes++;return {ok:true,state:'applied'};}},CxxDataSync:{push:async()=>({ok:true})}};
+ const service=Variables.create({api,win,runtime:{key:()=> 'policy-read',scheduleMessages(){}},schema,policy:Policy.create({api,win,content:{}})});
+ try{
+  const failed=await service.settle(0);
+  assert.equal(failed.ok,false,JSON.stringify({status:failed.status,ignored:failed.transaction?.ignored,location:chat[0].variables[0].stat_data.terminal.gameplay.location,...seen}));assert.equal(failed.status,'failed');assert.match(failed.reason,/变量定义尚未就绪/);
+  assert.equal(chat[0].mes,raw);assert.deepEqual(chat[0].variables[0].stat_data,before);assert.equal(seen.writes,0);assert.equal(seen.saved,0);
+  assert.equal((await service.settle(0)).status,'failed');assert.equal(seen.writes,0);assert.equal(seen.saved,0);
+  seed={mapIndex:POLICY.mapIndex,initialContent:{quests:[]}};
+  const recovered=await service.settle(0);assert.equal(recovered.ok,true,recovered.reason);
+  assert.equal(chat[0].variables[0].stat_data.terminal.wallet.yen,125);assert.deepEqual(chat[0].variables[0].stat_data.terminal.gameplay.location,{mapId:'m1',placeId:'p2'});
+  assert.equal(seen.writes,1);assert.equal(seen.saved,1);assert.equal((await service.settle(0)).status,'duplicate');assert.equal(seen.writes,1);
+  seed={...seed,mapIndex:{m1:['p1','p2','p3']}};
+  chat.push({is_user:false,swipe_id:0,mes:block([{op:'replace',path:'/terminal/gameplay/location',value:{mapId:'m1',placeId:'p3'}}])});
+  assert.equal((await service.settle(1)).ok,true);assert.deepEqual(chat[1].variables[0].stat_data.terminal.gameplay.location,{mapId:'m1',placeId:'p3'});
+ }finally{service.destroy();}
+});
+
