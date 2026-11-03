@@ -5,6 +5,11 @@
  const structuredClone=(typeof module==='object'&&module.exports?require('../共享/data-clone.js'):globalThis.CxxDataClone).clone;
  const copy=value=>structuredClone(value);
  const record=(stat,id)=>stat?.terminal?.quests?.[id]||{state:'已发布'};
+ function definitionsOf(stat,definitions){
+  const all=new Map(definitions.map(q=>[q.id,q]));
+  for(const [id,r]of Object.entries(stat?.terminal?.quests||{}))if(r.definition?.source==='story')all.set(id,{...r.definition,id});
+  return [...all.values()];
+ }
  function project(stat={},definitions=[],source={}){
   const all=definitions.map(q=>record(stat,q.id).definition?.source==='story'?{...record(stat,q.id).definition,id:q.id}:q),hasChapter=all.some(q=>q.id==='q_chip_night');
   const rows=all.filter(q=>(!q.hidden||record(stat,q.id).discovered)&&!(hasChapter&&q.id==='q_heist'&&record(stat,q.id).state==='已发布')).map(copy);
@@ -23,5 +28,13 @@
   if(!projection.tracked)return projection.trackedId?'追踪记录暂不可见':empty;
   return String(projection.tracked[field]??'未提供');
  }
- return {project,display};
+ function map(stat,definitions=[]){
+  const all=definitionsOf(stat,definitions),hasChapter=all.some(q=>q.id==='q_chip_night'),completed=all.filter(q=>q.id!=='q_heist'&&record(stat,q.id).state==='完成').length;
+  return all.map(q=>{
+   const state=stat?.terminal?record(stat,q.id).state||'已发布':'未就绪';
+   const locked=q.id==='q_heist'&&(state==='已发布'&&hasChapter||completed<2)||(q.prerequisites||[]).some(id=>record(stat,id).state!=='完成');
+   return {...copy(q),state,locked,visible:state!=='已发布'||!locked};
+  });
+ }
+ return {project,display,map};
 });

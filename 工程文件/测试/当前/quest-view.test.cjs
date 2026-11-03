@@ -19,3 +19,21 @@ test('switching tracking and unavailable references do not invent or settle task
  assert.equal(View.project(stat,defs).tracked.state,'完成');stat.terminal.questJournal.tracked='not-visible';assert.equal(View.display(View.project(stat,defs),'title'),'追踪记录暂不可见');
  assert.equal(stat.terminal.wallet.yen,0);assert.equal(stat.terminal.quests.q01.settled,false);assert.throws(()=>View.display(View.project(stat,defs),'pay'));
 });
+
+test('map task projection preserves prerequisite discovery and keeps an already accepted task visible',()=>{
+ const definitions=[{id:'q_first',title:'第一单'},{id:'q_next',title:'后续委托',prerequisites:['q_first'],placeId:'clinic'}],stat={terminal:{quests:{}}},before=structuredClone(stat);
+ let rows=View.map(stat,definitions);assert.equal(rows[1].locked,true);assert.equal(rows[1].visible,false);assert.equal(rows[1].state,'已发布');assert.deepEqual(stat,before);
+ stat.terminal.quests.q_first={state:'完成'};rows=View.map(stat,definitions);assert.equal(rows[1].visible,true);assert.equal(rows[1].locked,false);
+ stat.terminal.quests.q_first.state='已放弃';stat.terminal.quests.q_next={state:'进行中'};assert.equal(View.map(stat,definitions)[1].visible,true);
+});
+
+test('map task projection retains the old heist discovery rules and missing-state presentation',()=>{
+ const heist={id:'q_heist',title:'旧盗芯'},definitions=[heist,{id:'a',title:'A'},{id:'b',title:'B'}],stat={terminal:{quests:{a:{state:'完成'},b:{state:'完成'}}}};
+ assert.equal(View.map(stat,definitions)[0].visible,true);assert.equal(View.map(stat,[...definitions,{id:'q_chip_night',title:'盗芯章节'}])[0].visible,false);
+ stat.terminal.quests.q_heist={state:'已接取'};assert.equal(View.map(stat,[...definitions,{id:'q_chip_night'}])[0].visible,true);assert.equal(View.map(null,definitions)[0].state,'未就绪');
+});
+
+test('map task projection consumes saved story definitions and returns detached display data',()=>{
+ const stat={terminal:{quests:{q_delivery:{state:'已接取',definition:{source:'story',title:'夜间送货',mapId:'tokyo-central',placeId:'clinic',future:{keep:7}}}}}},before=structuredClone(stat),rows=View.map(stat,[]);
+ assert.equal(rows[0].id,'q_delivery');assert.equal(rows[0].title,'夜间送货');assert.equal(rows[0].visible,true);assert.equal(rows[0].placeId,'clinic');rows[0].future.keep=9;assert.deepEqual(stat,before);
+});

@@ -76,6 +76,8 @@
 }
 
 .journal-detail-bar .journal-back {
+  flex-shrink: 0;
+  white-space: nowrap;
   min-height: 44px;
   padding: 0;
   border: 0;

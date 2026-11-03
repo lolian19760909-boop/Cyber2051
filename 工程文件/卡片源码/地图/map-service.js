@@ -2,6 +2,7 @@
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports={create:factory};else root.CxxAtlasToolFactory={create:factory};})(globalThis,function(options){
  'use strict';
  const {window:win,api,runtime,maps,content,base,styles}=options;
+ const QuestView=typeof module==='object'&&module.exports?require('../运行时/quest-view.js'):globalThis.CxxQuestView;
  const doc=win.document,off=[];let scope='',dialog=null,shell=null,active=null,subscription=null,style=null,stopped=false,pendingFocus=null,viewState={},stamp='',lastData=null,terminalReturn=null;
  const stats={created:0,opened:0,detailUpdates:0,scopeReleases:0};let records=null,motion=null;
  const city=()=>win.CxxCity;
@@ -15,9 +16,8 @@
  function preferences(){if(!dialog)return;const p=settings();dialog.dataset.motion=p.motion;const inner=dialog.querySelector('#cxx-independent-atlas')?.contentDocument;if(inner){inner.documentElement.dataset.motion=p.motion;inner.documentElement.style.setProperty('--read-size',p.font+'px');if(!inner.getElementById('cxx-atlas-reading')){const style=inner.createElement('style');style.id='cxx-atlas-reading';style.textContent=styles.reading;inner.head.append(style);}}}
  function data(){const sd=readStat(),installed=content?.readHost?.(),signature=JSON.stringify([sd.terminal?.quests,installed?.contentRevision,installed?.subscriptions,content?.chatPins?.()]);if(signature===stamp&&lastData)return lastData;stamp=signature;
   const current=installed?content.view(base,installed.registry,sd.terminal?.quests||{},{subscriptions:installed.subscriptions,pins:content.chatPins(),mediaPreferences:installed.mediaPreferences,initialContent:installed.initialContent,initialAvatars:installed.initialAvatars}):base;
-  const state=id=>sd.terminal?.quests?.[id]?.state||'已发布',completed=(current.quests||[]).filter(q=>q.id!=='q_heist'&&state(q.id)==='完成').length;
   const all=[...new Map([...(current.quests||[]),...(win.CxxPlot?.definitions||[]).filter(q=>q.placeId)].map(q=>[q.id,q])).values()];
-  return lastData={quests:all.filter(q=>state(q.id)!=='已发布'||((q.id!=='q_heist'||completed>=2)&&!(q.prerequisites||[]).some(id=>state(id)!=='完成'))).map(q=>({...q,status:state(q.id)})),notes:current.workshopNotes||[]};
+  return lastData={quests:QuestView.map(sd,all).filter(q=>q.visible).map(q=>({...q,status:q.state})),notes:current.workshopNotes||[]};
  }
  function place(mapId,id){return mapId==='tokyo-central'&&city()?.place(readStat(),id)||base.locationMaps.find(m=>m.id===mapId)?.places.find(p=>p.id===id);}
  function visible(id){return !city()||city().known(readStat(),id);}
