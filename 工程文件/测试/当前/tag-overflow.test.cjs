@@ -29,8 +29,8 @@ test('field errors remain schema errors; malformed and nested syntax stays inert
  const repeated=f.valid+'\n'+f.valid;assert.equal(invalid(repeated),false);assert.equal(parser.variableUpdates(repeated).patches.length,f.fixed.length*2);
 });
 
-test('complete invalid update is closed, wrapped, escaped and retained in full',()=>{
-  const raw=f.reported.replace('numeric/input','__proto__/input').replace('玩家购买零件','<img src=x onerror=alert(1)>玩家购买零件'),x=rendering();
+test('complete syntactically invalid update is closed, wrapped, escaped and retained in full',()=>{
+  const raw=f.reported.replace(/"op"\s*:/,'"op":broken,').replace('玩家购买零件','<img src=x onerror=alert(1)>玩家购买零件'),x=rendering();
   const html=x.render(story(raw)),doc=document(html),d=doc.querySelector('details'),body=d.querySelector('.cxx-native-aux-body');
   assert.equal(d.open,false);assert.equal(body.hidden,true);assert.equal(body.getAttribute('style'),'display:none!important');
   assert.equal(d.querySelector('pre').textContent,raw);assert.equal(doc.querySelector('img'),null);assert.equal(doc.querySelectorAll('details').length,1);

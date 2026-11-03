@@ -20,7 +20,8 @@ test('numbers: explicit numeric strings convert; unreadable values retain their 
 test('paths: unavailable fields preserve old state; readable signed wallet balances save',async()=>{
  const h=setup();for(const p of [[replace('/新人/好感度',1)],[replace('/terminal',{})],[replace('/unknown/record','changed')],[{op:'delta',path:'/高松灯/好感度',value:1}]])assert.deepEqual((await h.run(patch(p))).stat_data,h.data.stat_data);
  assert.equal((await h.run(patch([replace('/terminal/wallet/yen',-1)]))).stat_data.terminal.wallet.yen,-1);
- assert.deepEqual(await h.run('<JSONPatch>[{"op":"replace" broken]</JSONPatch>'),h.data);assert.deepEqual(await h.run('_.set("高松灯.好感度", 1000);'),h.data);
+ assert.deepEqual(await h.run('<JSONPatch>[{"op":"replace" broken]</JSONPatch>'),h.data);
+ const inert=await h.run('_.set("高松灯.好感度", 1000);');for(const key of ['stat_data','initialized_lorebooks','other','schema'])assert.deepEqual(inert[key],h.data[key]);
 });
 
 

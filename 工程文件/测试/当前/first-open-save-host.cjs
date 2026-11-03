@@ -52,6 +52,7 @@ if(data.result){const rows=data.result.split(/\r?\n/).filter(Boolean).map(JSON.p
  if(process.env.CXX_STORY_QUEST_CHECK==='1'){report.mode='story-quests';await require('./story-quests-host-cases.cjs')({page:p,select,diskRows,report,out});report.pass=true;return;}
  if(process.env.CXX_STORY_ITEM_CHECK==='1'){report.mode='story-items';await require('./story-items-host-cases.cjs')({page:p,select,diskRows,report,out});report.pass=true;return;}
  if(process.env.CXX_NATIVE_TURN_CHECK==='1'){report.mode='native-continuation';await require('./native-continuation-host-cases.cjs')({page:p,select,diskRows,report,out});report.pass=true;return;}
+ if(process.env.CXX_PATCH_RECEPTION_CHECK==='1'){report.mode='model-patch-reception';await require('./model-patch-host-cases.cjs')({page:p,select,diskRows,report,out});report.pass=true;return;}
  const b=await p.context().newPage();await blockModelRequests(b);await select(b);
  await saveMarker(p,'newer-window');const stale=await saveMarker(b,'stale-window').then(()=>null,e=>e.message);assert.match(stale,/另一个窗口更新|已保存的故事.*发生了变化/);assert.equal(await diskMarker(),'newer-window');await b.close();report.checks.push('second stale tab rejected without replacing the latest saved story');
  report.pass=true;

@@ -106,12 +106,13 @@ test('applier：不可读字段保留原值并提供具体提示', async () => {
   assert.equal(typed.root.terminal.wallet.yen, before.terminal.wallet.yen);
 
   const polluted = await applier.apply(block([{ op: 'add', path: '/terminal/__proto__/x', value: 1 }]), { before, receipt: 'r-3', turn: 2 });
-  assert.equal(polluted.status, 'rejected');
-  assert.match(polluted.reason, /不是可更新的状态|路径格式不正确/);
+  assert.equal(polluted.status, 'applied');
+  assert.match(polluted.transaction.ignored[0].reason, /不是可更新的状态|路径格式不正确/);
+  assert.deepEqual(polluted.root, before);
   assert.equal({}.x, undefined);
 
-  assert.equal(calls.write.length, 2);
-  assert.equal(calls.sync.length, 2);
+  assert.equal(calls.write.length, 3);
+  assert.equal(calls.sync.length, 3);
   assert.deepEqual(before, TERMINAL(), '单项处理保留原始入参');
   applier.destroy();
 });
@@ -282,5 +283,18 @@ test('本地结算：MVU 缺席时 variables.js 自己抽块、校验、执行�
 
   service.destroy();
   assert.equal((await service.settle(0)).status, 'ended');
+});
+
+test('本地坏JSON楼层保存完整父状态，刷新保持未结算并可继续', async()=>{
+ const Variables=require(path.join(root,'卡片源码/MVU/variables.js')),chat=[{is_user:false,swipe_id:0,cxx_plot_id:'before',mes:block([{op:'replace',path:'/terminal/wallet/yen',value:100},{op:'replace',path:'/terminal/wallet/earned',value:100}])}],seen={saved:0,writes:0,disk:null};
+ const context={chat,eventTypes:{},saveChat:async()=>{seen.saved++;seen.disk=JSON.parse(JSON.stringify(chat));}},api={SillyTavern:{getContext:()=>context},eventOn(){},eventRemoveListener(){}},win={CxxDiagnostics:{report(){}},CxxDataWrite:{state:()=>null,apply:async()=>{seen.writes++;return {ok:true,state:'applied'};}},CxxDataSync:{push:async()=>({ok:true})}},runtime={key:()=> 'rejected-floor',scheduleMessages(){}};
+ const create=()=>Variables.create({api,win,runtime,schema,policy:()=>POLICY});let service=create();
+ try{
+  assert.equal((await service.settle(0)).ok,true);const before=JSON.parse(JSON.stringify(chat[0].variables[0].stat_data));
+  chat.push({is_user:false,swipe_id:0,cxx_plot_id:'bad',mes:'<cxx-story>正文仍需保存。</cxx-story><UpdateVariable>[{"op":</UpdateVariable>',variables:[{stat_data:before}]});
+  const failed=await service.settle(1);assert.equal(failed.status,'rejected');assert.equal(failed.persisted,true);assert.equal(seen.disk[1].variables_initialized[0],true);assert.deepEqual(seen.disk[1].variables[0].stat_data,before);assert.equal(seen.disk[1].variables[0].__cxx_native_commit.status,'rejected');assert.equal(service.state({floor:1}).receipt.phase,'rejected');
+  service.destroy();service=create();const saves=seen.saved,replay=await service.settle(1);assert.equal(replay.ok,false);assert.equal(replay.status,'rejected');assert.equal(seen.saved,saves);assert.equal(service.state({floor:1}).receipt.phase,'rejected');assert.equal(service.captureNativeState({floor:1}).root.terminal.wallet.yen,100);
+  chat.push({is_user:false,swipe_id:0,cxx_plot_id:'after',mes:block([{op:'replace',path:'/terminal/wallet/yen',value:129}])});assert.equal((await service.settle(2)).ok,true);assert.equal(seen.disk[2].variables[0].stat_data.terminal.wallet.yen,129);assert.equal(seen.writes,2);
+ }finally{service.destroy();}
 });
 

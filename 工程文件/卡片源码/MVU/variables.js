@@ -62,7 +62,7 @@
     const cached=completedNative.get(floor);if(cached?.receipt===value.receipt)cached.savePending=true;
     const save=async()=>{
       if(!current())throw Error('聊天或正文分支已变化，旧楼层快照未写入。');
-      const vars=copy(container||floorValue(row)||{});delete vars.__cxx_web_commit;vars.stat_data=copy(value.root);vars.__cxx_native_commit={schema:1,scope:expectedScope,floor,swipe,fingerprint:value.fingerprint,receipt:value.receipt,stateFingerprint:stateKey(value.root),beforeFingerprint:value.beforeFingerprint,patches:copy(value.patches||[])};
+      const vars=copy(container||floorValue(row)||{});delete vars.__cxx_web_commit;vars.stat_data=copy(value.root);vars.__cxx_native_commit={schema:1,scope:expectedScope,floor,swipe,fingerprint:value.fingerprint,receipt:value.receipt,stateFingerprint:stateKey(value.root),beforeFingerprint:value.beforeFingerprint,patches:copy(value.patches||[]),...(value.status==='rejected'?{status:'rejected',reason:value.reason}:{})};
       if(value.actorBinding)vars.__cxx_native_commit.actorBinding=copy(value.actorBinding);
       if(container){delete container.__cxx_web_commit;container.stat_data=copy(vars.stat_data);container.__cxx_native_commit=copy(vars.__cxx_native_commit);}
       row.variables||=[];if(Array.isArray(row.variables))row.variables[swipe]=vars;else row.variables=vars;row.variables_initialized||=[];row.variables_initialized[swipe]=true;
@@ -85,7 +85,7 @@
   function receiptAt(floor=context().chat.length-1){
     const cached=receipts.get(floor);if(matches(cached,floor))return cached;
     const row=context().chat[floor],raw=rawAt(floor),saved=nativeCommit(floor,row,raw,false);if(!saved)return null;
-    const restored={...copy(saved),row,messageId:rowId(row),raw:normal(raw),hostRaw:normal(row?.mes),hostFingerprint:textKey(row?.mes),phase:'saved',message:'变量已保存并核对。',persisted:true,revision:++receiptSequence};
+    const restored={...copy(saved),row,messageId:rowId(row),raw:normal(raw),hostRaw:normal(row?.mes),hostFingerprint:textKey(row?.mes),phase:saved.status==='rejected'?'rejected':'saved',message:saved.status==='rejected'?saved.reason:'变量已保存并核对。',persisted:true,revision:++receiptSequence};
     receipts.set(floor,restored);while(receipts.size>16)receipts.delete(receipts.keys().next().value);runtime.scheduleMessages?.(floor,false,'mvu-receipt');return restored;
   }
   function verifySaved(r,attempt=0){
@@ -122,17 +122,6 @@
     });
     runtime.scheduleMessages?.(floor,false,'mvu-receipt');return true;
   }
-  function inputIssues(patches){
-    const issues=[];for(const patch of patches){if(!/(?:numericInput|rosterInput)$/.test(patch.path)||!Array.isArray(patch.value))continue;
-      patch.value.forEach((event,index)=>{if(event?.kind!=='achievement')return;const label=patch.path+'['+index+']'+(event.id?' ('+event.id+')':'');
-        if(!event.source||typeof event.source!=='object'||Array.isArray(event.source))issues.push(label+'.source 需要 {kind,id} 对象，不能只写来源字符串。');
-        else {if(!['story','training','activity','quest'].includes(event.source.kind))issues.push(label+'.source.kind 只接受 story、training、activity、quest。');if(typeof event.source.id!=='string'||!event.source.id.trim())issues.push(label+'.source.id 需要稳定的成果编号。');}
-        if(!['small','stage','gig','major'].includes(event.category))issues.push(label+'.category 只接受 small、stage、gig、major；请按实际成果选择，不自动替换含义。');
-        if(event.completed!==true)issues.push(label+'.completed 必须为 true，未完成的计划不结算。');
-        if(typeof event.reason!=='string'||!event.reason.trim())issues.push(label+'.reason 需要本轮已完成成果的正文依据。');
-      });
-    }return issues;
-  }
   function report(message){lastError=message;win.CxxDiagnostics?.report({module:"MVU",stage:"变量结算",message});if(notices.has(message))return;notices.add(message);win.toastr?.warning(message,'变量更新未保存');}
   function restore(target,before){for(const key of Object.keys(target))delete target[key];Object.assign(target,copy(before));}
   function inspect(){if(!schema)return;const c=context();let data;for(let i=c.chat.length-1;i>=0;i--){data=c.chat[i].variables?.[c.chat[i].swipe_id||0]?.stat_data;if(data)break;}legacyIssues=data?schema.audit(data):[];if(legacyIssues.length){const text=legacyIssues.slice(0,2).map(x=>x.path).join('、');if(!notices.has('legacy')){notices.add('legacy');win.toastr?.info('旧存档有需检查的值：'+text+'。其他合法字段仍可更新。','变量检查');}}}
@@ -164,10 +153,9 @@
     const floor=context().chat.length-1,row=context().chat[floor],raw=rawAt(floor);
     tx.receipt={scope:runtime.key(),floor,swipe:row?.swipe_id||0,messageId:rowId(row),row,raw:normal(raw),fingerprint:textKey(raw),hostRaw:normal(row?.mes),hostFingerprint:textKey(row?.mes),phase:'parsed',revision:0};record(tx,'parsed','正在解析变量更新。');
     if(!Parser?.variableUpdates)throw Error('变量解析器尚未就绪。');
-    if(/_\.(?:set|add|insert|assign|remove|unset|delete)\s*\(/.test(source))throw Error('变量命令须使用 JSONPatch 数组；本卡不执行脚本式变量命令。');
     const decoded=Parser.variableUpdates(source);if(decoded.issues.length)throw Error(decoded.issues.join('；'));
     if(!decoded.found){commands.length=0;tx.skipped=true;record(tx,'missing','本轮未提供可执行的变量更新。');return;}
-    const patches=decoded.patches,issues=inputIssues(patches);if(issues.length)throw Error(issues.slice(0,8).join('；'));
+    const patches=decoded.patches;
     const options=narrativePolicy(floor,row,raw);
     if(tx.receipt&&options.numericOptions?.source)tx.receipt.messageId=options.numericOptions.source.messageId;
     tx.transaction=schema.prepare(patches,tx.before.stat_data,options);win.CxxDiagnostics?.report({module:"MVU",stage:"指令解析",level:"info",message:"接收 "+patches.length+" 项变量更新",detail:JSON.stringify(patches)});
@@ -268,7 +256,8 @@
     }
     // Program actions may legitimately change this floor's state after its story settled. Its own
     // source receipt still prevents replaying the story; an inherited receipt never matches this row.
-    if(nativeCommit(floor,row,raw,false)&&!completedNative.get(floor)?.savePending)return {ok:true,status:'duplicate',persisted:true,reason:'原生回合已结算。'};
+    const prior=nativeCommit(floor,row,raw,false);
+    if(prior&&!completedNative.get(floor)?.savePending)return prior.status==='rejected'?{ok:false,status:'rejected',persisted:true,reason:prior.reason}:{ok:true,status:'duplicate',persisted:true,reason:'原生回合已结算。'};
     let state=localState(),complete=stateComplete;
     if(!state&&openingFloor(floor)){const empty=Applier()?.emptyRoot?.();if(empty?.terminal){state={terminal:copy(empty.terminal)};complete=true;}}
     if(webChat()&&!complete)return {ok:false,status:'snapshot-pending',reason:'此网页聊天缺少可验证的完整父状态，未用数据库显示投影继续结算。'};
@@ -280,6 +269,9 @@
     if(result.ok){
       const captured=captureNativeState({floor});if(!captured.ok||!captured.complete)result={...result,ok:false,status:'snapshot-pending',reason:captured.reason||'此楼没有完整父状态，未把显示投影保存为完整快照。'};
       else try{await persistNative(floor,row,raw,captured);result={...result,floorSaved:true};}catch(error){result={...result,ok:false,status:'snapshot-pending',reason:'原生表已结算，完整楼层快照保存待恢复：'+error.message};}
+    }else if(result.status==='rejected'&&complete&&state?.terminal){
+      const value=rememberNative(floor,row,raw,state,localReceipt(floor,row,raw),state,[],true);value.status='rejected';value.reason=result.reason;
+      try{await persistNative(floor,row,raw,value);result={...result,persisted:true,rawSaved:true};}catch(error){result={...result,status:'snapshot-pending',reason:'正文与父状态快照保存待恢复：'+error.message};}
     }
     recordLocal(floor,row,raw,result);
     if(result.ok){lastError='';}else if(result.status!=='skipped'&&result.status!=='duplicate'){report(result.reason);}

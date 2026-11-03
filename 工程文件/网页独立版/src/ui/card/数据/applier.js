@@ -1,12 +1,12 @@
-/* Derived from 卡片源码/数据/applier.js; source SHA256 bd41c909af560a97e48d65c42d756315e13d05051c672c2aedfbe5eb7160c1fa. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/数据/applier.js; source SHA256 1b995cd2325bd00cb5bf53d77bb9589930c7e0780922616a8b0885c5fb14311c. Rebuild with tools/p3a-adapt-views.mjs. */
 /*! 东京都2051 · 变量程序应用器（Cxx236Applier / CxxProgramApplier）
  *  作用：取代远端 MVU 的「解析 → 执行 → 落库」三段。卡内自己从正文抽出 <UpdateVariable> 的 JSONPatch，
  *        交给本地校验层（MVU/schema.js + zod-lite）出事务，再按 JSONPointer 写进状态树，最后经
  *        CxxDataWrite / CxxDataSync 落数据库表。执行器归我们，MVU 不再参与。
  *  边界：
- *   - 模型文本只接受 add / replace（与 Gal/parser.js 的 readUpdate 口径一致）；remove / test 只供程序内部
+ *   - 模型补丁经 MVU/schema.js 逐项接收 add / replace；remove / test 只供程序内部
  *     的撤销、回滚与自检使用，绝不放给正文。
- *   - 校验失败、路径未知、类型不符、钱包不守恒都返回可读原因，不抛到界面；只有依赖装错（schema 缺失）才算未就绪。
+ *   - 单项路径、类型等输入问题由 schema 保留对应字段，其余更新继续；执行与持久化按完整事务处理。
  *   - 同页幂等沿 apply 票据账本，持久去重沿 CxxDataWrite 的实际票据；
  *     已有票据但状态表同步未完时，web 调用以完整父状态补完 Sync，不重复业务结算。
  */

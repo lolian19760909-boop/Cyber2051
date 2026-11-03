@@ -127,7 +127,7 @@
   },
   {
     "source": "卡片源码/Gal/parser.js",
-    "sha256": "caf0d079975103aa5ceacc4a8d3ac827176ad4e7518227e3802d1ef7437b01c3",
+    "sha256": "6fc2282480d05dac88adc57dca5c96fb82167d984329ec422f5aa9702f9e9f19",
     "target": "src/ui/card/Gal/parser.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -205,7 +205,7 @@
   },
   {
     "source": "卡片源码/数据/applier.js",
-    "sha256": "bd41c909af560a97e48d65c42d756315e13d05051c672c2aedfbe5eb7160c1fa",
+    "sha256": "1b995cd2325bd00cb5bf53d77bb9589930c7e0780922616a8b0885c5fb14311c",
     "target": "src/ui/card/数据/applier.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
