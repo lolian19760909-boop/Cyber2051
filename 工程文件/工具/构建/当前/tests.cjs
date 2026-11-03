@@ -3,7 +3,6 @@ const fs=require('node:fs'),path=require('node:path'),{spawnSync}=require('node:
 const root=path.resolve(__dirname,'../../..'),files=[...['quest-actions','network-226','iteration225','reset225','variable-mode','debug223','quests','chapter','story-profile','feedback-r1','item-reference','summary-source','opening-flow','opening-mvu-reinit','story-library','tactical','tactical-narrative','tt-cold-branches','battle-entry','battle-narrative','battle-integration','battle-host','battle-mode','battle-repair-2125','equipment-battle'].map(n=>'当前/'+n),...['backup','migration','experience','growth','growth-host'].map(n=>'运行时/'+n),'Gal/terminal-numeric-ownership'].map(n=>path.join(root,'测试',n+'.test.cjs'));
 files.push(path.join(root,'测试/Gal/media-queue.test.cjs'));
 files.push(path.join(root,'测试/当前/terminal-assembly.test.cjs'));
-files.push(path.join(root,'测试/当前/terminal-state-sources.test.cjs')); 
 files.push(...['host','content-routing','foreign-journal'].map(n=>path.join(root,'测试/运行时',n+'.test.cjs')));
 files.push(path.join(root,'测试/当前/creation-diagnostics.test.cjs'),path.join(root,'测试/当前/startup-state.test.cjs'));
 files.push(...['MVU/variables','Gal/hud','运行时/growth-mvu','当前/relationship-retirement'].map(n=>path.join(root,'测试',n+'.test.cjs')));

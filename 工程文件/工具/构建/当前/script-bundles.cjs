@@ -55,7 +55,7 @@ function prefixModules(text, changes, s, {source, version, chipNightEnabled}) {
       JSON.stringify(Theme.scopedSheet(source, '运行时/battle-surface.css', '.cxx-battle-strip,.cxx-battle-dialog,.cxx-battle-dialog::backdrop')) +
       ';');
   if (modules.has('CxxAtlasToolFactory'))
-    prepend('globalThis.CxxAtlasToolStyle=' + JSON.stringify(source('地图/tool.css')) + ';');
+    prepend(source('运行时/quest-view.js') + ';\n' + 'globalThis.CxxAtlasToolStyle=' + JSON.stringify(source('地图/tool.css')) + ';');
   if (modules.has('CxxCombatView'))
     prepend('globalThis.CxxCombatViewStyle=' + JSON.stringify(style('运行时/combat-view.css')) + ';');
   if (modules.has('CxxUpdatePanel'))

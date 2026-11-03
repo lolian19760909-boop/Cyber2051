@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/终端/terminal.js; source SHA256 7bc8c4187fcdff611eea98206aa9303448d4611a4e19223480ed969ee3b56b2a. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/终端/terminal.js; source SHA256 460b882ff15ce05905da6e08132d640dd86d4b737cf248a4b12afd634a769b8b. Rebuild with tools/p3a-adapt-views.mjs. */
 (() => {
   'use strict';
   const document=window.CxxWebTerminal.document;
@@ -15,7 +15,8 @@
   const sourceData=window.T2051_DATA;
   const baseData={...sourceData,quests:sourceData.quests.map(bindLegacyLocation)};
   let installedSnapshot,hasInstalledSnapshot=false;
-  const contentClient={...window.CxxContent,readHost(){if(!hasInstalledSnapshot){installedSnapshot=window.CxxContent?.readHost();hasInstalledSnapshot=true;}return installedSnapshot;}};
+  const contentModule=window.CxxContent;
+  const contentClient={...contentModule,readHost(){if(!hasInstalledSnapshot){installedSnapshot=contentModule?.readHost();hasInstalledSnapshot=true;}return installedSnapshot;}};
   let data = baseData;
   function refreshContent() {
     const installed = contentClient?.readHost();
@@ -115,45 +116,12 @@
   function readStatDataUncached(){return window.CxxWebTerminal.readState().statData;}
   function readStatData(){stats.reads++;const now=Date.now();if(statCache&&now-statCache.at<STAT_TTL)return statCache.value;const value=readStatDataUncached();statCache={at:now,value};return value;}
   function invalidateStatCache(){statCache=null;}
-  const moduleReports=new Set();
-  function reportOnce(stage,message){if(moduleReports.has(stage))return;moduleReports.add(stage);try{window?.CxxDiagnostics?.report?.({module:'终端',stage,message});}catch(error){}}
   const ledgerMvu = () => true;
-  // 酒馆助手 4.11.2 实装源码：getVariables / updateVariablesWith 默认是 chat，必须显式指定 message。
-  async function updateTerminal(update){const ok=hostBridge.updateLedger(update);invalidateStatCache();if(ok)try{window?.CxxDataSyncRun?.();}catch(error){}return ok;}
   function demoLedger() {
     try { return JSON.parse(localStorage.getItem(LEDGER_DEMO_KEY) || '{}') || {}; } catch { return {}; }
   }
-  function questRecord(id) {
-    if (ledgerMvu()) {
-      const stat = readStatData();
-      const rec = stat?.terminal?.quests?.[id];
-      // 读不到状态时不能当成「还没接」：那会给界面一个必然失败的接取按钮。
-      if (!stat || !stat.terminal) {
-        reportOnce('状态读取', '数据库表与聊天变量都没有读到状态，终端先按未就绪显示。');
-        return { state: '未就绪', rank: '', acceptedFloor: 0, definitionRef: undefined, ready: false };
-      }
-      return { state: rec?.state || '已发布', rank: rec?.rank || '', acceptedFloor: Number(rec?.acceptedFloor) || 0, definitionRef: rec?.definitionRef, ready: true };
-    }
-    const rec = demoLedger().quests?.[id] || {};
-    return { state: rec.state || '已发布', rank: rec.rank || '', acceptedFloor: Number(rec.acceptedFloor) || 0, definitionRef: rec.definitionRef, ready: true };
-  }
-  function walletYen() {
-    if (ledgerMvu()) {
-      const stat=readStatData(),value=(window.CxxQuests?.actor?window.CxxQuests.actor(stat).wallet:stat?.terminal?.ensemble?null:stat?.terminal?.wallet)?.yen;
-      if ((typeof value!=='number' && typeof value!=='string') || String(value).trim()==='') return null;
-      const amount=Number(value); return Number.isFinite(amount)?amount:null;
-    }
-    return Number(demoLedger().wallet) || 0;
-  }
-  function completedQuestCount(excludeId) {
-    return (data.quests || []).filter(q => q.id !== excludeId && questRecord(q.id).state === '完成').length;
-  }
-  function heistUnlocked() {
-    return completedQuestCount('q_heist') >= 2;
-  }
-  function questLocked(q) {
-    if(q.id==='q_heist'&&questRecord(q.id).state==='已发布'&&data.quests.some(q=>q.id==='q_chip_night'))return true;
-    return (q.id === 'q_heist' && !heistUnlocked()) || (q.prerequisites || []).some(id => questRecord(id).state !== '完成');
+  function mapQuests(stat=ledgerMvu()?readStatData():{terminal:demoLedger()},definitions=data.quests||[]) {
+    return window.CxxQuestView.map(stat,definitions);
   }
 
   const readingPositions = new Map();
@@ -957,16 +925,15 @@
   }
   const hostBridge=window.TOKYO_TERMINAL_HOST=window.CxxWebTerminal.bridge;
   netState=window.TOKYO_TERMINAL_NEWS=CxxNewsState.create({read:()=>hostBridge.read(),storage:{getItem:key=>{try{return localStorage.getItem(key);}catch{return null;}},setItem:(key,value)=>{try{localStorage.setItem(key,value);}catch{}}}});
-  const placeQuestLocked=q=>questRecord(q.id).state==='已发布'&&questLocked(q);
-  window.TOKYO_TERMINAL_MAP_LINKS={openQuest:id=>{refreshContent();const q=data.quests?.find(q=>q.id===id);if(!q||placeQuestLocked(q)){announce('这份任务暂不可用，请查看当前行动列表。');return false;}return openQuest(id);},closeTerminal,
+  window.TOKYO_TERMINAL_MAP_LINKS={openQuest:id=>{refreshContent();const q=mapQuests().find(q=>q.id===id);if(!q?.visible){announce('这份任务暂不可用，请查看当前行动列表。');return false;}return openQuest(id);},closeTerminal,
     record:(mapId,placeId)=>recordOf({kind:'place',mapId,id:placeId}),
     openArchive:(mapId,placeId)=>window.TOKYO_TERMINAL_MAP_CONTROL.focus(mapId,placeId),
     placeName:(mapId,placeId)=>atlasLocations.find(m=>m.id===(mapId||'tokyo-central'))?.places.find(n=>n.id===placeId)?.name,
-    goToQuest:id=>{refreshContent();const q=currentLocationContent(readStatData()).quests?.find(q=>q.id===id);if(!q||placeQuestLocked(q)||!window.TOKYO_TERMINAL_MAP_LINKS.placeName(q.mapId,q.placeId)){announce('这份任务尚无可用的地图地点。');return false;}switchPage('city');return window.TOKYO_TERMINAL_MAP_CONTROL.focus(q.mapId||'tokyo-central',q.placeId);},
+    goToQuest:id=>{refreshContent();const stat=readStatData(),q=mapQuests(stat,currentLocationContent(stat).quests||[]).find(q=>q.id===id);if(!q?.visible||!window.TOKYO_TERMINAL_MAP_LINKS.placeName(q.mapId,q.placeId)){announce('这份任务尚无可用的地图地点。');return false;}switchPage('city');return window.TOKYO_TERMINAL_MAP_CONTROL.focus(q.mapId||'tokyo-central',q.placeId);},
     read:(mapId,placeId)=>{
       if(!atlasLocations.find(m=>m.id===mapId)?.places.some(n=>n.id===placeId))return{quests:[],notes:[]};
-      const current=currentLocationContent(readStatData());
-      return{quests:(current.quests||[]).filter(q=>q.placeId===placeId&&(q.mapId||'tokyo-central')===mapId&&!placeQuestLocked(q)).map(q=>({id:q.id,title:q.title,status:questRecord(q.id).state})),notes:(current.workshopNotes||[]).filter(n=>n.mapId===mapId&&n.placeId===placeId)};
+      const stat=readStatData(),current=currentLocationContent(stat);
+      return{quests:mapQuests(stat,current.quests||[]).filter(q=>q.placeId===placeId&&(q.mapId||'tokyo-central')===mapId&&q.visible).map(q=>({id:q.id,title:q.title,status:q.state})),notes:(current.workshopNotes||[]).filter(n=>n.mapId===mapId&&n.placeId===placeId)};
     }
   };
   refreshContent();contentStamp=contentClient?.readHost()?.contentRevision||'';

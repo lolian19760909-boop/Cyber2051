@@ -325,13 +325,13 @@
   },
   {
     "source": "卡片源码/地图/map-service.js",
-    "sha256": "01cd3eae2ec1c836dcea047d8138feff1e53974c34d51af956d12eb6950e779b",
+    "sha256": "c841913d174a254fdd1f93617e7c4489fadbde20665f91e092875593482a0490",
     "target": "src/ui/card/地图/map-service.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
   {
     "source": "卡片源码/终端/terminal.js",
-    "sha256": "7bc8c4187fcdff611eea98206aa9303448d4611a4e19223480ed969ee3b56b2a",
+    "sha256": "460b882ff15ce05905da6e08132d640dd86d4b737cf248a4b12afd634a769b8b",
     "target": "src/ui/card/终端/terminal.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },

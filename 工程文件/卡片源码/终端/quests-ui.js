@@ -35,7 +35,7 @@
    // With nothing chosen yet, a wide screen previews the first listed commission.
    const preview=!selected&&win.matchMedia('(min-width:701px)').matches?rows.find(q=>q.id===list.querySelector('.journal-row')?.dataset.questId):null;if(preview)list.querySelector('.journal-row').setAttribute('aria-pressed','true');
    if(selected||preview){
-    const q=selected||preview,r=Q.record(stat,q.id),bar=n('nav',null,detail,'journal-detail-bar');btn('‹ 返回列表',back,bar,'journal-back');n('span',(q.track==='main'?'主线':'委托')+' / '+r.state+' · '+(q.chapterId?'剧情章节':q.id.toUpperCase()),bar,'sec-eyebrow');
+    const q=selected||preview,r=Q.record(stat,q.id),bar=n('nav',null,detail,'journal-detail-bar');btn('‹ 返回列表',back,bar,'journal-back');n('span',(q.track==='main'?'主线':'委托')+' / '+r.state+(q.chapterId?' · 剧情章节':''),bar,'sec-eyebrow');
     const copy=n('div',null,detail,'journal-copy sec-scroll');n('p',[q.fixer,q.type,q.difficulty&&q.difficulty+'风险'].filter(Boolean).join(' / '),copy,'journal-kicker');const h=n('h2',q.title,copy);h.tabIndex=-1;
     const goal=n('div',null,copy,'journal-objective sec-objective');n('small',r.state==='完成'?'已达成目标':'当前目标',goal);n('p',snapshot.items.find(item=>item.id===q.id).objective,goal);
     n('p',q.brief||'',copy,'journal-brief');
