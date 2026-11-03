@@ -23,7 +23,7 @@ export const KNOWN_BROKEN = [
     id: 'skill-prompt-truncated-1',
     why: '导出时把 skillPrompt 截成半段，uid 回填那条规则整条丢了',
     fields: ['skillPrompt'],
-    when: prompt => !!prompt?.skillPrompt && !String(prompt.skillPrompt).includes('uid 必须原样回填'),
+    when: prompt => prompt?.skillPrompt === '你是东京都2051的条目整理器。规则一：',
   },
   {
     id: 'segment-rules-missing-0',

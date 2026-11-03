@@ -15,6 +15,11 @@ test('native continuation reads the complete saved floor before the display tabl
  const f=fixture(),service=f.create();try{assert.deepEqual(service.localState(),f.c.chat[0].variables[0].stat_data);}finally{service.destroy();}
 });
 
+for(const [name,raw]of [['plain-body','<cxx-story>雨停了，你在店里等候。</cxx-story>'],['empty-array','<cxx-story>雨停了，你在店里等候。</cxx-story><UpdateVariable><JSONPatch>[]</JSONPatch></UpdateVariable>'],['display-only','<ztl>{"date":"2051-01-01","time":"12:00","location":{"name":"店内"},"characters":[]}</ztl>']])test('native '+name+' owns a complete zero-delta snapshot after reload',async()=>{
+ const f=fixture({projection:false});let service=f.create();try{const before=service.localState(),floor=f.append(0);f.c.chat[floor].mes=raw;await f.c.saveChat();const result=await service.settle(floor),saved=f.disk()[floor].variables[0];assert.equal(result.status,'skipped');assert.equal(result.floorSaved,true);assert.deepEqual(saved.stat_data,before);assert.deepEqual(saved.__cxx_native_commit.patches,[]);assert.deepEqual(f.counts(),{saves:2,mirrors:0,writes:0,wrongPush:0});service.destroy();f.reload();service=f.create();assert.deepEqual(service.localState(),before);assert.equal(service.captureNativeState({floor}).ok,true);}finally{service.destroy();}
+});
+test('an opening without a complete parent keeps its uninitialized state',async()=>{const f=fixture({projection:false});f.c.chat.splice(0,f.c.chat.length,{mes:'<cxx-story>空开局正文。</cxx-story>',swipe_id:0,variables:[{}]});const service=f.create();try{await f.c.saveChat();await service.settle(0);assert.equal(f.disk()[0].variables[0].__cxx_native_commit,undefined);}finally{service.destroy();}});
+
 test('native local settlement gives story quests the same source context as the MVU route',async()=>{
  const f=fixture({projection:false}),service=f.create();try{
   const floor=f.append(0);f.c.chat[floor].mes='<cxx-story>医生请你雨夜送药，你接下了委托。</cxx-story><UpdateVariable><JSONPatch>'+JSON.stringify([{op:'add',path:'/terminal/quests/q_native_medicine',value:{title:'雨夜送药',objective:'送达诊所',state:'已接取',agreedYen:'300'}}])+'</JSONPatch></UpdateVariable>';

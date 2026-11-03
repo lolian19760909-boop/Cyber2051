@@ -85,7 +85,7 @@
   },
   {
     "source": "卡片源码/数值引擎/adapters/mvu.js",
-    "sha256": "64b22b078a84d0fcdb2e00639714a2c887801b51bb82fd2731986e4cf300c822",
+    "sha256": "8ea871f89740c612ac78046d8338af9bbc0a4b181df9c8fdf9602e3af5332cb4",
     "target": "src/ui/card/数值引擎/adapters/mvu.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -187,7 +187,7 @@
   },
   {
     "source": "卡片源码/运行时/tactical-engine.js",
-    "sha256": "9ce94b231c97ccfc9b7d559281d55ac26cdbdd8533374732baeeb11cb61d61ee",
+    "sha256": "24b70725ce64e977847762a33160bb3f1e4ca9b05c877cbc1055fcf441e6c869",
     "target": "src/ui/card/运行时/tactical-engine.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -265,7 +265,7 @@
   },
   {
     "source": "卡片源码/运行时/player-ui.js",
-    "sha256": "ac8457b7817060399258a048a07b31d83a0502fdf719e223fd0546921791ce97",
+    "sha256": "d4f5420f8dc3658813df9b110dd00af64536351fe20e514eff4b9696f3b121a1",
     "target": "src/ui/card/运行时/player-ui.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -313,7 +313,7 @@
   },
   {
     "source": "卡片源码/运行时/creator-ui.js",
-    "sha256": "304a8bb81d5377d57a2fdf4864e8fe6d2d48b293519db0d1aa620e7198a5ac29",
+    "sha256": "1d9327e2ab8d954c9d3541d2ea9ac8795b05aa525ed6fe771dccfa6152f39f8b",
     "target": "src/ui/card/运行时/creator-ui.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -331,13 +331,13 @@
   },
   {
     "source": "卡片源码/终端/terminal.js",
-    "sha256": "460b882ff15ce05905da6e08132d640dd86d4b737cf248a4b12afd634a769b8b",
+    "sha256": "27758f131ea4f61dbe1d2dfe96dd3ac9e47200c0f495dbde3e219c3b6d67c6cb",
     "target": "src/ui/card/终端/terminal.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
   {
     "source": "卡片源码/终端/city-entry.js",
-    "sha256": "da2e80621bfdcec221ced427ad5ec7cab645988235242038f84a63faa3646dfe",
+    "sha256": "561a3778138cde858de97abe58f5b75b742f4b4bc931f1808db523cab295b72f",
     "target": "src/ui/card/终端/city-entry.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   }

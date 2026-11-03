@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/数值引擎/adapters/mvu.js; source SHA256 64b22b078a84d0fcdb2e00639714a2c887801b51bb82fd2731986e4cf300c822. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/数值引擎/adapters/mvu.js; source SHA256 8ea871f89740c612ac78046d8338af9bbc0a4b181df9c8fdf9602e3af5332cb4. Rebuild with tools/p3a-adapt-views.mjs. */
 (function(root,factory){const local=typeof module==='object'&&module.exports;const value=factory(local?require('../src/engine.js'):root.CxxNumericEngine);if(local)module.exports=value;else root.CxxNumericMvu=value;})(globalThis,function(engine){
   'use strict';
  const cloneAPI=()=>{const local=typeof module==='object'&&module.exports?require('../../共享/data-clone.js'):null;const api=local||globalThis.CxxDataClone;if(api&&typeof api.clone==='function')return api;if(typeof structuredClone==='function')return {clone:value=>structuredClone(value)};return {clone:value=>JSON.parse(JSON.stringify(value))};};const clone=value=>cloneAPI().clone(value);
@@ -30,7 +30,7 @@
     const game=stat.terminal.gameplay,values=events.map(row=>row.event),gains=values.filter(e=>e.kind==='item-gain'),wallet=ordinary.filter(p=>p.path==='/terminal/wallet'||p.path.startsWith('/terminal/wallet/'));
     const accepted=[];let result=engine.settle(game,[],options);
     for(const {event,path:at}of events)try{const next=engine.settle(game,[...accepted,event],options);accepted.push(event);result=next;}catch(error){ignored.push({path:at,reason:error.message+'（该项保留原值）'});}
-    const duplicateGains=gains.filter(e=>result.duplicates.includes(e.id));if(wallet.length&&duplicateGains.length&&duplicateGains.length!==gains.length)throw Error('同次购买混有已结算与新物品，请核对购买记录后重新处理。');
+    const duplicateGains=gains.filter(e=>result.duplicates.includes(e.id));
     const withheld=wallet.length&&gains.length&&duplicateGains.length===gains.length?wallet:[];
     return {ignored,withheld,patches:[...clone(ordinary.filter(p=>!withheld.includes(p))),...result.changes.map(c=>({op:c.missing?'add':'replace',path:path(c.path),value:clone(c.after)}))],changes:result.changes,applied:result.applied,duplicates:result.duplicates,...(options.context?{context:clone(options.context)}:{})};
   }

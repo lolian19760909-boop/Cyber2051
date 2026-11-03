@@ -4,24 +4,18 @@
 function create({api,Core,Content,Host,Gameplay,host,readSeed,transaction}){
 const clone=x=>JSON.parse(JSON.stringify(x)),same=(a,b)=>Core.canonical(a)===Core.canonical(b),error=(code,message)=>Object.assign(Error(message),{code});
 let confirmed='';
-    function readRecords() {
-      try {
-        for (let floor = api.getLastMessageId(); floor >= 0; floor--) {
-          const value = api.getVariables({ type: 'message', message_id: floor });
-          if (value?.stat_data) return value.stat_data.terminal?.quests || {};
-        }
-      } catch { /* Missing MVU is a read-only empty ledger, never initialization. */ }
-      return {};
-    }
-    function readGameplay() {
-      try {for(let floor=api.getLastMessageId();floor>=0;floor--){const value=api.getVariables({type:'message',message_id:floor});if(value?.stat_data)return value.stat_data.terminal?.gameplay || {};}}catch{}
+    function readTerminal() {
+      for (let floor = api.getLastMessageId(); floor >= 0; floor--) {
+        const value = api.getVariables({ type: 'message', message_id: floor });
+        if (value?.stat_data) return value.stat_data.terminal || {};
+      }
       return {};
     }
     function chatVars() { return api.getVariables({ type: 'chat' }); }
     function pins() { return chatVars().__cxx_content_pins || {}; }
 
-    function selectedWorldbook(registry, state, chatPins) {
-      const result = [],selectedOrigin=readGameplay().origin?.definitionRef;
+    function selectedWorldbook(registry, state, chatPins, gameplay) {
+      const result = [],selectedOrigin=gameplay.origin?.definitionRef;
       for (const [id, r] of Object.entries(registry.packages)) {
         if (r.optional && !state.subscriptions[id] || ['new_chat', 'opt_in'].includes(r.activation) && !chatPins[id]) continue;
         const version = chatPins[id] || r.version, content = Content.packageContent(r, version);
@@ -47,12 +41,12 @@ let confirmed='';
     }
     function selection() {
       const rawState = host.readState(), state = Content.withMigration ? Content.withMigration(rawState, chatVars()) : rawState;
-      const chatPins = pins(), initial = state.initialContent;
+      const chatPins = pins(), initial = state.initialContent,terminal=readTerminal(),gameplay=terminal.gameplay||{};
       const gallery = { characters: (readSeed().characterIds || []).map(id => ({ id, standard: [], daily: [], av: '' })) };
-      const view = Content.view({ quests: initial.quests, gallery }, state.registry, readRecords(), {
+      const view = Content.view({ quests: initial.quests, gallery }, state.registry, terminal.quests||{}, {
         subscriptions: state.subscriptions, pins: chatPins, initialContent: initial });
-      const wanted = selectedWorldbook(state.registry, state, chatPins);
-      if(Gameplay)wanted.push(...Gameplay.promptEntries(state.registry,{mapIndex:readSeed().mapIndex,subscriptions:state.subscriptions,pins:chatPins},readGameplay()));
+      const wanted = selectedWorldbook(state.registry, state, chatPins, gameplay);
+      if(Gameplay)wanted.push(...Gameplay.promptEntries(state.registry,{mapIndex:readSeed().mapIndex,subscriptions:state.subscriptions,pins:chatPins},gameplay));
       for (const q of view.quests) if (q.definitionRef) wanted.push({ owner: q.definitionRef.packageId,
         id: 'quest.' + q.id, version: q.definitionRef.version, entry: questEntry(q) });
       return {rawState,state,wanted};

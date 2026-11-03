@@ -74,8 +74,8 @@ export function parseReply(raw, options = {}) {
   } catch (error) {
     base.protocol.issues.push(String(error.message || error));
   }
-  for (const item of parsed.diagnostics || []) base.protocol.issues.push(item.message);
-  try { parser.settlementParts?.(normalized); } catch(error) { base.protocol.issues.push(error.message); }
+  base.display.warnings = [...new Set([...base.display.warnings,...(parsed.diagnostics || []).map(item=>item.message)])];
+  try { parser.settlementParts?.(normalized); } catch(error) { base.display.warnings = [...new Set([...base.display.warnings,error.message])]; }
   base.protocol.issues = [...new Set(base.protocol.issues)];
   return base;
 }

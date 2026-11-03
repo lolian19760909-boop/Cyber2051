@@ -1,13 +1,14 @@
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.CxxCombatView=api;})(globalThis,function(){
  'use strict';
  const storyKey=raw=>{let hash=2166136261;for(const ch of String(raw||'').replace(/<UpdateVariable>[\s\S]*?<\/UpdateVariable>/gi,'').replace(/\r\n/g,'\n').replace(/<StatusPlaceHolderImpl\/>/g,'').trim())hash=Math.imul(hash^ch.charCodeAt(0),16777619);return (hash>>>0).toString(16);};
- const numeric=m=>m?.variables?.[m.swipe_id||0]?.stat_data?.terminal?.gameplay?.numeric;
+ const numerics=m=>{const terminal=m?.variables?.[m.swipe_id||0]?.stat_data?.terminal;return Object.fromEntries([['player',terminal?.gameplay?.numeric],...Object.entries(terminal?.ensemble?.actors||{}).filter(([id])=>id!=='player').map(([id,actor])=>[id,actor.gameplay?.numeric])].filter(([,value])=>value));};
  const liveNumeric=()=>{const s=(typeof globalThis!=='undefined'&&globalThis.Cxx236State)||(typeof window!=='undefined'&&window.parent&&window.parent.Cxx236State);if(!s||typeof s.stat!=='function')return null;try{const stat=s.stat(),id=stat?.terminal?.ensemble?.control?.actorId||'player';return (id==='player'?stat?.terminal?.gameplay:stat?.terminal?.ensemble?.actors?.[id]?.gameplay)?.numeric||null;}catch(e){return null;}};
  function forFloor(chat,floor){
   const m=chat?.[floor];if(!m||m.is_user)return [];
-  const current=numeric(m)||(floor===chat.length-1?liveNumeric():null);if(!current)return [];
-  let prior={};for(let i=floor-1;i>=0;i--){const n=numeric(chat[i]);if(n){prior=n.receipts||{};break;}}
-  return Object.entries(current.receipts||{}).flatMap(([id,r])=>r.round&&!prior[id]?.round&&r.round.source?.floor===floor&&r.round.source?.swipe===(m.swipe_id||0)?[r.round]:r.assessment&&!prior[id]?.assessment&&(!r.assessment.source?.story||r.assessment.source.story===storyKey(m.mes)&&r.assessment.source.swipe===(m.swipe_id||0))?[r.assessment]:[]);
+  let current=numerics(m);if(!Object.keys(current).length&&floor===chat.length-1){const live=liveNumeric();if(live)current={live};}
+  return Object.entries(current).flatMap(([actorId,value])=>{let prior={};for(let i=floor-1;i>=0;i--){const n=numerics(chat[i])[actorId];if(n){prior=n.receipts||{};break;}}
+   return Object.entries(value.receipts||{}).flatMap(([id,r])=>r.round&&!prior[id]?.round&&r.round.source?.floor===floor&&r.round.source?.swipe===(m.swipe_id||0)?[r.round]:r.assessment&&!prior[id]?.assessment&&(!r.assessment.source?.story||r.assessment.source.story===storyKey(m.mes)&&r.assessment.source.swipe===(m.swipe_id||0))?[r.assessment]:[]);
+  });
  }
  function mount({document:doc,parent,compact=false}){
   const root=doc.createElement('div');root.dataset.cxxSlot='combat';root.dataset.compact=String(compact);root.hidden=true;const shadow=root.attachShadow({mode:'open'}),style=doc.createElement('style');style.textContent=globalThis.CxxCombatViewStyle||'';shadow.append(style);parent.append(root);let signature='';

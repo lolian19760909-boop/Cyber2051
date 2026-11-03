@@ -58,8 +58,7 @@ export function createTurnCoordinator({ports,rules,identity,parser=null,now=()=>
     status('validating',{proposal:null});const owner=turn;
     try{
       assertLive();
-      // 酒馆式宽容：截断回复与带协议瑕疵的回复都保留正文；解析有缺口时补丁不落库（变量本回合
-      // 不结算，与酒馆变量失败仅丢更新一致），瑕疵作为警告随回执可见，原文始终可编辑重解析。
+      // 变量解码问题按零增量保存正文；显示诊断随显示投影展示，可读补丁沿共享规则接收。
       const incomplete=turn.complete===false;
       const protocolIssues=!turn.parsed.supported?['协议解析不可用']:(!incomplete?turn.parsed.protocol.issues:[]);
       if(!turn.parsed.supported&&!String(turn.parsed.raw||'').length)throw new TurnError('protocol_invalid','协议解析不可用');

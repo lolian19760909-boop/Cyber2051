@@ -645,11 +645,12 @@
         let attempted='',shown='';
         while(alive){
           if(running||saveRunning){await new Promise(resolve=>setTimeout(resolve,100));continue;}
-          const pending=host.readState().journalName;
-          if(!pending)return;
+          const inspection=await host.inspectInstall();
+          if(inspection.kind==='none'||inspection.kind==='foreign')return;
+          const pending=inspection.state.journalName||inspection.record?.journalName||inspection.code;
           // 孤儿安装记录（备份已不存在，来自上次换卡/导入残留）：恢复无从谈起，
           // 留着这个指针只会让本循环永久自旋，连带卡死剧情推进与真实宿主验收。
-          if(await host.journalOrphan()){
+          if(inspection.kind==='orphan'){
             const fresh=host.readState();
             if(fresh.journalName||fresh.pendingRegistry){delete fresh.journalName;delete fresh.pendingRegistry;await host.saveState(fresh);}
             continue;
@@ -657,7 +658,8 @@
           // A queued/busy recovery used to kill the core at startup permanently.
           // Recover through the existing transaction checks, then resume this same core.
           const scope=JSON.stringify([pending,host.getContext().chatId]);
-          if(attempted!==scope&&!host.getContext().busy){attempted=scope;await check(false);continue;}
+          if(inspection.kind==='pending'&&attempted!==scope&&!host.getContext().busy){attempted=scope;await check(false);continue;}
+          if(inspection.kind==='blocked'){attempted=scope;lastError={code:inspection.code,message:inspection.message};}
           if(attempted===scope&&shown!==scope){shown=scope;report(lastError?.message||'正在等待未完成的安装恢复');try{openPanel('recovery');}catch(e){console.warn('[卡更新恢复]',e.message);}}
           await new Promise(resolve=>setTimeout(resolve,250));
         }

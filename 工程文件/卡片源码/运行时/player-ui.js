@@ -43,7 +43,7 @@
     function overview(){const g=game(),profile=global.CxxPlayerProfileUI;
       if(native2x&&g.growth&&profilePanel==='attributes'&&global.CxxTalentUI){
         const wrap=el('section',undefined,body,'cp2-character');
-        subview=global.CxxTalentUI.mount({document:doc,parent:wrap,state:g.growth,readGame:()=>savedGame(),assets:{...global.CxxTalentAssets,...top.CxxWebTerminal.attributeAssets},appearanceStyle,
+        subview=global.CxxTalentUI.mount({document:doc,parent:wrap,state:g.growth,readGame:()=>savedGame(),assets:{...global.CxxTalentAssets,...top.CxxWebTerminal.attributeAssets},appearanceStyle,allowRepair:!data.actor||data.actor.id==='player',
           onOpenTree:tree=>{talentView={...talentView,tree};void setTab('天赋');}});
         subview.element.style.cssText='display:block;flex:1;min-height:0';
         const actions=el('nav',undefined,wrap,'cp2-character-actions');actions.setAttribute('aria-label','人物相关功能');

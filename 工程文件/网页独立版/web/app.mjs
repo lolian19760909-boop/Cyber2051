@@ -82,6 +82,7 @@ const settings = {
   connection: 'default',
   rememberKey: false,
 };
+let sessionStartFlight=Promise.resolve();
 let bootSequence=0,startSequence=0,modelConnection,connectionSettingsScope=null;
 const storyDrafts=new Map(),draftScope=(accountId,runId)=>state.mode+':'+accountId+':'+runId;
 
@@ -422,32 +423,40 @@ async function doLogin() {
 }
 
 /** 旧存档热更提醒：restore 后对比存档版本与当前内容版本，进入游戏前弹窗由玩家决定（issue #28）。 */
-async function maybeOfferSaveUpdate(){
+async function maybeOfferSaveUpdate(isCurrent=()=>true){
  try{
   if(state.mode==='tavern'||!state.manifest?.contentVersion||!state.session)return;
-  const run=await state.statePort.readRun?.(state.session.identity.runId);
+  const session=state.session,run=await state.statePort.readRun?.(session.identity.runId);
+  if(!isCurrent())return;
   const plan=updatePlan({from:run?.contentVersion,to:state.manifest.contentVersion});
   if(!plan)return;
   state.saveUpdateUI?.close?.();
-  let updated=false;
+  let updated=false,updateFlight=null;
   await new Promise(resolve=>{
    state.saveUpdateUI=mountSaveUpdate({
     from:plan.from,to:plan.to,highlights:plan.highlights,steps:plan.steps,
     brandUrl:document.querySelector('.game-wordmark')?.src,
-    onUpdate:async()=>{await state.session.applySaveUpdate({to:state.manifest.contentVersion});updated=true;},
+    onUpdate:async()=>{updateFlight=session.applySaveUpdate({to:state.manifest.contentVersion});await updateFlight;updated=true;},
     onSkip:()=>{state.saveUpdateUI=null;resolve();},
     onEnter:()=>{state.saveUpdateUI=null;resolve();},
    });
   });
-  if(updated)setStatus('存档已更新到 '+plan.to+'（已自动备份）。','ok');
+  await updateFlight;
+  if(updated&&isCurrent())setStatus('存档已更新到 '+plan.to+'（已自动备份）。','ok');
  }catch{/* 版本提醒是附加能力；读取失败时按无更新处理，不打断开局 */ return;}
 }
 
-async function startSession({ accountId, runId, fromOpening=true, onRestored }) {
+async function startSession(options) {
+  const sequence=++startSequence;state.abort?.abort();state.saveUpdateUI?.close?.();
+  const previous=sessionStartFlight;let release;sessionStartFlight=new Promise(resolve=>{release=resolve;});
+  await previous;
+  try{if(sequence!==startSequence)return;return await prepareSession({...options,sequence});}
+  finally{release();}
+}
+async function prepareSession({ accountId, runId, fromOpening=true, onRestored, sequence }) {
   const mark=step=>{state.phase=step;try{(globalThis.__cxxBootMark??=[]).push([Date.now(),step]);if(globalThis.__cxxBootMark.length>80)globalThis.__cxxBootMark.shift();}catch{}};
   mark('session:start');
   if(state.mode==='public'&&(!state.tokenStore?.get()||!accountId||globalThis.CXXUser?.current()?.publisherId!==accountId)){setStatus('请登录后进入故事。','warn');return;}
-  const sequence=++startSequence;
   if(state.session)storyDrafts.set(draftScope(state.session.identity.accountId,state.session.identity.runId),els.input.value);
   els.input.value=storyDrafts.get(draftScope(accountId,runId))||'';
   state.booted=false;
@@ -474,8 +483,11 @@ async function startSession({ accountId, runId, fromOpening=true, onRestored }) 
   syncModelForm();
   mark('port:create-begin');
   let statePort = state.mode==='tavern'?await createTavernStatePort({host:state.host,accountId,runId,deferReconcile:true,parser:state.chain.parser,parse:raw=>parseReply(raw,{parser:state.chain.parser}),rules:createRulesEngine({chain:state.chain})}):createIdbStatePort({ factory: globalThis.indexedDB, lockManager: globalThis.navigator?.locks, accountId });
-  state.database=null;
-  if(state.mode!=='tavern'){const attached=await attachDatabase({statePort,runId,accountId,parser:state.chain.parser});statePort=attached.port;state.database=attached.database;globalThis.AutoCardUpdaterAPI=state.database.api;}
+  if(sequence!==startSequence){await statePort.close();return;}
+  let database=null;
+  if(state.mode!=='tavern'){const attached=await attachDatabase({statePort,runId,accountId,parser:state.chain.parser});statePort=attached.port;database=attached.database;}
+  if(sequence!==startSequence){await statePort.close();return;}
+  state.database=database;if(database)globalThis.AutoCardUpdaterAPI=database.api;
   mark('port:create-done');
   state.statePort = statePort;
   if(state.mode==='public'){
@@ -511,17 +523,20 @@ async function startSession({ accountId, runId, fromOpening=true, onRestored }) 
   if(sequence!==startSequence)return;
   onRestored?.();
   // 存档热更弹窗是进入游戏前的一道闸：更新或暂不之后才继续装配界面。
-  await maybeOfferSaveUpdate();
+  await maybeOfferSaveUpdate(()=>sequence===startSequence);
+  if(sequence!==startSequence)return;
   state.savesUI=mountSaveControls({parent:document.getElementById('save-controls'),session:state.session,statePort,accountId,mode:state.mode,onSwitch:runId=>startSession({accountId,runId}),onError:error=>setStatus(error.message,'error')});
   if(state.mode!=='tavern')safeStorage()?.setItem(lastRunKey,runId);
   mark('head:begin');
   const head = await statePort.readHead(state.session.identity.runId);
   mark('head:done');
+  if(sequence!==startSequence)return;
   if(!fromOpening)return;
   settingsSurface.close();
   mark('lineage:begin'+(restored.nodes?'-cached':''));
   const lineage=restored.nodes||await statePort.readLineage(runId);
   mark('lineage:done:'+(lineage?.length??'?'));
+  if(sequence!==startSequence)return;
   const node=restored.narrativeNode||[...lineage].reverse().find(n=>n.message?.kind!=='program'&&n.message?.raw)||null;
   globalThis.CxxWebModels={creator:async payload=>(await state.session.generatePurpose('creator',{messages:payload.ordered_prompts||payload.messages||[],signal:payload.signal})).text};
   if (head.headNodeId) {
@@ -535,6 +550,7 @@ async function startSession({ accountId, runId, fromOpening=true, onRestored }) 
     document.querySelector('.composer').hidden=true;
     document.body.classList.add('creating');
     const session=state.session,setup=gameSetup,target=openingPage.creationTarget(),drafts=await statePort.listRecords('drafts',runId);let setupDraft=drafts.find(row=>row.id==='game-setup')?.value||session.gameSetupBinding||setup.draft();
+    if(sequence!==startSequence)return;
     const saveDraft=value=>{setupDraft=structuredClone(value);return statePort.putRecords('drafts',runId,[{id:'game-setup',kind:'game-setup',value:setupDraft}]);};
     const openCreator=async binding=>{const previous=state.gameSetupView,view=await mountCreation({parent:target,session,statePort,gameSetup:binding,onSetup:()=>{void showSetup().catch(error=>setStatus(error.message,'error'));},contentVersion:state.manifest?.contentVersion,isCurrent:()=>sequence===startSequence,onError:error=>setStatus(error.message,'error'),onComplete:async({handoff})=>{if(sequence!==startSequence)return;await openingPage.transition(async()=>{await handoff();state.creation=null;await startSession({accountId,runId});});}});if(sequence!==startSequence){view.destroy();return;}previous?.destroy();state.gameSetupView=null;state.creation=view;setStatus('创建人物');};
     async function showSetup(){if(sequence!==startSequence)return;state.creation?.destroy();state.creation=null;state.gameSetupView?.destroy();target.replaceChildren();setStatus('新故事设置');state.gameSetupView=mountGameSetup({parent:target,setup,value:setupDraft,onChange:value=>{void saveDraft(value).catch(error=>setStatus(error.message,'error'));},onCancel:()=>{state.gameSetupView?.destroy();state.gameSetupView=null;openingPage.show();},onError:error=>setStatus(error.message,'error'),onContinue:async(binding,draft)=>{await saveDraft(draft);await session.bindGameSetup(binding);if(sequence!==startSequence)return;await openCreator(binding);}});await state.gameSetupView.ready;}
@@ -544,10 +560,12 @@ async function startSession({ accountId, runId, fromOpening=true, onRestored }) 
   document.querySelector('.composer').hidden=false;
   document.body.classList.remove('creating');
   setStatus('正在准备阅读与终端界面…');
-  state.ui=await mountGameplay({session:state.session,statePort,database:state.database,card:state.card,host:state.host,assets:state.assets,foundation:state.foundation,stage:els.stage,composer:document.querySelector('.composer'),input:els.input,send:sendTurn,stop:()=>{state.stopRequested=true;state.abort?.abort();state.session.cancel();},regenerate:nodeId=>sendTurn('',{regenerate:true,nodeId}),status:setStatus,busy:()=>state.busy,openSettings:()=>settingsSurface.open('play'),onEdited:async()=>{await state.ui.update();await refreshSaves();},deleteBody:nodeId=>deleteFloor(nodeId),openStories:()=>{settingsSurface.close();return openingPage.openStories();},savePoint:()=>document.getElementById('checkpoint').click(),backupStory:()=>exportCurrentStory(),temporary:state.mode==='public'?temporaryTransfer:null,openMainMenu:()=>openingPage.show(),openWorkshop:()=>window.open(state.mode==='public'?'/workshop.html':'https://cyber2051.top/workshop.html','_blank','noopener')});
+  const ui=await mountGameplay({session:state.session,statePort,database:state.database,card:state.card,host:state.host,assets:state.assets,foundation:state.foundation,stage:els.stage,composer:document.querySelector('.composer'),input:els.input,send:sendTurn,stop:()=>{state.stopRequested=true;state.abort?.abort();state.session.cancel();},regenerate:nodeId=>sendTurn('',{regenerate:true,nodeId}),status:setStatus,busy:()=>state.busy,openSettings:()=>settingsSurface.open('play'),onEdited:async()=>{await state.ui.update();await refreshSaves();},deleteBody:nodeId=>deleteFloor(nodeId),openStories:()=>{settingsSurface.close();return openingPage.openStories();},savePoint:()=>document.getElementById('checkpoint').click(),backupStory:()=>exportCurrentStory(),temporary:state.mode==='public'?temporaryTransfer:null,openMainMenu:()=>openingPage.show(),openWorkshop:()=>window.open(state.mode==='public'?'/workshop.html':'https://cyber2051.top/workshop.html','_blank','noopener')});
+  if(sequence!==startSequence){ui.destroy();return;}state.ui=ui;
   els.aux.replaceChildren();
-  if(sequence!==startSequence){state.ui?.destroy();return;}state.replyUI=mountReplyControls({parent:document.getElementById('reply-controls'),session:state.session,statePort,parser:state.chain.parser,openSettings:()=>settingsSurface.open('stories'),busy:()=>state.busy,onBusy:value=>{state.busy=value;els.stop.disabled=!value;els.send.disabled=value;els.regen.disabled=value||!canRegenerate();els.continueBtn.disabled=value||!state.session.narrativeNode;if(!value)state.ui?.finish();},onCommitted:async()=>{await state.ui.update();await refreshSaves();setStatus('正文已校验保存，旧路线保留。','ok');},onDiscarded:async result=>{if(result.clearedCurrent)state.ui.clearCandidate();await state.ui.update();setStatus('已丢弃待处理回复，可以继续行动。','ok');},onError:error=>setStatus(error.message,'error')});
-  state.settingsUI=await mountSessionSettings({parent:document.getElementById('session-settings'),memoryParent:els.memoryBox,session:state.session,presets:state.presets,onSettings:async value=>{safeStorage()?.setItem(preferenceKey,JSON.stringify(value));await state.session.saveContentPreferences();await state.ui.update();},onError:error=>setStatus(error.message,'error')});
+  state.replyUI=mountReplyControls({parent:document.getElementById('reply-controls'),session:state.session,statePort,parser:state.chain.parser,openSettings:()=>settingsSurface.open('stories'),busy:()=>state.busy,onBusy:value=>{state.busy=value;els.stop.disabled=!value;els.send.disabled=value;els.regen.disabled=value||!canRegenerate();els.continueBtn.disabled=value||!state.session.narrativeNode;if(!value)state.ui?.finish();},onCommitted:async()=>{await state.ui.update();await refreshSaves();setStatus('正文已校验保存，旧路线保留。','ok');},onDiscarded:async result=>{if(result.clearedCurrent)state.ui.clearCandidate();await state.ui.update();setStatus('已丢弃待处理回复，可以继续行动。','ok');},onError:error=>setStatus(error.message,'error')});
+  const sessionSettings=await mountSessionSettings({parent:document.getElementById('session-settings'),memoryParent:els.memoryBox,session:state.session,presets:state.presets,onSettings:async value=>{safeStorage()?.setItem(preferenceKey,JSON.stringify(value));await state.session.saveContentPreferences();await state.ui.update();},onError:error=>setStatus(error.message,'error')});
+  if(sequence!==startSequence){sessionSettings.destroy();return;}state.settingsUI=sessionSettings;
   state.contentUI=mountSessionContent({database:state.database,parent:document.getElementById('session-content'),session:state.session,onChanged:async()=>{await state.ui.update();await state.settingsUI.refreshContent();},onError:error=>setStatus(error.message,'error')});
   state.applicationUI=mountApplicationControls({parent:document.getElementById('application-controls'),session:state.session,statePort,manifest:state.manifest,mode:state.mode,busy:()=>state.busy||state.session.running,onError:error=>setStatus(error.message,'error')});
   state.promptUI=mountPromptInspector({parent:document.getElementById('prompt-inspector'),session:state.session});
@@ -555,9 +573,12 @@ async function startSession({ accountId, runId, fromOpening=true, onRestored }) 
   document.getElementById('play-nav').hidden=false;
   refreshGeneratorInfo(head);
   await refreshSaves();
+  if(sequence!==startSequence)return;
   await state.replyUI.ready;
+  if(sequence!==startSequence)return;
   if(state.replyUI.pendingCount){setStatus('有 '+state.replyUI.pendingCount+' 份回复已保留，可在设置的“故事与存档”中继续处理','warn');state.ui.finish();}
   const awaitingOpening=await pendingOpening({nodes:state.session.nodes,statePort:state.statePort,runId,draft:els.input.value});
+  if(sequence!==startSequence)return;
   if(awaitingOpening){
     readingSurface.hide();const attempt=awaitingOpening.retryAttempt;
     if(attempt){const retry=()=>resumeOpening().catch(error=>setStatus(error.message,'error')),raw=String(attempt.raw||'');openingPage.openingIssue(attempt.error?.message||'上次开场尚未完成，已收到的回复已保留。',retry,{raw,paragraphs:raw?state.chain.parser.parseMessage(raw).paragraphs.length:0,completion:attempt.completion||'未完成',warnings:[],diagnostics:attempt.responseDiagnostics||null});}

@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/运行时/creator-ui.js; source SHA256 304a8bb81d5377d57a2fdf4864e8fe6d2d48b293519db0d1aa620e7198a5ac29. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/运行时/creator-ui.js; source SHA256 1d9327e2ab8d954c9d3541d2ea9ac8795b05aa525ed6fe771dccfa6152f39f8b. Rebuild with tools/p3a-adapt-views.mjs. */
 (function(root,factory){const api=factory(root);if(typeof module==='object'&&module.exports)module.exports=api;else root.CxxCreatorUI=api;})(globalThis,function(global){
  'use strict';
  const structuredClone=(typeof module==='object'&&module.exports?require('../共享/data-clone.js'):globalThis.CxxDataClone).clone;
@@ -38,6 +38,7 @@
     if(aiBusy)return;
     const gens=collectGenerators(win);
     if(!gens.length){aiState.textContent='当前环境没有可用的生成接口：需要酒馆助手（JS-Slash-Runner）就绪；仍不行请刷新酒馆页面再试。';return;}
+    const initial=read();let edited=false;const markEdited=()=>{edited=true;};input.addEventListener('input',markEdited);
     aiBusy=true;aiButton.disabled=true;aiButton.setAttribute('aria-busy','true');aiState.textContent='正在让 AI 起草…';
     try{
      const payload={should_silence:true,ordered_prompts:[{role:'system',content:'你是《东京都 2051》的人物设定助手。只输出可以直接采用的简体中文正文，不要标题、不要解释、不要引号，180 字以内。'},{role:'user',content:'【已有设定】\n'+(digest()||'（尚未填写）')+'\n\n【需要写】'+name+'：'+prompt}]};
@@ -45,10 +46,10 @@
      for(const gen of gens){
       try{const draft=String(await gen(payload)||'').trim();if(draft){text=draft;break;}}catch(e){last=e;}
      }
-     if(!text)throw last||Error('生成结果为空。');
+     if(disposed)return;if(edited||read()!==initial){aiState.textContent='已保留你刚填写的内容。';return;}if(!text)throw last||Error('生成结果为空。');
      input.value=text;change(text);aiState.textContent='已生成草稿，可直接修改。';
     }catch(e){aiState.textContent='生成失败：'+((e&&e.message)||e)+'。可稍后重试。';}
-    finally{aiBusy=false;aiButton.disabled=false;aiButton.removeAttribute('aria-busy');}
+    finally{input.removeEventListener('input',markEdited);aiBusy=false;if(!disposed){aiButton.disabled=false;aiButton.removeAttribute('aria-busy');}}
    }
    }
    controls.push({input,read,sync:()=>clear?.setAttribute('aria-pressed',String(!read().trim()))});return input;

@@ -95,7 +95,7 @@ export async function createTavernStatePort({host,accountId,runId,parse,parser,r
   }
   async function fresh(){
     check();
-    if(stale){stale=false;const current=await host.read(),saved=current?.metadata?.cxx2051_web;if(saved)doc=clone(saved);}
+    if(stale){const current=await host.read(),saved=current?.metadata?.cxx2051_web;if(saved)doc=clone(saved);stale=false;}
     // 端口创建时已整份读过一次酒馆存档；此后本页是这份文档的唯一写入者，
     // 再逐 getter 回读会在大存档（几十 MB）上把启动拖成分钟级。
     // 需要真实磁盘状态的路径（对账 syncNativeSource、写入冲突）自己读 host。

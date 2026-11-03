@@ -1,10 +1,10 @@
-/* Derived from 卡片源码/终端/city-entry.js; source SHA256 da2e80621bfdcec221ced427ad5ec7cab645988235242038f84a63faa3646dfe. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/终端/city-entry.js; source SHA256 561a3778138cde858de97abe58f5b75b742f4b4bc931f1808db523cab295b72f. Rebuild with tools/p3a-adapt-views.mjs. */
 /* City page (DESIGN.md 10.14): the terminal's city map with the tracked commission, the current
    location and the four city entries over it; phones get a list that opens one full-screen detail.
    Read-only; the chat-owned atlas does all map work. */
-(()=>{
+window.CxxWebCityFactory=(bridge)=>{
  'use strict';
- const document=window.CxxWebTerminal.document;
+ const document=bridge.document;
  const app=window.CxxTerminalApp,city=document.getElementById('t2051x-page-city'),tool=()=>window.CxxAtlasTool,links=()=>window.TOKYO_TERMINAL_MAP_LINKS,data=window.T2051_DATA;
  const phone=window.matchMedia('(max-width:700px)');
  let disposed=false,focus='here',listScroll=0;
@@ -106,7 +106,7 @@
   if(kind==='enter')for(const [i,pin] of [pinHere,pinTarget].entries())if(!pin.hidden)animations.push(pin.animate(theme==='night'?[{opacity:0},{opacity:1}]:[{opacity:0,transform:'translateY(-14px)'},{opacity:1,transform:'none'}],{duration:240,delay:200+i*160,easing:ease,fill:'backwards'}));
  }
  function openMap(location){
-  if(!tool()){const page=app.page;note.textContent='正在准备地图…';void window.CxxWebTerminal.prepareMap().then(()=>{if(!disposed&&app.visible&&(app.page===page||app.page==='city'))openMap(location);}).catch(error=>{if(!disposed)note.textContent=error.message;});return true;}
+  if(!tool()){const page=app.page;note.textContent='正在准备地图…';void bridge.prepareMap().then(()=>{if(!disposed&&app.visible&&(app.page===page||app.page==='city'))openMap(location);}).catch(error=>{if(!disposed)note.textContent=error.message;});return true;}
   const atlas=tool();if(!atlas){note.textContent='城市地图尚未就绪，请稍后重试。';return false;}
   try{const opened=location?atlas.focus(location.mapId,location.placeId):atlas.open();note.textContent=opened?'':'此地点暂时没有地图入口。';return opened;}catch(error){note.textContent=error.message;return false;}
  }
@@ -117,6 +117,8 @@
  let shown=false;
  // Leaving the city page closes a phone detail, so coming back always starts at the list.
  const stop=app.subscribe(event=>{if(disposed)return;if(event?.preferences)tool()?.preferences();if(event?.data||event?.route)render();if(event?.route){const now=app.page==='city'&&!city.hidden;if(!now)page.dataset.view='list';if(now&&!shown)requestAnimationFrame(()=>motion('enter'));shown=now;}});
- window.TOKYO_TERMINAL_MAP_CONTROL={focus(mapId,placeId){return !disposed&&openMap({mapId,placeId})||false;},escape:()=>!disposed&&showList(),read:()=>tool()?.read().shell,destroy(){if(disposed)return;disposed=true;stop();resize.disconnect();phone.removeEventListener('change',layout);nav.removeEventListener('click',launch);animations.forEach(a=>a.cancel());}};
- window.addEventListener('pagehide',()=>window.TOKYO_TERMINAL_MAP_CONTROL.destroy(),{once:true});render();
-})();
+ const onPageHide=()=>control.destroy();
+ const control=window.TOKYO_TERMINAL_MAP_CONTROL={focus(mapId,placeId){return !disposed&&openMap({mapId,placeId})||false;},escape:()=>!disposed&&showList(),read:()=>tool()?.read().shell,destroy(){if(disposed)return;disposed=true;stop();resize.disconnect();phone.removeEventListener('change',layout);nav.removeEventListener('click',launch);window.removeEventListener('pagehide',onPageHide);animations.forEach(a=>a.cancel());}};
+ window.addEventListener('pagehide',onPageHide,{once:true});render();
+return window.TOKYO_TERMINAL_MAP_CONTROL;
+};

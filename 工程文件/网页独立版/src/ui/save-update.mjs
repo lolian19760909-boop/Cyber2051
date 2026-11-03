@@ -53,7 +53,7 @@ const tokenCss=base=>`
 @media (max-width:420px){.cxx-save-update-header{min-height:52px;padding:8px 16px}.cxx-save-update-body{padding:14px 16px 6px}.cxx-save-update-footer{padding:10px 14px max(10px,env(safe-area-inset-bottom))}}
 `;
 const ICON='<svg class="cxx-save-update-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>';
-export function mountSaveUpdate({win=window,from,to,highlights=[],steps=[],brandUrl,onUpdate,onSkip}={}){
+export function mountSaveUpdate({win=window,from,to,highlights=[],steps=[],brandUrl,onUpdate,onSkip,onEnter}={}){
  const doc=win.document,host=doc.createElement('div'),scope=host.attachShadow({mode:'open'});
  host.dataset.cxxTheme=win.CxxTheme?.read?.()||doc.documentElement.dataset.cxxTheme||'red';
  const base=new URL('assets/terminal-2x/',doc.baseURI).href;
@@ -78,12 +78,13 @@ export function mountSaveUpdate({win=window,from,to,highlights=[],steps=[],brand
  const rows=[...highlights.map(text=>({text})),...steps.map(step=>({text:step.detail?step.label+'：'+step.detail:step.label}))];
  for(const row of rows){const li=doc.createElement('li');const span=doc.createElement('span');span.textContent=row.text;li.append(span);list.append(li);}
  if(!rows.length)list.remove();
- let settled=false;
+ let settled=false,completed=false,updating=false;
  const finish=action=>{if(settled)return;settled=true;subscription?.();dialog.close?.();host.remove();if(action==='skip')onSkip?.();else onEnter?.();};
  scope.querySelector('[data-update]').addEventListener('click',async()=>{
+  if(completed){finish('enter');return;}if(updating)return;updating=true;
   const update=scope.querySelector('[data-update]'),skip=scope.querySelector('[data-skip]');
   update.disabled=true;skip.disabled=true;update.textContent='正在更新…';
-  try{await onUpdate?.();}catch(error){update.disabled=false;skip.disabled=false;update.textContent='更新并进入';
+  try{await onUpdate?.();}catch(error){updating=false;update.disabled=false;skip.disabled=false;update.textContent='更新并进入';
    const note=scope.querySelector('.cxx-save-update-note');if(note)note.textContent='更新失败，原档未受影响：'+error.message+'。可以重试或暂不更新。';return;}
   // 完成页：明确告诉玩家更新已落地，进入游戏是主动的一步。
   const body=scope.querySelector('.cxx-save-update-body');
@@ -94,14 +95,15 @@ export function mountSaveUpdate({win=window,from,to,highlights=[],steps=[],brand
   const detail=doc.createElement('p');detail.className='cxx-save-update-done-detail';detail.textContent='这份存档已更新到 '+to+'，更新前已自动备份。';
   done.append(mark,head,detail);
   update.textContent='进入游戏';update.disabled=false;update.dataset.enter='';update.focus();
-  update.onclick=()=>finish('enter');
+  completed=true;updating=false;
   skip.remove();
  });
  scope.querySelector('[data-skip]').addEventListener('click',()=>finish('skip'));
- dialog.addEventListener('cancel',event=>{event.preventDefault();finish('skip');});
+ dialog.addEventListener('cancel',event=>{event.preventDefault();if(!updating)finish(completed?'enter':'skip');});
+ dialog.addEventListener('close',()=>finish(completed?'enter':'skip'));
  const syncTheme=theme=>{host.dataset.cxxTheme=theme;};
  const subscription=win.CxxTheme?.subscribe?.(syncTheme);
  dialog.showModal();
  scope.querySelector('[data-update]').focus();
- return {close:()=>finish(null)};
+ return {close:()=>finish(completed?'enter':'skip')};
 }

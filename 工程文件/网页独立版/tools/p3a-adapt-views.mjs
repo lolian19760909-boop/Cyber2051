@@ -63,10 +63,13 @@ export function adaptViews({only}={}){if(only&&only.some(name=>!views.includes(n
  }
  if(name==='地图/map-service.js')text=text.replace('const context=()=>api.SillyTavern.getContext();','').replace('const events=context().eventTypes||{};','const events={};').replace("event('mag_variable_update_ended',relevant);",'').replace('function relevant(){records?.refresh();','function relevant(){refreshScope();records?.refresh();');
  if(name==='终端/city-entry.js'){
+   text=text.replace('(()=>{','window.CxxWebCityFactory=(bridge)=>{').replace(/\}\)\(\);\s*$/,'return window.TOKYO_TERMINAL_MAP_CONTROL;\n};');
    text=text.replace(" 'use strict';"," 'use strict';\n const document=window.CxxWebTerminal.document;");
    text=text.replace(' function openMap(location){'," function openMap(location){\n  if(!tool()){const page=app.page;note.textContent='正在准备地图…';void window.CxxWebTerminal.prepareMap().then(()=>{if(!disposed&&app.visible&&(app.page===page||app.page==='city'))openMap(location);}).catch(error=>{if(!disposed)note.textContent=error.message;});return true;}");
+   text=text.replaceAll('window.CxxWebTerminal','bridge');
  }
  if(name==='终端/terminal.js'){
+   text=text.replace('(() => {','window.CxxWebTerminalFactory=(bridge)=>{').replace(/\}\)\(\);\s*$/,'return window.CxxTerminalApp;\n};');
    text=text.replace('  function switchPage(id,options={}) {',"  let mapNavigation=0;\n  function switchPage(id,options={}) {\n    const request=++mapNavigation;if(['city','archive'].includes(id)&&!window.CxxAtlasTool){announce('正在准备地图…');void window.CxxWebTerminal.prepareMap().then(()=>{if(request===mapNavigation&&rootEl.isConnected)switchPage(id,options);}).catch(error=>announce(error.message));return false;}");
    text=text.replace('  function closeTerminal() {','  function closeTerminal() {mapNavigation++;');
    text=text.replace("  'use strict';","  'use strict';\n  const document=window.CxxWebTerminal.document;");
@@ -81,6 +84,7 @@ export function adaptViews({only}={}){if(only&&only.some(name=>!views.includes(n
    const hostStart=text.indexOf('  function requestHostTerminal() {'),hostEnd=text.indexOf('  let hostChat',hostStart);text=text.slice(0,hostStart)+'  function requestHostTerminal(){return false;}\n'+text.slice(hostEnd);
    const viewportStart=text.indexOf('  function useHostViewport(scroll = true) {'),viewportEnd=text.indexOf('  useHostViewport(false);',viewportStart);text=text.slice(0,viewportStart)+'  function useHostViewport(){releaseHostViewport();}\n'+text.slice(viewportEnd);
    const restrictedStart=text.indexOf('    function nsfwAllowed() {'),restrictedEnd=text.indexOf('  function buildGalleryPanel() {',restrictedStart);if(restrictedStart<0||restrictedEnd<0)throw Error('Gallery preference port slot drift');text=text.slice(0,restrictedStart)+'    function nsfwAllowed(){return window.CxxWebTerminal.preferences().nsfw===true;}\n'+text.slice(restrictedEnd);
+   text=text.replaceAll('window.CxxWebTerminal','bridge').replace('bridgeFactory=','window.CxxWebTerminalFactory=');
  }
  if(name==='Gal/ui.js'){
    text=text.replaceAll('默认阅读原文；翻译和声音设置由镜译控制。','').replaceAll('镜译处理中，暂用原文','翻译中…').replaceAll('镜译处理失败，保留原文','翻译失败，显示原文');

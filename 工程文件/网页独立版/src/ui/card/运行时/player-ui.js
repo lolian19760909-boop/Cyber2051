@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/运行时/player-ui.js; source SHA256 ac8457b7817060399258a048a07b31d83a0502fdf719e223fd0546921791ce97. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/运行时/player-ui.js; source SHA256 d4f5420f8dc3658813df9b110dd00af64536351fe20e514eff4b9696f3b121a1. Rebuild with tools/p3a-adapt-views.mjs. */
 (function(root,factory){const local=typeof module==='object'&&module.exports;const api=factory(root,local?require('./loadout.js'):root.CxxLoadout,local?require("../数值引擎/src/engine.js"):root.CxxNumericEngine,local?require('./player-art.js'):root.CxxPlayerArt);if(local)module.exports=api;else root.CxxPlayerUI=api;})(globalThis,function(global,L,E,A){
   'use strict';
   const Boot=typeof module==='object'&&module.exports?require('./boot-loader.js'):global.CxxBootLoader;
@@ -44,7 +44,7 @@
     function overview(){const g=game(),profile=global.CxxPlayerProfileUI;
       if(native2x&&g.growth&&profilePanel==='attributes'&&global.CxxTalentUI){
         const wrap=el('section',undefined,body,'cp2-character');
-        subview=global.CxxTalentUI.mount({document:doc,parent:wrap,state:g.growth,readGame:()=>savedGame(),assets:{...global.CxxTalentAssets,...top.CxxWebTerminal.attributeAssets},appearanceStyle,
+        subview=global.CxxTalentUI.mount({document:doc,parent:wrap,state:g.growth,readGame:()=>savedGame(),assets:{...global.CxxTalentAssets,...top.CxxWebTerminal.attributeAssets},appearanceStyle,allowRepair:!data.actor||data.actor.id==='player',
           onOpenTree:tree=>{talentView={...talentView,tree};void setTab('天赋');}});
         subview.element.style.cssText='display:block;flex:1;min-height:0';
         const actions=el('nav',undefined,wrap,'cp2-character-actions');actions.setAttribute('aria-label','人物相关功能');

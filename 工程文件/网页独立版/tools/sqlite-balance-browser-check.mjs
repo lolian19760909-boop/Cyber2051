@@ -46,7 +46,12 @@ try{
     const tables=S.tablesOf(host.api,template),wallet=tables.cxx_wallet.content.slice(1).find(row=>row[1]==='chat'),player=tables.cxx_actor_stat.content.slice(1).find(row=>row[1]==='player'),debt=tables.cxx_actor_stat.content.slice(1).find(row=>row[1]==='debt');
     if(Number(wallet?.[2])!==yen||Number(player?.[5])!==yen||Number(debt?.[5])!==-37)throw Error('Saved balances differ from formal state');
    }
-   return {mode,balances:[-100,0,250],npc:-37,oldRowsPreserved:true,privateTablePreserved:true};
+   if(mode==='fresh'){
+    await import('/releases/'+release+'/card/共享/data-clone.js');await import('/releases/'+release+'/card/长期记忆/material.js');
+    const current=host.api.exportTableAsJson(),[collisionKey,privateTable]=Object.entries(current).find(([,table])=>table?.name==='余额验证私人表'),memory={...structuredClone(privateTable),name:'纪要表',sourceData:{...structuredClone(privateTable.sourceData),ddl:'CREATE TABLE collision_memory (row_id INTEGER PRIMARY KEY, code TEXT, period TEXT, summary TEXT, memory TEXT, dialogue TEXT);'},content:[['row_id','编码索引','时间跨度','概览','纪要','重要对话'],[1,'AM0001','2051','旧记忆','旧故事的已确认经历','']]};
+    const merged=CxxMemoryMaterial.merge(current,{[collisionKey]:memory});if(!await host.api.importTableAsJson(JSON.stringify(merged)))throw Error('Merged memory tables were not stored');const restored=host.api.exportTableAsJson();if(!Object.values(restored).some(t=>t?.name==='余额验证私人表'&&t.content[1][1]==='保留自用记录'))throw Error('Memory import overwrote the private table');if(!Object.values(restored).some(t=>t?.name==='纪要表'&&t.content.length===2))throw Error('Restored memory table was lost');
+   }
+   return {mode,balances:[-100,0,250],npc:-37,oldRowsPreserved:true,privateTablePreserved:true,...(mode==='fresh'?{memoryCollisionPreserved:true}:{})};
   },{release,mode});report.checks.push(checked);await page.close();console.log('PASS '+mode);
  }
  assert.deepEqual(report.errors,[]);report.ok=true;
