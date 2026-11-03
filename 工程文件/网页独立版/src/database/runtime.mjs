@@ -17,6 +17,7 @@ export function prepareDatabase(){return prepared??=(async()=>{
  })();}
 function databaseAt(nodes,overrides){let value=empty();for(const node of nodes){const saved=overrides.get(node.nodeId)||node.database;if(!saved)continue;if(saved.snapshot)value=clone(saved.snapshot);else value=applyChanges(value,saved.changes||[]);}return value;}
 function projectRows(nodes,saved,userName='旅人'){const rows=[],keys=[];for(const node of nodes){if(node.message?.kind==='program')continue;const input=node.message?.input,text=typeof input==='string'?input:input?.text||node.message?.user||'';if(text){keys.push(node.nodeId+':user');rows.push({name:userName,is_user:true,mes:text,send_date:node.createdAt,extra:{}});}keys.push(node.nodeId);rows.push({name:node.message?.speaker||'东京都2051',is_user:false,is_system:false,mes:node.message?.raw||'',send_date:node.createdAt,swipe_id:0,swipes:[node.message?.raw||''],extra:{}});}
+ if(!rows.length&&nodes.length){const node=nodes.at(-1);keys.push(node.nodeId);rows.push({name:'东京都2051',is_user:false,is_system:true,mes:node.message?.raw||'',send_date:node.createdAt,extra:{}});}
  for(let i=0;i<rows.length;i++)Object.assign(rows[i],clone(saved.rows[keys[i]]||{}));return {rows,keys};}
 const baseKeys=new Set(['name','is_user','is_system','mes','send_date','swipe_id','swipes','swipe_info','extra','variables','variables_initialized']);
 export async function attachDatabase({statePort,runId,accountId,parser}){
