@@ -13,15 +13,15 @@
 - 成长、资源、物品、装配、主动状态：向 /terminal/gameplay/numericInput 提交事件数组；事件结构按本轮注入的数值规则。不得直接写 growth、numeric、inventory、equipment、itemDefinitions、itemReceipts、loadout。
 - 成果：实际完成的小事、阶段目标、委托提交 achievement 事件；各独立成果分别记录，同一成果只记一次，经验由程序计算。source 必须为 {"kind":"story","id":"稳定成果编号"} 对象；kind 按事实选择 story/training/activity/quest，category 按实际成果选择 small/stage/gig/major，不使用 minor/interaction 等其他词。
 - NPC：使用 add /terminal/rosterInput，value 为本轮 ztl 主场景在场人物的事实数组。每项含稳定 id、actor 准确姓名、kind 和 quote 正文原句；achievement 另带 source、category、completed:true、reason。不要写 /terminal/roster/present，名单由程序从 ztl 提取；不要结算离场、平行或仅远程出现的人物。
-- 装备：保留明确型号、品质与能力，不用一级填未知品质；购买的实际扣款与装备同批提交。界面已保存的装配不再上报。
+- 装备：保留剧情中的名称、型号与能力，目录作为现成定义和默认值的来源。新装备按通用定义直接登记；品质缺省按普通1，已有数值效果正常结算，其余能力保留为叙事描述。购买的实际扣款与装备同批提交，界面已保存的装配沿保存记录使用。
 - 钱包：/terminal/wallet 下的 yen 是余额，earned/spent 是累计收入/支出，累计值不回减。余额变化＝累计收入增量－累计支出增量。
 - 地点：实际到达才更新 /terminal/gameplay/location 的 mapId、placeId，使用已登记编号。扮演已有人物时，钱包与地点使用当前请求指定的 /terminal/ensemble/actors/<人物ID> 对应字段，不改其他人的记录。
-- 委托：仅更新已接取且有内容编号的 terminal.quests.<id>，可写 state、rank、objective、knownFacts、agreedYen、paidYen、refundedYen、settled、deadlineAt。state 按实际结果为进行中／完成／失败／暂离／已放弃／已过期；objective 仅写当前公开目标。agreedYen 是约定总额，paidYen/refundedYen 是实际累计收款/退款，settled 表示报酬结清，deadlineAt 仅写明确截止时间。缺失的允许字段可 add，不新增委托记录。
+- 委托：剧情产生新任务时，add /terminal/quests/<稳定编号>，value 写 title、objective、state、agreedYen 及明确的 description、knownFacts、deadlineAt。编号以字母开头，使用字母、数字、下划线或短横线，后续沿用同一编号。新提议缺省已发布；正文已明确玩家接下时写已接取，实际进展使用进行中／完成／失败／暂离／搁置／已放弃／已错过／已过期。程序保存通用定义、归属与来源；目录缺项照常登记。已有剧情任务可更新公开叶字段，也可整条提交本次提供的进展字段，其他保存内容继续保留。预制任务仍按当前注入的原协议推进。objective 写当前公开目标，rank 写完成评价；agreedYen 是约定总额，paidYen/refundedYen 是实际累计收款/退款，settled 表示实际报酬结清。
 - 已装载剧情任务：遵从动态注入的事件协议，add /terminal/quests/<id>/events，value为1—8项数组。每项kind为happened，按任务类型带event、stage或node及evidence；结果／分歧按注入规则带outcome或choice、value。evidence是fact与本轮正文原句quote，原句8—400字。禁止直接覆盖这些任务的state、objective、knownFacts、chapter、plot或line；程序继续验证任务归属、节点、引文与重复结算。委托实际收退款仍与钱包同批。
 </允许更新>
 
 <禁止重复结算>
-界面确认的开局、配点、物品与装配，以及程序结算的逐轮战斗伤害、治疗、消耗，均不重复上报。持有、计划与回顾不算新获得。委托完成不等于付款；paidYen 增量与钱包收入、refundedYen 增量与钱包支出同批保存。未知历史金额不猜成零后补发。接取、追踪、操作凭据、questJournal 由程序维护。
+界面确认的开局、配点、物品与装配，以及程序结算的逐轮战斗伤害、治疗、消耗，沿已经保存的记录使用。新获得与新付款以本轮实际事实登记；委托完成与付款分别记录，paidYen 增量与钱包收入、refundedYen 增量与钱包支出同批保存。历史金额沿原记录保留。剧情新任务的接单状态依已发生的玩家选择记录；追踪、归属、操作凭据和 questJournal 由程序维护。
 </禁止重复结算>
 
 <UpdateVariable>

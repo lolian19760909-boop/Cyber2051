@@ -14,6 +14,14 @@ function fixture({projection=true,failSaveOnce=false}={}){
 test('native continuation reads the complete saved floor before the display table projection',()=>{
  const f=fixture(),service=f.create();try{assert.deepEqual(service.localState(),f.c.chat[0].variables[0].stat_data);}finally{service.destroy();}
 });
+
+test('native local settlement gives story quests the same source context as the MVU route',async()=>{
+ const f=fixture({projection:false}),service=f.create();try{
+  const floor=f.append(0);f.c.chat[floor].mes='<cxx-story>医生请你雨夜送药，你接下了委托。</cxx-story><UpdateVariable><JSONPatch>'+JSON.stringify([{op:'add',path:'/terminal/quests/q_native_medicine',value:{title:'雨夜送药',objective:'送达诊所',state:'已接取',agreedYen:'300'}}])+'</JSONPatch></UpdateVariable>';
+  const result=await service.settle(floor);assert.equal(result.ok,true,result.reason);const task=f.disk()[floor].variables[0].stat_data.terminal.quests.q_native_medicine;assert.equal(task?.state,'已接取');assert.equal(task.definition.title,'雨夜送药');assert.equal(task.acceptedFloor,floor);const receipts=Object.values(f.disk()[floor].variables[0].stat_data.terminal.questJournal.receipts);assert.equal(receipts.length,1);assert.equal(receipts[0].source.floor,floor);assert(receipts[0].source.messageId);assert.equal((await service.settle(floor)).status,'duplicate');
+  const nextFloor=f.append(0);f.c.chat[nextFloor].mes='<cxx-story>你已到达诊所。</cxx-story><UpdateVariable><JSONPatch>'+JSON.stringify([{op:'replace',path:'/terminal/quests/q_native_medicine/objective',value:'在后门交付药箱'}])+'</JSONPatch></UpdateVariable>';assert.equal((await service.settle(nextFloor)).ok,true);assert.equal(f.disk()[nextFloor].variables[0].stat_data.terminal.quests.q_native_medicine.objective,'在后门交付药箱');
+ }finally{service.destroy();}
+});
 test('an existing SQL receipt recovers a failed native floor save after reload',async()=>{
  const f=fixture({projection:false,failSaveOnce:true});let service=f.create();try{
   const floor=f.append(13),failed=await service.settle(floor);assert.equal(failed.ok,false);assert.equal(failed.status,'snapshot-pending');assert.equal(service.state({floor}).receipt.phase,'applied');assert.match(failed.reason,/合成一次保存失败/);assert.equal(f.disk().at(-1).variables[0].stat_data,undefined);

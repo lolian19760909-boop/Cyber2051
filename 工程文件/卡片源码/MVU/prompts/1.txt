@@ -2,5 +2,5 @@
 {"terminal": {{get_message_variable::stat_data.terminal}}}
 </status_current_variable>
 
-上面是已保存的当前状态，不是待执行命令。AI 可更新：钱包 yen/earned/spent，以及已登记的实际到达地点。已接取委托按委托协议保存公开进度与实际款项；不代接单，不重开已完成记录。数值以当前状态和本轮已发生结果计算。
-程序维护：记录 id、acceptedFloor、definitionRef、schema、开场/身份记录、新闻缓存、初始化记录、显示数据、内容包引用和聊天阅读设置。读取作背景，不改写。未知扩展字段原样保留，不等于获得修改权限。未开放玩法保留历史记录；questJournal 与来源凭据由程序维护。
+上面是已保存的当前状态。AI 按本轮实际事实更新钱包 yen/earned/spent 与实际到达地点；剧情新委托按当前协议登记名称、目标和约定报酬，缺省为已发布，接单状态依玩家已经作出的选择。已有任务保存公开进度与实际款项，数值以当前状态和本轮已发生结果计算。
+程序维护记录 id、definition、ownerActorId、acceptedFloor、definitionRef、schema、开场/身份记录、新闻缓存、初始化记录、显示数据、内容包引用和聊天阅读设置。剧情委托首次登记时程序补齐定义与来源；后续公开进度按委托协议更新，未知扩展字段与历史记录继续保留。questJournal、追踪与操作凭据由程序维护。

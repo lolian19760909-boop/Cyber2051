@@ -6,9 +6,9 @@
  const copy=value=>structuredClone(value);
  const record=(stat,id)=>stat?.terminal?.quests?.[id]||{state:'已发布'};
  function project(stat={},definitions=[],source={}){
-  const all=definitions,hasChapter=all.some(q=>q.id==='q_chip_night');
+  const all=definitions.map(q=>record(stat,q.id).definition?.source==='story'?{...record(stat,q.id).definition,id:q.id}:q),hasChapter=all.some(q=>q.id==='q_chip_night');
   const rows=all.filter(q=>(!q.hidden||record(stat,q.id).discovered)&&!(hasChapter&&q.id==='q_heist'&&record(stat,q.id).state==='已发布')).map(copy);
-  for(const [id,r]of Object.entries(stat.terminal?.quests||{}))if(id!=='$meta'&&!all.some(q=>q.id===id)&&!rows.some(q=>q.id===id))rows.push({id,title:r.title||'旧委托 · '+id,brief:'此记录的内容包未加载。进度原样保留；加载原内容包后可继续。',legacy:true});
+  for(const [id,r]of Object.entries(stat.terminal?.quests||{}))if(id!=='$meta'&&!all.some(q=>q.id===id)&&!rows.some(q=>q.id===id))rows.push(r.definition?.source==='story'?{...copy(r.definition),id}:{id,title:r.title||'旧委托 · '+id,brief:'此记录的内容包未加载。进度原样保留；加载原内容包后可继续。',legacy:true});
   const journal=stat.terminal?.questJournal||{},trackedId=journal.tracked||'';
   const items=rows.map(definition=>{
    const r=copy(record(stat,definition.id));

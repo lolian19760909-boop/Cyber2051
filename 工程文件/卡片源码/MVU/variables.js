@@ -168,25 +168,8 @@
     const decoded=Parser.variableUpdates(source);if(decoded.issues.length)throw Error(decoded.issues.join('；'));
     if(!decoded.found){commands.length=0;tx.skipped=true;record(tx,'missing','本轮未提供可执行的变量更新。');return;}
     const patches=decoded.patches,issues=inputIssues(patches);if(issues.length)throw Error(issues.slice(0,8).join('；'));
-    const options={...policyOf()},messages=context().chat,last=messages.at(-1);
-    if(last&&!last.is_user&&String(last.mes||'').trim()){
-      const raw=String(win.CxxSource?win.CxxSource.sync(messages.length-1):last.mes),story=normal(options.plot?options.plot.story(raw):raw.replace(/<UpdateVariable>[\s\S]*?<\/UpdateVariable>/gi,''));
-      let hash=2166136261;for(const ch of JSON.stringify([runtime.key(),messages.length-1,last.swipe_id||0,story]))hash=Math.imul(hash^ch.charCodeAt(0),16777619);
-      let storyHash=2166136261;for(const ch of story)storyHash=Math.imul(storyHash^ch.charCodeAt(0),16777619);
-      options.numericOptions={...options.numericOptions,rawStory:raw,storyText:story,factBatch:'story_'+(hash>>>0).toString(16),source:{floor:messages.length-1,swipe:last.swipe_id||0,story:(storyHash>>>0).toString(16)}};
-      // A floor is only a position. Keep the message identity when earlier rows
-      // are removed; MVU may run before the context service registers this reply.
-      const identity=last.cxx_context?.messageId||last.cxx_plot_id;
-      if(!identity)last.cxx_plot_id=(typeof module==='object'&&module.exports?require('../运行时/crypto-compat.js'):globalThis.CxxCrypto).uuid();
-      options.numericOptions.source.messageId=identity||last.cxx_plot_id;
-      if(tx.receipt)tx.receipt.messageId=options.numericOptions.source.messageId;
-      const variant=last.extra?.cxx_context;
-      if(variant?.messageId===options.numericOptions.source.messageId&&variant.variantId)options.numericOptions.source.variantId=variant.variantId;
-      const battleRound=win.__cxx_battle__?.pendingFor?.(options.numericOptions.source);
-      if(battleRound)options.numericOptions.battleRound=battleRound;
-      const tacticalBase=win.__cxx_tactical__?.narrativeBase?.();
-      if(tacticalBase)options.numericOptions.tacticalBase=tacticalBase;
-    }
+    const options=narrativePolicy(floor,row,raw);
+    if(tx.receipt&&options.numericOptions?.source)tx.receipt.messageId=options.numericOptions.source.messageId;
     tx.transaction=schema.prepare(patches,tx.before.stat_data,options);win.CxxDiagnostics?.report({module:"MVU",stage:"指令解析",level:"info",message:"接收 "+patches.length+" 项变量更新",detail:JSON.stringify(patches)});
     if(tx.transaction.ignored?.length)win.CxxDiagnostics?.report({module:'MVU',stage:'字段接收',level:'warn',message:tx.transaction.ignored.length+' 项状态输入保留原值，其余更新继续',detail:tx.transaction.ignored.map(row=>row.path+'：'+row.reason).join('\n')});
     if(tx.transaction.policy.civicTransaction)(typeof module==='object'&&module.exports?require('../运行时/civic.js'):win.CxxCivic||globalThis.CxxCivic).extendSchema(data.schema);
@@ -237,6 +220,21 @@
     try{const snap=readOf()?.snapshot?.({});if(snap&&snap.ok!==false&&!snap.empty&&snap.terminal)return copy(snap);}catch{}
     return null;
   }
+  function narrativePolicy(floor,row,raw){
+    const options={...policyOf()};
+    if(!row||row.is_user||!String(raw||'').trim())return options;
+    const story=normal(options.plot?options.plot.story(raw):raw.replace(/<UpdateVariable>[\s\S]*?<\/UpdateVariable>/gi,''));
+    let hash=2166136261;for(const ch of JSON.stringify([runtime.key(),floor,row.swipe_id||0,story]))hash=Math.imul(hash^ch.charCodeAt(0),16777619);
+    let storyHash=2166136261;for(const ch of story)storyHash=Math.imul(storyHash^ch.charCodeAt(0),16777619);
+    // Keep message identity stable across position changes and both executors.
+    if(!rowId(row))row.cxx_plot_id=(typeof module==='object'&&module.exports?require('../运行时/crypto-compat.js'):globalThis.CxxCrypto).uuid();
+    const source={floor,swipe:row.swipe_id||0,story:(storyHash>>>0).toString(16),messageId:rowId(row)},variant=row.extra?.cxx_context;
+    if(variant?.messageId===source.messageId&&variant.variantId)source.variantId=variant.variantId;
+    options.numericOptions={...options.numericOptions,rawStory:raw,storyText:story,factBatch:'story_'+(hash>>>0).toString(16),source};
+    const battleRound=win.__cxx_battle__?.pendingFor?.(source);if(battleRound)options.numericOptions.battleRound=battleRound;
+    const tacticalBase=win.__cxx_tactical__?.narrativeBase?.();if(tacticalBase)options.numericOptions.tacticalBase=tacticalBase;
+    return options;
+  }
   function localReceipt(floor,row,raw){return [runtime.key(),floor,row?.swipe_id||0,textKey(raw)].join('|');}
   function recordLocal(floor,row,raw,result){
     const r={scope:runtime.key(),floor,swipe:row?.swipe_id||0,row,messageId:rowId(row),raw:normal(raw),fingerprint:textKey(raw),hostRaw:normal(row?.mes),hostFingerprint:textKey(row?.mes),phase:result.floorSaved?'saved':result.ok||result.status==='snapshot-pending'?'applied':result.status==='skipped'?'missing':'rejected',message:result.reason||(result.floorSaved?'变量已保存并核对。':''),revision:++receiptSequence,patches:copy(result.patches||[]),persisted:!!result.persisted};
@@ -276,7 +274,7 @@
     if(webChat()&&!complete)return {ok:false,status:'snapshot-pending',reason:'此网页聊天缺少可验证的完整父状态，未用数据库显示投影继续结算。'};
     let result;
     try{
-      result=await runner.apply(raw,{state,policy:policyOf(),receipt:localReceipt(floor,row,raw),turn:floor,kind:'variable',recoverSync:true});
+      result=await runner.apply(raw,{state,policy:narrativePolicy(floor,row,raw),receipt:localReceipt(floor,row,raw),turn:floor,kind:'variable',recoverSync:true});
     }catch(error){result={ok:false,status:'failed',reason:error&&error.message?error.message:String(error)};}
     if(result.ok&&result.root)rememberNative(floor,row,raw,result.root,result.receipt||localReceipt(floor,row,raw),state,result.patches,complete);
     if(result.ok){
