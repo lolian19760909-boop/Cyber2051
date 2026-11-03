@@ -5,7 +5,7 @@ import {createExperience,installDatabaseSummaryView} from './experience.mjs';
 import {createCommunications} from './communications.mjs';
 import {createReading} from './reading.mjs';
 import {createMedia} from './media.mjs';
-import {displayProjection,normalizeThinkingTags} from '../app/parse.mjs';
+import {createReadingParser} from './reading-parser.mjs';
 import {createCombat} from './combat.mjs';
 import {createNativeReader} from './native-reader.mjs';
 import {mountRawEditor} from './raw-editor.mjs';
@@ -65,7 +65,7 @@ export async function mountGameplay({session,statePort,database,card,host,assets
   const phoneFonts=nativeFontStyle(document),phoneView=globalThis.CxxPhoneUI?.mount({top:window,service:communications,reader:reading,setup:mirrorSetup,native2x:true,appearanceStyle:await phone2xStyle(),theme:foundation.theme});communications.attach(phoneView);
   const mediaServices=await createMedia({session,assets,card});
   combat=await createCombat({session,statePort,messages:()=>messages,nodes:()=>nodes,commit,draft,getDraft:()=>input.value,busy,changed:emit});
-  const bodyDepths=new Map(),bodySeen=new Map(),viewParser={...globalThis.CxxGalParser,parseMessage(raw,options){const text=session.transformMessage(raw,{depth:options?.depth??bodyDepths.get(raw)??0}),original=globalThis.CxxGalParser.parseMessage(normalizeThinkingTags(text),options),response=options?.nodeId?nodes.find(row=>row.nodeId===options.nodeId)?.message?.processing?.response:candidate?.mes===raw?session.coordinator.context.processing?.response:undefined,projected=session.projectParsed({...displayProjection(original),response});return {...original,auxiliary:projected.display.auxiliary||[]};}};
+  const bodyDepths=new Map(),bodySeen=new Map(),viewParser=createReadingParser({parser:globalThis.CxxGalParser,session,depthFor:raw=>bodyDepths.get(raw)??0,responseFor:(raw,options)=>options?.nodeId?nodes.find(row=>row.nodeId===options.nodeId)?.message?.processing?.response:candidate?.mes===raw?session.coordinator.context.processing?.response:undefined});
   async function update(){
     if(disposed)return;const reopen=gal?.active&&preferences.gal;const restored=await session.restore(),lineage=restored.nodes||await statePort.readLineage(session.identity.runId);nodes=lineage.filter(n=>n.message?.kind!=='program'&&n.message?.raw);floorVersions=await session.listFloorVersions();const next=[];for(const node of nodes){let message=bodySeen.get(node.nodeId);if(!message){message={mes:node.message.raw,name:session.profile.name||'正文',is_user:false,is_system:false,swipe_id:0,nodeId:node.nodeId};bodySeen.set(node.nodeId,message);}next.push(message);}messages=next;bodyDepths.clear();let depth=0;for(const node of [...nodes].reverse()){if(!bodyDepths.has(node.message.raw))bodyDepths.set(node.message.raw,depth);depth+=1+(node.message.input?.text?1:0);}selectedBody=nodes.at(-1)||null;revision=restored.head?.revision||revision+1;await refreshMedia();savedMedia=await contentPort.savedEventMedia();await experience.refreshSources();await communications.refresh();await combat?.refresh();for(const view of playerViews)view.refresh();atlas?.refresh();terminal?.invalidate({data:true});terminalChrome?.refresh();renderNative();emit();if(reopen&&!gal.active)gal.open();
   }

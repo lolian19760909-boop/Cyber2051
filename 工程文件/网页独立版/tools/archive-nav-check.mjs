@@ -7,7 +7,7 @@ const server=await new Promise(resolve=>{const s=createPackagedServer({root});s.
 const base='http://127.0.0.1:'+server.address().port;
 const report={at:new Date().toISOString(),buildId:current.release,scope:'Isolated browser, seeded local IDB rows; no user story, no model call',errors:[],steps:[],shots:[]};let browser;
 const seed=page=>page.evaluate(async()=>{
-  const accountId=localStorage.getItem('cxx2051:local-account')||null;const db=await new Promise((resolve,reject)=>{const q=indexedDB.open('cxx2051-web',2);q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error);});
+  const accountId=localStorage.getItem('cxx2051:local-account')||null,{openDatabase}=await import('/src/store/idb.mjs'),db=await openDatabase();
   const now=new Date().toISOString();
   await new Promise((resolve,reject)=>{const t=db.transaction(['runs','checkpoints'],'readwrite');t.objectStore('runs').put({runId:'seed-run',accountId,branchId:'main',revision:0,headNodeId:null,createdAt:now,updatedAt:now,profile:{name:'种子故事',origin:{name:'测试起点'}}});t.objectStore('checkpoints').put({runId:'seed-run',checkpointId:'seed-point-1',nodeId:null,branchId:'main',label:'种子存档点',createdAt:now});t.oncomplete=resolve;t.onerror=()=>reject(t.error);});
   db.close();return 'seeded';
@@ -79,5 +79,5 @@ try{
  assert.ok(report.finalBackWorks,'收尾返回主菜单失效');
  assert.deepEqual(report.errors,[],'页面出现未捕获错误');
  report.ok=true;
-}catch(error){report.ok=false;report.failure=error.message.split('\n')[0];}
+}catch(error){report.ok=false;report.failure=error.message.split('\n')[0];process.exitCode=1;}
 finally{fs.writeFileSync(out,JSON.stringify(report,null,2)+'\n');await browser?.close().catch(()=>{});await new Promise(r=>server.close(r));console.log(JSON.stringify(report,null,2));}
