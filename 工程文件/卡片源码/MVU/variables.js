@@ -23,7 +23,7 @@
   const context=()=>api.SillyTavern.getContext(),branches=()=>JSON.stringify(context().chat.map(m=>[m.is_user===true,m.swipe_id||0]));
   const current=tx=>!ended&&tx.scope===runtime.key()&&tx.epoch===epoch&&(tx.branches===undefined||tx.branches===branches());
   let startupTimer=null,engine=null,stateComplete=false;
-  const policyOf=()=>{try{return (typeof policy==='function'?policy():policy)||{};}catch{return {};}};
+  const policyOf=()=>(typeof policy==='function'?policy():policy)||{};
   function mvuReady(){const mvu=win.Mvu||api.Mvu;return typeof mvu?.parseMessage==='function'&&mvu.events?.COMMAND_PARSED===events.parsed&&mvu.events?.VARIABLE_UPDATE_ENDED===events.ended;}
   // 本地结算只要求「解析器 + 校验层」，与 MVU 是否加载无关。
   function localReady(){return !!schema&&typeof Parser?.variableUpdates==='function';}
@@ -192,7 +192,7 @@
     const A=Applier();if(!A||typeof A.create!=='function')return null;
     const nativeSync=win.CxxDataSync||api.CxxDataSync;
     const sync=nativeSync&&typeof nativeSync.push==='function'?{push(root,turn){const push=nativeSync.pushAll||nativeSync.push;return push.call(nativeSync,root.terminal,turn);}}:nativeSync;
-    engine=A.create({schema,parser:Parser,reader:readOf(),notify:report,report,policy:policyOf(),write:win.CxxDataWrite||api.CxxDataWrite,sync});
+    engine=A.create({schema,parser:Parser,reader:readOf(),notify:report,report,write:win.CxxDataWrite||api.CxxDataWrite,sync});
     return engine;
   }
   /** 当前权威状态：优先读模型快照，退化到旧 stat_data（迁移期只做兜底，不写）。 */
