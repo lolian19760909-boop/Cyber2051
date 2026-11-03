@@ -1,13 +1,6 @@
 'use strict';
-const fs=require('fs'),path=require('path'),Module=require('module'),test=require('node:test'),assert=require('node:assert/strict');
-const repo=path.resolve(__dirname,'../../..'),original=path.join(repo,'工程文件/测试/当前/opening-flow.test.cjs');
-const fixtureModule=new Module(original,module);fixtureModule.filename=original;fixtureModule.paths=Module._nodeModulePaths(path.dirname(original));
-let source=fs.readFileSync(original,'utf8').split("test('discard removes")[0];
-source=source.replace('existing=null}={})','existing=null,preferences={}}={})').replace('external:{keep:3},','external:{keep:3},__cxx_ui_preferences:copy(preferences),');
-source=source.replace("readPreferences:()=>({level:'medium',device:'desktop',gal:false})","readPreferences:()=>require('../../卡片源码/MVU/preferences.js').read(ctx.chatMetadata.variables)");
-source=source.replace('return {flow,player,row,ctx,storage,','return {flow,player,row,ctx,storage,disk:()=>copy(disk),');
-fixtureModule._compile(source+'\nmodule.exports={fixture,ready};',original);
-const {fixture,ready}=fixtureModule.exports,P=require(path.join(repo,'工程文件/卡片源码/MVU/preferences.js'));
+const test=require('node:test'),assert=require('node:assert/strict');
+const {fixture,ready}=require('../lib/opening-fixture.cjs'),P=require('../../卡片源码/MVU/preferences.js');
 for(const nsfw of [false,true])for(const battleMode of ['fast','text','tactical'])test('final opening transaction persists '+nsfw+'/'+battleMode+' and preserves unrelated fields',async()=>{
  const f=fixture({preferences:{nsfw:!nsfw,nsfwChosen:true,battleMode:battleMode==='text'?'tactical':'text',unknown:{keep:7}}});
  assert.equal(f.flow.state().draft.preferences.nsfw,!nsfw);assert.equal(f.flow.state().draft.preferences.battleMode,battleMode==='text'?'tactical':'text');
