@@ -1,9 +1,7 @@
 /** Synthetic story and model; no player data, API credentials or network. */
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import vm from 'node:vm';
-import {createRequire} from 'node:module';
-import {displayProjection,normalizeThinkingTags} from '../src/app/parse.mjs';
+import {createReadingParser} from '../src/ui/reading-parser.mjs';
 import {createMemoryStatePort} from '../src/store/memory.mjs';
 import {createWebSession} from '../src/app/session.mjs';
 import {cardRuleChain,cardParser} from '../src/reuse/card.mjs';
@@ -68,10 +66,15 @@ await check('额外变量解析同样使用玩家修改后的规则',async()=>{
 });
 await check('阅读只解析一次；显示正则移除的辅助块不会覆回',async()=>{
   await app.saveRegex([rule('hide-aux','/<tucao>[\\s\\S]*?<\\/tucao>/g','',{markdownOnly:true})]);
-  const source=fs.readFileSync(new URL('../src/ui/gameplay.mjs',import.meta.url),'utf8'),acorn=createRequire(import.meta.url)('acorn');let node;
-  const visit=value=>{if(!value||typeof value!=='object')return;if(value.type==='VariableDeclarator'&&value.id.name==='viewParser')node=value.init;for(const field of Object.values(value))if(Array.isArray(field))field.forEach(visit);else if(field&&typeof field==='object')visit(field);};visit(acorn.parse(source,{ecmaVersion:'latest',sourceType:'module'}));
-  let count=0;const fixture={CxxGalParser:{...chain.parser,parseMessage(...args){count++;return chain.parser.parseMessage(...args);}},bodyDepths:new Map(),session:app,displayProjection,normalizeThinkingTags};
-  const parser=vm.runInNewContext('('+source.slice(node.start,node.end)+')',fixture),parsed=parser.parseMessage('<cxx-story>显示正文</cxx-story><tucao>应该隐藏</tucao>');assert.equal(count,1);assert.ok(!JSON.stringify(parsed.auxiliary).includes('应该隐藏'));assert.ok(parsed.paragraphs.some(row=>row.text.includes('显示正文')));
+  let count=0;const parser=createReadingParser({parser:{...chain.parser,parseMessage(...args){count++;return chain.parser.parseMessage(...args);}},session:app});
+  const parsed=parser.parseMessage('<cxx-story>显示正文</cxx-story><tucao>应该隐藏</tucao>');assert.equal(count,1);assert.ok(!JSON.stringify(parsed.auxiliary).includes('应该隐藏'));assert.ok(parsed.paragraphs.some(row=>row.text.includes('显示正文')));
+});
+await check('阅读按节点取当前响应元数据，思考附属内容随节点更新',()=>{
+  const responses=new Map([['one',{reasoning:'第一段原生思考'}],['two',{reasoning:'第二段原生思考'}]]);
+  const parser=createReadingParser({parser:chain.parser,session:app,responseFor:(_raw,options)=>responses.get(options?.nodeId)}),raw='<cxx-story>同一段显示正文</cxx-story>';
+  assert.ok(parser.parseMessage(raw,{nodeId:'one'}).auxiliary.some(row=>row.body==='第一段原生思考'));
+  assert.ok(parser.parseMessage(raw,{nodeId:'two'}).auxiliary.some(row=>row.body==='第二段原生思考'));
+  assert.ok(!parser.parseMessage(raw).auxiliary.some(row=>row.body?.includes('原生思考')));
 });
 const report={ok:true,checks,scope:'synthetic memory storage and model; no visual or live API acceptance'};
 fs.mkdirSync(new URL('../../.cache/player-controls-20261029/',import.meta.url),{recursive:true});fs.writeFileSync(new URL('../../.cache/player-controls-20261029/content-check.json',import.meta.url),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));
