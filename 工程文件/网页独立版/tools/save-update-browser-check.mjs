@@ -1,8 +1,8 @@
-/** 存档热更实际入口检查（issue #28）：种子旧档（2.3.33）→ 打开故事 → 弹窗出现（截图）→ 暂不更新进游戏
- *  → 重开再问 → 更新并进入 → run 版本戳推进且备份入库。隔离浏览器+本地包，无真实存档、无模型调用。 */
+/** 存档热更实际入口检查（issue #28）：种子旧档（2.3.33）→ 打开故事 → 弹窗截图 → 暂不更新保留版本。
+ *  更新事务、备份与版本戳由 save-update-check.mjs 验证。此入口使用隔离浏览器、本地包和合成旧档。 */
 import fs from 'node:fs';import assert from 'node:assert/strict';import path from 'node:path';import {fileURLToPath} from 'node:url';
 import {chromium} from 'playwright';import {createPackagedServer} from './local-runtime.mjs';
-const here=path.dirname(fileURLToPath(import.meta.url)),root=path.resolve(here,'../../.cache/save-update-20261101/package'),out=path.resolve(here,'../../.cache/save-update-20261101/save-update-browser-check.json');
+const arg=(name,fallback)=>{const i=process.argv.indexOf(name);return i<0?fallback:process.argv[i+1];},here=path.dirname(fileURLToPath(import.meta.url)),root=path.resolve(arg('--root',path.resolve(here,'../../.cache/save-update-20261101/package'))),out=path.resolve(arg('--out',path.resolve(here,'../../.cache/save-update-20261101/save-update-browser-check.json')));fs.mkdirSync(path.dirname(out),{recursive:true});
 const current=JSON.parse(fs.readFileSync(path.join(root,'current.json')));
 const server=await new Promise(resolve=>{const s=createPackagedServer({root});s.listen(0,'127.0.0.1',()=>resolve(s));});
 const base='http://127.0.0.1:'+server.address().port;
