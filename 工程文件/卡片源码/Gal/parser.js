@@ -231,10 +231,7 @@
     if(fence)value=fence[2].trim();
     let patches;try{patches=JSON.parse(value);}catch{throw Error('变量更新需要完整的 JSON 数组；请检查括号、引号和标签边界。');}
     if(!Array.isArray(patches))throw Error('变量更新必须是 JSON 数组。');
-    patches.forEach((entry,index)=>{
-      if(!object(entry)||!['add','replace'].includes(entry.op)||!Object.hasOwn(entry,'value')||Object.keys(entry).some(k=>!['op','path','value'].includes(k)))throw Error('第 '+(index+1)+' 项需要 op、path、value，op 只接受 add 或 replace。');
-      if(typeof entry.path!=='string'||!entry.path.startsWith('/')||entry.path==='/'||/~(?![01])/.test(entry.path)||entry.path.slice(1).split('/').some(k=>!k||['__proto__','constructor','prototype','$meta','$internal'].includes(k.replace(/~1/g,'/').replace(/~0/g,'~'))))throw Error('第 '+(index+1)+' 项变量路径格式不正确。');
-    });
+    // Syntax belongs here; schema.prepare receives each field independently.
     return patches;
   }
   function standaloneUpdates(raw,protection,ranges){
@@ -257,6 +254,7 @@
     // append spelling is normalized; ordinary JSON Pointer paths stay untouched.
     const normalized=[];
     for(const patch of patches){
+      if(!object(patch)||typeof patch.path!=='string'){normalized.push(patch);continue;}
       const append=/^\/terminal\/(?:rosterInput|gameplay\/numericInput|ensemble\/actors\/[^/]+\/gameplay\/numericInput)\/-$/.test(patch.path);
       const item=append&&patch.op==='add'&&object(patch.value)?{...patch,path:patch.path.slice(0,-2),value:[patch.value]}:patch;
       const queue=/^\/terminal\/(?:rosterInput|gameplay\/numericInput|ensemble\/actors\/[^/]+\/gameplay\/numericInput)$/.test(item.path);

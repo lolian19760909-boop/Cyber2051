@@ -20,8 +20,8 @@ test('shared decoder recognizes syntax while schema remains field authority',()=
  const check=(entry,analysis='')=>parser.variableUpdates('<UpdateVariable>'+analysis+'<JSONPatch>'+JSON.stringify([entry])+'</JSONPatch></UpdateVariable>');
  for(const analysis of ['','<Analysis></Analysis>','<Analyze>记录事实。</Analyze>'])assert.deepEqual(check({op:'add',path:'/terminal/quests/q01/events',value:events},analysis).issues,[]);
  for(const path of ['/terminal/quests/q01/state','/terminal/quests/q01/events/-','/unrelated/events'])assert.deepEqual(check({op:'add',path,value:events}).issues,[]);
- for(const path of ['/terminal/quests/__proto__/events','/terminal/$internal/events','/terminal/bad~2path'])assert(check({op:'add',path,value:events}).issues.length);
- for(const op of ['remove','move','execute'])assert(check({op,path:'/terminal/wallet/yen',value:0}).issues.length);
+ for(const path of ['/terminal/quests/__proto__/events','/terminal/$internal/events','/terminal/bad~2path']){const entry={op:'add',path,value:events};assert.deepEqual(check(entry).issues,[]);assert.deepEqual(check(entry).patches,[entry]);}
+ for(const op of ['remove','move','execute']){const entry={op,path:'/terminal/wallet/yen',value:0};assert.deepEqual(check(entry).issues,[]);assert.deepEqual(check(entry).patches,[entry]);}
 });
 
 test('a proven story boundary recovers orphan or unclosed thought prefixes without dropping the story',()=>{
