@@ -40,7 +40,13 @@
    page='create';selected=number;render();const pane=el.querySelector('.game-create-body');
    try{creation=resume?{chatId:resume.chatId,meta:(await store.details(resume.chatId)).meta}:null;draft=opening.beginDraft({key:context().characterKey+':slot:'+number,parent:pane,scope:{instanceId:context().instanceId,slot:number},resumeDraft:creation?.meta?.openingDraft,creationId:creation?.meta?.creationId,resuming:!!creation,
     inspect:()=>store.inspectPending(),recover:async options=>{const result=await store.recoverPending(options);if(result.code==='creation-replacement-ready')creation=null;return result;},openRecovery:async id=>{await store.openRecovery(id);draft?.cancel();draft=null;creation=null;close({cancel:false});await open('home');},
-    async submit(options){if(!creation)creation=await begin(number,options.creationId,options.draft);else if(context().chatId!==creation.chatId)throw Error('聊天已经变化，请回到正在创建的档位重试。');await store.saveOpeningDraft(options.draft,creation.chatId);await win.__cxx_player__.completeOpening(options);},
+    async withCommit(work){const resume=await win.Cxx233Updater.pauseForStory();try{return await work();}finally{resume();}},
+    async submit(options){
+     if(!creation)creation=await begin(number,options.creationId,options.draft);else if(context().chatId!==creation.chatId)throw Error('聊天已经变化，请回到正在创建的档位重试。');
+     await store.saveOpeningDraft(options.draft,creation.chatId);
+     // Bind the new route before the player save publishes a completed creation.
+     await win.Cxx233Updater.initializeChat();await win.__cxx_player__.completeOpening(options);
+    },
     async verify(){await win.__cxx_player__.waitForSaved();await store.finishCreation();},
     onComplete(){draft=null;creation=null;close({cancel:false});leave?.();}
    });win.CxxDiagnostics?.resolve(r=>r.module==='人物创建'&&r.context.slot===number&&r.context.character===context().characterKey&&r.context.chat===context().chatId);}catch(e){page='slots';render();throw e;}

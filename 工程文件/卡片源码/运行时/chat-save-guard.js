@@ -4,6 +4,17 @@
  // JSON applies toJSON/Date and undefined rules before the replacer. Sort each
  // object once, without serializing and reparsing the whole chat first.
  const canonical=v=>JSON.stringify(v,(_key,value)=>value&&typeof value==='object'&&!Array.isArray(value)?Object.fromEntries(Object.keys(value).sort().map(k=>[k,value[k]])):value);
+ // Module instances belong to their document. Import through the host document
+ // so live save flags, worldbook caches and Tauri resources share its instance.
+ function importHostModule(win,path,message){
+  return new Promise((resolve,reject)=>{
+   const id='__cxx_host_module_'+Math.random().toString(36).slice(2),script=win.document.createElement('script');
+   const finish=(value,error)=>{delete win[id];script.remove();error?reject(Error(error)):resolve(value);};
+   win[id]=finish;script.type='module';
+   script.textContent=`import(${JSON.stringify(path)}).then(m=>window[${JSON.stringify(id)}](m)).catch(e=>window[${JSON.stringify(id)}](null,String(e)));`;
+   script.onerror=()=>finish(null,message);win.document.head.append(script);
+  });
+ }
   function slimChat(rows){
    let changed=false;const out=rows.map(row=>{
     const vars=row&&row.variables;if(!vars||typeof vars!=='object')return row;
@@ -333,16 +344,7 @@
   const closingCold=new Map();
   const nativeOpen=createNativeOpenObserver({decode:bytes=>new win.TextDecoder().decode(bytes)});
   function loadColdTools(){
-   if(coldTools)return coldTools;
-   // Import in the host realm: the transport module uses that window's Tauri bridge.
-   coldTools=new Promise((resolve,reject)=>{
-    const id='__cxx_cold_tools_'+Math.random().toString(36).slice(2),script=win.document.createElement('script');
-    const finish=(value,error)=>{delete win[id];script.remove();error?reject(Error(error)):resolve(value);};
-    win[id]=finish;script.type='module';
-    script.textContent=`import('/scripts/chat-payload-transport.js').then(m=>window[${JSON.stringify(id)}](m)).catch(e=>window[${JSON.stringify(id)}](null,String(e)));`;
-    script.onerror=()=>finish(null,'未能读取 TT 的延迟分支接口。');
-    win.document.head.append(script);
-   });return coldTools;
+   return coldTools||=importHostModule(win,'/scripts/chat-payload-transport.js','未能读取 TT 的延迟分支接口。');
   }
   function retainedCold(sourceId){return [...new Set([...(ctx().chat||[]),...(checkpoint?.loaded.messages||[]),...(loading?.before?.loaded.messages||[]),...(loading?.installed?.loaded.messages||[]),...(recoveryDraft?.loaded.messages||[])])].filter(m=>m?.tt_swipe_cold&&(sourceId===undefined||m.tt_swipe_cold.sourceId===sourceId));}
   async function hydratePreserved(message,records){
@@ -617,7 +619,7 @@
    }catch(error){await restoreLoad(load,error,{finish:true});throw error;}
    finally{if(load.nativeId!==null)nativeOpen.cancel();releaseColdRecords(load);}
   }
-  const hostState=()=>hostStatePromise||=(isNative?Promise.resolve(null):Promise.resolve().then(()=>loadHostState?loadHostState():import(new URL('/script.js',win.location.href).href)).then(m=>m?.saveChatConditional===ctx().saveChat&&typeof m.isChatSaving==='boolean'?m:null).catch(()=>null));
+  const hostState=()=>hostStatePromise||=(isNative?Promise.resolve(null):Promise.resolve().then(()=>loadHostState?loadHostState():importHostModule(win,'/script.js','未能读取宿主保存状态。')).then(m=>m?.saveChatConditional===ctx().saveChat&&typeof m.isChatSaving==='boolean'?m:null).catch(()=>null));
   async function waitHostSave(expected){
    const native=await hostState();
    do{await guard.whenIdle();if(closed||!sameScope(expected,scope()))fail('context-changed','故事已切换，停止旧窗口提交。');if(!native?.isChatSaving)return;await new Promise(r=>(win.setTimeout||setTimeout)(r,20));}while(true);
@@ -770,5 +772,5 @@
   win[SINGLETON]=service;checkpoint=capture({references:true});guard.reset().catch(()=>{});return service;
  }
  // slimChat 单独导出：保存瘦身规则要能被离线回归直接核对，不必模拟整条保存链路。
- return {create,acquire,wrapNative,createNativeOpenObserver,canonical,normalizeAuthorNote,slimChat};
+ return {create,acquire,wrapNative,createNativeOpenObserver,canonical,normalizeAuthorNote,slimChat,importHostModule};
 });

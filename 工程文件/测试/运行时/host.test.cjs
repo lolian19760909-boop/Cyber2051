@@ -819,6 +819,15 @@ test('worldbook cache refresh uses one acknowledged write and preserves unknown 
  const value={entries:{},extensions:{journal:{unknown:[0,false,'keep']}}};await host.writeRawBook('cache-proof',value,host.getContext(),true);
  assert.deepEqual(h.state.rawBooks.get('cache-proof'),value);assert.deepEqual(cache.get('cache-proof'),value);assert.equal(events.length,1);assert.equal(events[0][0],'world');assert.equal(h.state.events.filter(x=>x==='worldbook-persisted:cache-proof').length,1);assert(!h.state.events.includes('cache:cache-proof'));value.extensions.journal.unknown.push('later');assert.equal(cache.get('cache-proof').extensions.journal.unknown.length,3);
 });
+test('the browser host loads its worldbook cache through the host document',async t=>{
+ const h=fakeBackend(t),c=h.api.SillyTavern.getContext(),cache=new Map(),win={document:{}};h.api.SillyTavern.getContext=()=>c;h.api.parent=win;c.eventTypes={WORLDINFO_UPDATED:'world'};c.eventSource={emit:async()=>{}};
+ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),file=path.resolve(__dirname,'../../卡片源码/运行时/host.js'),sandbox={module:{exports:{}},require:require('node:module').createRequire(file),document:{},parent:win,Date,URL,AbortSignal,TextEncoder,setTimeout,clearTimeout,console};
+ vm.runInNewContext(fs.readFileSync(file,'utf8'),sandbox,{filename:file});let loads=0;
+ const host=sandbox.module.exports.create({core:Core,api:h.api,fetch:h.fetch,hostOrigin:'http://localhost:8000',chatSaveGuard:{async importHostModule(target,module){assert.equal(target,win);assert.equal(module,'/scripts/world-info.js');loads++;return {saveWorldInfo:c.saveWorldInfo,worldInfoCache:cache};}}});t.mock.timers.tick(2500);
+ for(const name of ['first','second'])await host.writeRawBook(name,{entries:{},unknown:{keep:7}},host.getContext(),true);
+ assert.equal(loads,1);assert.equal(cache.size,2);assert.equal(cache.get('second').unknown.keep,7);assert(!h.state.events.some(e=>e.startsWith('cache:')));
+});
+
 test('unknown worldbook implementation retains fallback; cache path cannot hide bad acknowledgement or readback',async t=>{
  const h=fakeBackend(t),c=h.api.SillyTavern.getContext(),cache=new Map();h.api.SillyTavern.getContext=()=>c;c.eventTypes={WORLDINFO_UPDATED:'world'};c.eventSource={emit:async()=>{}};let mode='fallback';const host=Host.create({core:Core,api:h.api,hostOrigin:'http://localhost:8000',fetch:async(...args)=>{if(mode==='ack')return {ok:true,json:async()=>({ok:false})};if(mode==='readback'&&new URL(args[0]).pathname.endsWith('/get'))return {ok:true,json:async()=>({entries:{},changed:true})};return h.fetch(...args);},loadWorldInfoRuntime:async()=>({saveWorldInfo:()=>{},worldInfoCache:cache})});t.mock.timers.tick(2500);
  await host.writeRawBook('fallback',{entries:{}},host.getContext(),true);assert(h.state.events.includes('cache:fallback'));assert.equal(cache.size,0);

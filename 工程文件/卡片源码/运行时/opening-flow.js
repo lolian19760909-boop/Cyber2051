@@ -5,7 +5,7 @@
   const copy=structuredClone,steps=['origin','profile','growth','loadout','scenario','review'];
   const directOrigins={'origin-street':'street','origin-corpo':'corpo','origin-student':'student','custom-opening':null};
   const isDirect=id=>Object.hasOwn(directOrigins,id),validScenario=id=>Number.isInteger(id)&&id>=2&&id<=11||isDirect(id);
-  function create({key,scope,resumeDraft,creationId,identity:I,loadout:L,readIdentity,readPreferences,readProfile=()=>null,readOpening=()=>'',storage,prepare,submit,verify,send,recover,inspect,openRecovery,rescue,onPreview=()=>{},onFailure=()=>{},onComplete=()=>{}}){
+  function create({key,scope,resumeDraft,creationId,identity:I,loadout:L,readIdentity,readPreferences,readProfile=()=>null,readOpening=()=>'',storage,prepare,withCommit=work=>work(),submit,verify,send,recover,inspect,openRecovery,rescue,onPreview=()=>{},onFailure=()=>{},onComplete=()=>{}}){
     const legacyKey='cxx-opening-draft:'+key,indexKey=scope?'cxx-opening-draft:v2:'+JSON.stringify([scope.instanceId,key]):legacyKey,listeners=new Set();let storageKey=indexKey,restoreChoice=null;
     let ended=false,flight=null,dispatched=false,locked=false,restored=false,creationStarted=!!(resumeDraft||creationId);
     const saved=readIdentity(),prefs=readPreferences();
@@ -62,7 +62,9 @@
       const selection=choice(),openingText=directText(),target=isDirect(draft.scenario)?1:draft.scenario,preferences=copy(draft.preferences),profile=copy(draft.profile);
       cache(true);status='saving';error='';lastError=null;guidance=null;locked=true;creationStarted=true;
       flight=Promise.resolve().then(async()=>{
-        active();stats.submissions++;await submit({value:selection,swipe:target,...(openingText!==undefined?{openingText}:{}),preferences,profile,creationId:draft.creationId,draft:copy(draft)});active();await verify();active();
+        active();await withCommit(async()=>{
+          active();stats.submissions++;await submit({value:selection,swipe:target,...(openingText!==undefined?{openingText}:{}),preferences,profile,creationId:draft.creationId,draft:copy(draft)});active();await verify();active();
+        });active();
         // Only retry saving. Never automatically resend a command whose dispatch began.
         status='saved';notify();
         if(draft.pendingCommand&&!dispatched){draft.dispatchStarted=true;cache(true);dispatched=true;stats.sends++;await send(draft.pendingCommand);}

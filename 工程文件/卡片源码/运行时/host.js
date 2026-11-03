@@ -132,11 +132,12 @@
     const api = options.api || root;
     const fetcher = options.fetch || root.fetch.bind(root);
     const context = () => api.SillyTavern.getContext();
+    const ChatSaveGuard=options.chatSaveGuard||(typeof module==='object'&&module.exports?require('./chat-save-guard.js'):root.CxxChatSaveGuard);
     let chatSaveGuard;
     function startChatSaveGuard(){
       if(chatSaveGuard)return chatSaveGuard;
-      const win=api.parent||root.parent,Guard=options.chatSaveGuard||(typeof module==='object'&&module.exports?require('./chat-save-guard.js'):root.CxxChatSaveGuard);
-      if(win?.document&&win?.fetch&&Guard)chatSaveGuard=Guard.acquire({win,api});
+      const win=api.parent||root.parent;
+      if(win?.document&&win?.fetch&&ChatSaveGuard)chatSaveGuard=ChatSaveGuard.acquire({win,api});
       return chatSaveGuard;
     }
     function resetChatSaveGuard({reuseScope=false}={}){const service=startChatSaveGuard();return service?.reset({reuseScope});}
@@ -441,7 +442,7 @@
     async function readRawBook(name, expected = operationContext()) { return name ? post('worldinfo/get', { name }, expected) : { entries: {} }; }
     let worldbookRuntimePromise;
     function worldbookRuntime() {
-      return worldbookRuntimePromise ||= Promise.resolve().then(() => options.loadWorldInfoRuntime ? options.loadWorldInfoRuntime() : root.document ? import(new URL('/scripts/world-info.js', root.parent.location.href).href) : null).then(runtime => {
+      return worldbookRuntimePromise ||= Promise.resolve().then(() => options.loadWorldInfoRuntime ? options.loadWorldInfoRuntime() : root.document ? ChatSaveGuard.importHostModule(api.parent||root.parent,'/scripts/world-info.js','未能读取宿主世界书缓存。') : null).then(runtime => {
         const c=context();
         return runtime?.saveWorldInfo===c.saveWorldInfo && typeof runtime?.worldInfoCache?.set==='function' && typeof c.eventSource?.emit==='function' && c.eventTypes?.WORLDINFO_UPDATED ? runtime : null;
       }).catch(() => null);
