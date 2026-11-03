@@ -1,0 +1,49 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {chromium} from 'playwright';
+import {createPackagedServer} from './local-runtime.mjs';
+
+const arg=(name,fallback)=>{const at=process.argv.indexOf(name);return at<0?fallback:process.argv[at+1];};
+const root=path.resolve(arg('--root','.cache/feedback-batch1-20261101/package')),out=path.resolve(arg('--out','.cache/feedback-batch1-20261101'));
+fs.mkdirSync(out,{recursive:true});
+const {release}=JSON.parse(fs.readFileSync(path.join(root,'current.json'))),server=createPackagedServer({root});
+await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+const base='http://127.0.0.1:'+server.address().port,report={buildId:release,checks:[],shots:[],errors:[],modelRequests:0};
+let browser,page,phase='boot';
+const shoot=async name=>{const file='preset-controls-'+name+'.png';await page.screenshot({path:path.join(out,file)});report.shots.push(file);};
+try{
+ browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
+ const context=await browser.newContext({viewport:{width:1280,height:900}});page=await context.newPage();page.setDefaultTimeout(20000);
+ page.on('pageerror',error=>report.errors.push(error.message));
+ await context.route('**/api/workshop/announcements',route=>route.fulfill({json:{ok:true,items:[]}}));
+ await context.route('**/api/play/connect',route=>{report.modelRequests++;return route.fulfill({json:{choices:[{message:{content:'<cxx-story>雨停了，街角的霓虹映在水面上。</cxx-story><ztl>{"characters":[],"location":"街头"}</ztl>'},finish_reason:'stop'}]}});});
+ await page.goto(base+'/?mode=local&baseUrl=https%3A%2F%2Ffixture.invalid%2Fv1&model=synthetic');
+ await page.locator('.cxx-pack-choice button').first().waitFor({timeout:60000});await page.locator('.cxx-pack-choice button').first().click();
+ await page.waitForFunction(()=>!!window.CxxOpeningPage&&!document.querySelector('.cxx-boot'),null,{timeout:180000});
+ const later=page.getByRole('button',{name:'稍后再说',exact:true});if(await later.isVisible())await later.click();
+ await page.locator('.cx77-splash[data-phase=title]').waitFor({timeout:30000});await page.locator('.cx77-splash[data-phase=title]').click();await page.locator('.cx77-splash').waitFor({state:'detached'});
+ if(await later.isVisible())await later.click();
+ await page.getByRole('button',{name:'新游戏',exact:true}).click();await page.locator('.cxx-game-setup').waitFor();await page.getByRole('button',{name:'下一步',exact:true}).click();await page.getByRole('button',{name:/开始创建|创建角色|创建人物|继续创建/}).click();await page.locator('.cxx-opening-flow').waitFor();
+ const next=async step=>{await page.locator('.opening-next').click();if(step)await page.locator('.cxx-opening-flow[data-step="'+step+'"]').waitFor();};
+ await next('origin');await next('profile');await page.getByLabel('姓名',{exact:true}).fill('预设开关核对');await next('growth');await next('loadout');await next('scenario');await page.getByRole('button',{name:/街头/}).last().click();await page.getByRole('button',{name:'查看剧情',exact:true}).click();await page.getByRole('button',{name:'确认开局',exact:true}).click();await page.locator('.cxx-opening-flow[data-step="review"]').waitFor();await next();
+ await page.waitForFunction(()=>!!CxxWebApp.ui&&CxxWebApp.session?.nodes?.length>0&&!CxxWebApp.read().busy,null,{timeout:60000});
+ const panel=page.locator('#session-settings'),control=()=>panel.getByLabel('当前预设',{exact:true});
+ const open=async()=>{await page.locator('.cxx-game-menu').waitFor({state:'hidden'});await page.getByRole('button',{name:'设置',exact:true}).click();await page.getByRole('tab',{name:'生成与变量',exact:true}).click();await control().waitFor();};
+ const snapshot=()=>page.evaluate(async()=>{const s=CxxWebApp.session,main=s.presetControls.find(row=>row.identifier==='main'),prompt=s.buildPrompt('核对当前预设');return {id:s.presetId,runId:s.identity.runId,main,used:prompt.prompt.used,temperature:{effective:(s.promptOptions.sampling.temperature??s.sampling.temperature),display:Number(document.querySelector('#session-settings input[aria-label="温度"]').value)},stored:await CxxWebApp.statePort.readStorySettings(s.identity.runId),controlCount:s.presetControls.length,orderCount:s.preset.prompt_order.find(row=>row.character_id===100001).order.length};});
+ const saved=async(id,enabled)=>page.waitForFunction(async({id,enabled})=>{const s=CxxWebApp.session,v=await CxxWebApp.statePort.readStorySettings(s.identity.runId);return v?.contentPreset?.id===id&&(enabled===undefined||v?.promptToggles?.main===enabled);},{id,enabled});
+ await open();if(await control().inputValue()!=='izumi')await control().selectOption('izumi');
+ await panel.locator('summary').filter({hasText:'预设原有开关'}).click();let current=await snapshot();
+ phase='disable';await panel.getByLabel(current.main.name,{exact:true}).uncheck();await saved('izumi',false);current=await snapshot();assert.equal(current.main.enabled,false);assert.ok(!current.used.includes('main'));await shoot('01-disabled');report.checks.push('实际关闭主提示后，提示装配与IDB同时关闭');
+ await panel.getByLabel(current.main.name,{exact:true}).check();await saved('izumi',true);
+ phase='switch';await control().selectOption('reborn');await saved('reborn');current=await snapshot();assert.equal(current.main.enabled,false);assert.ok(!current.used.includes('main'));assert.equal(current.temperature.display,current.temperature.effective);assert.equal(current.controlCount,current.orderCount);assert.deepEqual(current.stored.promptToggles,{});await shoot('02-switched');report.checks.push('切换喵赛亚采用其默认关闭状态，温度同步，列表与编排一致');
+ phase='save-reload';await panel.getByLabel(current.main.name,{exact:true}).check();await saved('reborn',true);const runId=current.runId;await shoot('03-saved');
+ await page.reload();await page.locator('.cx77-splash[data-phase=title]').waitFor({timeout:60000});await page.locator('.cx77-splash[data-phase=title]').click();await page.locator('.cx77-splash').waitFor({state:'detached'});await page.getByRole('button',{name:/^继续游戏/}).click();await page.waitForFunction(()=>CxxWebApp.read().booted&&CxxWebApp.session&&!CxxWebApp.read().busy,null,{timeout:60000});await open();current=await snapshot();assert.equal(current.runId,runId);assert.equal(current.id,'reborn');assert.equal(current.main.enabled,true);assert.ok(current.used.includes('main'));await shoot('04-restored');report.checks.push('刷新并从主菜单继续后，本故事预设与玩家启用状态恢复，实际提示保持启用');
+ phase='switch-back';await control().selectOption('izumi');await saved('izumi');current=await snapshot();assert.equal(current.main.enabled,true);assert.ok(current.used.includes('main'));assert.equal(current.temperature.display,current.temperature.effective);await shoot('05-switch-back');report.checks.push('切回Izumi采用其默认开关与有效温度');
+ phase='reading';await page.getByRole('tab',{name:'显示与声音',exact:true}).click();await page.getByRole('button',{name:'正文阅读',exact:true}).click();await page.locator('#drawer-close').click();const floors=page.getByLabel('选择正文楼层',{exact:true});await floors.selectOption(await floors.locator('option').last().getAttribute('value'));await page.locator('.cxx-native-reading .cxx-native-layout').getByText('雨停了，街角的霓虹映在水面上。',{exact:true}).waitFor();await shoot('05a-native');report.checks.push('实际切换正文阅读，共用解析器正确显示已保存正文');
+ await open();await page.getByRole('tab',{name:'显示与声音',exact:true}).click();await page.getByRole('button',{name:'GAL 对话',exact:true}).click();await page.locator('#drawer-close').click();await page.locator('.cxx-gal-dialogue:not(.cxx-gal-dialogue-probe)').filter({hasText:'雨停了，街角的霓虹映在水面上。'}).waitFor();await shoot('05b-gal');report.checks.push('实际切回GAL，已保存正文可读');await open();
+ phase='mobile';await page.setViewportSize({width:390,height:844});await control().scrollIntoViewIfNeeded();await shoot('06-mobile');
+ const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth);assert.equal(overflow,false);report.checks.push('390px预设控件可用，页面宽度正常');
+ assert.equal(report.modelRequests,1);assert.deepEqual(report.errors,[]);report.paidRequests=0;report.ok=true;
+}catch(error){report.ok=false;report.phase=phase;report.error=error.stack;process.exitCode=1;await page?.screenshot({path:path.join(out,'preset-controls-failed.png')}).catch(()=>{});}
+finally{fs.writeFileSync(path.join(out,'preset-controls-browser.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));await browser?.close();await new Promise(resolve=>server.close(resolve));}
