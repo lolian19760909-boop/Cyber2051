@@ -33,7 +33,7 @@
   return {schema:1,location:String(scene.location||place?.name||'地点未记录').slice(0,100),time:[scene.date,scene.time].filter(x=>typeof x==='string').join(' ').slice(0,80),excerpt:text,characters:Array.isArray(scene.characters)?scene.characters.map(p=>typeof p?.name==='string'?p.name:'').filter(Boolean).slice(0,5):[],floor:Math.max(0,messages.length-1),lastAt:messages.at(-1)?.send_date||'',identity:String(game.origin?.name||'').slice(0,80)};
  }
  function createStore({adapter:A,hash,uuid,now=()=>new Date().toISOString(),validateCover=async v=>copy(v),storage,storageKey='cxx-story-creation'}){
-  let flight=null,pendingCreation=null,pendingPoint=null,pendingRestore=null,journalKey;
+  let flight=null,pendingCreation=null,pendingPoint=null,pendingRestore=null,pendingImport=null,journalKey;
   function readJournal(){const key=typeof storageKey==='function'?storageKey():storageKey;if(key!==journalKey){journalKey=key;pendingCreation=null;try{pendingCreation=JSON.parse(storage?.getItem(key)||'null');}catch{}}}
   readJournal();
   function journal(value){if(storage){if(value)storage.setItem(journalKey,JSON.stringify(value));else storage.removeItem(journalKey);}pendingCreation=value;}
@@ -110,7 +110,15 @@
    await A.write(id,rows);if(await hash(await A.read(id))!==await hash(rows))fail('配图保存尚未读回确认，请刷新检查后重试。');
   });}
   async function exportCurrent(){return serial(async()=>{await ensureRoute();const doc=await A.capture();A.assertExportCurrent?.(doc);return doc;});}
-  async function importDocument(doc){return serial(async()=>{await A.flush();const parsed=await A.validateExport(doc),prior=parsed.payload.header.chat_metadata[KEY],sourceHash=parsed.sha256;parsed.payload.header.chat_metadata[KEY]=routeMeta(prior,{schema:1,indexVersion:1,kind:'route',storyId:prior?.storyId||'import_'+sourceHash,routeId:'import_'+sourceHash,name:prior?.name||'旧版续玩',slot:prior?.slot||1,createdAt:prior?.createdAt||parsed.createdAt||'1970-01-01T00:00:00.000Z',quickPoint:null,...(prior?.routeId?{parentRouteId:prior.routeId}:{})});parsed.sha256=await hash(withoutHash(parsed));const result=await A.importDocument(parsed);await A.open(result.chatId);await remember();return result;});}
+  async function importDocument(doc){return serial(async()=>{
+   await A.flush();const parsed=await A.validateExport(doc),sourceHash=parsed.sha256;
+   if(!pendingImport||pendingImport.sourceHash!==sourceHash){
+    const prior=parsed.payload.header.chat_metadata[KEY];parsed.payload.header.chat_metadata[KEY]=routeMeta(prior,{schema:1,indexVersion:1,kind:'route',storyId:prior?.storyId||'import_'+sourceHash,routeId:uuid(),name:prior?.name||'旧版续玩',slot:await chooseSlot(),createdAt:now(),quickPoint:null,...(prior?.routeId?{parentRouteId:prior.routeId}:{})});
+    parsed.sha256=await hash(withoutHash(parsed));pendingImport={sourceHash,doc:parsed};
+   }
+   const pending=pendingImport,result=pending.result||await A.importDocument(pending.doc);pending.result=result;
+   await A.open(result.chatId);await remember();pendingImport=null;return result;
+  });}
   async function branchAt(floor){return serial(async()=>{const doc=await A.capture();if(!Number.isInteger(floor)||floor<1||floor>=doc.payload.messages.length)fail('路线起点无效。');doc.payload.messages=doc.payload.messages.slice(0,floor+1);const prior=doc.payload.header.chat_metadata[KEY];doc.payload.header.chat_metadata[KEY]=routeMeta(prior,{schema:1,kind:'route',storyId:prior?.storyId||uuid(),routeId:uuid(),name:(prior?.name||'故事')+' · 第'+floor+'层分支',createdAt:now(),slot:await chooseSlot(),quickPoint:null});doc.sha256=await hash(withoutHash(doc));const result=await A.importDocument(doc);await A.open(result.chatId);return result;});}
   async function inspectPending(){
    readJournal();const result=(code,message,action='none',extra={})=>({code,message,action,...extra});
