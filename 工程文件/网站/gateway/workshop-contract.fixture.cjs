@@ -45,7 +45,7 @@ async function startFixture(port=0,{evidenceDirectory}={}){
    const pathname=url.pathname.startsWith('/workshop/')?url.pathname.slice('/workshop'.length):url.pathname;
    const publicRoot=path.join(__dirname, "public"),file=path.resolve(publicRoot,'.'+(pathname==='/'?'/submit.html':decodeURIComponent(pathname)));
    if(!file.startsWith(publicRoot+path.sep)||!fs.existsSync(file)||!fs.statSync(file).isFile())return json(res,404,{ok:false,error:'not_found'});
-   res.writeHead(200,{'Content-Type':{'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8'}[path.extname(file)]||'application/octet-stream','Cache-Control':'no-store'});fs.createReadStream(file).pipe(res);
+   res.writeHead(200,{'Content-Type':{'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8'}[path.extname(file)]||'application/octet-stream','Cache-Control':'no-store'});fs.createReadStream(file).pipe(res);
   }catch{json(res,500,{ok:false,error:'fixture_error'});}});
   const publicPort=port||await freePort();await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(publicPort,'127.0.0.1',resolve);});
   const baseUrl='http://127.0.0.1:'+server.address().port;publicFixture();

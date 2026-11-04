@@ -49,6 +49,14 @@
       <input id="title" maxlength="60" required data-ui-ph-zh="给这份投稿起个名字" data-ui-ph-en="Name this submission" data-ui-ph-ja="投稿の名前">
       <label class="fld" for="summary" data-ui-zh="一句话简介（必填）" data-ui-en="One-sentence summary (required)" data-ui-ja="一文の概要（必須）">一句话简介（必填）</label>
       <textarea id="summary" maxlength="2000" required data-ui-ph-zh="它是什么、怎么用、有哪些亮点……" data-ui-ph-en="What is it, how is it used, and what makes it interesting?" data-ui-ph-ja="内容、使い方、見どころなど…"></textarea>
+      <details class="form-options" open>
+        <summary>发布说明与授权</summary>
+        <label class="fld" for="update-note">本次更新说明</label><textarea id="update-note" maxlength="3000"></textarea>
+        <label class="fld" for="credits">合作与素材署名</label><textarea id="credits" maxlength="2000"></textarea>
+        <label class="fld" for="rights">权利说明（必填）</label><textarea id="rights" maxlength="2000" required placeholder="说明原创部分、引用素材来源及相应许可"></textarea>
+        <label class="fld" for="adaptation">是否允许改编转载</label><select id="adaptation"><option value="ask">需先取得作者许可</option><option value="allowed">允许改编转载，须署名并保留素材来源</option><option value="reserved">保留权利</option></select>
+        <label><input id="rights-confirm" type="checkbox" required>我已核对投稿与素材的署名及授权说明</label>
+      </details>
       <details class="form-options">
         <summary data-ui-zh="署名与标签（可选）" data-ui-en="Credit and tags (optional)" data-ui-ja="名義とタグ（任意）">署名与标签（可选）</summary>
         <label class="fld" for="author" data-i18n="sub.author">署名（可选，最多 24 字）</label>
@@ -145,9 +153,10 @@ async function formData(validate=true) {
   if(!payload||typeof payload!=='object'||Array.isArray(payload))throw Error(SL('内容须为 JSON 对象','Content must be a JSON object','本文は JSON オブジェクトにしてください'));
   if(validate&&!$('title').value.trim()){$('title').focus?.();throw Error(SL('请填写标题','Please enter a title','タイトルを入力してください'));}
   if(validate&&!$('summary').reportValidity())throw Error(SL('请填写一句话简介','Add a one-sentence summary','一文の概要を記入してください'));
+  if(validate&&(!$('rights').reportValidity()||!$('rights-confirm').reportValidity()))throw Error('请填写并确认权利说明');
   const file=typeOf($('type').value)==='contract'?null:$('file').files?.[0];
   if(file&&file.size>10*1024*1024)throw Error(SL('附件超过 10MB，请换一个文件。','Attachment exceeds 10MB. Choose another file.','添付は 10MB 以下にしてください。'));
-  return {type:typeOf($('type').value),title:$('title').value.trim(),authorName:$('author').value.trim(),tags:$('tags').value.split(/[,，]/).map(s=>s.trim()).filter(Boolean).slice(0,8),summary:$('summary').value.trim(),payload};
+  return {type:typeOf($('type').value),title:$('title').value.trim(),authorName:$('author').value.trim(),tags:$('tags').value.split(/[,，]/).map(s=>s.trim()).filter(Boolean).slice(0,8),summary:$('summary').value.trim(),payload,publication:{version:1,updateNote:$('update-note').value.trim(),credits:$('credits').value.trim(),rightsStatement:$('rights').value.trim(),adaptation:$('adaptation').value}};
 }
 function say(text,kind=''){const el=$('msg');el.textContent=text;el.className='msg '+kind;}
 async function validatePreview(data){
@@ -172,6 +181,7 @@ const editReady = (async () => {
   if(!r.ok||!j.ok)throw Error(SL('请以作者身份登录后打开改稿','Sign in as the author to edit this post','作者としてログインしてから編集してください'));
   editing=j.item;await contractForm.ready;
   for(const [field,key]of [['title','title'],['summary','summary'],['author','authorName'],['type','type']])$(field).value=editing[key]||'';
+  const publication=editing.publication||{};for(const [field,key]of [['update-note','updateNote'],['credits','credits'],['rights','rightsStatement']])$(field).value=publication[key]||'';$('adaptation').value=publication.adaptation||'ask';
   $('tags').value=editing.tags.join(',');$('payload').textContent=JSON.stringify(editing.payload,null,2);$('original-draft').hidden=false;
   const kind=editing.payload.templateKind||templateOf(editing.type);$('type').value=kind==='npc'?'character':kind;
   paused=editing.status==='withdrawn'||!CxxSubmissionTemplate.isOpen(editing.type,editing.payload);$('type').disabled=paused;
@@ -223,7 +233,7 @@ $('export-key').addEventListener('click',()=>{if(created)downloadJson({id:create
 $('new-submission').addEventListener('click',()=>{
   if(editing){location.href='/workshop/submit.html';return;}
   if(uploading)return;
-  for(const id of ['title','author','tags','summary','file'])$(id).value='';
+  for(const id of ['title','author','tags','summary','file','update-note','credits','rights'])$(id).value='';$('rights-confirm').checked=false;$('adaptation').value='ask';
   $('type').value='character';contractForm.reset();typeChanged();
   created=null;attachmentFile=null;completed=false;dirty=false;$('keyval').textContent='';$('keybox').style.display='none';
   $('submission-success').hidden=true;$('form-panel').hidden=false;$('send').disabled=false;say('');$('title').focus?.();

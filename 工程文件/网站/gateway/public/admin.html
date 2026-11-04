@@ -93,6 +93,8 @@
     <p class="hint" data-ui-zh="请使用干净的维护导出，不要上传玩家存档或验收卡。新版卡在这里仅用于核对并提取基础内容；程序随完整新卡交付，玩家通过存档迁移续玩。" data-ui-en="Use a clean maintained export, not a player save or test card. Modern cards supply only static base content here. New code ships in a complete card; players migrate their saves." data-ui-ja="プレイヤーのセーブや検証用カードではなく、保守用の出力を使用してください。新カードからは基本コンテンツのみ抽出します。新しいコードは完全版カードで配布し、セーブを移行します。">请使用干净的维护导出，不要上传玩家存档或验收卡。新版卡在这里仅用于核对并提取基础内容；程序随完整新卡交付，玩家通过存档迁移续玩。</p>
     <p class="hint" data-ui-zh="服务会核对版本、内容归属和旧版本。此处只接收 JSON；PNG 卡仍由原有打包流程生成。" data-ui-en="The service checks versions and content ownership. Only JSON is accepted here; PNG cards use the existing packaging process." data-ui-ja="バージョンと内容の帰属を確認します。ここは JSON のみ対応し、PNG カードは既存の工程で生成します。">服务会核对版本、内容归属和旧版本。此处只接收 JSON；PNG 卡仍由原有打包流程生成。</p>
     <fieldset id="file-controls">
+      <label class="fld" for="release-queue">已审核待发行的投稿</label><select id="release-queue" multiple size="5"></select>
+      <p id="queue-state" class="hint" role="status"></p><div class="toolbar"><button id="queue-refresh" type="button" class="btn ghost">刷新待发行队列</button><button id="queue-compile" type="button" class="btn ghost">生成所选审核产物</button></div>
       <label class="fld" for="files" data-ui-zh="本次更新文件" data-ui-en="Update files" data-ui-ja="今回の更新ファイル">本次更新文件</label>
       <input id="files" type="file" accept=".json,application/json" multiple>
       <label class="fld" for="withdraw-packages">撤回公开发行的内容包（可多选）</label>

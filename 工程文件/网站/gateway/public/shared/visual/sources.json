@@ -1,0 +1,20 @@
+{
+  "source": "配套扩展/tavern-runtime-suite/visual",
+  "files": [
+    {
+      "file": "runtime/motion.mjs",
+      "sha256": "f9d1331155e6ae8289049c706cdc9325e1da59384d13719543381c352e102e64",
+      "bytes": 20022
+    },
+    {
+      "file": "recipes/graphic.mjs",
+      "sha256": "6e73471b3e49a3988f99a299affee17c8f307a4e1a4b1ee68091ac871a75a31a",
+      "bytes": 726
+    },
+    {
+      "file": "recipes/interface.mjs",
+      "sha256": "dbc612a89bfb68f028a752cefcd7997937bf72e505b3ccaf9d361fa9726313dc",
+      "bytes": 631
+    }
+  ]
+}

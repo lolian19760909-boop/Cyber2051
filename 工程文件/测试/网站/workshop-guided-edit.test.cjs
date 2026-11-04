@@ -32,13 +32,13 @@ test('actual guided edit source restores the three active templates and legacy J
  }
  await run('world_factor',{legacy:'只读静态正文'},true);
  async function run(type,payload,raw){
-  const d=dom(),calls=[],item={id:42,type,revision:4,status:'approved',title:'合成改稿',summary:'简介',authorName:'已绑定作者',tags:['验收'],payload};
+  const d=dom(),calls=[],item={id:42,type,revision:4,status:'approved',title:'合成改稿',summary:'简介',authorName:'已绑定作者',tags:['验收'],payload,publication:{version:1,updateNote:'修订说明',credits:'原创',rightsStatement:'作者原创',adaptation:'ask'}};
   d.document.getElementById('type').value='contract';
   const fetch=async(url,options={})=>{calls.push({url,options});return {ok:true,status:200,json:async()=>url.endsWith('/schema')?{ok:true,schema:C.schema()}:url.endsWith('/update')?{ok:true,revision:5}:url.endsWith('/attachment')?{ok:true,revision:6}:{ok:true,item:copy(item)}};};
   const context=vm.createContext({window:{},...d,fetch,URLSearchParams,location:{search:'?edit=42'},SL:zh=>zh,CXXI18N:{current:()=> 'zh',t:(key,fallback)=>fallback},$:id=>d.document.getElementById(id),authHeaders:extra=>({...extra,Authorization:'Bearer synthetic-owner'})});
   context.window=context;vm.runInContext(read('submission-template.js'),context);vm.runInContext(read('contract-form.js')+'\nglobalThis.CxxContractForm=window.CxxContractForm;',context);
   vm.runInContext(source+'\nglobalThis.done=editReady;globalThis.readForm=formData;globalThis.getEditing=()=>editing;',context);await context.done;
-  if(raw){assert.equal(d.document.getElementById('send').disabled,true);assert.deepEqual(JSON.parse(d.document.getElementById('payload').textContent),payload);await assert.rejects(context.readForm(),/暂停|历史|只读/);return;}const value=copy(await context.readForm());assert.deepEqual(value,{type,title:item.title,authorName:item.authorName,tags:item.tags,summary:item.summary,payload});
+  if(raw){assert.equal(d.document.getElementById('send').disabled,true);assert.deepEqual(JSON.parse(d.document.getElementById('payload').textContent),payload);await assert.rejects(context.readForm(),/暂停|历史|只读/);return;}const value=copy(await context.readForm());assert.deepEqual(value,{type,title:item.title,authorName:item.authorName,tags:item.tags,summary:item.summary,payload,publication:item.publication});
   assert.deepEqual(JSON.parse(d.document.getElementById('payload').textContent),payload);assert.equal(context.getEditing().revision,4);
   assert.equal(calls.find(x=>x.url.endsWith('/42/edit')).options.headers.Authorization,'Bearer synthetic-owner');
   if(type==='code_component')d.document.getElementById('file').files=[{name:'proposal.js',arrayBuffer:async()=>new TextEncoder().encode('// Review-only proposal').buffer}];
