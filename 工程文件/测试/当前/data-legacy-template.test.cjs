@@ -45,3 +45,11 @@ test('signed player and NPC balances mirror and read back through the actual SQL
 test('old nonnegative balance schemas upgrade once and preserve existing rows and player metadata',async()=>{
  const f=fixture({legacy:false,balanceLegacy:true});try{const before=structuredClone(f.data),ready=await f.store.ensureSchema();assert.equal(ready.ok,true,ready.reason);assert.equal(f.imports,1);for(const name of ['cxx_actor_stat','cxx_wallet']){assert.deepEqual(f.data['sheet_'+name].content,before['sheet_'+name].content);assert.equal(f.data['sheet_'+name].sourceData.playerNote,'保留余额说明');}assert.deepEqual(f.data.sheet_private,before.sheet_private);const result=await Sync.create({store:f.store,rows:Rows}).pushAll(balanceState(-100),8);assert.equal(result.ok,true,result.reason+' SQL='+f.lastError);assert.equal(f.db.prepare('SELECT yen FROM cxx_wallet').get().yen,-100);assert.equal(f.imports,1);}finally{f.close();}
 });
+
+
+test('模板与运行表键名不同时按同表合并，保留实时uid、行与私人字段',async()=>{
+ const f=fixture();try{const before=structuredClone(f.data),readTemplate=f.api.getTableTemplate;f.api.getTableTemplate=async()=>Object.fromEntries(Object.entries(readTemplate()).map(([key,value],i)=>key.startsWith('sheet_')?['sheet_template_'+i,{...value,uid:'sheet_template_'+i}]:[key,value]));
+ const ready=await f.store.ensureSchema();assert.equal(ready.ok,true,ready.reason);assert.equal(f.imports,1);assert.equal(new Set(Object.values(f.data).filter(row=>row?.name).map(row=>row.name)).size,Object.keys(f.data).filter(key=>key.startsWith('sheet_')).length);
+ for(const [key,sheet]of Object.entries(before))if(key.startsWith('sheet_')){assert.equal(f.data[key].uid,sheet.uid||key);assert.deepEqual(f.data[key].content,sheet.content);}assert.deepEqual(f.data.sheet_private,before.sheet_private);assert.deepEqual(f.data.sheet_zhuang_bei_biao.playerField,{zero:0});assert.equal(f.db.prepare('SELECT slot FROM cxx_equipment').get().slot,'主手');assert.equal((await f.store.ensureSchema()).ok,true);assert.equal(f.imports,1);
+ }finally{f.close();}
+});
