@@ -31,6 +31,7 @@ import { createRulesEngine } from '../src/rules/engine.mjs';
 import { loadCardChainInBrowser } from '../src/reuse/browser-chain.mjs';
 import { createWebSession } from '../src/app/session.mjs';
 import { createRelayModelPort, createDirectModelPort, createTavernModelPort, ModelError } from '../src/models/port.mjs';
+import {createWorkshopAccount} from '../src/models/workshop-account.mjs';
 import { createSiteLogin, createSessionTokenStore } from '../src/models/login.mjs';
 import {createAssetPort} from '../src/assets/port.mjs';
 import {prepareOfficialMedia} from '../src/assets/prepare.mjs';
@@ -503,6 +504,7 @@ async function prepareSession({ accountId, runId, fromOpening=true, onRestored, 
     mode: state.mode,
     accountId,
     runId,
+    workshopAccount:state.mode==='public'?createWorkshopAccount({publisherId:accountId,token:()=>state.tokenStore.get(),currentPublisher:()=>globalThis.CXXUser?.current()?.publisherId,isCurrent:()=>sequence===startSequence}):undefined,
     contentVersion:state.manifest?.contentVersion,
     engineVersion:state.manifest?.engineVersion,promptVersion:state.manifest?.promptVersion,
     ports: { state: statePort, model: modelPort,...(state.database?{database:state.database}:{}), ...(state.mode==='tavern'&&state.host?.worldbook?{worldbook: state.host.worldbook, worldbookBooks: ()=>state.host.hostBooks?.()??[],worldInfoSettings:()=>state.host.worldInfoSettings?.()??{}}:{}) },
