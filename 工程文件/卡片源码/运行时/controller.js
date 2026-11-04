@@ -23,20 +23,8 @@
   const Unified = typeof module==='object' && module.exports ? require('./unified-update.js') : root.CxxUnifiedUpdate;
   const PluginCheck = typeof module==='object' && module.exports ? require('./plugin-check.js') : root.CxxPluginCheck;
   const error = (code, message) => Object.assign(new Error(message), { code });
-  function bytes64(value) { return Uint8Array.from(root.atob(value), c => c.charCodeAt(0)); }
-  async function verifyDocument(doc, keys, core, crypto = root.crypto) {
-    const s = doc.signature, publicKey = keys?.[s?.keyId];
-    if (!publicKey || s?.algorithm !== 'Ed25519') throw error('untrusted-signature', '更新签名不属于本卡信任的发布者');
-    const unavailable=()=>error('crypto-signature-unavailable','当前脚本环境无法验证更新签名。请在支持 Web Crypto 的浏览器或电脑本机打开后安装更新；未安装此文件。');
-    const subtle=CryptoCompat.create(crypto).subtle;
-    if(typeof subtle?.importKey!=='function'||typeof subtle?.verify!=='function')throw unavailable();
-    try {
-      const key = await subtle.importKey('spki', bytes64(publicKey), { name: 'Ed25519' }, false, ['verify']);
-      const unsigned = { ...doc }; delete unsigned.signature;
-      if (!await subtle.verify('Ed25519', key, bytes64(s.value), new TextEncoder().encode(core.canonical(unsigned)))) throw error('bad-signature', '更新签名校验失败');
-    } catch(e) { if(['NotSupportedError','SecurityError'].includes(e.name))throw unavailable();throw e; }
-    return doc;
-  }
+
+  async function verifyDocument(doc,keys,core,crypto=root.crypto){return Discovery.verifyDocument(doc,keys,core,crypto);}
   function ownership(registry, pack) {
     for (const [id, old] of Object.entries(registry.packages || {})) {
       if (id === pack.id) continue;
@@ -180,6 +168,12 @@
         __cxx_content_origin: { instanceId: state.instanceId, initialized: true, newChat: fresh } }), { type: 'chat' });
       host.assertContext(expected);
     }
+    const contentState=(state=host.readState())=>Content.withMigration?Content.withMigration(state,chatVars()):state;
+    async function workshop({refresh=false}={}) {
+      const expected=host.getContext();host.assertContext(expected,true);
+      if(refresh){const loaded=await Discovery.readCatalog({Core,verify:(doc,keys)=>verifyDocument(doc,keys,Core,crypto),trustedKeys:readSeed().trustedKeys,url:COMPONENT_CATALOG,fetch:options.fetch||root.fetch?.bind(root)});host.assertContext(expected,true);if(!alive)throw error('updater-stopped','更新脚本已卸载');catalog=loaded;}
+      const raw=host.readState(),state=contentState(raw),active=pins();return {loaded:catalog!==null,items:clone((catalog?.packages||[]).filter(p=>p.kind==='content'&&p.optional)),subscriptions:clone(state.subscriptions),pins:clone(active),installed:Object.entries(state.registry.packages).filter(([,p])=>p.optional).map(([id,p])=>({id,scope:raw.registry.packages[id]?'character':'story',installed:raw.installed[id]?.kind==='content',title:p.title||p.name||catalog?.packages.find(p=>p.id===id)?.title||id,version:p.version,versions:[p.version,...Object.keys(p.history||{}).filter(v=>v!==p.version&&Content.packageContent(p,v))],enabledVersion:active[id]||null}))};
+    }
     async function getPackages(expected, mode = 'manual') {
       host.assertContext(expected, true);
       if (mode !== 'manual') return [];
@@ -251,9 +245,9 @@
       if (result?.status !== 'committed') throw error('release-not-installed', '本次版本未安装成功，已恢复原组件；可在备份恢复中查看');
       localPackage = null; return {...result,partial:!!plan.releaseProgress};
     }
-    async function installContent(items) {
+    async function installContent(items,subscriptions) {
       if (!items.length) return;
-      const state = host.readState(); host.setScope('character');
+      const state = host.readState();if(subscriptions)state.subscriptions=subscriptions; host.setScope('character');
       const before = await host.snapshot(); let registry = before.registry;
       const installed = clone(state.installed);
       for (const item of items) {
@@ -389,10 +383,19 @@
       const expectedCommand = host.getContext();
       running=true;if(panel)renderPanel();
       try{
+      let prepared=null;if(value.command==='subscribe'){
+        if(typeof value.enabled!=='boolean')throw error('invalid-subscription','请选择订阅或取消订阅');
+        const state=host.readState(),available=contentState(state).registry.packages[value.id],installed=state.installed[value.id];
+        if(value.enabled&&(!available||value.version&&value.version!==installed?.version)){
+          await workshop({refresh:true});const entry=catalog.packages.find(p=>p.id===value.id&&p.kind==='content'&&p.optional);
+          if(!entry||value.version&&value.version!==entry.version)throw error('invalid-subscription','内容目录已改变，请重新查看版本');
+          prepared=await Discovery.downloadContent(entry,{Core,verify:(doc,keys)=>verifyDocument(doc,keys,Core,crypto),trustedKeys:readSeed().trustedKeys,fetch:options.fetch||root.fetch?.bind(root)});host.assertContext(expectedCommand,true);
+        }
+      }
       await host.withLock(async () => {
         host.assertContext(expectedCommand);
         await recover();
-        const next = host.readState(); host.assertContext(host.getContext());
+        let next = host.readState(); host.assertContext(host.getContext());
         if (value.command === 'uninstall-component') {
           if (value.confirm !== true || !value.context || !['characterKey', 'chatId'].every(key => value.context[key] === expectedCommand[key])) throw error('component-confirmation-needed', '请在当前聊天重新确认卸载组件');
           host.setScope('character');
@@ -412,18 +415,20 @@
           if (p?.kind !== 'component' || p.version !== value.version || p.sha256 !== value.sha256) throw error('invalid-component-consent', '组件文件已变化，请重新查看后确认');
           next.policy = { ...(next.policy || {}), componentConsent: { ...(next.policy?.componentConsent || {}), [p.id]: { version: p.version, sha256: p.sha256 } } };
         } else if (value.command === 'subscribe') {
-          const p = catalog?.packages.find(p => p.id === value.id);
-          if (!p?.optional || typeof value.enabled !== 'boolean') throw error('invalid-subscription', '只有清单中的可选内容可以订阅');
+          if(prepared){await installContent([prepared],{...next.subscriptions,[value.id]:true});next=host.readState();}
+          const p=contentState(next).registry.packages[value.id]||catalog?.packages.find(p=>p.id===value.id&&p.kind==='content');
+          if(!p?.optional)throw error('invalid-subscription','请选择已安装或目录中的可选内容');
           next.subscriptions[value.id] = value.enabled;
         } else if (value.command === 'choose') {
           const p = catalog?.packages.find(p => p.id === value.id);
           if (!p || p.version !== value.version || typeof value.accept !== 'boolean') throw error('invalid-version-choice', '更新列表已改变，请重新检查并选择版本');
           next.policy = { ...(next.policy || {}), versions: { ...(next.policy?.versions || {}), [p.id]: { version: p.version, accept: value.accept } } };
         } else {
-          const p = next.registry.packages[value.id];
+          const p = contentState(next).registry.packages[value.id];
           if (!p || !(['new_chat', 'opt_in'].includes(p.activation) || p.activation === 'compatible' && pins()[value.id])) throw error('invalid-activation', '该包无需单独启用');
           const expected = host.getContext();
-          await api.updateVariablesWith(vars => ({ ...vars, __cxx_content_pins: { ...(vars.__cxx_content_pins || {}), [value.id]: p.version } }), { type: 'chat' });
+          const version=value.version||p.version;if(value.enabled!==false&&!Content.packageContent(p,version))throw error('invalid-activation','所选内容版本尚未安装');
+          await api.updateVariablesWith(vars=>{const active={...(vars.__cxx_content_pins||{})};if(value.enabled===false)delete active[value.id];else active[value.id]=version;return {...vars,__cxx_content_pins:active};},{type:'chat'});
           host.assertContext(expected);
         }
         next.contentRevision = crypto.randomUUID(); await host.saveState(next);
@@ -630,7 +635,7 @@
       }, 5000);
       queued = true; await check(false, 'sync');if(!host.getContext().busy)discovery?.check(false).catch(()=>{});resumePending=!!unified;return { status };
     }
-    return { start, stop, check, installPrepared, command, openPanel, getStatus: () => status,
+    return { start, stop, check, installPrepared, command, workshop, openPanel, getStatus: () => status,
       initialize, initializeChat, getPackages, recover, recoverPending, inspectRecovery, syncChat, host, storage, backup, readSeed, hostModule:Host,discovery,rollbackRelease,invalidateSave,prepareOnline,online:()=>unified,runtimeHash:()=>runtimeHash,
       activity:()=>({running,saveRunning,storyOperations}),
       async pauseForStory(){

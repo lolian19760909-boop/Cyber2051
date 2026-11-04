@@ -5,6 +5,7 @@ files.push(path.join(root,'测试/Gal/media-queue.test.cjs'));
 files.push(path.join(root,'测试/当前/terminal-assembly.test.cjs'));
 files.push(...['host','content-routing','foreign-journal'].map(n=>path.join(root,'测试/运行时',n+'.test.cjs')));
 files.push(path.join(root,'测试/运行时/database-writer.test.cjs'));
+files.push(path.join(root,'测试/运行时/workshop-library.test.cjs'));
 files.push(path.join(root,'测试/当前/creation-diagnostics.test.cjs'),path.join(root,'测试/当前/startup-state.test.cjs'));
 files.push(...['MVU/variables','Gal/hud','运行时/growth-mvu','当前/relationship-retirement'].map(n=>path.join(root,'测试',n+'.test.cjs')));
 files.push(...["phone","reading","mirror-integration","setup"].map(n=>path.join(root,"测试/通讯",n+".test.cjs")));
