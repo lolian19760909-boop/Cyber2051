@@ -172,7 +172,7 @@
     async function workshop({refresh=false}={}) {
       const expected=host.getContext();host.assertContext(expected,true);
       if(refresh){const loaded=await Discovery.readCatalog({Core,verify:(doc,keys)=>verifyDocument(doc,keys,Core,crypto),trustedKeys:readSeed().trustedKeys,url:COMPONENT_CATALOG,fetch:options.fetch||root.fetch?.bind(root)});host.assertContext(expected,true);if(!alive)throw error('updater-stopped','更新脚本已卸载');catalog=loaded;}
-      const raw=host.readState(),state=contentState(raw),active=pins();return {loaded:catalog!==null,items:clone((catalog?.packages||[]).filter(p=>p.kind==='content'&&p.optional)),subscriptions:clone(state.subscriptions),pins:clone(active),installed:Object.entries(state.registry.packages).filter(([,p])=>p.optional).map(([id,p])=>({id,scope:raw.registry.packages[id]?'character':'story',installed:raw.installed[id]?.kind==='content',title:p.title||p.name||catalog?.packages.find(p=>p.id===id)?.title||id,version:p.version,versions:[p.version,...Object.keys(p.history||{}).filter(v=>v!==p.version&&Content.packageContent(p,v))],enabledVersion:active[id]||null}))};
+      const raw=host.readState(),state=contentState(raw),active=pins();return {loaded:catalog!==null,items:clone((catalog?.packages||[]).filter(p=>p.kind==='content'&&p.optional)),subscriptions:clone(state.subscriptions),pins:clone(active),installed:Object.entries(state.registry.packages).filter(([,p])=>p.optional).map(([id,p])=>({id,scope:raw.registry.packages[id]?'character':'story',installed:raw.installed[id]?.kind==='content',display:p.content.worldbook?.[0]?.extra?.__cxx_workshop_display,title:p.content.worldbook?.[0]?.extra?.__cxx_workshop_display?.title||p.content.worldbook?.[0]?.name||id,version:p.version,versions:[p.version,...Object.keys(p.history||{}).filter(v=>v!==p.version&&Content.packageContent(p,v))],enabledVersion:active[id]||null}))};
     }
     async function getPackages(expected, mode = 'manual') {
       host.assertContext(expected, true);
@@ -235,6 +235,10 @@
       if (result.status === 'superseded') return result;
       return recover();
     }
+    async function writeContentProjection(before,after,{registry,conflicts}){
+      const state=host.readState();if(!same(conflicts,state.conflicts||[]))await host.saveState({...state,conflicts});
+      await host.writeStage('worldbook',after,{worldbook:before,registry});
+    }
     async function installCore(item) {
       if (!item.pack.release) throw error('invalid-release', '请使用独立更新器对应的完整版本包');
       const state = host.readState(); host.setScope('character');
@@ -245,10 +249,10 @@
       if (result?.status !== 'committed') throw error('release-not-installed', '本次版本未安装成功，已恢复原组件；可在备份恢复中查看');
       localPackage = null; return {...result,partial:!!plan.releaseProgress};
     }
-    async function installContent(items,subscriptions) {
+    async function installContent(items,subscriptions,{persist=true}={}) {
       if (!items.length) return;
       const state = host.readState();if(subscriptions)state.subscriptions=subscriptions; host.setScope('character');
-      const before = await host.snapshot(); let registry = before.registry;
+      let registry = clone(state.registry);
       const installed = clone(state.installed);
       for (const item of items) {
         const archive = chatVars().__cxx_migration?.archive, old = archive?.packages?.[item.pack.id];
@@ -263,8 +267,7 @@
           questIds: Object.values(registry.packages).flatMap(r => (r.content.quests || []).map(q => q.id)) }).registry;
         installed[item.pack.id] = { version: item.pack.version, sha256: item.sha256, kind: 'content', requires: clone(item.pack.requires) };
       }
-      const after = { ...before, registry };
-      await transaction(before, after, installed, state.baseline, state.conflicts || [], 'character');
+      const next={...state,registry,installed,scope:'character',contentRevision:crypto.randomUUID()};if(persist)await host.saveState(next);return next;
     }
     async function commitComponentPlan(plan, state) {
       if (plan.noop) return;
@@ -339,7 +342,7 @@
           if(installedCount) localPackage = null;
           const partial=host.readState().installed?.[Release.ID]?.release?.releaseProgress;
           report(partial?'部分更新至 '+partial.targetVersion+'；'+partial.blockedGroups.length+' 组因玩家修改或依赖暂缓，完整版本仍为 '+readSeed().baseVersion:installedCount ? '已安装更新，当前版本 '+readSeed().baseVersion : saved);
-        }, { waitForIdle: mode === 'manual' || !!pending });
+        }, { waitForIdle: true });
         retryAfter = 0;
       } catch (e) {
         lastError = { code:e.code || 'update-failed', message:e.message };
@@ -378,8 +381,8 @@
       if (value.command === 'check') return check();
       if (value.command === 'install') return check(true, 'manual');
       if (value.command === 'confirm-component') throw error('card-upgrade-required', '程序统一通过完整版本包安装');
-      if (running || saveRunning) { report('已有更新或存档在处理，请稍后修改订阅'); return; }
-      if (host.getContext().busy) { report('正在生成或保存，本次设置未修改；空闲后请再次操作'); return; }
+      if (running || saveRunning) throw error('update-already-running','已有更新或存档在处理，请稍后修改订阅');
+      if (host.getContext().busy) throw error('host-busy','正在生成或保存，空闲后可修改订阅');
       const expectedCommand = host.getContext();
       running=true;if(panel)renderPanel();
       try{
@@ -389,7 +392,7 @@
         if(value.enabled&&(!available||value.version&&value.version!==installed?.version)){
           await workshop({refresh:true});const entry=catalog.packages.find(p=>p.id===value.id&&p.kind==='content'&&p.optional);
           if(!entry||value.version&&value.version!==entry.version)throw error('invalid-subscription','内容目录已改变，请重新查看版本');
-          prepared=await Discovery.downloadContent(entry,{Core,verify:(doc,keys)=>verifyDocument(doc,keys,Core,crypto),trustedKeys:readSeed().trustedKeys,fetch:options.fetch||root.fetch?.bind(root)});host.assertContext(expectedCommand,true);
+          prepared=await Discovery.downloadContent(entry,{Core,mapIndex:readSeed().mapIndex,characterIds:readSeed().characterIds,verify:(doc,keys)=>verifyDocument(doc,keys,Core,crypto),trustedKeys:readSeed().trustedKeys,fetch:options.fetch||root.fetch?.bind(root)});host.assertContext(expectedCommand,true);
         }
       }
       await host.withLock(async () => {
@@ -415,7 +418,7 @@
           if (p?.kind !== 'component' || p.version !== value.version || p.sha256 !== value.sha256) throw error('invalid-component-consent', '组件文件已变化，请重新查看后确认');
           next.policy = { ...(next.policy || {}), componentConsent: { ...(next.policy?.componentConsent || {}), [p.id]: { version: p.version, sha256: p.sha256 } } };
         } else if (value.command === 'subscribe') {
-          if(prepared){await installContent([prepared],{...next.subscriptions,[value.id]:true});next=host.readState();}
+          if(prepared)next=await installContent([prepared],{...next.subscriptions,[value.id]:true},{persist:false});
           const p=contentState(next).registry.packages[value.id]||catalog?.packages.find(p=>p.id===value.id&&p.kind==='content');
           if(!p?.optional)throw error('invalid-subscription','请选择已安装或目录中的可选内容');
           next.subscriptions[value.id] = value.enabled;
@@ -432,7 +435,7 @@
           host.assertContext(expected);
         }
         next.contentRevision = crypto.randomUUID(); await host.saveState(next);
-      });
+      },{waitForIdle:true});
       }finally{running=false;if(panel)renderPanel();}
       return check(false);
     }
@@ -670,7 +673,7 @@
         }
         throw error('updater-stopped','更新脚本已卸载');
       },
-      attachContentSync(value) { contentSync=value; return ()=>{if(contentSync===value)contentSync=null;}; }, transaction, previewLocalPackage,
+      attachContentSync(value) { contentSync=value; return ()=>{if(contentSync===value)contentSync=null;}; }, transaction, writeContentProjection, previewLocalPackage,
       attachGameplay(value) { gameplay=value; return ()=>{if(gameplay===value)gameplay=null;}; } };
   }
   return { create, verifyDocument, ownership, selection, CATALOG, COMPONENT_CATALOG, RELEASE_CATALOG };

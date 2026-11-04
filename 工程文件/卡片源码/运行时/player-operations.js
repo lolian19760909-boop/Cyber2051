@@ -26,6 +26,7 @@
         game.loadoutStart={token:identity.setupToken,version:L.version};
       }
       if(!existed&&!game.numeric)game.numeric=E.initialNumeric(game,undefined,L.effects(game));
+      if(!existed&&newChat&&identity?.communityStart)game.origin={...copy(identity.communityStart),identityId:identity.communityStart.id,identityName:identity.communityStart.name,body:identity.communityStart.opening,definitionRef:copy(identity.communityStart.definitionRef)};
       if(openingFunds!==undefined){const I=typeof module==='object'&&module.exports?require('./identity.js'):globalThis.CxxIdentity;next.terminal.wallet={...next.terminal.wallet,yen:I.normalizeFunds(openingFunds)};}
     }else{
       E.growth.read(game.growth);

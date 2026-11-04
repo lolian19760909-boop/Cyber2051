@@ -844,3 +844,17 @@ test('unknown worldbook implementation retains fallback; cache path cannot hide 
  mode='ack';await assert.rejects(host.writeRawBook('bad',{entries:{}},host.getContext(),true),{code:'worldbook-not-saved'});assert(!h.state.events.includes('cache:bad'));
  mode='readback';await assert.rejects(host.writeRawBook('bad-read',{entries:{}},host.getContext(),true),{code:'worldbook-readback-mismatch'});
 });
+
+function nativeCacheBackend(t,notify){
+ const f=fakeBackend(t),cache=new Map([[f.state.binding,copy(f.state.rawBooks.get(f.state.binding))]]),native=f.api.SillyTavern.getContext(),saveWorldInfo=native.saveWorldInfo;
+ f.api.SillyTavern.getContext=()=>({...native,saveWorldInfo,eventSource:{emit:notify},eventTypes:{WORLDINFO_UPDATED:'worldinfo_updated'}});
+ const host=Host.create({core:Core,api:f.api,fetch:f.fetch,locks:f.locks,indexedDB:f.indexedDB,stateStore:{create:()=>null},loadWorldInfoRuntime:()=>({saveWorldInfo,worldInfoCache:cache}),hostOrigin:'http://localhost:8000'});host.setScope('character');t.mock.timers.tick(2500);return {...f,host,cache};
+}
+test('journal metadata persists and refreshes native cache while entry-processing listeners stay idle',async t=>{
+ let notified=0;const f=nativeCacheBackend(t,async()=>{notified++;}),before={registry:copy(f.host.readState().registry)},journal={format:2,id:'metadata-fixture',context:f.host.getContext(),before,after:copy(before),stages:['registry'],attempted:[],completed:[],installed:{scope:'character',installed:{},baseline:{},registry:before.registry,conflicts:[]},commitAttempted:false,status:'prepared'};
+ await finish(t,f.host.withLock(()=>f.host.createStorage().claim('journal',journal)),5000);assert.equal(notified,0);assert.equal(f.cache.get(f.state.binding).extensions.__cxx_update_journals['test-instance'].active.journal.id,journal.id);assert.deepEqual(f.state.rawBooks.get(f.state.binding),f.cache.get(f.state.binding));
+});
+test('worldbook entry edits retain their native notification and cache/disk content',async t=>{
+ const notifications=[],f=nativeCacheBackend(t,async(type,name,value)=>notifications.push({type,name,content:value.entries['1'].content})),raw=copy(f.state.rawBooks.get(f.state.binding));raw.entries['1'].content='changed body';
+ await finish(t,f.host.withLock(()=>f.host.writeRawBook(f.state.binding,raw,f.host.getContext(),true)),5000);assert.deepEqual(notifications,[{type:'worldinfo_updated',name:f.state.binding,content:'changed body'}]);assert.equal(f.cache.get(f.state.binding).entries['1'].content,'changed body');assert.deepEqual(f.state.rawBooks.get(f.state.binding),f.cache.get(f.state.binding));
+});

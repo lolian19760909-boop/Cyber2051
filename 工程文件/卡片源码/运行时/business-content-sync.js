@@ -1,7 +1,7 @@
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.CxxBusinessContentSync=api;})(globalThis,function(){
 'use strict';
   const CryptoCompat=typeof module==='object'&&module.exports?require('./crypto-compat.js'):globalThis.CxxCrypto;
-function create({api,Core,Content,Host,Gameplay,host,readSeed,transaction}){
+function create({api,Core,Content,Host,Gameplay,host,readSeed,writeProjection}){
 const clone=x=>JSON.parse(JSON.stringify(x)),same=(a,b)=>Core.canonical(a)===Core.canonical(b),error=(code,message)=>Object.assign(Error(message),{code});
 let confirmed='';
     function readTerminal() {
@@ -21,10 +21,11 @@ let confirmed='';
         const version = chatPins[id] || r.version, content = Content.packageContent(r, version);
         if (!content) continue;
         for (const entry of content.worldbook || []) {
-          if(entry.extra?.__cxx_player_start && !(selectedOrigin?.packageId===id && selectedOrigin.version===version && selectedOrigin.uid===entry.uid))continue;
+          if(entry.extra?.__cxx_player_start)continue;
           result.push({ owner: id, id: 'worldbook.' + entry.uid, version, entry });
         }
       }
+      if(selectedOrigin){const id=selectedOrigin.packageId,record=registry.packages[id],entry=record&&Content.packageContent(record,selectedOrigin.version)?.worldbook?.find(row=>row.uid===selectedOrigin.uid&&row.extra?.__cxx_player_start);if(entry)result.push({owner:id,id:'worldbook.'+entry.uid,version:selectedOrigin.version,entry:{...clone(entry),strategy:{...entry.strategy,type:'constant'}}});}
       return result;
     }
     function questEntry(quest) {
@@ -103,7 +104,7 @@ let confirmed='';
       // Installation metadata is ours. Remove only that marker while checking
       // upstream removals; otherwise the marker itself looks like a player edit.
       const local = clone(before);
-      for (const e of local.worldbook.entries) if (owned(e)) delete e.extra.__cxx_official_content;
+      for (const e of local.worldbook.entries) if (owned(e)) {const info=e.extra.__cxx_official_content;delete e.extra.__cxx_official_content;if(!Object.keys(e.extra).length&&!Object.hasOwn(info.baseline.retained||{},'extra'))delete e.extra;}
       const claimed = new Set([...adoptedUids, ...staleCopies]);
       local.worldbook.entries = local.worldbook.entries.filter(e => !claimed.has(e.uid));
       const metadata = (await Core.fingerprints({ worldbook: before.worldbook })).worldbook.metadata;
@@ -122,7 +123,7 @@ let confirmed='';
         return;
       }
       after.worldbook.internalName = before.worldbook.internalName;
-      await transaction(before, after, state.installed, state.baseline, conflicts, 'character');
+      await writeProjection(before.worldbook,after.worldbook,{registry:before.registry,conflicts});
       remember();
     }
 

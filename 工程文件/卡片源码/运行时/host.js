@@ -448,7 +448,7 @@
         return runtime?.saveWorldInfo===c.saveWorldInfo && typeof runtime?.worldInfoCache?.set==='function' && typeof c.eventSource?.emit==='function' && c.eventTypes?.WORLDINFO_UPDATED ? runtime : null;
       }).catch(() => null);
     }
-    async function writeRawBook(name, value, expected = operationContext(), updateCache = false) {
+    async function writeRawBook(name, value, expected = operationContext(), updateCache = false, notify = true) {
       const ack = await post('worldinfo/edit', { name, data: value }, expected);
       if (ack.ok !== true) throw error('worldbook-not-saved', '世界书没有返回保存确认');
       if (updateCache) {
@@ -457,7 +457,7 @@
         // above already persisted this record; do not upload its full backup twice.
         // Hosts without that verified API retain the existing save/cache path.
         const runtime=await worldbookRuntime();assertContext(expected);
-        if(runtime){const c=context();runtime.worldInfoCache.set(name,clone(value));await c.eventSource.emit(c.eventTypes.WORLDINFO_UPDATED,name,clone(value));}
+        if(runtime){const c=context();runtime.worldInfoCache.set(name,clone(value));if(notify)await c.eventSource.emit(c.eventTypes.WORLDINFO_UPDATED,name,clone(value));}
         else await context().saveWorldInfo(name, clone(value), true);
       }
       const actual = await readRawBook(name, expected);
@@ -639,7 +639,7 @@
       const book=await readRawBook(name,expected);
       const all=book.extensions?.__cxx_update_journals||{};
       const slot={...all[instanceId],[kind]:{format:2,instanceId,journal:clone(journal)}};
-      await writeRawBook(name,{...book,extensions:{...book.extensions,__cxx_update_journals:{...all,[instanceId]:slot}}},expected,true);
+      await writeRawBook(name,{...book,extensions:{...book.extensions,__cxx_update_journals:{...all,[instanceId]:slot}}},expected,true,false);
     }
     async function readReleaseBackup(name) { const state=readState();return journalBackup(await readRawBook(name),state.instanceId,'release'); }
     function createStorage() {

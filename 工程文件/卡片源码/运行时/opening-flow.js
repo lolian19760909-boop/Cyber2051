@@ -5,7 +5,7 @@
   const copy=structuredClone,steps=['origin','profile','growth','loadout','scenario','review'];
   const directOrigins={'origin-street':'street','origin-corpo':'corpo','origin-student':'student','custom-opening':null};
   const isDirect=id=>Object.hasOwn(directOrigins,id),validScenario=id=>Number.isInteger(id)&&id>=2&&id<=11||isDirect(id);
-  function create({key,scope,resumeDraft,creationId,identity:I,loadout:L,readIdentity,readPreferences,readProfile=()=>null,readOpening=()=>'',storage,prepare,withCommit=work=>work(),submit,verify,send,recover,inspect,openRecovery,rescue,onPreview=()=>{},onFailure=()=>{},onComplete=()=>{}}){
+  function create({key,scope,resumeDraft,creationId,identity:I,loadout:L,readIdentity,readPreferences,readProfile=()=>null,readOpening=()=>'',readStarts=()=>[],storage,prepare,withCommit=work=>work(),submit,verify,send,recover,inspect,openRecovery,rescue,onPreview=()=>{},onFailure=()=>{},onComplete=()=>{}}){
     const legacyKey='cxx-opening-draft:'+key,indexKey=scope?'cxx-opening-draft:v2:'+JSON.stringify([scope.instanceId,key]):legacyKey,listeners=new Set();let storageKey=indexKey,restoreChoice=null;
     let ended=false,flight=null,dispatched=false,locked=false,restored=false,creationStarted=!!(resumeDraft||creationId);
     const saved=readIdentity(),prefs=readPreferences();
@@ -18,6 +18,7 @@
     draft.completed=steps.filter((s,i)=>i<5&&Array.isArray(draft.completed)&&steps.slice(0,i+1).every(k=>draft.completed.includes(k)));
     if(steps.indexOf(draft.step)>draft.completed.length)draft.step=steps[draft.completed.length];
     if(I.valid(saved)&&!restored){if(saved.openingFunds!==undefined)draft.openingFunds=saved.openingFunds;draft.origin=saved.id;draft.custom=saved.id==='custom'?saved.background:'';if(saved.growthSetup)draft.growth[saved.id]=copy(saved.growthSetup);if(saved.loadoutSetup)draft.loadouts[saved.id]=copy(saved.loadoutSetup);}
+    if(I.valid(saved)&&saved.communityStart&&!restored)draft.communityStart=copy(saved.communityStart);
     if(I.valid(saved)&&saved.setupToken){
       locked=true;draft.openingFunds=saved.openingFunds;draft.origin=saved.id;draft.custom=saved.id==='custom'?saved.background:'';
       if(saved.growthSetup)draft.growth[saved.id]=copy(saved.growthSetup);
@@ -34,7 +35,7 @@
     function active(){if(ended)throw Error('聊天已切换，原开场操作已停止。');}
     function editable(){active();if(restoreChoice)throw Error('请先选择继续草稿或重新填写。');if(flight||status==='saved'||status==='saving'||status==='error'&&locked)throw Error('请先完成或重试当前开局保存。');}
     function growth(){return draft.growth[draft.origin]||(draft.growth[draft.origin]=I.initialSetup(draft.origin));}
-    function choice(){return I.snapshot(draft.origin,draft.custom,growth(),draft.loadouts[draft.origin]||{},draft.openingFunds===''?undefined:draft.openingFunds);}
+    function choice(){const value=I.snapshot(draft.origin,draft.custom,growth(),draft.loadouts[draft.origin]||{},draft.openingFunds===''?undefined:draft.openingFunds);if(!draft.communityStart)return value;const start=readStarts().find(row=>row.id===draft.communityStart.id&&JSON.stringify(row.definitionRef)===JSON.stringify(draft.communityStart.definitionRef));if(!start)inputHint('请在工坊启用所选人设的原版本，或选择其他出身。','origin','','工坊人设');return {...value,name:start.name,definitionRef:copy(start.definitionRef),communityStart:copy(start)};}
     function inputHint(message,step,field,label){throw Object.assign(Error(message),{code:'opening-input',guidance:{step,field,label}});}
     function validate(step){
       if(steps.indexOf(step)>=1){
@@ -49,7 +50,8 @@
     function invalidate(step){draft.completed=draft.completed.slice(0,steps.indexOf(step));draft.pendingCommand=null;}
     function change(fn){editable();fn(draft);stats.draftChanges++;error='';lastError=null;guidance=null;cache();notify();}
     function patch(fields){change(d=>{if(fields.profile&&!locked){d.profile={...d.profile,...copy(fields.profile)};invalidate('profile');}if(fields.preferences)d.preferences={...d.preferences,...fields.preferences};if(fields.openingText!==undefined){d.openingText=fields.openingText;invalidate('scenario');}if(fields.custom!==undefined&&!locked){d.custom=fields.custom;invalidate('profile');}if(fields.growth&&!locked){d.growth[d.origin]=copy(fields.growth);invalidate('growth');}if(fields.loadout&&!locked){d.loadouts[d.origin]=copy(fields.loadout);invalidate('loadout');}if(Object.hasOwn(fields,'openingFunds')&&!locked){d.openingFunds=fields.openingFunds;invalidate('loadout');}});if(fields.preferences)onPreview(copy(draft.preferences));}
-    function chooseOrigin(id){if(!['street','corpo','student','custom'].includes(id))throw Error('身份编号无效。');if(locked)throw Error('已有开局配置，继续选择剧情即可。');change(d=>{if(d.origin!==id)invalidate('origin');d.origin=id;growth();});}
+    function chooseOrigin(id){if(!['street','corpo','student','custom'].includes(id))throw Error('身份编号无效。');if(locked)throw Error('已有开局配置，继续选择剧情即可。');change(d=>{if(d.origin!==id)invalidate('origin');d.origin=id;delete d.communityStart;growth();});}
+    function chooseStart(id){editable();if(locked)throw Error('已有开局配置，请新建故事使用人设。');const start=readStarts().find(row=>row.id===id);if(!start)throw Error('请选择本存档已启用的工坊人设。');change(d=>{d.origin='custom';d.custom=start.background||'';d.communityStart=copy(start);if(start.opening){d.openingText=start.opening;d.scenario='custom-opening';}if(start.appearance&&d.profile)d.profile={...d.profile,appearance:start.appearance};growth();invalidate('origin');});}
     function canGo(step){return !restoreChoice&&steps.includes(step)&&steps.indexOf(step)<=draft.completed.length&&(!locked||['scenario','review'].includes(step));}
     function go(step){editable();if(!canGo(step))throw Error('请先保存并完成前面的步骤。');change(d=>{d.step=step;});if(step==='growth')void Promise.resolve(prepare()).catch(markError);}
     function advance(command){editable();const i=steps.indexOf(draft.step);if(i>=5)throw Error('请在确认页开始游戏。');if(i>draft.completed.length)throw Error('请先保存并完成前面的步骤。');validate(draft.step);if(i===4&&!draft.scenario)inputHint('请先选择想体验的剧情。','scenario','','剧情');const prior={step:draft.step,completed:[...draft.completed],pendingCommand:draft.pendingCommand};draft.completed=steps.slice(0,i+1);draft.step=steps[i+1];if(i===4)draft.pendingCommand=command??null;try{cache(true);}catch(e){Object.assign(draft,prior);notify();throw e;}error='';lastError=null;guidance=null;notify();if(draft.step==='growth')void Promise.resolve(prepare()).catch(markError);}
@@ -78,7 +80,7 @@
       guidance=!locked&&!flight&&target&&canGo(target.step)?{...target,revision:++guidanceRevision}:null;
       if(guidance){lastError=null;draft.step=guidance.step;if(!cache())guidance=null;}else lastError={message:error,code:e.code||'opening-action-failed',detail:e.stack||'',...(e.details?{saveCheck:copy(e.details)}:{}),creationId:draft.creationId};notify();
     }
-    return {state,patch,chooseOrigin,go,canGo,markError,next:()=>advance(),selectScenario,rememberScenario,review(command=null){if(draft.step!=='scenario')throw Error('请先进入乐队与开局。');advance(command);},commit,retry:()=>commit(draft.pendingCommand),choice,wait:()=>flight||Promise.reject(Error('请先确认开局配置。')),
+    return {state,patch,chooseOrigin,chooseStart,starts:()=>copy(readStarts()),refresh:notify,go,canGo,markError,next:()=>advance(),selectScenario,rememberScenario,review(command=null){if(draft.step!=='scenario')throw Error('请先进入乐队与开局。');advance(command);},commit,retry:()=>commit(draft.pendingCommand),choice,wait:()=>flight||Promise.reject(Error('请先确认开局配置。')),
       resolveDraft(use){active();if(!restoreChoice)return;const old=restoreChoice,oldKey=indexKey+':'+old.draft.creationId;if(use){const freshId=draft.creationId;adopt(old.draft);if(old.legacy){draft.creationId=freshId;draft.dispatchStarted=false;dispatched=false;draft.completed=['origin'];draft.step='profile';}draft.owner=copy(scope);storageKey=indexKey+':'+draft.creationId;draft.completed=steps.filter((s,i)=>i<5&&steps.slice(0,i+1).every(k=>draft.completed?.includes(k)));if(steps.indexOf(draft.step)>draft.completed.length)draft.step=steps[draft.completed.length];}cache(true);if(!use&&!old.legacy)storage?.removeItem(oldKey);restoreChoice=null;notify();},
       inspect:()=>inspect?inspect():Promise.resolve({code:'creation-unavailable',action:'rescue',message:'尚未取得创建记录，请打开救援与导出查看详细诊断。'}),
       openRecovery:id=>openRecovery?.(id),rescue:()=>rescue?.(),

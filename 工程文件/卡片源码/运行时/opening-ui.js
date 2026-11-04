@@ -4,6 +4,7 @@
   const steps=['origin','profile','growth','loadout','scenario','review'],labels=['人生出身','捏人与背景','能力配点','初始装备','乐队与开局','确认开始'];
   const scenarioTitle=id=>id==='custom-opening'?'自己写第一幕':global.CxxOpeningGroups?.beginnings?.find(x=>x.id===id)?.title||global.CxxOpeningCatalog?.find(x=>x.id===id)?.title||'';
   function mount({document:doc,flow,identity:I,setup:Setup,css,preview,resolveDevice,manageViewport=true}){
+    const openWorkshop=()=>{if(preview.openWorkshop)return preview.openWorkshop();const win=doc.defaultView.parent||doc.defaultView;return win.CxxWorkshopWebsite.open();};
     let state=flow.state(),viewKey='',loadout=null,updates=[],destroyed=false,avatarEpoch=0,creator=null,creatorView={},guidedRevision=0,markedInput=null,detailKey='',selectedItem=null,forge=null,forgeEpoch=0,forgeClosing=Promise.resolve(),itemSource='';
     const node=(tag,cls,text)=>{const n=doc.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
     const button=(text,run,cls='')=>{const b=node('button',cls,text);b.type='button';b.onclick=()=>{try{Promise.resolve(run()).catch(e=>flow.markError(e));}catch(e){flow.markError(e);}};return b;};
@@ -61,6 +62,7 @@
         b.append(node('span','identity-copy',e.intro));updates.push(()=>{const selected=state.draft.origin===e.id;b.setAttribute('aria-checked',String(selected));b.tabIndex=selected?0:-1;});
         b.onkeydown=ev=>{if(!['ArrowLeft','ArrowRight'].includes(ev.key))return;ev.preventDefault();const next=all[(i+(ev.key==='ArrowRight'?1:all.length-1))%all.length];flow.chooseOrigin(next.id);cards.querySelector('[data-identity="'+next.id+'"]').focus();};cards.append(b);
       });
+      const workshop=node('section','identity-panel');workshop.append(node('h3','','工坊人设'));const select=node('select');select.setAttribute('aria-label','工坊人设模板');select.dataset.cxxNativeSelect='';let choices='';updates.push(()=>{const list=flow.starts?.()||[],stamp=JSON.stringify(list.map(row=>[row.id,row.definitionRef]));if(stamp!==choices){choices=stamp;select.replaceChildren();const none=node('option','','选择已订阅的人设');none.value='';select.append(none);for(const row of list){const option=node('option','',row.name);option.value=row.id;select.append(option);}}select.value=state.draft.communityStart?.id||'';});select.onchange=()=>{if(select.value)flow.chooseStart(select.value);};workshop.append(select,button('打开工坊',openWorkshop));body.append(workshop);
       mirrorChoice(body);
     }
     function growth(){
@@ -203,8 +205,9 @@
     const motionHost=doc.defaultView.parent||doc.defaultView,reducedMotion=doc.defaultView.matchMedia('(prefers-reduced-motion: reduce)');
     function settleMotion(){const closing=stopForge();for(const animation of root.getAnimations({subtree:true}))animation.cancel();const hero=stageArt.querySelector('.opening-forge-hero');if(hero)hero.style.visibility='';return closing;}
     motionHost.addEventListener('cxx-theme-change',settleMotion);motionHost.addEventListener('cxx-ui-preferences-changed',settleMotion);reducedMotion.addEventListener('change',settleMotion);
+    const workshopChanged=()=>flow.refresh();motionHost.addEventListener('cxx-workshop-changed',workshopChanged);
     const off=flow.subscribe(s=>{const restored=state.restoreChoice&&!s.restoreChoice;state=s;if(restored)preferScreen=!s.draft.preferences?.nsfwChosen;if(!destroyed)paint();});
-    return {root,refresh:paint,destroy(){const closing=settleMotion();motionHost.removeEventListener('cxx-theme-change',settleMotion);motionHost.removeEventListener('cxx-ui-preferences-changed',settleMotion);reducedMotion.removeEventListener('change',settleMotion);creator?.destroy();fullTalent?.destroy();stopLayout?.();resizeObserver?.disconnect();sizeWindow.cancelAnimationFrame(layoutFrame);sizeWindow.removeEventListener('resize',resizeLayout);destroyed=true;stopOrientation?.();off();loadout?.destroy();preview.unmount();root.hidden=true;void closing.then(()=>root.remove());}};
+    return {root,refresh:paint,destroy(){motionHost.removeEventListener('cxx-workshop-changed',workshopChanged);const closing=settleMotion();motionHost.removeEventListener('cxx-theme-change',settleMotion);motionHost.removeEventListener('cxx-ui-preferences-changed',settleMotion);reducedMotion.removeEventListener('change',settleMotion);creator?.destroy();fullTalent?.destroy();stopLayout?.();resizeObserver?.disconnect();sizeWindow.cancelAnimationFrame(layoutFrame);sizeWindow.removeEventListener('resize',resizeLayout);destroyed=true;stopOrientation?.();off();loadout?.destroy();preview.unmount();root.hidden=true;void closing.then(()=>root.remove());}};
   }
   return {mount};
 });

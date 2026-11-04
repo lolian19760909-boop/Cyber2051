@@ -157,7 +157,7 @@
   },
   {
     "source": "卡片源码/运行时/quests.js",
-    "sha256": "346da71813d4241d81e83ca75c6d68b0f0389d3a5726ec4ec3bff0526bc9eac9",
+    "sha256": "c2e90e0eebf145e1e3b4735b99d9c44ad4191939c0dad96d64031f6bb926abd3",
     "target": "src/ui/card/运行时/quests.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -193,7 +193,7 @@
   },
   {
     "source": "卡片源码/运行时/player-operations.js",
-    "sha256": "c0231c33acf3287bfa2477ca672425385ecc5fe39499c133d3d5c7815f118a53",
+    "sha256": "0d6a61840176012c5dbe1c0622689eddb23a8cb0c4b00c1a442b27a7fab5c543",
     "target": "src/ui/card/运行时/player-operations.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -259,7 +259,7 @@
   },
   {
     "source": "卡片源码/Gal/ui.js",
-    "sha256": "7cf60d137c8626ccc7add58125a3de50f5f040c5f58684fbf033c7ff747ec075",
+    "sha256": "d47227137c02783430799fba876350779ec4e89fe2c915b6675855d99808bb08",
     "target": "src/ui/card/Gal/ui.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -307,7 +307,7 @@
   },
   {
     "source": "卡片源码/运行时/opening-ui.js",
-    "sha256": "9dee326e11f651b9f9077803f4b1f06a2143d5ce86634409048f42f94e3cc08c",
+    "sha256": "95ad5f3e6b5f600c0b7838ee3ed454e25ddd045d63565bacff8e4d1b300f1a71",
     "target": "src/ui/card/运行时/opening-ui.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },

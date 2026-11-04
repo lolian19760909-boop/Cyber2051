@@ -154,6 +154,7 @@ function compile(row, identity, P, options={}) {
     staticText(entry.content,'世界书正文',40000,true);
   }
   Object.assign(entry.extra,storyMetadata(payload));
+  entry.extra.__cxx_workshop_display={title:row.title,summary:row.summary||'',type:payload.templateKind||row.type,author:row.author_name||'',...(place?{location:{mapId,placeId:place.id,name:place.name}}:{})};
   const gameplay=payload.gameplay?Gameplay.compile(payload.gameplay,payload.templateKind,row.id,mapIndex):null;
   const pkg = P.createContentPackage({ id: packageId, version: '1.0.' + row.revision, optional: true, activation: 'opt_in',
     requires: { engine: gameplay||Object.keys(storyMetadata(payload)).length?'1.2.0':'1.0.0', packages: [] }, content: { quests: quest ? [quest] : [], gallery: [], worldbook: [entry],...(gameplay?{gameplay}:{}) } },

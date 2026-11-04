@@ -190,7 +190,7 @@
     const closeButton = button('返回原生', function () { call('onClose'); });
     closeButton.title = '关闭 Galgame 界面，保留聊天和输入草稿';
     const workshopButton = button('工坊', function () { call('onWorkshop'); });
-    workshopButton.title = '确认后前往官网创意工坊';
+    workshopButton.title = '订阅工坊内容与选择本存档版本';
     navSubtitle(statusButton, 'CHARACTERS'); navSubtitle(terminalButton, 'TERMINAL');
     navSubtitle(workshopButton, 'WORKSHOP');
     navSubtitle(mapButton, 'CITY MAP');
@@ -220,7 +220,7 @@
     moreItems.append(button('电台',()=>{closeMore(true);try{mailWindow.Cxx233Terminal?.openPage('network',2);}catch(e){call('onError',e.message);}}));
     const settingsButton=button('设置',()=>{if(mailWindow.__cxx_stories__)void mailWindow.__cxx_stories__.menu('home');else call('onError','设置服务正在准备，请稍后重试。');});
     const backgroundButton=button('背景',openBackground);backgroundButton.setAttribute('aria-haspopup','dialog');
-    tools.replaceChildren(closeButton,backgroundButton,settingsButton,menuButton);header.append(brand, tools);
+    tools.replaceChildren(closeButton,workshopButton,backgroundButton,settingsButton,menuButton);header.append(brand, tools);
     const backgroundDialog=element('dialog','cxx-gal-background-picker'),backgroundTitle=element('h2','','选择当前场景背景'),backgroundNote=element('p','','仅调整本楼当前回复的画面；正文重写后重新按场景识别。'),backgroundSelect=element('select'),backgroundPreview=element('img'),backgroundActions=element('div','cxx-gal-background-actions');
     backgroundSelect.setAttribute('aria-label','背景图片');backgroundPreview.alt='背景预览';let backgroundChoiceKey='';
     const backgroundAuto=button('恢复自动',()=>{call('onBackground',{filename:'',key:backgroundChoiceKey});backgroundDialog.close();}),backgroundApply=button('使用这张',()=>{call('onBackground',{filename:backgroundSelect.value,key:backgroundChoiceKey});backgroundDialog.close();}),backgroundCancel=button('关闭',()=>backgroundDialog.close());

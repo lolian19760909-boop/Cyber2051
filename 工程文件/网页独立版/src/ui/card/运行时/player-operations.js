@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/运行时/player-operations.js; source SHA256 c0231c33acf3287bfa2477ca672425385ecc5fe39499c133d3d5c7815f118a53. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/运行时/player-operations.js; source SHA256 0d6a61840176012c5dbe1c0622689eddb23a8cb0c4b00c1a442b27a7fab5c543. Rebuild with tools/p3a-adapt-views.mjs. */
 (function(root,factory){const local=typeof module==='object'&&module.exports;const api=factory(local?require('./loadout.js'):root.CxxLoadout,local?require("../数值引擎/src/engine.js"):root.CxxNumericEngine,local?require('./battle.js'):root.CxxBattle,local?require('./tactical-engine.js'):root.CxxTacticalEngine,local?require('./quests.js'):root.CxxQuests);if(local)module.exports=api;else root.CxxPlayerOperations=api;})(globalThis,function(L,E,B,T,Q){
   'use strict';
  const structuredClone=(typeof module==='object'&&module.exports?require('../共享/data-clone.js'):globalThis.CxxDataClone).clone;
@@ -27,6 +27,7 @@
         game.loadoutStart={token:identity.setupToken,version:L.version};
       }
       if(!existed&&!game.numeric)game.numeric=E.initialNumeric(game,undefined,L.effects(game));
+      if(!existed&&newChat&&identity?.communityStart)game.origin={...copy(identity.communityStart),identityId:identity.communityStart.id,identityName:identity.communityStart.name,body:identity.communityStart.opening,definitionRef:copy(identity.communityStart.definitionRef)};
       if(openingFunds!==undefined){const I=typeof module==='object'&&module.exports?require('./identity.js'):globalThis.CxxIdentity;next.terminal.wallet={...next.terminal.wallet,yen:I.normalizeFunds(openingFunds)};}
     }else{
       E.growth.read(game.growth);

@@ -152,9 +152,14 @@ function prepareOpening(value,target=1){
         await new Promise(r=>setTimeout(r,100));
       }throw Error('聊天已切换。');})();preparation={state:s,row,target,promise:p};p.finally(()=>{if(preparation?.promise===p)preparation=null;}).catch(()=>{});return p;
     }
+    function openingChoice(value){
+      const next=I.snapshot(value.id,value.id==='custom'?value.background:'',value.growthSetup,value.loadoutSetup,value.openingFunds);if(!value.communityStart)return next;
+      const C=typeof module==='object'&&module.exports?require('./content.js'):root.CxxContent,vars=api.getVariables({type:'chat'}),state=C.withMigration(host.readState(),vars),ref=value.communityStart.definitionRef;
+      const start=C.storyChoices(state.registry,{subscriptions:state.subscriptions,pins:{...vars.__cxx_content_pins,[ref.packageId]:ref.version}}).starts.find(row=>row.id===value.communityStart.id&&same(row.definitionRef,ref));if(!start)throw Error('请先订阅所选人设的原版本。');return {...next,name:start.name,definitionRef:copy(ref),communityStart:copy(start)};
+    }
     function choiceFor(value){
-      if(!value)return copy(identity());const next=I.snapshot(value.id,value.id==='custom'?value.background:'',value.growthSetup,value.loadoutSetup,value.openingFunds),prior=identity();
-      const equal=I.valid(prior)&&same(next,I.snapshot(prior.id,prior.id==='custom'?prior.background:'',prior.growthSetup,prior.loadoutSetup,prior.openingFunds));
+      if(!value)return copy(identity());const next=openingChoice(value),prior=identity();
+      const equal=I.valid(prior)&&same(next,openingChoice(prior));
       const built=ctx().chat[0]?.variables?.some(v=>v?.stat_data?.terminal?.gameplay?.growth);
       if(built&&!equal)throw Error('当前开局已经建档；请继续当前配置，或新建聊天重新选择。');
       next.setupToken=equal&&prior.setupToken?prior.setupToken:'start_'+CryptoCompat.uuid().replaceAll('-','');return equal?{...prior,...next}:next;
@@ -180,7 +185,7 @@ function prepareOpening(value,target=1){
         if(profile){if(!root.CxxStoryProfile)throw Error('故事人物服务未就绪。');dirty(s);await root.CxxStoryProfile.bind(top,{...profile,origin:{id:choice.id,name:choice.name,background:choice.background}},{art:Art,assertCurrent:()=>assertCurrent(s)});assertCurrent(s);}if(from===target&&s.signature===localSignature()&&base.stat_data.terminal.gameplay?.growth&&(openingText===undefined||row.mes===openingText))return read.local();
         const request={action:'initialize'},operation={request,identity:choice,newChat:true,startGame:copy(row.variables?.[from]?.stat_data?.terminal?.gameplay)};
         const applied=applyVariables(base,request,operation);
-        if(!same(identity(),choice)||preferences)await api.updateVariablesWith(v=>{assertCurrent(s);if(ctx().chat[0]!==row||(row.swipe_id||0)!==from)throw Error('开场分支已变化。');const next={...v,__cxx_identity:choice};if(preferences){next.__cxx_ui_preferences={...v.__cxx_ui_preferences,schemaVersion:1,effects:preferences.level,device:preferences.device,...(preferences.mirror===undefined?{}:{mirror:preferences.mirror,mirrorGuidePending:preferences.mirror===true}),...(preferences.nsfw===undefined?{}:{nsfw:preferences.nsfw}),...(preferences.nsfwChosen===undefined?{}:{nsfwChosen:preferences.nsfwChosen}),...(preferences.battleMode===undefined?{}:{battleMode:preferences.battleMode}),setupVersion:1,completed:true};next.__cxx_gal_mode={...v.__cxx_gal_mode,schemaVersion:1,enabled:preferences.gal};}return next;},{type:'chat'});
+        if(!same(identity(),choice)||preferences)await api.updateVariablesWith(v=>{assertCurrent(s);if(ctx().chat[0]!==row||(row.swipe_id||0)!==from)throw Error('开场分支已变化。');const next={...v,__cxx_identity:choice};if(choice.communityStart)next.__cxx_content_pins={...v.__cxx_content_pins,[choice.definitionRef.packageId]:choice.definitionRef.version};if(preferences){next.__cxx_ui_preferences={...v.__cxx_ui_preferences,schemaVersion:1,effects:preferences.level,device:preferences.device,...(preferences.mirror===undefined?{}:{mirror:preferences.mirror,mirrorGuidePending:preferences.mirror===true}),...(preferences.nsfw===undefined?{}:{nsfw:preferences.nsfw}),...(preferences.nsfwChosen===undefined?{}:{nsfwChosen:preferences.nsfwChosen}),...(preferences.battleMode===undefined?{}:{battleMode:preferences.battleMode}),setupVersion:1,completed:true};next.__cxx_gal_mode={...v.__cxx_gal_mode,schemaVersion:1,enabled:preferences.gal};}return next;},{type:'chat'});
         assertCurrent(s);if(ctx().chat[0]!==row||(row.swipe_id||0)!==from||!same(row.variables?.[target],originalBase))throw Error('开场分支已变化，请重新操作。');
         const data=Array.from({length:row.swipes.length},(_,i)=>i===target?applied:copy(row.variables?.[i]||{}));
         // affected: ST refreshOneMessage / TT refreshManagedChatSurface.

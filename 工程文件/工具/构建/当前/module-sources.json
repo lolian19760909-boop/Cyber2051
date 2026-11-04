@@ -1268,10 +1268,10 @@
       "verification": "主回归；history-source；reading-lifecycle-browser 20次"
     },
     "9a9d6e73-5111-4c64-89c7-98717bbbdf3b": {
-      "owner": "官网创意工坊入口及旧投稿草稿导出",
-      "dependencies": "现有网站链接；本地旧草稿只读",
+      "owner": "游戏内工坊订阅、按档版本与官网/旧草稿入口",
+      "dependencies": "共享工坊面板与Cxx233Updater内容服务；本地旧草稿导出",
       "disposal": "替换前destroy；关闭对话框和pagehide清理入口监听",
-      "verification": "静态入口与原草稿导出合同；网站改版不在本轮"
+      "verification": "真实签名两版、共享面板、三类双端消费与旧版本保存恢复"
     },
     "cxx-native-ui-231": {
       "owner": "原生正文、现用状态、选项、终端、地图、电台",
