@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/运行时/player-operations.js; source SHA256 326ee6940a438461c3c2c7b73b579de219a226187f9c42a588875b967c80583f. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/运行时/player-operations.js; source SHA256 c0231c33acf3287bfa2477ca672425385ecc5fe39499c133d3d5c7815f118a53. Rebuild with tools/p3a-adapt-views.mjs. */
 (function(root,factory){const local=typeof module==='object'&&module.exports;const api=factory(local?require('./loadout.js'):root.CxxLoadout,local?require("../数值引擎/src/engine.js"):root.CxxNumericEngine,local?require('./battle.js'):root.CxxBattle,local?require('./tactical-engine.js'):root.CxxTacticalEngine,local?require('./quests.js'):root.CxxQuests);if(local)module.exports=api;else root.CxxPlayerOperations=api;})(globalThis,function(L,E,B,T,Q){
   'use strict';
  const structuredClone=(typeof module==='object'&&module.exports?require('../共享/data-clone.js'):globalThis.CxxDataClone).clone;
@@ -10,7 +10,7 @@
     if(request.action.startsWith('quest-'))return Q.plan(stat,request,{questDefinitions,questSource,questCalibration});
     const next=copy(stat),previous=next.terminal.gameplay||{};let game=E.migrate(previous);
     if(request.action==='initialize'){
-      let existed=game.growth!==undefined;if(existed)E.growth.read(game.growth);
+      let existed=game.growth!==undefined;const openingFunds=!existed&&newChat&&identity?.setupToken?identity.openingFunds:undefined;if(existed)E.growth.read(game.growth);
       // A new scenario keeps its authored values and unknown fields. Only the
       // player fields follow the already configured opening, once per branch.
       if(!existed&&newChat&&startGame?.growth&&startGame.loadoutStart?.token===identity?.setupToken){
@@ -27,6 +27,7 @@
         game.loadoutStart={token:identity.setupToken,version:L.version};
       }
       if(!existed&&!game.numeric)game.numeric=E.initialNumeric(game,undefined,L.effects(game));
+      if(openingFunds!==undefined){const I=typeof module==='object'&&module.exports?require('./identity.js'):globalThis.CxxIdentity;next.terminal.wallet={...next.terminal.wallet,yen:I.normalizeFunds(openingFunds)};}
     }else{
       E.growth.read(game.growth);
       if(game.tactical?.encounter?.active&&!request.action.startsWith('tactical-'))throw Error('请先将战況交回剧情，再改变配点或装备。');

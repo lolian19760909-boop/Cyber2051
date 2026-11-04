@@ -47,7 +47,7 @@
      // Bind the new route before the player save publishes a completed creation.
      await win.Cxx233Updater.initializeChat();await win.__cxx_player__.completeOpening(options);
     },
-    async verify(){await win.__cxx_player__.waitForSaved();await store.finishCreation();},
+    async verify(){await win.__cxx_player__.waitForSaved();await store.openingPoint();await store.finishCreation();},
     onComplete(){draft=null;creation=null;close({cancel:false});leave?.();}
    });win.CxxDiagnostics?.resolve(r=>r.module==='人物创建'&&r.context.slot===number&&r.context.character===context().characterKey&&r.context.chat===context().chatId);}catch(e){page='slots';render();throw e;}
   }

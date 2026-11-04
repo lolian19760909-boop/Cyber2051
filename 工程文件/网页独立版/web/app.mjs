@@ -521,6 +521,9 @@ async function prepareSession({ accountId, runId, fromOpening=true, onRestored, 
   const restored=await state.session.restore();
   mark('restore:done');
   if(sequence!==startSequence)return;
+  const openingNode=restored.nodes?.find(node=>!node.parentId&&node.message?.kind==='opening'&&node.message.creationId);
+  if(openingNode)await statePort.createCheckpoint(runId,'开局存档',{nodeId:openingNode.nodeId,checkpointId:'opening_'+openingNode.nodeId});
+  if(sequence!==startSequence)return;
   onRestored?.();
   // 存档热更弹窗是进入游戏前的一道闸：更新或暂不之后才继续装配界面。
   await maybeOfferSaveUpdate(()=>sequence===startSequence);

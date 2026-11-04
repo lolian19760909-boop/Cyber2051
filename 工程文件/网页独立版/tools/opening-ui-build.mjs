@@ -4,6 +4,7 @@ import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {ROOT,WEB} from './workspace-paths.mjs';
+import {adaptCreationVisuals} from './opening-visuals-adapt.mjs';
 
 export const OPENING_SOURCE=path.resolve(ROOT,'../资料/设计/UI升级-设计师旧卡-20261026/fusion');
 export const OPENING_OUTPUT=path.join(WEB,'generated/opening-ui');
@@ -15,7 +16,7 @@ export function buildOpeningUI(){
  const assets=[...Object.values(manifest.controls),manifest.map,manifest.logo,manifest.city,manifest.loading,...manifest.music.map(row=>row.file),...Object.values(manifest.sfx)];
  const rows=[];
  for(const name of [...files,...assets.map(name=>'assets/'+name),'reading-shell.mjs','reading.css']){
-  const override=path.join(WEB,'web/opening-ui',name),source=fs.existsSync(override)?override:path.join(name.startsWith('reading')?integration:built,name),target=path.join(OPENING_OUTPUT,name),bytes=fs.readFileSync(source);
+  const override=path.join(WEB,'web/opening-ui',name),source=fs.existsSync(override)?override:path.join(name.startsWith('reading')?integration:built,name),target=path.join(OPENING_OUTPUT,name),raw=fs.readFileSync(source),bytes=name==='visual-runtime.mjs'?Buffer.from(adaptCreationVisuals(raw.toString('utf8'))):raw;
   fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,bytes);
   rows.push({path:name,bytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')});
  }

@@ -153,8 +153,8 @@ function prepareOpening(value,target=1){
       }throw Error('聊天已切换。');})();preparation={state:s,row,target,promise:p};p.finally(()=>{if(preparation?.promise===p)preparation=null;}).catch(()=>{});return p;
     }
     function choiceFor(value){
-      if(!value)return copy(identity());const next=I.snapshot(value.id,value.id==='custom'?value.background:'',value.growthSetup,value.loadoutSetup),prior=identity();
-      const equal=I.valid(prior)&&same(next,I.snapshot(prior.id,prior.id==='custom'?prior.background:'',prior.growthSetup,prior.loadoutSetup));
+      if(!value)return copy(identity());const next=I.snapshot(value.id,value.id==='custom'?value.background:'',value.growthSetup,value.loadoutSetup,value.openingFunds),prior=identity();
+      const equal=I.valid(prior)&&same(next,I.snapshot(prior.id,prior.id==='custom'?prior.background:'',prior.growthSetup,prior.loadoutSetup,prior.openingFunds));
       const built=ctx().chat[0]?.variables?.some(v=>v?.stat_data?.terminal?.gameplay?.growth);
       if(built&&!equal)throw Error('当前开局已经建档；请继续当前配置，或新建聊天重新选择。');
       next.setupToken=equal&&prior.setupToken?prior.setupToken:'start_'+CryptoCompat.uuid().replaceAll('-','');return equal?{...prior,...next}:next;

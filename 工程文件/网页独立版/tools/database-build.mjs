@@ -9,10 +9,6 @@ export function buildDatabase(out){
  for(const row of receipt.files){const bytes=fs.readFileSync(path.join(source,row.file));if(createHash('sha256').update(bytes).digest('hex')!==row.sha256)throw Error('数据库维护文件指纹不符：'+row.file);fs.writeFileSync(path.join(target,row.file),bytes);}
  const stateBridge=fs.readFileSync(path.join(WEB,'src/database/sqlite-bridge.mjs'),'utf8').replace(/^export /gm,'');
  const rewrites=[
-  // The bundled exec allocates its tail pointer with stackAlloc(4). Each query
-  // consumes 16 aligned bytes until SQLite crosses the end of the WASM stack.
-  ['var s=null,l=null,g=null;try{g=l=fa(n);var u=xe(4);','var s=null,l=null,g=null,cxxStack=Ne();try{g=l=fa(n);var u=xe(4);'],
-  ['finally{l&&ve(l)}},e.prototype.Mb=','finally{l&&ve(l),Re(cxxStack)}},e.prototype.Mb='],
   ['return t.loadFromData(o.data||null)','return t.loadFromData(m.CxxDatabaseHost.prepareTables(o.data||null))'],
   ['l.loadFromData(t.data)','l.loadFromData(m.CxxDatabaseHost.prepareTables(t.data))'],
   ['m.AutoCardUpdaterAPI=$B','m.AutoCardUpdaterAPI=$B;'+stateBridge+`;attachSqlState(m.CxxDatabaseHost,()=>{const p=getActiveStorageProvider();if(p?.mode!=='sqlite'||!p.engine.db)throw Error('SQLite运行时尚未就绪');return p.engine.db})`],
@@ -24,7 +20,8 @@ export function buildDatabase(out){
   ['registerAcuV2MenuButton(),function ensureAcuV2AppMounted','function ensureAcuV2AppMounted'],
   ['if(Ve&&Ve.chatId)setTimeout(async()=>{await initWithChatIdSafely(Ve.chatId)},1e3);else{','if(window.parent.CxxDatabaseHost){}else if(Ve&&Ve.chatId)setTimeout(async()=>{await initWithChatIdSafely(Ve.chatId)},1e3);else{']
  ];
- let plugin=fs.readFileSync(path.join(target,'shujuku-1.3.js'),'utf8');for(const [from,to]of rewrites){if(plugin.split(from).length!==2)throw Error('数据库宿主适配锚点变化：'+from);plugin=plugin.replace(from,to);}
+ const compatibility=createRequire(import.meta.url)('../../工具/lib/database-plugin-patch.cjs').patchDatabasePlugin(fs.readFileSync(path.join(target,'shujuku-1.3.js'),'utf8'));
+ let plugin=compatibility.code;for(const [from,to]of rewrites){if(plugin.split(from).length!==2)throw Error('数据库宿主适配锚点变化：'+from);plugin=plugin.replace(from,to);}
  const B=createRequire(import.meta.url)('../../工具/lib/card-ast.cjs'),delays=[];
  B.walk(B.acorn.parse(plugin,{ecmaVersion:'latest'}),node=>{if(node.type==='CallExpression'&&node.callee?.property?.name==='on'&&plugin.slice(node.arguments[0]?.start,node.arguments[0]?.end)==='Ve.eventTypes.CHAT_CHANGED')B.walk(node.arguments[1],call=>{if(call.type==='CallExpression'&&call.callee?.name==='setTimeout'&&call.arguments[1]?.value===1200&&call.arguments[0]?.async)delays.push(call);});});
  if(delays.length!==1)throw Error('数据库聊天切换接点变化');const delay=delays[0];plugin=plugin.slice(0,delay.start)+'await ('+plugin.slice(delay.arguments[0].start,delay.arguments[0].end)+')()'+plugin.slice(delay.end);
@@ -33,5 +30,5 @@ export function buildDatabase(out){
  for(const name of ['world-info','extensions','script'])fs.copyFileSync(path.join(WEB,'src/database',name+'.mjs'),path.join(target,name+'.mjs'));
  const state=JSON.parse(fs.readFileSync(path.join(WEB,'../数据/表格模板-cxx15.json'))),memory=JSON.parse(fs.readFileSync(path.join(WEB,'generated/memory-contract.json')));
  fs.writeFileSync(path.join(target,'template.json'),JSON.stringify({...state,...memory.nativeTemplate})+'\n');
- fs.writeFileSync(path.join(target,'source.json'),JSON.stringify({...receipt,adaptation:{rewrites:rewrites.map(([from,to])=>({from,to})),chatChanged:'await the original 1200 ms delayed reload immediately; local story binding already owns complete saved rows',sha256:createHash('sha256').update(plugin).digest('hex'),scope:'browser-local host modules, explicit story lifecycle, lazy original admin UI, removal of fixed UI waits, sql.js exec stack restored on success and failure; original tables, CRUD, history, prompts and update engine retained'}})+'\n');
+ fs.writeFileSync(path.join(target,'source.json'),JSON.stringify({...receipt,adaptation:{rewrites:[...compatibility.changes,...rewrites].map(([from,to])=>({from,to})),chatChanged:'await the original 1200 ms delayed reload immediately; local story binding already owns complete saved rows',sha256:createHash('sha256').update(plugin).digest('hex'),scope:'browser-local host modules, explicit story lifecycle, lazy original admin UI, removal of fixed UI waits, sql.js exec stack restored on success and failure; original tables, CRUD, history, prompts and update engine retained'}})+'\n');
 }

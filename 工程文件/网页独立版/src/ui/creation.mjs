@@ -46,7 +46,7 @@ export async function mountCreation({parent,session,statePort,contentVersion,gam
       if(result.status==='conflict')throw new Error('另一页面已建立开局，请重新读取');
       createdNode=result.nodeId;
     },
-    async verify(){if(!createdNode||!(await statePort.readNode(session.identity.runId,createdNode)))throw new Error('开局尚未保存完成');},send:async command=>{pendingCommand=command;},onFailure:onError,
+    async verify(){if(!createdNode||!(await statePort.readNode(session.identity.runId,createdNode)))throw new Error('开局尚未保存完成');await statePort.createCheckpoint(session.identity.runId,'开局存档',{nodeId:createdNode,checkpointId:'opening_'+createdNode});},send:async command=>{pendingCommand=command;},onFailure:onError,
     onComplete(){if(disposed)return;queueMicrotask(async()=>{try{await onComplete?.({pendingCommand,handoff:async()=>{await session.restore();destroy();}});}catch(error){onError?.(error);}});},
   });
   const preview={

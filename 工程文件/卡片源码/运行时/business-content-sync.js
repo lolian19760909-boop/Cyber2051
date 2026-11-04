@@ -127,7 +127,7 @@ let confirmed='';
     }
 
 syncChat.isCurrent=()=>!!confirmed&&confirmed===signature();
-const run=()=>{const win=api.parent||api,P=win.CxxStoryProfile||api.CxxStoryProfile,book=api.getCharWorldbookNames?.('current')?.primary;return P?.withBookLock&&book?P.withBookLock(win,book,syncChat):syncChat();};run.isCurrent=syncChat.isCurrent;return run;
+const run=({worldbook:lockedBook}={})=>{const win=api.parent||api,P=win.CxxStoryProfile||api.CxxStoryProfile,book=api.getCharWorldbookNames?.('current')?.primary;return P?.withBookLock&&book&&book!==lockedBook?P.withBookLock(win,book,syncChat):syncChat();};run.isCurrent=syncChat.isCurrent;return run;
 }
 return {create};
 });

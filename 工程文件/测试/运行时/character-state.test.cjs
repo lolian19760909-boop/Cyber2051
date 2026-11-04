@@ -1,5 +1,15 @@
 const test=require('node:test'),assert=require('node:assert/strict'),State=require('../../卡片源码/运行时/character-state.js');
 const copy=structuredClone,namespace='__cxx_update',expected={characterKey:'fixture.png',chatId:'a'};
+{
+ const Host=require('../../卡片源码/运行时/host.js'),Core=require('../../卡片源码/运行时/core.js'),F=require('../lib/fixture-loader.cjs')('host.test.cjs',['fakeBackend','finish']);
+ test('installer lock uses the native namespace writer and preserves embedded-only fields',async t=>{
+  const f=F.fakeBackend(t),s=f.state;s.raw.character_book={name:s.binding,entries:[{id:0,keys:[],content:'原人物书',use_regex:true,extensions:{cfSortKey:1}}]};s.disk=copy(s.raw);const original=copy(s.disk);let mergeWrites=0,fullWrites=0;const update=f.api.updateVariablesWith;
+  f.api.updateVariablesWith=async(fn,options)=>{if(options.type!=='character')return update(fn,options);const before=f.api.getVariables(options),after=await fn(copy(before));if(JSON.stringify(before)===JSON.stringify(after))return;fullWrites++;s.raw.extensions.tavern_helper.variables=copy(after);f.queueSave();};
+  function merge(target,delta){const out=copy(target);for(const[k,v]of Object.entries(delta)){if(v==='__@@UNSET@@__')delete out[k];else out[k]=v&&typeof v==='object'&&!Array.isArray(v)&&out[k]&&typeof out[k]==='object'&&!Array.isArray(out[k])?merge(out[k],v):copy(v);}return out;}
+  const fetch=async(url,request)=>{if(new URL(url).pathname!=='/api/characters/merge-attributes')return f.fetch(url,request);const body=JSON.parse(request.body);assert.equal(body.avatar,s.avatar);s.disk=merge(s.disk,body.data);mergeWrites++;return{ok:true,status:200,json:async()=>({})};};
+  const host=Host.create({core:Core,api:f.api,fetch,locks:f.locks,indexedDB:f.indexedDB,hostOrigin:'http://localhost:8000'});t.mock.timers.tick(2500);const value={...host.readState(),migrationReady:true};await F.finish(t,host.withLock(()=>host.saveState(value)));assert.equal(mergeWrites,1);assert.equal(fullWrites,0);original.extensions.tavern_helper.variables[Host.NAMESPACE]=value;assert.deepEqual(s.disk,original);
+ });
+}
 function fixture(options={}){
  const before={journalName:'old',registry:{packages:{keep:{version:'1'},remove:{version:'2'}}},conflicts:[1,2]},scripts=[{id:'map',content:'unchanged large geometry'}],data={name:'卡',extensions:{unknown:'keep',tavern_helper:{scripts,variables:{other:{keep:true},[namespace]:before}}}};
  const character={avatar:expected.characterKey,data,json_data:JSON.stringify({data,unknownOuter:'keep'})},context={characters:[character],characterId:0,getRequestHeaders:()=>({'X-CSRF-Token':'test'})},field={value:character.json_data},calls=[];let disk=copy(data),chat='a';

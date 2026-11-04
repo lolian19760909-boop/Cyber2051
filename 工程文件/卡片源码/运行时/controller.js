@@ -290,7 +290,7 @@
       return commitComponentPlan(plan, state);
     }
     let contentSync = null;
-    async function syncChat() { if (contentSync) return contentSync(); }
+    async function syncChat(lock) { if (contentSync) return contentSync(lock); }
     async function installPrepared() {
       const expected=host.getContext();
       while(alive&&(running||saveRunning||storyOperations||host.getContext().busy)){
@@ -318,7 +318,7 @@
         if(mode==='sync'&&!downloadUpdates&&!pending&&!state.journalName&&!state.pendingRegistry&&state.characterKey===expected.characterKey&&state.engineVersion===Core.ENGINE_VERSION&&chatVars().__cxx_content_origin?.instanceId===state.instanceId&&contentSync?.isCurrent?.()){
           retryAfter=0;report('本轮内容定义未变化');return;
         }
-        await host.withLock(async () => {
+        await host.withLock(async lock => {
           host.assertContext(expected);
           await initialize(); await recover(); await initializeChat();
           if (downloadUpdates && mode === 'manual') {
@@ -339,7 +339,7 @@
             }
             await initializeChat();
           }
-          await syncChat();
+          await syncChat(lock);
           const n = host.readState().conflicts?.length || 0;
           const saved = n ? '更新已保存；' + n + '处玩家修改已保留，请查看冲突记录' : '当前内容已保存，游玩进度保持不动';
           if(installedCount) localPackage = null;
@@ -362,7 +362,7 @@
         if (e.code === 'publisher-not-configured') {
           // The locally assembled candidate still exposes its built-in content.
           // No unsigned release is accepted as a workaround.
-          try { await host.withLock(async () => { host.assertContext(expected); await recover(); await syncChat(); }); } catch (syncError) { report(syncError.message); }
+          try { await host.withLock(async lock => { host.assertContext(expected); await recover(); await syncChat(lock); }); } catch (syncError) { report(syncError.message); }
         }
       } finally { running = false; if (panel) renderPanel(); }
     }

@@ -1,6 +1,14 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const Identity=require("../../卡片源码/运行时/identity.js");
 
+test('the player chooses opening funds independently of origin, including zero and debt',()=>{
+ for(const origin of ['street','corpo','student','custom'])for(const amount of [0,2750,-90]){const value=Identity.snapshot(origin,'',Identity.initialSetup(origin),undefined,String(amount));assert.equal(value.openingFunds,amount);assert.equal(Identity.valid(value),true);}
+ for(const value of ['',null,undefined,'1.5','not-money',Infinity,Number.MAX_SAFE_INTEGER+1])assert.throws(()=>Identity.normalizeFunds(value),/开局资金/);
+ const legacy=Identity.snapshot('street','',Identity.initialSetup('street'));assert.equal(Object.hasOwn(legacy,'openingFunds'),false);assert.equal(Identity.valid(legacy),true);
+});
+
+test('chosen funds apply at the new opening once while later initialization keeps the played wallet',()=>{const O=require('../../卡片源码/运行时/player-operations.js');for(const amount of [0,2750,-90]){const identity={...Identity.snapshot('street','',Identity.initialSetup('street'),{weapon:''},amount),setupToken:'funds_'+amount},before={future:{keep:true},terminal:{wallet:{yen:500,earned:0,spent:0,custom:'keep'},gameplay:{}}};const first=O.plan(before,{action:'initialize'},{identity,newChat:true});assert.equal(first.terminal.wallet.yen,amount);assert.equal(first.terminal.wallet.custom,'keep');assert.deepEqual(first.future,{keep:true});const later=structuredClone(first);later.terminal.wallet.yen=amount+17;const again=O.plan(later,{action:'initialize'},{identity,newChat:true});assert.equal(again.terminal.wallet.yen,amount+17);assert.deepEqual(again.terminal.ensemble.actors.wb_6.wallet,first.terminal.ensemble.actors.wb_6.wallet);}});
+
 test('preset origins have distinct anchors and the same remaining allocation budget',()=>{
   const starts=['street','corpo','student'].map(id=>Identity.initialSetup(id));
   assert.equal(starts.every(s=>s.attributePoints===4),true);

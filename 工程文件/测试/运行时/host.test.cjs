@@ -462,7 +462,7 @@ test('saveState waits for a character disk readback beyond the helper return ACK
   let complete = false; const operation = h.host.saveState(desired).then(() => { complete = true; });
   await nextTurn(); assert.equal(complete, false); assert.equal(h.state.events.includes('state-helper-returned'), true);
   assert.equal(h.state.disk.extensions.tavern_helper.variables[NAMESPACE].subscriptions, undefined);
-  await finish(t, operation); assert.equal(h.state.characterReads, 4);
+  await finish(t, operation); assert.ok(h.state.events.indexOf('character-persisted')>h.state.events.indexOf('state-helper-returned'));
   assert.deepEqual(h.state.disk.extensions.tavern_helper.variables[NAMESPACE], desired);
   assert.deepEqual(h.state.disk.extensions.tavern_helper.variables.existingPlayerVar, { untouched: true });
 });
@@ -598,7 +598,7 @@ test('a server character edit during an acquired lock blocks the next namespace 
   assert.deepEqual(h.state.disk.extensions.playerNewSetting, { keep: true });
   assert.equal(h.state.events.includes('state-helper-returned'), false);
 });
-test('character preflight refuses prompt and foreign fields the real helper save would drop', async t => {
+test('full helper writer refuses prompt and foreign fields before serializing the card', async t => {
   const h = fakeBackend(t), initial = copy(h.state.raw);
   for (const [field, mutate] of [
     ['system_prompt', data => { data.system_prompt = 'player system prompt'; }],
@@ -610,22 +610,32 @@ test('character preflight refuses prompt and foreign fields the real helper save
     h.state.raw = copy(initial); mutate(h.state.raw); h.state.disk = copy(h.state.raw);
     let called = false;
     await assert.rejects(h.host.withLock(async () => { called = true; await h.host.saveState({ ...h.host.readState(), updated: true }); }), error => error.code === 'unsupported-character-field' && error.message.includes(field));
-    assert.equal(called, false); assert.equal(h.state.events.includes('state-helper-returned'), false);
+    assert.equal(called, true); assert.equal(h.state.events.includes('state-helper-returned'), false);
   }
 });
 test('an embedded book foreign extension survives only if the bound raw book can regenerate it', async t => {
   const h = fakeBackend(t);
   h.state.raw.character_book = { name: 'world 1.0.0', entries: [{ id: 1, use_regex: true, extensions: { cfSortKey: 'player-order' } }] };
   h.state.disk = copy(h.state.raw);
-  await assert.rejects(h.host.withLock(() => Promise.resolve()), { code: 'unsupported-character-field' });
+  await assert.rejects(h.host.withLock(() => h.host.assertCharacterWritable()), { code: 'unsupported-character-field' });
   h.state.rawBooks.get('world 1.0.0').entries['1'].extensions = { cfSortKey: 'player-order' };
-  await h.host.withLock(() => Promise.resolve());
+  await h.host.withLock(() => h.host.assertCharacterWritable());
   for (const data of [h.state.raw,h.state.disk]) data.character_book.entries[0].extensions.playerNote = 'keep\r\noriginal';
   h.state.rawBooks.get('world 1.0.0').entries['1'].extensions.playerNote = 'keep\r\noriginal';
-  await h.host.withLock(() => Promise.resolve());
+  await h.host.withLock(() => h.host.assertCharacterWritable());
   assert.equal(h.state.raw.character_book.entries[0].extensions.playerNote, 'keep\r\noriginal');
   h.state.rawBooks.get('world 1.0.0').entries['1'].extensions.playerNote = 'changed';
-  await assert.rejects(h.host.withLock(() => Promise.resolve()), { code: 'unsupported-character-field' });
+  await assert.rejects(h.host.withLock(() => h.host.assertCharacterWritable()), { code: 'unsupported-character-field' });
+});
+
+test('namespace-only persistence preserves embedded foreign fields independently of full-card serialization',async t=>{
+ const h=fakeBackend(t);h.state.raw.character_book={name:'world 1.0.0',entries:[{id:1,use_regex:true,extensions:{cfSortKey:1,playerNote:'保留原卡字段'}}]};h.state.disk=copy(h.state.raw);const before=copy(h.state.raw);let writes=0;
+ const host=Host.create({core:Core,api:h.api,fetch:h.fetch,locks:h.locks,indexedDB:h.indexedDB,hostOrigin:'http://localhost:8000',stateStore:{create:()=>({async write(value){writes++;for(const data of [h.state.raw,h.state.disk])data.extensions.tavern_helper.variables[NAMESPACE]=copy(value);return true;}})}});t.mock.timers.tick(2500);await finish(t,host.withLock(()=>host.saveState({...host.readState(),migration:{copied:true}})));assert.equal(writes,1);const after=copy(h.state.disk);after.extensions.tavern_helper.variables[NAMESPACE]=before.extensions.tavern_helper.variables[NAMESPACE];assert.deepEqual(after,before);assert.equal(h.state.events.includes('state-helper-returned'),false);
+});
+
+test('chat pointer uses the native text acknowledgement and verifies the saved pointer without rewriting card data',async t=>{
+ const h=fakeBackend(t),before=copy(h.state.disk);let saved='previous',persist=true,writes=0;const fetch=async(url,request)=>{const name=new URL(url).pathname;if(name==='/api/characters/merge-attributes'){const body=JSON.parse(request.body);assert.deepEqual(Object.keys(body).sort(),['avatar','chat']);assert.equal(body.avatar,h.state.avatar);writes++;if(persist)saved=body.chat;return {ok:true,status:200,text:async()=> 'OK'};}const response=await h.fetch(url,request);if(name==='/api/characters/get')return {...response,json:async()=>({...await response.json(),chat:saved})};return response;};
+ const host=Host.create({core:Core,api:h.api,fetch,locks:h.locks,indexedDB:h.indexedDB,hostOrigin:'http://localhost:8000',stateStore:{create:()=>null}});t.mock.timers.tick(2500);await host.saveChatPointer(h.state.chatId);assert.equal(saved,h.state.chatId);assert.equal(writes,1);assert.deepEqual(h.state.disk,before);await assert.rejects(host.saveChatPointer('other-chat'),{code:'context-changed'});assert.equal(writes,1);persist=false;h.state.chatId='next-chat';await assert.rejects(host.saveChatPointer('next-chat'),{code:'chat-pointer-unconfirmed'});assert.deepEqual(h.state.disk,before);
 });
 test('full V2 data comparison ignores runtime wrapper metadata and normalizes helper tuple settings', async t => {
   const h = fakeBackend(t), getRaw = h.api.getCharData;

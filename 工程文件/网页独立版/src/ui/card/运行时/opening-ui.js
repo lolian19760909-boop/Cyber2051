@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/运行时/opening-ui.js; source SHA256 814cadd9a35a0cf9da65242e45823e466bbc0ee01245a54177003319f8ab7c64. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/运行时/opening-ui.js; source SHA256 9dee326e11f651b9f9077803f4b1f06a2143d5ce86634409048f42f94e3cc08c. Rebuild with tools/p3a-adapt-views.mjs. */
 (function(root,factory){const api=factory(root);if(typeof module==='object'&&module.exports)module.exports=api;else root.CxxOpeningUI=api;})(globalThis,function(global){
   'use strict';
  const structuredClone=(typeof module==='object'&&module.exports?require('../共享/data-clone.js'):globalThis.CxxDataClone).clone;
@@ -242,6 +242,7 @@ function createOpeningArchive({document:doc,flow,preview:delegate,groups,catalog
     }
     function review(){
       heading('准备好，走进这座城市。','检查最后一遍。点击开始游戏后，才会建立故事并进入所选开局。');const d=state.draft,layout=node('div','opening-review'),info=node('section','opening-review-card');layout.append(info);body.append(layout);info.append(node('small','','YOUR STORY / 档案确认'),node('h3','',d.profile?.name||'沿用当前人物'),node('p','',I.entries.find(e=>e.id===d.origin)?.name||'自定义出身'),node('p','',d.profile?.personality||'性格交由故事逐渐展现'),node('h3','',scenarioTitle(d.scenario)||'尚未选择'),node('p','','能力与装备按上一页的选择建立。返回任何步骤都不会提前发放或消耗。'));
+      info.append(node('p','opening-starting-funds',d.openingFunds===undefined?'沿用已保存的钱包':'开局资金 · ¥ '+I.normalizeFunds(d.openingFunds).toLocaleString('zh-CN')));info.append(node('p','opening-worldbook-notice','人物资料保存在原世界书内属于本存档的 user 条目中；每条新路线各有自己的条目。'));
       if(global.CxxOpeningFlow.isDirect(d.scenario)){info.append(node('h3','','第一幕原文'),node('div','opening-written-preview',d.scenario==='custom-opening'?d.openingText:global.CxxOpeningGroups?.beginnings?.find(x=>x.id===d.scenario)?.text||''));}
       const settings=node('section','opening-review-card');layout.append(settings);settings.append(node('h3','','阅读偏好'));for(const [key,title,opts]of [['gal','阅读方式',[[false,'原生阅读'],[true,'Gal 阅读']]],['level','画面特效',[['medium','标准'],['low','低特效'],['high','完整']]],['device','布局',[['auto','自动适配'],['desktop','桌面'],['mobile','手机']]]]){const label=node('label','',title),select=node('select','');for(const [value,name]of opts){const option=node('option','',name);option.value=String(value);select.append(option);}select.value=String(d.preferences[key]);select.onchange=()=>flow.patch({preferences:{[key]:key==='gal'?select.value==='true':select.value}});label.append(select);settings.append(label);}mirrorChoice(settings);
     }
@@ -252,7 +253,7 @@ function createOpeningArchive({document:doc,flow,preview:delegate,groups,catalog
         if(state.restoreChoice){heading('发现一份人物草稿',state.restoreChoice.legacy?'这是旧版或归属未确认的草稿，可手动恢复文字；恢复后会重新确认人物设定。':'档位中保留了 '+state.restoreChoice.name+' 的草稿。');body.append(button('继续草稿',()=>flow.resolveDraft(true),'opening-next'),button('重新填写',()=>flow.resolveDraft(false),'opening-back'));}
         else if(step==='preferences')preferenceScreen();
         else if(step==='origin')origins();else if(step==='profile')persona();else if(step==='review')review();else if(step==='growth')growth();
-        else if(step==='loadout'){heading('你的初始装备','确认开局携带与已安装的物品，正式建档时生效。');loadout=Setup.mount({document:doc,parent:body,origin:state.draft.origin,initial:state.draft.loadouts[state.draft.origin],onChange:loadout=>flow.patch({loadout}),onSelect:item=>{selectedItem=item;paintStage('loadout');}});}
+        else if(step==='loadout'){heading('你的初始装备','填写开局资金，选择随身物品。确认开局时保存。');const funds=node('label','opening-funds'),label=node('span','','开局资金'),money=node('input','');money.type='number';money.step='1';money.value=state.draft.openingFunds??'';money.placeholder='由你填写，0也可以';money.setAttribute('aria-label','开局资金');money.dataset.openingField='openingFunds';money.oninput=()=>flow.patch({openingFunds:money.value});funds.append(label,money,node('small','','¥ · 可填写负数作为初始负债'));body.append(funds);loadout=Setup.mount({document:doc,parent:body,origin:state.draft.origin,initial:state.draft.loadouts[state.draft.origin],onChange:loadout=>flow.patch({loadout}),onSelect:item=>{selectedItem=item;paintStage('loadout');}});}
         else{heading('故事从哪一幕开始','先浏览剧情，再确认全部配置。');const pane=node('div','opening-scenario');body.append(pane);preview.mount(pane);}
         body.scrollTop=0;enterRows();
       }

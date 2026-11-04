@@ -43,7 +43,7 @@ test('missing backup gives actionable diagnosis and preserves the active mirror'
 
 test('real host rescue read lock permits unresolved records while normal export stays blocked',async t=>{
  const h=await orphan(t),check=await h.host.inspectInstall();h.state.rawBooks.delete(check.record.journalName);
- let locked=false;h.locks.request=async(name,options,fn)=>{assert.ok(options.ifAvailable===true||options.signal);if(locked)return fn(null);locked=true;try{return await fn({name,mode:options.mode});}finally{locked=false;}};
+ const locked=new Set();h.locks.request=async(name,options,fn)=>{assert.ok(options.ifAvailable===true||options.signal);if(locked.has(name))return fn(null);locked.add(name);try{return await fn({name,mode:options.mode});}finally{locked.delete(name);}};
  const f=M.fixture(),host={...f.host,withRescueReadLock:h.host.withRescueReadLock,inspectInstall:h.host.inspectInstall},client=Backup.create({host,core:Core,seed:f.seed,adapters:f.adapters});
  await assert.rejects(h.host.withReadLock(()=>{}),{code:'migration-pending-install'});
  const doc=await client.captureRescue();assert.equal(doc.payload.recovery.inspection.code,'backup-missing');assert.deepEqual(doc.payload.messages,f.messages);assert.equal(f.writes,0);
