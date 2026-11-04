@@ -84,7 +84,7 @@
         const scene=adapter.resolveScene?adapter.resolveScene({floor:floorNumbers.get(selected),scene:parsed.scene}):parsed.scene;
         const backgroundInfo=adapter.backgroundInfo?.({floor,swipe:selected?.swipe_id||0,raw,scene});
         const projection=!selected?.is_user?globalThis.parent?.CxxReading?.project(mirrorSource?.peek(floor)?.snapshot):null;
-        const illustration=selected&&!selected.is_user?globalThis.parent?.CxxPlot?.illustrationsAt?.(selected,floor)?.at(-1):null;
+        const illustration=selected&&!selected.is_user?((globalThis.CxxImages||globalThis.parent?.CxxImages)?.at?.(selected,floor)?.at(-1)||globalThis.parent?.CxxPlot?.illustrationsAt?.(selected,floor)?.at(-1)):null;
         view.render({
           opening: Boolean(snapshot.opening),presetAuxiliary:(parsed.auxiliary||[]).filter(item=>item.kind==='preset-detail'),
           openingMessage: snapshot.openingMessage,
@@ -238,14 +238,14 @@
       if (kind === 'sent' || kind === 'ended') resetPending();
       refresh();
     });
-    const top=globalThis.parent;top?.addEventListener?.('cxx-source-changed',refresh);top?.addEventListener?.('cxx-reading-changed',refresh);
+    const top=globalThis.parent;top?.addEventListener?.('cxx-images-changed',refresh);top?.addEventListener?.('cxx-source-changed',refresh);top?.addEventListener?.('cxx-reading-changed',refresh);
     return {
       open, close, refresh,
       focusTerminal() { view?.focusTerminal?.(); },
       focusStatus() { view?.focusStatus?.(); },
       focusWorkshop() { view?.focusWorkshop?.(); },
       get active() { return Boolean(view); },
-      destroy() { if (disposed) return; close(); disposed = true; unsubscribe();top?.removeEventListener?.('cxx-source-changed',refresh);top?.removeEventListener?.('cxx-reading-changed',refresh); positions.clear(); },
+      destroy() { if (disposed) return; close(); disposed = true; unsubscribe();top?.removeEventListener?.('cxx-images-changed',refresh);top?.removeEventListener?.('cxx-source-changed',refresh);top?.removeEventListener?.('cxx-reading-changed',refresh); positions.clear(); },
     };
   }
   return { create };

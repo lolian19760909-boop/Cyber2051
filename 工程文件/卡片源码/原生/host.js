@@ -38,13 +38,13 @@
     function closeTerminal(){terminal.close();activeSource=null;}
     function clearArt(entry){entry.art?.remove();entry.artDialog?.close();entry.artDialog?.remove();for(const dispose of entry.artDisposers||[])dispose();entry.artDisposers=[];entry.art=null;entry.artDialog=null;entry.artKey='';}
     function renderArt(entry,node,source,id){
-      const pictures=win.CxxPlot?.illustrationsAt?.(source,id)||[],key=JSON.stringify(pictures.map(p=>[p.id,p.url,p.source]));
+      const pictures=[...(win.CxxPlot?.illustrationsAt?.(source,id)||[]),...(win.CxxImages?.at(source,id)||[])],key=JSON.stringify(pictures.map(p=>[p.id,p.url,p.source]));
       if(entry.artKey===key&&(!pictures.length||entry.art?.isConnected))return;
       clearArt(entry);entry.artKey=key;if(!pictures.length)return;
       const art=entry.art=doc.createElement('section');art.className='cxx-story-illustrations';art.dataset.cxxStoryStyle='figure';art.setAttribute('aria-label','本轮剧情插图');
       for(const picture of pictures){
         const figure=doc.createElement('figure'),button=doc.createElement('button'),img=doc.createElement('img'),caption=doc.createElement('figcaption');
-        figure.className='cxx-story-figure';figure.dataset.cxxStoryCg=picture.id;figure.hidden=true;
+        figure.className='cxx-story-figure'+(String(picture.id).startsWith('generated:')?' cxx-generated-illustrations':'');figure.dataset.cxxStoryCg=picture.id;figure.hidden=true;
         button.type='button';button.className='cxx-story-figure-open';button.setAttribute('aria-label','查看剧情插图：'+(picture.caption||picture.lineTitle));img.alt=picture.caption||picture.lineTitle;img.decoding='async';caption.textContent=picture.caption||'';
         let lease=null,ended=false;
         const show=()=>{if(!ended){figure.hidden=false;figure.setAttribute('data-ready','1');}},failed=()=>{if(!ended){figure.hidden=false;img.hidden=true;caption.textContent='图片暂不可用，解锁记录仍保留。';if(!caption.isConnected)figure.append(caption);}};
@@ -64,7 +64,7 @@
     }
     function clear(){
       observer?.disconnect();closeTerminal();
-      for(const [node,entry] of surfaces){clearArt(entry);entry.api.destroy();if(!entry.hadClass)node.classList.remove('cxx-native-prose');}
+      for(const [node,entry] of surfaces){clearArt(entry);entry.imageButton?.remove();entry.api.destroy();if(!entry.hadClass)node.classList.remove('cxx-native-prose');}
       surfaces.clear();statusStates.clear();frames.clear();style?.remove();style=null;chat=null;
     }
     function renderText(text,id){
@@ -93,15 +93,16 @@
         if(!Number.isInteger(id)||!source||source.is_user||source.is_system)continue;
         const node=message.querySelector('.mes_text');if(!node)continue;
         let entry=surfaces.get(node);
-        if(entry&&(entry.source!==source||entry.swipe!==source.swipe_id)){clearArt(entry);entry.api.destroy();if(!entry.hadClass)node.classList.remove('cxx-native-prose');surfaces.delete(node);entry=null;}
+        if(entry&&(entry.source!==source||entry.swipe!==source.swipe_id)){clearArt(entry);entry.imageButton?.remove();entry.api.destroy();if(!entry.hadClass)node.classList.remove('cxx-native-prose');surfaces.delete(node);entry=null;}
         if(!entry){
           const hadClass=node.classList.contains('cxx-native-prose');node.classList.add('cxx-native-prose');
           entry={source,swipe:source.swipe_id,hadClass,api:prose.mount(node,{raw:()=>source.mes,renderText:text=>renderText(text,id)})};surfaces.set(node,entry);
         }else entry.api.refresh();
         renderArt(entry,node,source,id);
+        if(win.CxxImages&&!entry.imageButton?.isConnected){const button=entry.imageButton=doc.createElement('button');button.type='button';button.className='cxx-generated-image-button';button.textContent='剧情插图';button.onclick=()=>{const floor=ctxFloor();if(floor>=0)void win.CxxImages.open(floor).catch(error=>notify(error.message));};const ctxFloor=()=>context().chat.indexOf(entry.source);node.after(button);}
         for(const frame of [...message.querySelectorAll('iframe'),...doc.querySelectorAll('[data-cxx-component][data-cxx-floor="'+id+'"]')])statusReady(frame);
       }
-      for(const [node,entry] of surfaces)if(!chat.contains(node)){clearArt(entry);entry.api.destroy();if(!entry.hadClass)node.classList.remove('cxx-native-prose');surfaces.delete(node);}
+      for(const [node,entry] of surfaces)if(!chat.contains(node)){clearArt(entry);entry.imageButton?.remove();entry.api.destroy();if(!entry.hadClass)node.classList.remove('cxx-native-prose');surfaces.delete(node);}
       for(const frame of frames.keys())if(!frame.isConnected)frames.delete(frame);
       for(const [id,saved] of statusStates)if(c.chat[id]!==saved.source||c.chat[id]?.swipe_id!==saved.swipe)statusStates.delete(id);
     }
@@ -119,6 +120,7 @@
     for(const [event,handler] of [['cxx:open-native-diagnostics',openDiagnostics],['cxx:open-native-terminal',openTerminal],['cxx:native-status-ready',readyStatus],['cxx:native-status-change',saveStatus],['cxx:native-suspend',closeTerminal]]){
       doc.addEventListener(event,handler);disposers.push(()=>doc.removeEventListener(event,handler));
     }
+    win.addEventListener('cxx-images-changed',schedule);disposers.push(()=>win.removeEventListener('cxx-images-changed',schedule));
     const events=context().eventTypes||{};
     if(messageFeed)disposers.push(messageFeed(refresh));
     else for(const name of ['CHAT_CHANGED','MESSAGE_RECEIVED','MESSAGE_SWIPED','MESSAGE_EDITED','MESSAGE_DELETED','MESSAGE_UPDATED','CHARACTER_MESSAGE_RENDERED']){

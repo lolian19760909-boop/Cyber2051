@@ -39,7 +39,7 @@ export function createIdbStatePort(options={}){
   const list=(t,name,runId)=>request(t.objectStore(name).index('byRun').getAll(runId));
   async function readHead(runId,branchId){return tx(['runs','branches'],'readonly',async t=>{const current=await run(t,runId),id=branchId||current?.branchId;const branch=id?await request(t.objectStore('branches').get([runId,id])):null;return {revision:current?.revision||0,headNodeId:branch?.headNodeId||((!branchId||branchId===current?.branchId)?current?.headNodeId:null)||null,branchId:id||null};});}
   async function readRecord(name,runId,id){return tx(['runs',name],'readonly',async t=>{await run(t,runId);return await request(t.objectStore(name).get([runId,id]))||null;});}
-  async function listRecords(name,runId){return tx(['runs',name],'readonly',async t=>{await run(t,runId);return list(t,name,runId);});}
+  async function listRecords(name,runId,{prefix}={}){return tx(['runs',name],'readonly',async t=>{await run(t,runId);if(name==='media'&&prefix!==undefined){const range=options.keyRange||globalThis.IDBKeyRange;return request(t.objectStore(name).getAll(range.bound([runId,prefix],[runId,prefix+'\uffff'])));}return list(t,name,runId);});}
   async function withRunLock(runId,fn){
     if(locks?.request)return locks.request('cxx2051:generate:'+runId,{mode:'exclusive',ifAvailable:true},lock=>{if(!lock)throw Object.assign(new Error('另一页面正在处理这个故事'),{code:'turn_busy'});return fn();});
     const leaseId=newId('lease'),leaseMs=90000;

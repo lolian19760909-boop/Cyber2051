@@ -12,7 +12,7 @@ export function adaptViews({only}={}){if(only&&only.some(name=>!views.includes(n
    text=text.replace("button('返回原生', function ()","button('正文', function ()")
     .replace("const menuButton=button('游戏菜单',()=>{const w=doc.defaultView;if(w.__cxx_stories__)void w.__cxx_stories__.menu('hub');else call('onError','存档服务正在准备，请稍后重试。');});","const menuButton=button('主菜单',()=>call('onMainMenu'));")
     .replace("const settingsButton=button('设置',()=>{if(mailWindow.__cxx_stories__)void mailWindow.__cxx_stories__.menu('home');else call('onError','设置服务正在准备，请稍后重试。');});","const settingsButton=button('设置',()=>call('onSettings'));")
-    .replace('tools.replaceChildren(closeButton,workshopButton,backgroundButton,settingsButton,menuButton);',"const backupButton=button('备份',()=>call('onBackup'));tools.replaceChildren(closeButton,workshopButton,backgroundButton,terminalButton,backupButton,settingsButton,menuButton);");
+    .replace('tools.replaceChildren(closeButton,workshopButton,imageButton,backgroundButton,settingsButton,menuButton);',"const backupButton=button('备份',()=>call('onBackup'));tools.replaceChildren(closeButton,workshopButton,imageButton,backgroundButton,terminalButton,backupButton,settingsButton,menuButton);");
    text=text.replace('else if(!mailWindow.__JINGYI__)r.setup?.();','else if(!r.read().capabilities?.tts)r.setup?.();').replace('if (!landscape.isMobile(doc.defaultView) && typeof root.showPopover', 'if (!globalThis.__cxxStandaloneUI && !landscape.isMobile(doc.defaultView) && typeof root.showPopover');
    const bar='    readBar.append(speakerLabel, history, statsToggle);',render='      history.hidden = !model.history;';
    if(!text.includes(bar)||!text.includes(render))throw Error('Gal floor version controls slot drift');

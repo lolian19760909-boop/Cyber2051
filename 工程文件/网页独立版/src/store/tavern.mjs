@@ -118,7 +118,7 @@ export async function createTavernStatePort({host,accountId,runId,parse,parser,r
     readLineage:async(_id,id)=>{await fresh();return clone(lineage(doc.nodes,id===undefined?doc.run?.headNodeId:id));},
     readNodeState:async(_id,id)=>{await fresh();const node=doc.nodes.find(n=>n.nodeId===id);return node?.snapshot!==undefined?clone(node.snapshot):stateAt(doc.nodes,id);},
     listBranches:async()=>{await fresh();return clone(doc.branches);},listCheckpoints:async()=>{await fresh();return clone(doc.checkpoints);},
-    listRecords:async name=>{await fresh();return name==='media'?unpackMedia(records(name)):clone(records(name));},
+    listRecords:async(name,_run,{prefix}={})=>{await fresh();return name==='media'?unpackMedia(records(name).filter(row=>prefix===undefined||String(row.mediaId||row.id).startsWith(prefix))):clone(records(name));},
     readRecord:async(name,id,key)=>{await fresh();if(id!==runId)throw fail('account_mismatch','记录不属于当前酒馆故事');const row=records(name).find(row=>(row.id||row.taskId||row.mediaId)===key);return name==='media'?unpackMedia(row||null):clone(row||null);},
     readMedia:async(_id,id)=>{await fresh();return unpackMedia(records('media').find(r=>(r.mediaId||r.id)===id)||null);},
     listTasks:async(_id,status='pending')=>{await fresh();return clone(records('tasks').filter(r=>!status||r.status===status));},

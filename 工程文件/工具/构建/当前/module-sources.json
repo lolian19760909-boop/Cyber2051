@@ -1291,6 +1291,12 @@
       "disposal": "旧服务仅销毁自己持有的voice；卸载移除按钮和启动监听",
       "verification": "通讯22项；startup同一runtime替换20次"
     },
+    "cxx-image-generation-300": {
+      "owner": "逐楼NovelAI插图、当前页面Key和独立图片队列",
+      "dependencies": "Cxx233Runtime解析器、Updater.host.withChatSave与TH消息变量",
+      "disposal": "helper pagehide取消等待/请求并销毁UI，CHAT_CHANGED关闭旧页；原回调移除",
+      "verification": "图片服务/来源/保存失败复用候选；原生及网页逐楼恢复"
+    },
     "cxx-long-memory-p1": {
       "owner": "长期记忆、剧情检测和面板",
       "dependencies": "共享解析器；原数据库和模型配置",

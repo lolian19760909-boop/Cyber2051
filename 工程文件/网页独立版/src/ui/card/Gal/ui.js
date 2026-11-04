@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/Gal/ui.js; source SHA256 d47227137c02783430799fba876350779ec4e89fe2c915b6675855d99808bb08. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/Gal/ui.js; source SHA256 7239485b3a0d2937b65ce11d62c5440405a2dfae87c78ed62f876ebdad0d04e4. Rebuild with tools/p3a-adapt-views.mjs. */
 (function (root, factory) {
   'use strict';
   const Popover=typeof module==='object'&&module.exports?require('../共享/popover.js'):globalThis.CxxPopover;
@@ -191,6 +191,7 @@
     const closeButton = button('正文', function () { call('onClose'); });
     closeButton.title = '关闭 Galgame 界面，保留聊天和输入草稿';
     const workshopButton = button('工坊', function () { call('onWorkshop'); });
+    const imageButton=button('插图',()=>{const host=doc.defaultView,images=host.CxxImages||host.parent?.CxxImages;if(images)void images.open(model.selectedFloor??model.floor).catch(error=>call('onError',error.message));});imageButton.title='编辑提示词、生成或重画本楼插图';
     workshopButton.title = '订阅工坊内容与选择本存档版本';
     navSubtitle(statusButton, 'CHARACTERS'); navSubtitle(terminalButton, 'TERMINAL');
     navSubtitle(workshopButton, 'WORKSHOP');
@@ -221,7 +222,7 @@
     moreItems.append(button('电台',()=>{closeMore(true);try{mailWindow.Cxx233Terminal?.openPage('network',2);}catch(e){call('onError',e.message);}}));
     const settingsButton=button('设置',()=>call('onSettings'));
     const backgroundButton=button('背景',openBackground);backgroundButton.setAttribute('aria-haspopup','dialog');
-    const backupButton=button('备份',()=>call('onBackup'));tools.replaceChildren(closeButton,workshopButton,backgroundButton,terminalButton,backupButton,settingsButton,menuButton);header.append(brand, tools);
+    const backupButton=button('备份',()=>call('onBackup'));tools.replaceChildren(closeButton,workshopButton,imageButton,backgroundButton,terminalButton,backupButton,settingsButton,menuButton);header.append(brand, tools);
     const backgroundDialog=element('dialog','cxx-gal-background-picker'),backgroundTitle=element('h2','','选择当前场景背景'),backgroundNote=element('p','','仅用于当前回复。'),backgroundSelect=element('select'),backgroundPreview=element('img'),backgroundActions=element('div','cxx-gal-background-actions');
     backgroundSelect.setAttribute('aria-label','背景图片');backgroundPreview.alt='背景预览';let backgroundChoiceKey='';
     const backgroundAuto=button('恢复自动',()=>{call('onBackground',{filename:'',key:backgroundChoiceKey});backgroundDialog.close();}),backgroundApply=button('使用这张',()=>{call('onBackground',{filename:backgroundSelect.value,key:backgroundChoiceKey});backgroundDialog.close();}),backgroundCancel=button('关闭',()=>backgroundDialog.close());
@@ -264,7 +265,7 @@
     // Story pictures behave like a galgame CG: they cover the scene on their own floor while dialogue continues.
     let storyCgImage=null,storyCgUrl='';
     function renderStoryCg(value){
-      const url=safeSpriteUrl(value?.url);
+      if(value?.url===storyCgUrl)return;const url=/^data:image\/png;base64,[A-Za-z0-9+/]+={0,2}$/.test(value?.url||'')?value.url:safeSpriteUrl(value?.url);
       if(storyCgUrl===url)return;
       storyCgUrl=url;
       const old=storyCgImage;storyCgImage=null;

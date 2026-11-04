@@ -64,6 +64,7 @@ if(data.result){const rows=data.result.split(/\r?\n/).filter(Boolean).map(JSON.p
  if(workshop){report.mode='workshop';report.sourceHash=crypto.createHash('sha256').update(inputBytes).digest('hex');await require('./workshop-host-cases.cjs').check({page:p,fixture:workshop,select,diskRows,report,out});report.pass=true;return;}
  if(process.env.CXX_STORY_QUEST_CHECK==='1'){report.mode='story-quests';await require('./story-quests-host-cases.cjs')({page:p,select,diskRows,report,out});report.pass=true;return;}
  if(process.env.CXX_STORY_ITEM_CHECK==='1'){report.mode='story-items';await require('./story-items-host-cases.cjs')({page:p,select,diskRows,report,out});report.pass=true;return;}
+ if(process.env.CXX_IMAGE_CHECK==='1'){report.mode='story-images';await require('../lib/image-runtime-cases.cjs').native({page:p,context:p.context(),select,diskRows,report,out});report.pass=true;return;}
  if(process.env.CXX_NATIVE_TURN_CHECK==='1'){report.mode='native-continuation';await require('./native-continuation-host-cases.cjs')({page:p,select,diskRows,report,out});report.pass=true;return;}
  if(process.env.CXX_PATCH_RECEPTION_CHECK==='1'){report.mode='model-patch-reception';await require('./model-patch-host-cases.cjs')({page:p,select,diskRows,report,out});report.pass=true;return;}
  if(process.env.CXX_POLICY_READ_CHECK==='1'){report.mode='variable-policy-read';await require('./variable-policy-host-cases.cjs')({page:p,select,diskRows,report,out});report.pass=true;return;}

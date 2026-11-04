@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/Gal/controller.js; source SHA256 b00ac4ac54446d4e7d3bda8fced22a54f918f08ad870e55d77a852c87581a1fa. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/Gal/controller.js; source SHA256 05bd46bbf7337f9558a4e3da3dc14667a9bfa806abce98c18ce38db0114b6aa7. Rebuild with tools/p3a-adapt-views.mjs. */
 /* G1: view state only; native messages and draft remain authoritative. */
 (function (root, factory) {
   const api = factory(typeof module === 'object' && module.exports ? require('./sprites.js') : root.CxxGalSprites);
@@ -86,7 +86,7 @@
         const scene=adapter.resolveScene?adapter.resolveScene({floor:floorNumbers.get(selected),scene:parsed.scene}):parsed.scene;
         const backgroundInfo=adapter.backgroundInfo?.({floor,swipe:selected?.swipe_id||0,raw,scene});
         const projection=!selected?.is_user?globalThis?.CxxReading?.project(mirrorSource?.peek(floor)?.snapshot):null;
-        const illustration=selected&&!selected.is_user?globalThis?.CxxPlot?.illustrationsAt?.(selected,floor)?.at(-1):null;
+        const illustration=selected&&!selected.is_user?((globalThis.CxxImages||globalThis?.CxxImages)?.at?.(selected,floor)?.at(-1)||globalThis?.CxxPlot?.illustrationsAt?.(selected,floor)?.at(-1)):null;
         view.render({
           auxiliary:parsed.auxiliary||[],
           opening: Boolean(snapshot.opening),presetAuxiliary:(parsed.auxiliary||[]).filter(item=>item.kind==='preset-detail'),
@@ -247,7 +247,7 @@
       if (kind === 'sent' || kind === 'ended') resetPending();
       refresh();
     });
-    const top=globalThis;top?.addEventListener?.('cxx-source-changed',refresh);top?.addEventListener?.('cxx-reading-changed',refresh);
+    const top=globalThis;top?.addEventListener?.('cxx-images-changed',refresh);top?.addEventListener?.('cxx-source-changed',refresh);top?.addEventListener?.('cxx-reading-changed',refresh);
     return {
       open, close, refresh,
       get position(){return {floor:adapter.read().messages.indexOf(selected),index:paragraphIndex,follow};},
@@ -255,7 +255,7 @@
       focusStatus() { view?.focusStatus?.(); },
       focusWorkshop() { view?.focusWorkshop?.(); },
       get active() { return Boolean(view); },
-      destroy() { if (disposed) return; close(); disposed = true; unsubscribe();top?.removeEventListener?.('cxx-source-changed',refresh);top?.removeEventListener?.('cxx-reading-changed',refresh); positions.clear(); },
+      destroy() { if (disposed) return; close(); disposed = true; unsubscribe();top?.removeEventListener?.('cxx-images-changed',refresh);top?.removeEventListener?.('cxx-source-changed',refresh);top?.removeEventListener?.('cxx-reading-changed',refresh); positions.clear(); },
     };
   }
   return { create };

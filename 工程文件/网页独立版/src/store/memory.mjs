@@ -37,7 +37,7 @@ export function createMemoryStatePort({ accountId } = {}) {
     readNodeState:async(runId,nodeId)=>{getRun(runId);const node=tables.nodes.get(key(runId,nodeId));if(node?.snapshot!==undefined)return clone(node.snapshot);return stateAt(rows('nodes',runId),nodeId);},
     listBranches:async runId=>{getRun(runId);return clone(rows('branches',runId));},
     listTasks:async(runId,status='pending')=>{getRun(runId);return clone(rows('tasks',runId).filter(row=>!status||row.status===status));},
-    listRecords:async(name,runId)=>{getRun(runId);return clone(rows(name,runId));},
+    listRecords:async(name,runId,{prefix}={})=>{getRun(runId);return clone(rows(name,runId).filter(row=>name!=='media'||prefix===undefined||String(row.mediaId||row.id).startsWith(prefix)));},
     readRecord:async(name,runId,id)=>{getRun(runId);return clone(tables[name].get(key(runId,id))||null);},
     putRecords:async(name,runId,records)=>serial(()=>{getRun(runId);if(!['tasks','drafts','memories','summaries','indices','media','backups'].includes(name))throw new Error('不可写记录类型');for(const row of records)tables[name].set(key(runId,row.id||row.taskId||row.mediaId),clone({...row,runId}));}),
     async commit(operation){return serial(()=>{
