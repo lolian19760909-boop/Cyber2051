@@ -226,7 +226,7 @@ function createOfficialRelease({ db, authorize, isAdmin = () => false, send, rea
       // content here; preserve the old publisher path for legacy baselines.
       if (P.compareVersion(seed.engineVersion || P.ENGINE_VERSION, '1.2.0') < 0) packages.push(P.createCorePackage(card));
       for (const [id, record] of Object.entries(seed.registry.packages)) {
-        if (record.version !== seed.baseVersion) reject('invalid_card', 400, '卡内基础内容版本与新卡不一致');
+        if (id === BASE_ID && record.version !== seed.baseVersion) reject('invalid_card', 400, '卡内基础内容版本与新卡不一致');
         packages.push(contentInput(P, { id, version: record.version, optional: record.optional, activation: record.activation || 'compatible', requires: { engine: seed.engineVersion||P.ENGINE_VERSION, packages: [] }, content: record.content }, consumers));
       }
       if (P.canonical(seed.initialContent) !== P.canonical(seed.registry.packages[BASE_ID].content)) reject('invalid_card', 400, '新卡基础内容与所有权基线不一致');

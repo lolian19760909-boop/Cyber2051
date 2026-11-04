@@ -32,3 +32,20 @@ test('actual gateway HTTP preserves workshop APIs and enforces grant/preview/pub
     assert.equal((await call('/api/official/preview', authorized, { card, keyId: 'attacker.key' })).status, 400);
   } finally { await fixture.close(); }
 });
+
+
+test('HTTP modern full-card publish preserves a bundled story version independent of the card', async () => {
+  const fixture=await startFixture();
+  try {
+    const authorized=fixture.session('authorized'),card=await(await fetch(fixture.baseUrl+'/__fixture__/card.json')).json();
+    const seed=card.data.extensions.tavern_helper.scripts.find(s=>s.data?.__cxx_update_seed).data.__cxx_update_seed;
+    seed.engineVersion='1.4.0';seed.catalogUrl='https://cyber2051.top/updates/v3/component-manifest.json';
+    const story=require('../../网站/gateway/official-release-fixtures.cjs').content('cyber2051.chip-night','0.9.0');
+    seed.registry.packages[story.id]={version:story.version,optional:true,activation:'new_chat',content:story.content,history:{},historyActivation:{}};
+    const call=async(route,body)=>{const r=await fetch(fixture.baseUrl+route,{method:body?'POST':'GET',headers:{Authorization:'Bearer '+authorized.token,...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});assert.equal(r.status,200);return r.json();};
+    const preview=await call('/api/official/preview',{card});
+    assert.equal(preview.packages.find(p=>p.id===story.id).version,'0.9.0');
+    assert.equal((await call('/api/official/publish',{previewId:preview.previewId,previewHash:preview.previewHash})).published,true);
+    const me=await call('/api/official/me');assert.equal(me.packages.find(p=>p.id===story.id).version,'0.9.0');assert.equal(me.packages.find(p=>p.id==='cyber2051.base-content').version,seed.baseVersion);
+  } finally { await fixture.close(); }
+});
