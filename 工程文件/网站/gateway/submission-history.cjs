@@ -2,7 +2,9 @@
 const W=require('./public/submission-template.js');
 function createHistory(db) {
   // 首次部署只建表和触发器，不更新任何历史稿。快照不含会话或编辑凭据。
-  db.exec(`CREATE TABLE IF NOT EXISTS submission_revisions (
+  if(!db.prepare('PRAGMA table_info(submissions)').all().some(column=>column.name==='publication_metadata'))db.exec("ALTER TABLE submissions ADD COLUMN publication_metadata TEXT NOT NULL DEFAULT '{}'");
+  db.exec(`DROP TRIGGER IF EXISTS snapshot_submission_before_revision;
+  CREATE TABLE IF NOT EXISTS submission_revisions (
     submission_id INTEGER NOT NULL, revision INTEGER NOT NULL, saved_at TEXT NOT NULL,
     snapshot TEXT NOT NULL, PRIMARY KEY (submission_id,revision)
   );
@@ -11,7 +13,7 @@ function createHistory(db) {
   BEGIN
     INSERT OR IGNORE INTO submission_revisions VALUES (OLD.id, OLD.revision, datetime('now'),
       json_object('id',OLD.id,'revision',OLD.revision,'type',OLD.type,'title',OLD.title,
-        'summary',OLD.summary,'authorName',OLD.author_name,'tags',json(OLD.tags),'payload',json(OLD.payload)));
+        'summary',OLD.summary,'authorName',OLD.author_name,'publication',json(OLD.publication_metadata),'tags',json(OLD.tags),'payload',json(OLD.payload)));
   END;
   CREATE TRIGGER IF NOT EXISTS cleanup_deleted_submission_revisions
   AFTER DELETE ON submissions BEGIN DELETE FROM submission_revisions WHERE submission_id=OLD.id; END;`);
@@ -33,6 +35,8 @@ function flatten(row) {
   const p=typeof row.payload==='string'?JSON.parse(row.payload):row.payload;
   const tags=typeof row.tags==='string'?JSON.parse(row.tags):row.tags;
   const out={'标题':row.title||'','一句话简介':row.summary||'','署名':row.authorName||row.author_name||'','标签':(tags||[]).join('、'),'类别':row.type};
+  const publication=typeof row.publication_metadata==='string'?JSON.parse(row.publication_metadata):row.publication||{};
+  for(const [key,label]of [['updateNote','更新说明'],['credits','合作与素材署名'],['rightsStatement','权利说明'],['adaptation','改编授权']])out[label]=publication[key]||'';
   function walk(value,prefix) {
     for(const [key,v]of Object.entries(value||{})){
       const label=prefix?prefix+' / '+key:key;

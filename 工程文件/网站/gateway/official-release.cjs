@@ -18,7 +18,7 @@ function fields(value, allowed, label) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) reject('invalid_input', 400, label + ' 必须是 JSON 对象');
   if (Object.keys(value).some(key => !allowed.includes(key))) reject('invalid_input', 400, label + ' 含未支持字段');
 }
-function createOfficialRelease({ db, authorize, isAdmin = () => false, send, readRawBody, config = {}, fault = () => {}, beforeCommit = () => {} }) {
+function createOfficialRelease({ db, authorize, isAdmin = () => false, send, readRawBody, config = {}, fault = () => {}, beforeCommit = () => {}, afterCommit = () => {} }) {
   try { db.exec("ALTER TABLE publishers ADD COLUMN can_publish_official INTEGER NOT NULL DEFAULT 0"); } catch (error) {
     if (!String(error.message).includes('duplicate column')) throw error;
   }
@@ -125,7 +125,9 @@ function createOfficialRelease({ db, authorize, isAdmin = () => false, send, rea
     }
     db.prepare('INSERT INTO official_release_head VALUES (?,?,?,?) ON CONFLICT(card_id) DO UPDATE SET manifest_hash=excluded.manifest_hash,registry=excluded.registry,consumers=excluded.consumers')
       .run(P.CARD_ID, payload.manifestHash, P.canonical(payload.registry), P.canonical(payload.consumers));
-    db.prepare("UPDATE official_release_audit SET status='committed',finished_at=? WHERE id=?").run(new Date().toISOString(), id);
+    const finishedAt=new Date().toISOString();
+    db.prepare("UPDATE official_release_audit SET status='committed',finished_at=? WHERE id=?").run(finishedAt, id);
+    afterCommit(id,payload,finishedAt);
     db.prepare("UPDATE official_release_previews SET status='published' WHERE id=?").run(id);
   }
   function currentState(ctx) {

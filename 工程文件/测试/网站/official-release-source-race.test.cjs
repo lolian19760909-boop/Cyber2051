@@ -117,7 +117,7 @@ test('real author HTTP update in the two-phase gap defeats the final publish che
       const response = await fetch(f.baseUrl + route, { method: 'POST', headers: { Authorization: 'Bearer ' + session.token, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       return { status: response.status, body: await response.json() };
     };
-    const submission = { type: 'contract', title: 'HTTP竞争委托', summary: '合成', authorName: '测试署名', tags: [], payload: draft() };
+    const submission = { type: 'contract', title: 'HTTP竞争委托', summary: '合成', authorName: '测试署名', tags: [], publication:{version:1,updateNote:'竞争验收',credits:'原创',rightsStatement:'测试作者原创',adaptation:'ask'},payload: require('./examples.cjs').sample('contract').payload };
     const created = await call('/api/workshop/submissions', ownerSession, submission); assert.equal(created.status, 201);
     const id = created.body.id, approved = await call('/api/admin/submissions/' + id + '/approve', admin, { baseRevision: 1 }); assert.equal(approved.status, 200);
     const artifact = approved.body.artifact;

@@ -39,7 +39,16 @@ function validate(payload) {
   if (q.prerequisites !== undefined && (!Array.isArray(q.prerequisites) || new Set(q.prerequisites).size !== q.prerequisites.length || q.prerequisites.some(id => !BASE_QUESTS.includes(id)))) fail('前置任务只能选择已接入的基础任务，且不能重复');
   return JSON.parse(JSON.stringify(payload));
 }
+function publicationMetadata(value={}) {
+  const metadata=typeof value==='string'?JSON.parse(value):value;
+  fields(metadata,['version','updateNote','credits','rightsStatement','adaptation'],'发布资料');
+  if(!Object.keys(metadata).length)return {};
+  if(metadata.version!==1||!['allowed','ask','reserved'].includes(metadata.adaptation))fail('请选择素材改编授权','invalid_publication_metadata');
+  for(const [key,label,max,required]of [['updateNote','更新说明',3000,false],['credits','合作与素材署名',2000,false],['rightsStatement','权利说明',2000,true]])staticText(metadata[key]||'',label,max,required);
+  return {version:1,updateNote:metadata.updateNote||'',credits:metadata.credits||'',rightsStatement:metadata.rightsStatement,adaptation:metadata.adaptation};
+}
 function validateMetadata(input) {
+  publicationMetadata(input.publication||{});
   staticText(input.title, '标题', 60, true); staticText(input.summary, '简介', 2000);
   if (input.authorName) staticText(input.authorName, '署名', 24);
   for (const tag of input.tags || []) staticText(tag, '标签', 60);
@@ -131,6 +140,7 @@ function compile(row, identity, P, options={}) {
   const source = { submissionId: row.id, revision: row.revision, payloadSha256: row.content_hash, submissionSha256: snapshotHash(row, P),
     publisherId: identity.publisher_id, displayName: identity.display_name_last || '', creditName: row.author_name || '', type:row.type, templateKind:payload.templateKind || row.type };
   if (P.sha256(row.payload) !== source.payloadSha256) fail('投稿正文与已审内容指纹不一致', 'source_hash_mismatch', 409);
+  const publication=publicationMetadata(row.publication_metadata||{});if(publication.version)source.publication=publication;
   const q = payload.contract, mapId = q?.mapId || payload.mapId, place = findPlace(mapId, q?.placeId || payload.placeId);
   const packageId = options.packageId || 'community.' + row.type + '.' + row.id;
   const quest = q && { ...q, id: 'ugc.contract.' + row.id + '.01', title: row.title, district: place.district, track: 'side' };
@@ -163,7 +173,7 @@ function compile(row, identity, P, options={}) {
 }
 function snapshotHash(row, P) {
   return P.sha256(P.canonical({ id: row.id, revision: row.revision, type: row.type, title: row.title, summary: row.summary || '',
-    authorName: row.author_name || '', tags: JSON.parse(row.tags || '[]'), payload: JSON.parse(row.payload), publisherId: row.publisher_id }));
+    authorName: row.author_name || '', tags: JSON.parse(row.tags || '[]'), payload: JSON.parse(row.payload), publisherId: row.publisher_id,...(publicationMetadata(row.publication_metadata||{}).version?{publication:publicationMetadata(row.publication_metadata)}:{}) }));
 }
 function library(modulePath) { return require(modulePath || process.env.CXX_FORMAT3_PACKAGES_MODULE || path.resolve(__dirname, "../../工具/发布/packages.cjs")); }
 function assertOpen(type,payload={}) {
@@ -197,7 +207,7 @@ function presentation(row) {
   const P=library(), payload=typeof row.payload==='string'?row.payload:JSON.stringify(row.payload);
   const author=row.author_name || row.authorName || '';
   const draft={id:row.id || 100000000,revision:row.revision || 1,publisher_id:row.publisher_id || 'preview-author',
-    title:row.title,summary:row.summary || '',author_name:author,tags:typeof row.tags==='string'?row.tags:JSON.stringify(row.tags||[]),payload,content_hash:P.sha256(payload)};
+    title:row.title,summary:row.summary || '',author_name:author,publication_metadata:row.publication_metadata||row.publication||{},tags:typeof row.tags==='string'?row.tags:JSON.stringify(row.tags||[]),payload,content_hash:P.sha256(payload)};
   try {
     const artifact=compile({...draft,type:row.type},{publisher_id:draft.publisher_id,status:'active',display_name_last:author},P);
     const {worldbook,quests}=artifact.package.content;
@@ -221,4 +231,4 @@ function legacyText(p) {
   if(!p || typeof p!=='object')return String(p??'');
   return Object.entries(p).map(([k,v])=>k+'：'+(v&&typeof v==='object'?'\n'+legacyText(v):String(v??''))).join('\n\n');
 }
-module.exports = { TYPES,CONTENT_TYPES,ContractError, validate, validateSubmission, validateIncoming,assertOpen,validateMetadata, staticText, schema, compile, snapshotHash, library,presentation,Writing };
+module.exports = { TYPES,CONTENT_TYPES,ContractError, validate, validateSubmission, validateIncoming,assertOpen,validateMetadata,publicationMetadata, staticText, schema, compile, snapshotHash, library,presentation,Writing };

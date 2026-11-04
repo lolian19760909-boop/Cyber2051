@@ -14,7 +14,7 @@ async function runGateway(file,env){
 }
 function session(secret,publisherId,legacy=false){const payload=Buffer.from(JSON.stringify({...(legacy?{}:{v:2}),pid:publisherId,n:'合成旧用户',exp:Date.now()+3600000})).toString('base64url');const signature=legacy?crypto.createHash('sha256').update(secret+'.'+payload).digest('base64url'):crypto.createHmac('sha256',secret).update(payload).digest('base64url');return payload+'.'+signature;}
 async function request(base,route,token,body){const response=await fetch(base+route,{method:body?'POST':'GET',headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});return{status:response.status,body:await response.json()};}
-function originalRows(db){return Object.fromEntries(['publishers','submissions','feedback','login_handoffs','announcements'].map(table=>[table,db.prepare('SELECT * FROM '+table+' ORDER BY rowid').all().map(row=>{const item={...row};delete item.can_publish_official;return item;})]));}
+function originalRows(db){return Object.fromEntries(['publishers','submissions','feedback','login_handoffs','announcements'].map(table=>[table,db.prepare('SELECT * FROM '+table+' ORDER BY rowid').all().map(row=>{const item={...row};delete item.can_publish_official;if('publication_metadata'in item){assert.equal(item.publication_metadata,'{}');delete item.publication_metadata;}for(const key of ['submission_id','content_version'])if(key in item){assert.equal(item[key],null);delete item[key];}return item;})]));}
 test('pre-module database and issued sessions survive official startup without account/submission/handoff replacement',async()=>{
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'cxx-login-compat-'));
   const dbFile=path.join(root,'workshop.db'),secret=crypto.randomBytes(32).toString('hex'),owner='1111111111111111',other='2222222222222222';
@@ -39,7 +39,7 @@ test('pre-module database and issued sessions survive official startup without a
     assert.equal(hash(originalRows(db)),beforeDigest,'Existing account/post/feedback/handoff/announcement rows changed');
     assert.equal(db.prepare('SELECT COUNT(*) AS n FROM publishers WHERE can_publish_official<>0').get().n,0,'Existing users were automatically granted official publish access');
     assert.equal((await request(running.base,'/api/workshop/me',oldToken)).status,200);
-    const posts=await request(running.base,'/api/workshop/me/submissions',oldToken);assert.equal(hash(posts),hash(oldPosts),'Old owner view changed');
+    const posts=await request(running.base,'/api/workshop/me/submissions',oldToken);for(const item of posts.body.items){assert.equal(item.subscriberCount,0);assert.equal(item.endorsementCount,0);assert.equal(item.publication,null);assert.deepEqual(item.publicationMetadata,{});for(const key of ['subscriberCount','endorsementCount','publication','publicationMetadata'])delete item[key];}assert.deepEqual(posts,oldPosts,'Old owner view changed');
     const otherPosts=await request(running.base,'/api/workshop/me/submissions',otherToken);assert.deepEqual(otherPosts.body.items.map(x=>x.id),[3]);
     assert.equal((await request(running.base,'/api/workshop/me')).status,401);
     const officialMe=await request(running.base,'/api/official/me',oldToken);assert.equal(officialMe.status,200);assert.equal(officialMe.body.canPublishOfficial,false);
