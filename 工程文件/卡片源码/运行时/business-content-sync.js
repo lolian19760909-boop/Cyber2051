@@ -47,7 +47,8 @@ let confirmed='';
       const view = Content.view({ quests: initial.quests, gallery }, state.registry, terminal.quests||{}, {
         subscriptions: state.subscriptions, pins: chatPins, initialContent: initial });
       const wanted = selectedWorldbook(state.registry, state, chatPins, gameplay);
-      if(Gameplay)wanted.push(...Gameplay.promptEntries(state.registry,{mapIndex:readSeed().mapIndex,subscriptions:state.subscriptions,pins:chatPins},gameplay));
+      const Actors=typeof module==='object'&&module.exports?require('./ensemble-state.js'):globalThis.CxxEnsembleState,currentGame=Actors?Actors.selected({terminal}).gameplay||{}:gameplay;
+      if(Gameplay)wanted.push(...Gameplay.promptEntries(state.registry,{mapIndex:readSeed().mapIndex,subscriptions:state.subscriptions,pins:chatPins},currentGame));
       for (const q of view.quests) if (q.definitionRef) wanted.push({ owner: q.definitionRef.packageId,
         id: 'quest.' + q.id, version: q.definitionRef.version, entry: questEntry(q) });
       return {rawState,state,wanted};

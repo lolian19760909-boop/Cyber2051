@@ -45,7 +45,7 @@ test('every guided template has HTTP create/read/review/export/sign paths; stati
   const owner=f.session('ordinary'),official=f.session('authorized'),admin=f.session('admin');
   const call=async(route,who,body)=>{const r=await fetch(f.baseUrl+route,{method:body?'POST':'GET',headers:{...(who?{Authorization:'Bearer '+who.token}:{}),...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});return {status:r.status,body:await r.json()};};
   const card=await(await fetch(f.baseUrl+'/__fixture__/card.json')).json();const p=await call('/api/official/preview',official,{card});await call('/api/official/publish',official,{previewId:p.body.previewId,previewHash:p.body.previewHash});
-  for(const form of C.schema().templates){const payload=require('../../网站/gateway/workshop-gameplay-fixtures.cjs').payload(form.id);
+  let caseIndex=0;for(const form of C.schema().templates.filter(t=>!['code_component','collection'].includes(t.type))){const owner=f.session(['ordinary','other','authorized'][caseIndex++%3]);const payload=require('../../网站/gateway/workshop-gameplay-fixtures.cjs').payload(form.id);
    const data={type:form.type,title:'完整链测试 '+form.id,summary:'合成材料',payload};const a=await call('/api/workshop/submissions',owner,data);assert.equal(a.status,201);const id=a.body.id;
    const own=await call('/api/workshop/submissions/'+id+'/edit',owner);assert.deepEqual(own.body.item.payload,payload);
    const approved=await call('/api/admin/submissions/'+id+'/approve',admin,{baseRevision:1});assert.equal(approved.status,200);

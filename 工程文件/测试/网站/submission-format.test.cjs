@@ -16,7 +16,7 @@ test('preview uses configured production package module outside the local checko
   }finally{assert.ok(dir.startsWith(path.resolve(os.tmpdir())+path.sep)&&path.basename(dir).startsWith('cxx-submission-module-'));fs.rmSync(dir,{recursive:true,force:true});}
 });
 test('three writing templates compile without losing sections or changing runtime formats',()=>{
-  assert.deepEqual(C.schema().templates.map(x=>x.id),['npc','user_identity','contract']);
+  assert.deepEqual(C.schema().templates.slice(0,3).map(x=>x.id),['npc','user_identity','contract']);
   for(const kind of ['npc','user_identity','contract']){
     const d=sample(kind),original=JSON.stringify(d);C.validateIncoming(d.type,d.payload,d);
     const payload=JSON.stringify(d.payload),row={...d,id:42,revision:3,publisher_id:'fixture-author',author_name:d.authorName,tags:JSON.stringify(d.tags),payload,content_hash:P.sha256(payload)};
@@ -45,7 +45,7 @@ test('legacy open posts upgrade with exact previous text; paused attachments rem
     const db=new DatabaseSync(path.join(f.root,'workshop.db'));
     const seed=(type,payload)=>Number(db.prepare("INSERT INTO submissions(created_at,updated_at,type,title,summary,author_name,tags,payload,content_hash,edit_key_hash,ip_hash,revision,status,publisher_id)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)").run('2026-10-01','2026-10-01',type,'旧稿标题','旧稿简介','旧署名','[]',JSON.stringify(payload),P.sha256(JSON.stringify(payload)),'unused','fixture',4,'approved',owner.publisherId).lastInsertRowid);
     const old=W.toLegacy('character',sample('npc').payload),id=seed('character',old);
-    const closedId=seed('world_factor',{format:1,templateKind:'world_factor',mapId:'tokyo-central',placeId:'plaza',keywords:['旧稿'],content:'保留内容'});
+    const closedId=seed('world_factor',{format:1,templateKind:'future_kind',mapId:'tokyo-central',placeId:'plaza',keywords:['旧稿'],content:'保留内容'});
     assert.equal(db.prepare('SELECT COUNT(*) AS n FROM submission_revisions').get().n,0,'reading old records must not synthesize revision history');
     const dir=path.join(f.root,'workshop-storage',String(closedId)),bytes=Buffer.from('historical attachment');fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(path.join(dir,'att.json'),bytes);fs.writeFileSync(path.join(dir,'meta.json'),JSON.stringify({origName:'old.json',ext:'json',size:bytes.length,uploadedAt:'2026-10-01'}));
     const read=await call('/api/workshop/submissions/'+id+'/edit',owner);assert.deepEqual(read.item.payload,old);
@@ -75,15 +75,15 @@ test('new submission validation rejects omissions, placeholders, old JSON and cl
     const old=W.toLegacy(d.type,d.payload);assert.throws(()=>C.validateIncoming(d.type,old,d),e=>e.code==='template_version_required');C.validateSubmission(d.type,old);
     const unexpected=clone(d);unexpected.payload.sections.unknown='额外文本';assert.throws(()=>C.validateIncoming(d.type,unexpected.payload,d));
   }
-  for(const type of ['world_factor','shop_item','blueprint','recipe','skill','function','code_component'])assert.throws(()=>C.validateIncoming(type,{format:1},{}),e=>e.code==='submission_type_paused');
-  assert.throws(()=>C.assertOpen('contract',{templateKind:'side_story'}));
+  for(const type of ['future_type'])assert.throws(()=>C.validateIncoming(type,{format:1},{}),e=>e.code==='submission_type_paused');
+  C.assertOpen('contract',{templateKind:'side_story'});for(const type of ['world_factor','code_component'])assert.throws(()=>C.validateIncoming(type,{format:1},{}),e=>e.code==='template_version_required');
   const bad=sample('contract');bad.payload.contract.placeId='not-a-place';assert.throws(()=>C.validateIncoming(bad.type,bad.payload,bad));
   bad.payload.contract.placeId='plaza';bad.payload.contract.pay=-1;assert.throws(()=>C.validateIncoming(bad.type,bad.payload,bad));
 });
 test('legacy upgrade is lossless to the original and never invents missing fields',()=>{
   const old={format:1,templateKind:'npc',mapId:'tokyo-central',placeId:'plaza',keywords:['旧稿'],name:'旧人物',identity:'旧身份',background:'原来的一整段背景'};
   const text=JSON.stringify(old),up=W.upgradeLegacy('character',old);assert.equal(JSON.stringify(old),text);assert.equal(up.sections.background,old.background);assert.equal(up.sections.personality,undefined);
-  assert.equal(W.upgradeLegacy('world_factor',{content:'保留的原文'}),null);
+  assert.equal(W.upgradeLegacy('world_factor',{content:'保留的原文'}).sections.content,'保留的原文');
   const row={type:'character',title:'历史稿',payload:{unstructured:'未结构化的历史原文'},tags:[]};assert.ok(C.presentation(row).panels[0].text.includes('未结构化的历史原文'));
 });
 test('inline page scripts and touched modules compile',()=>{
@@ -114,7 +114,7 @@ test('local HTTP create/preview/revise/review/withdraw and old-post retention',a
     }
     // 直接播种旧库，表示部署前已存在的稿，不能借新建 API 绕过版本要求。
     const db=new DatabaseSync(path.join(f.root,'workshop.db'));
-    const old=JSON.stringify({format:1,templateKind:'world_factor',mapId:'tokyo-central',placeId:'plaza',keywords:['原稿'],content:'部署前已经存在的内容'});
+    const old=JSON.stringify({format:1,templateKind:'future_kind',mapId:'tokyo-central',placeId:'plaza',keywords:['原稿'],content:'部署前已经存在的内容'});
     const row=db.prepare("INSERT INTO submissions(created_at,updated_at,type,title,summary,author_name,tags,payload,content_hash,edit_key_hash,ip_hash,revision,status,publisher_id)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)").run('2026-10-01','2026-10-01','world_factor','历史设定','旧简介','旧署名','[]',old,P.sha256(old),'unused','fixture',7,'approved',owner.publisherId);const id=Number(row.lastInsertRowid);db.close();
     const saved=await call('/api/workshop/submissions/'+id+'/edit',owner);assert.deepEqual(saved.item.payload,JSON.parse(old));
     assert.equal((await call('/api/workshop/submissions/'+id)).httpStatus,200);

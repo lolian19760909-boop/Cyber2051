@@ -3,8 +3,9 @@
 const path = require('node:path');
 const Gameplay = require('./workshop-gameplay.cjs');
 const Writing = require('./public/submission-template.js');
+const gameplayExamples=require('./public/gameplay-examples.json');
 const Content = require(process.env.CXX_CONTENT_MODULE || "../../卡片源码/运行时/content.js");
-const CONTENT_TYPES = ['character','world_factor','user_identity','contract',...Object.keys(Gameplay.forms)];
+const CONTENT_TYPES = ['character','world_factor','user_identity','contract','collection',...Object.keys(Gameplay.forms)];
 const TYPES = [...CONTENT_TYPES,'code_component'];
 const places = require('./contract-places.json');
 const mapIndex = Object.fromEntries(places.maps.map(map => [map.id, map.places.map(place => place.id)]));
@@ -71,6 +72,7 @@ function validateSubmission(type,payload) {
   staticJson(payload);
   if(payload.templateVersion !== undefined) return validateWriting(type,payload);
   if(type==='contract') return validate(payload);
+  if(type==='collection'){fields(payload,['format','templateKind','description','members'],'合集');if(payload.format!==1||payload.templateKind!=='collection')fail('合集格式无效');staticText(payload.description,'合集说明',4000,true);validateMembers(payload.members);return JSON.parse(JSON.stringify(payload));}
   if(type==='code_component') {
     fields(payload,['format','templateKind','proposal','entrypoints','compatibility'],'代码集成提案');
     if(payload.format!==1||payload.templateKind!=='code_component')fail('代码提案格式不符');
@@ -119,8 +121,8 @@ function schema() {
     sourceSha256: places.sourceSha256, prerequisites: BASE_QUESTS, taskTypes: ['回收','护送','调查','交涉','救援','其他'], difficulties: ['低','中','高','极高'],
     limits: { pay: 10000000, title: 60, text: 4000 }, activation: 'opt_in',
     templateVersion: Writing.version,
-    templates: Writing.templates.map(form => ({...form,writingFields:form.fields,fields:form.fields.map(f=>[f.name,f.label[0],f.required]),enabled:true, templateVersion:Writing.version,
-      consumer:form.id==='contract'?'quests':form.id==='npc'?'NPC资料与模型读取':'新聊天出身选择'})),
+    templates: Writing.templates.map(form => ({...form,writingFields:form.fields,fields:form.fields.map(f=>[f.name,f.label[0],f.required]),enabled:true,...(form.gameplay?{gameplayExample:gameplayExamples[form.id]}:{}), templateVersion:Writing.version,
+      consumer:form.consumer||(form.type==='contract'?'quests':form.id==='npc'?'NPC资料与模型读取':'新聊天出身选择')})),
     legacyTemplates: [
       { id: 'contract', type:'contract', title: '委托', enabled: true, consumer: 'quests', fields: ['发布人','已有地点','简报','目标','报酬','要求','风险','前置任务'] },
       { id: 'side_story', type:'contract', title: '侧剧情', enabled: true, consumer: 'quests', fields: ['发布人','已有地点','剧情背景（简报）','本章目标','前置任务'], note:'剧情正文存为任务简报，接取后随固定任务版本消费。' },
@@ -164,10 +166,12 @@ function compile(row, identity, P, options={}) {
     staticText(entry.content,'世界书正文',40000,true);
   }
   Object.assign(entry.extra,storyMetadata(payload));
+  if(row.type==='collection'){entry.enabled=false;entry.extra.__cxx_collection={format:1,members:submitted.members};}
+  if(submitted.references?.length)entry.extra.__cxx_workshop_references=submitted.references;
   entry.extra.__cxx_workshop_display={title:row.title,summary:row.summary||'',type:payload.templateKind||row.type,author:row.author_name||'',...(place?{location:{mapId,placeId:place.id,name:place.name}}:{})};
   const gameplay=payload.gameplay?Gameplay.compile(payload.gameplay,payload.templateKind,row.id,mapIndex):null;
   const pkg = P.createContentPackage({ id: packageId, version: '1.0.' + row.revision, optional: true, activation: 'opt_in',
-    requires: { engine: gameplay||Object.keys(storyMetadata(payload)).length?'1.2.0':'1.0.0', packages: [] }, content: { quests: quest ? [quest] : [], gallery: [], worldbook: [entry],...(gameplay?{gameplay}:{}) } },
+    requires: { engine: gameplay||row.type==='collection'?'1.5.0':Object.keys(storyMetadata(payload)).length?'1.2.0':'1.0.0', packages:row.type==='collection'?submitted.members.map(m=>({id:m.packageId,version:m.minVersion})):[] }, content: { quests: quest ? [quest] : [], gallery: [], worldbook: [entry],...(gameplay?{gameplay}:{}) } },
   { mapIndex });
   return { format: 1, source, packageSha256: P.sha256(P.canonical(pkg)), package: pkg };
 }
@@ -179,18 +183,20 @@ function library(modulePath) { return require(modulePath || process.env.CXX_FORM
 function assertOpen(type,payload={}) {
   if(!Writing.isOpen(type,payload)) fail('该类别暂停新建和改投；历史稿仍可查看、导出或撤回。','submission_type_paused',409);
 }
+function validateMembers(members){if(!Array.isArray(members)||!members.length||members.length>32)fail('合集需要1至32份作品');const ids=new Set();for(const raw of members){const id=typeof raw==='number'?raw:raw?.submissionId;if(!Number.isSafeInteger(id)||id<1||ids.has(id))fail('合集成员编号需要有效且各不相同');ids.add(id);if(typeof raw==='object'){fields(raw,['submissionId','packageId','minVersion'],'合集成员');if(raw.packageId!==undefined&&(typeof raw.packageId!=='string'||!/^community\.(?!collection\.)[a-z_]+\.\d+$/.test(raw.packageId))||!/^\d+\.\d+\.\d+$/.test(raw.minVersion))fail('合集成员包与版本无效');}}}
 function validateWriting(type,payload) {
   assertOpen(type,payload);
   const form=Writing.byKind(Writing.kindOf(type,payload));
   if(payload.templateVersion!==Writing.version || payload.templateKind!==form.id || payload.format!==form.format)fail('请使用当前分栏投稿模板。','template_version_required');
-  fields(payload,['format','templateVersion','templateKind','sections',...(form.id==='contract'?['contract']:['mapId','placeId','keywords',...(form.id==='npc'?['media']:[])])],'投稿正文');
+  fields(payload,['format','templateVersion','templateKind','sections','references',...(form.id==='collection'?['members']:[]),...(form.gameplay?['gameplay']:[]),...(form.type==='contract'?['contract']:form.location===false?[]:['mapId','placeId','keywords',...(form.id==='npc'?['media']:[])])],'投稿正文');
+  if(payload.references!==undefined&&(!Array.isArray(payload.references)||payload.references.length>32||new Set(payload.references).size!==payload.references.length||payload.references.some(id=>!Number.isSafeInteger(id)||id<1)))fail('引用作品需要最多32个不同的有效编号');
   fields(payload.sections,form.fields.map(f=>f.name),'分栏正文');
   for(const f of form.fields) {
     const v=payload.sections[f.name];
     if(v!==undefined || f.required)staticText(v,f.label[0],f.max,f.required);
     if(f.required && /^(?:待补(?:充)?|待定|同上|略|tbd|todo|n\/a|[.。…\s]+)$/i.test(v.trim()))fail('请补写「'+f.label[0]+'」，不要用占位文字代替正文。');
   }
-  if(form.id==='contract') fields(payload.contract,['mapId','placeId','type','difficulty','pay','prerequisites'],'任务参数');
+  if(form.type==='contract') fields(payload.contract,['mapId','placeId','type','difficulty','pay','prerequisites'],'任务参数');
   // 通过现役卡接口再校验一次，包含合并后长度与地图/关键词，避免表单通过却无法入包。
   validateSubmission(type,Writing.toLegacy(type,payload));
   return JSON.parse(JSON.stringify(payload));
@@ -208,6 +214,10 @@ function presentation(row) {
   const author=row.author_name || row.authorName || '';
   const draft={id:row.id || 100000000,revision:row.revision || 1,publisher_id:row.publisher_id || 'preview-author',
     title:row.title,summary:row.summary || '',author_name:author,publication_metadata:row.publication_metadata||row.publication||{},tags:typeof row.tags==='string'?row.tags:JSON.stringify(row.tags||[]),payload,content_hash:P.sha256(payload)};
+  if(row.type==='code_component'){
+    const parsed=validateSubmission(row.type,JSON.parse(payload)),text=Writing.toLegacy(row.type,parsed);
+    return {templateVersion:parsed.templateVersion||null,panels:[['功能说明','proposal'],['接入点与影响范围','entrypoints'],['兼容与测试说明','compatibility']].map(([title,key])=>({title,text:text[key]})),delivery:'next_card',installsAssets:false};
+  }
   try {
     const artifact=compile({...draft,type:row.type},{publisher_id:draft.publisher_id,status:'active',display_name_last:author},P);
     const {worldbook,quests}=artifact.package.content;
@@ -231,4 +241,4 @@ function legacyText(p) {
   if(!p || typeof p!=='object')return String(p??'');
   return Object.entries(p).map(([k,v])=>k+'：'+(v&&typeof v==='object'?'\n'+legacyText(v):String(v??''))).join('\n\n');
 }
-module.exports = { TYPES,CONTENT_TYPES,ContractError, validate, validateSubmission, validateIncoming,assertOpen,validateMetadata,publicationMetadata, staticText, schema, compile, snapshotHash, library,presentation,Writing };
+module.exports = { Content, TYPES,CONTENT_TYPES,ContractError, validate, validateSubmission, validateIncoming,assertOpen,validateMetadata,publicationMetadata, staticText, schema, compile, snapshotHash, library,presentation,Writing };

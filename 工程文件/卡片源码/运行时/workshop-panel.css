@@ -9,3 +9,6 @@
 @media(max-width:600px){.cxx-workshop{padding:18px 16px;width:calc(100vw - 16px);max-height:calc(100dvh - 16px)}.cxx-workshop header{gap:8px 12px}.cxx-workshop header a{font-size:12px}.cxx-workshop-filters{grid-template-columns:1fr 1fr}.cxx-workshop-filters input{grid-column:1/-1;min-width:0}.cxx-workshop nav{gap:24px}.cxx-workshop-list article{display:block}.cxx-workshop-list h3{font-size:20px}.cxx-workshop-actions select{max-width:100%}}
 
 .cxx-workshop-actions select{width:auto;min-width:112px;flex:0 1 auto}
+
+.cxx-workshop [data-mode=play] article{grid-template-columns:minmax(0,1fr)}.cxx-workshop [data-mode=play] article>div{display:flex;flex-wrap:wrap;gap:8px}.cxx-workshop [data-mode=play] button{justify-self:start;max-width:100%;white-space:normal;text-align:left}.cxx-workshop [data-mode=play] input[type=number]{width:90px}.cxx-workshop [data-mode=play] p{overflow-wrap:anywhere}
+.cxx-workshop-filters[hidden]{display:none}

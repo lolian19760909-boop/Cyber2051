@@ -130,17 +130,17 @@ $('cancel-login').addEventListener('click',()=>CXXUser.cancelLogin());
 $('logoutbtn').addEventListener('click',()=>{CXXUser.logout();renderLogin(null);});
 document.addEventListener('cxx-user-changed',e=>{if(!loginPending)renderLogin(e.detail.account?.displayName||null);});
 CXXUser.check().then(user=>renderLogin(user?.displayName||null)).catch(()=>{$('loginstate').textContent=SL('暂时无法检查登录状态，可以重试登录。','Could not check login. You can retry login.','ログイン状態を確認できません。再度ログインできます。');$('loginbtn').hidden=false;});
-function renderTypes(){const value=$('type').value;$('type').replaceChildren();for(const form of CxxSubmissionTemplate.templates){const o=document.createElement('option');o.value=form.type;o.textContent=SL(...form.title);$('type').append(o);}if([...$('type').options].some(o=>o.value===value))$('type').value=value;}
+function renderTypes(){const value=$('type').value;$('type').replaceChildren();for(const form of CxxSubmissionTemplate.templates){const o=document.createElement('option');o.value=form.id;o.textContent=SL(...form.title);$('type').append(o);}if([...$('type').options].some(o=>o.value===value))$('type').value=value;}
 renderTypes();
 const contractForm = CxxContractForm($('contract-form'));
 let paused=false,lastPreview=null,previewTicket=0;
 let editing = null, completed=false,submitting=false,dirty=false,created=null,attachmentFile=null,uploading=false;
 const editId = new URLSearchParams(location.search).get('edit');
-const templateOf = value => value==='character'?'npc':value;
-const typeOf = value => ['encounter','function_zone'].includes(value)?'world_factor':value==='side_story'?'contract':value;
+const templateOf = value => CxxSubmissionTemplate.byKind(value)?.id||CxxSubmissionTemplate.templates.find(form=>form.type===value)?.id||value;
+const typeOf = value => CxxSubmissionTemplate.byKind(templateOf(value))?.type||value;
 function typeChanged() { $('attachment-controls').hidden=typeOf($('type').value)==='contract'||paused; contractForm.setKind(templateOf($('type').value));lastPreview=null;previewTicket++;$('content-preview').replaceChildren();$('preview-json').textContent=''; }
 $('type').addEventListener('change', typeChanged);
-const initialType=new URLSearchParams(location.search).get('type');if([...$('type').options].some(o=>o.value===initialType))$('type').value=initialType;
+const initialType=new URLSearchParams(location.search).get('type');if([...$('type').options].some(o=>o.value===templateOf(initialType)))$('type').value=templateOf(initialType);
 typeChanged();
 function downloadJson(value, name) {
   const url=URL.createObjectURL(new Blob([JSON.stringify(value,null,2)+'\n'],{type:'application/json'}));
@@ -160,7 +160,7 @@ async function formData(validate=true) {
 }
 function say(text,kind=''){const el=$('msg');el.textContent=text;el.className='msg '+kind;}
 async function validatePreview(data){
- const r=await fetch('/api/workshop/content/preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}),j=await r.json();
+ const r=await fetch('/api/workshop/content/preview',{method:'POST',headers:authHeaders({'Content-Type':'application/json'}),body:JSON.stringify(editing?{...data,editId:editing.id,baseRevision:editing.revision}:data)}),j=await r.json();
  if(!r.ok||!j.ok)throw Error(j.message||SL('内容校验失败','Content validation failed','内容の検証に失敗しました'));
  return j.preview;
 }
@@ -183,7 +183,7 @@ const editReady = (async () => {
   for(const [field,key]of [['title','title'],['summary','summary'],['author','authorName'],['type','type']])$(field).value=editing[key]||'';
   const publication=editing.publication||{};for(const [field,key]of [['update-note','updateNote'],['credits','credits'],['rights','rightsStatement']])$(field).value=publication[key]||'';$('adaptation').value=publication.adaptation||'ask';
   $('tags').value=editing.tags.join(',');$('payload').textContent=JSON.stringify(editing.payload,null,2);$('original-draft').hidden=false;
-  const kind=editing.payload.templateKind||templateOf(editing.type);$('type').value=kind==='npc'?'character':kind;
+  const kind=editing.payload.templateKind||templateOf(editing.type);$('type').value=templateOf(kind);
   paused=editing.status==='withdrawn'||!CxxSubmissionTemplate.isOpen(editing.type,editing.payload);$('type').disabled=paused;
   if(paused){const o=document.createElement('option');o.value=kind;o.textContent=SL('历史稿（暂停改投）','Legacy post (paused)','旧稿（改稿停止）');$('type').append(o);$('type').value=kind;}
   typeChanged();if(!paused)contractForm.fill(editing.payload);

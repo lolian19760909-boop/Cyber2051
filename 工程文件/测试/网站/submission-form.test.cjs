@@ -51,7 +51,7 @@ test('actual submission-page editor loads legacy and new posts, renders preview 
     const h=harness();await h.form.ready;
     for(const m of html.matchAll(/<(select|input|textarea|div|button|pre|details|a|span)[^>]*\bid="([^"]+)"[^>]*>/g)){const node=h.element(m[1]);node.id=m[2];node.required=m[0].includes(' required');node.type=m[0].match(/type="([^"]+)"/)?.[1]||'';}
     const d=sample(['npc','user_identity','contract'].includes(kind)?kind:'npc');
-    if(kind==='paused'){d.type='world_factor';d.payload={format:1,templateKind:'world_factor',content:'关闭类别原稿'};}
+    if(kind==='paused'){d.type='future_type';d.payload={format:1,templateKind:'future_type',content:'关闭类别原稿'};}
     if(kind==='legacy')d.payload={format:1,templateKind:'npc',name:'旧人物',identity:'旧身份',background:'旧背景',mapId:'tokyo-central',placeId:'plaza',keywords:['旧人物']};
     d.publication={version:1,updateNote:'修订说明',credits:'原创素材',rightsStatement:'作者原创',adaptation:'ask'};
     const item={...d,id:42,revision:4,status:kind==='withdrawn'?'withdrawn':'approved'},calls=[],saved=[];
@@ -69,7 +69,7 @@ test('actual submission-page editor loads legacy and new posts, renders preview 
 });
 test('My posts retains read/export after withdrawal and hides closed-category edit/attachment actions',async()=>{
   const html=fs.readFileSync(path.join(__dirname,'../../网站/gateway/public/my.html'),'utf8'),source=html.slice(html.indexOf('function card(it) {'),html.indexOf('async function boot()'));
-  for(const [type,status,payload]of [['character','approved',sample('npc').payload],['world_factor','approved',{templateKind:'world_factor',content:'旧稿'}],['character','withdrawn',sample('npc').payload]]){
+  for(const [type,status,payload]of [['character','approved',sample('npc').payload],['future_type','approved',{templateKind:'world_factor',content:'旧稿'}],['character','withdrawn',sample('npc').payload]]){
     const h=harness();await h.form.ready;Object.assign(h.context,{TYPE_CN:{},location:{href:''},Blob,URL,setTimeout});h.context.CXXI18N.t=(k,v)=>v;
     vm.runInContext(source+'\nglobalThis.makeCard=card;',h.context);const card=h.context.makeCard({id:19,type,status,payload,title:'原稿',summary:'简介',tags:[],revision:2});
     const acts=card.children.find(e=>e.className==='toolbar');assert.equal(acts.hidden,false);assert.ok(acts.children.some(e=>e.textContent==='导出原稿'));

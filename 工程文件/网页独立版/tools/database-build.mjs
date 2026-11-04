@@ -20,7 +20,7 @@ export function buildDatabase(out){
   ['registerAcuV2MenuButton(),function ensureAcuV2AppMounted','function ensureAcuV2AppMounted'],
   ['if(Ve&&Ve.chatId)setTimeout(async()=>{await initWithChatIdSafely(Ve.chatId)},1e3);else{','if(window.parent.CxxDatabaseHost){}else if(Ve&&Ve.chatId)setTimeout(async()=>{await initWithChatIdSafely(Ve.chatId)},1e3);else{']
  ];
- const compatibility=createRequire(import.meta.url)('../../工具/lib/database-plugin-patch.cjs').patchDatabasePlugin(fs.readFileSync(path.join(target,'shujuku-1.3.js'),'utf8'));
+ const compatibility=createRequire(import.meta.url)('../../工具/lib/database-plugin-patch.cjs').patchDatabasePlugin(fs.readFileSync(path.join(target,'shujuku-1.3.js'),'utf8'),{programCheckpoints:true});
  let plugin=compatibility.code;for(const [from,to]of rewrites){if(plugin.split(from).length!==2)throw Error('数据库宿主适配锚点变化：'+from);plugin=plugin.replace(from,to);}
  const B=createRequire(import.meta.url)('../../工具/lib/card-ast.cjs'),delays=[];
  B.walk(B.acorn.parse(plugin,{ecmaVersion:'latest'}),node=>{if(node.type==='CallExpression'&&node.callee?.property?.name==='on'&&plugin.slice(node.arguments[0]?.start,node.arguments[0]?.end)==='Ve.eventTypes.CHAT_CHANGED')B.walk(node.arguments[1],call=>{if(call.type==='CallExpression'&&call.callee?.name==='setTimeout'&&call.arguments[1]?.value===1200&&call.arguments[0]?.async)delays.push(call);});});

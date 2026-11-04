@@ -172,7 +172,7 @@
     async function workshop({refresh=false}={}) {
       const expected=host.getContext();host.assertContext(expected,true);
       if(refresh){const loaded=await Discovery.readCatalog({Core,verify:(doc,keys)=>verifyDocument(doc,keys,Core,crypto),trustedKeys:readSeed().trustedKeys,url:COMPONENT_CATALOG,fetch:options.fetch||root.fetch?.bind(root)});host.assertContext(expected,true);if(!alive)throw error('updater-stopped','更新脚本已卸载');catalog=loaded;}
-      const raw=host.readState(),state=contentState(raw),active=pins();return {loaded:catalog!==null,items:clone((catalog?.packages||[]).filter(p=>p.kind==='content'&&p.optional)),subscriptions:clone(state.subscriptions),pins:clone(active),installed:Object.entries(state.registry.packages).filter(([,p])=>p.optional).map(([id,p])=>({id,scope:raw.registry.packages[id]?'character':'story',installed:raw.installed[id]?.kind==='content',display:p.content.worldbook?.[0]?.extra?.__cxx_workshop_display,title:p.content.worldbook?.[0]?.extra?.__cxx_workshop_display?.title||p.content.worldbook?.[0]?.name||id,version:p.version,versions:[p.version,...Object.keys(p.history||{}).filter(v=>v!==p.version&&Content.packageContent(p,v))],enabledVersion:active[id]||null}))};
+      const raw=host.readState(),state=contentState(raw),active=pins();return {loaded:catalog!==null,items:clone((catalog?.packages||[]).filter(p=>p.kind==='content'&&p.optional)),subscriptions:clone(state.subscriptions),directSubscriptions:clone(state.directSubscriptions||state.subscriptions),requiredBy:clone(state.requiredBy||{}),pins:clone(active),pinIntent:clone(chatVars().__cxx_content_pin_intent||active),installed:Object.entries(state.registry.packages).filter(([,p])=>p.optional).map(([id,p])=>({id,scope:raw.registry.packages[id]?'character':'story',installed:raw.installed[id]?.kind==='content',display:p.content.worldbook?.[0]?.extra?.__cxx_workshop_display,title:p.content.worldbook?.[0]?.extra?.__cxx_workshop_display?.title||p.content.worldbook?.[0]?.name||id,version:p.version,versions:[p.version,...Object.keys(p.history||{}).filter(v=>v!==p.version&&Content.packageContent(p,v))],enabledVersion:active[id]||null}))};
     }
     async function getPackages(expected, mode = 'manual') {
       host.assertContext(expected, true);
@@ -262,7 +262,7 @@
         // Synthetic legacy references are aliases for the original base quests.
         if (archive?.legacyQuests) delete owners.packages['migration.legacy'];
         ownership(owners, item.pack);
-        registry = Core.mergeRegistry(registry, item.pack, { subscriptions: Object.keys(state.subscriptions).filter(id => state.subscriptions[id]),
+        registry = Core.mergeRegistry(registry, item.pack, { subscriptions: [...Object.keys(state.subscriptions).filter(id => state.subscriptions[id]),...items.map(item=>item.pack.id)],
           installed, mapIndex: readSeed().mapIndex || {}, characterIds: readSeed().characterIds,
           questIds: Object.values(registry.packages).flatMap(r => (r.content.quests || []).map(q => q.id)) }).registry;
         installed[item.pack.id] = { version: item.pack.version, sha256: item.sha256, kind: 'content', requires: clone(item.pack.requires) };
@@ -389,10 +389,10 @@
       let prepared=null;if(value.command==='subscribe'){
         if(typeof value.enabled!=='boolean')throw error('invalid-subscription','请选择订阅或取消订阅');
         const state=host.readState(),available=contentState(state).registry.packages[value.id],installed=state.installed[value.id];
-        if(value.enabled&&(!available||value.version&&value.version!==installed?.version)){
+        if(value.enabled&&(!available||value.version&&value.version!==installed?.version||Content.collectionMembers(available).some(m=>{const p=contentState(state).registry.packages[m.packageId];return !p||Core.compareVersions(p.version,m.minVersion)<0;}))){
           await workshop({refresh:true});const entry=catalog.packages.find(p=>p.id===value.id&&p.kind==='content'&&p.optional);
-          if(!entry||value.version&&value.version!==entry.version)throw error('invalid-subscription','内容目录已改变，请重新查看版本');
-          prepared=await Discovery.downloadContent(entry,{Core,mapIndex:readSeed().mapIndex,characterIds:readSeed().characterIds,verify:(doc,keys)=>verifyDocument(doc,keys,Core,crypto),trustedKeys:readSeed().trustedKeys,fetch:options.fetch||root.fetch?.bind(root)});host.assertContext(expectedCommand,true);
+          if(entry){if(value.version&&value.version!==entry.version)throw error('invalid-subscription','内容目录已改变，请重新查看版本');prepared=await Discovery.prepareContent(entry,{Content,catalog,Core,mapIndex:readSeed().mapIndex,characterIds:readSeed().characterIds,verify:(doc,keys)=>verifyDocument(doc,keys,Core,crypto),trustedKeys:readSeed().trustedKeys,fetch:options.fetch||root.fetch?.bind(root)});host.assertContext(expectedCommand,true);}
+          else {if(!available||value.version&&value.version!==available.version)throw error('invalid-subscription','所选内容暂不可下载');for(const m of Content.collectionMembers(available)){const p=contentState(state).registry.packages[m.packageId];if(!p||Core.compareVersions(p.version,m.minVersion)<0)throw error('invalid-subscription','合集成员暂不可下载：'+m.packageId);}}
         }
       }
       await host.withLock(async () => {
@@ -418,7 +418,7 @@
           if (p?.kind !== 'component' || p.version !== value.version || p.sha256 !== value.sha256) throw error('invalid-component-consent', '组件文件已变化，请重新查看后确认');
           next.policy = { ...(next.policy || {}), componentConsent: { ...(next.policy?.componentConsent || {}), [p.id]: { version: p.version, sha256: p.sha256 } } };
         } else if (value.command === 'subscribe') {
-          if(prepared)next=await installContent([prepared],{...next.subscriptions,[value.id]:true},{persist:false});
+          if(prepared)next=await installContent(prepared,{...next.subscriptions,[value.id]:true},{persist:false});
           const p=contentState(next).registry.packages[value.id]||catalog?.packages.find(p=>p.id===value.id&&p.kind==='content');
           if(!p?.optional)throw error('invalid-subscription','请选择已安装或目录中的可选内容');
           next.subscriptions[value.id] = value.enabled;
@@ -431,7 +431,7 @@
           if (!p || !(['new_chat', 'opt_in'].includes(p.activation) || p.activation === 'compatible' && pins()[value.id])) throw error('invalid-activation', '该包无需单独启用');
           const expected = host.getContext();
           const version=value.version||p.version;if(value.enabled!==false&&!Content.packageContent(p,version))throw error('invalid-activation','所选内容版本尚未安装');
-          await api.updateVariablesWith(vars=>{const active={...(vars.__cxx_content_pins||{})};if(value.enabled===false)delete active[value.id];else active[value.id]=version;return {...vars,__cxx_content_pins:active};},{type:'chat'});
+          await api.updateVariablesWith(vars=>{const selection=Content.planPins(contentState(next).registry,{pins:vars.__cxx_content_pins||{},pinIntent:vars.__cxx_content_pin_intent},{...value,enabled:value.enabled!==false,version});return {...vars,__cxx_content_pins:selection.pins,__cxx_content_pin_intent:selection.pinIntent};},{type:'chat'});
           host.assertContext(expected);
         }
         next.contentRevision = crypto.randomUUID(); await host.saveState(next);

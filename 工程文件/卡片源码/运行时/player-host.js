@@ -8,7 +8,7 @@
   const failure=(code,message)=>Object.assign(Error(message),{code});
   // Player reads never acquire the installer lock or read the character card.
   const createReader=(typeof module==='object'&&module.exports?require('./player-reader.js'):root.CxxPlayerReader).create;
-  function create({api=root,host,read,assertIdle=()=>{},waitForInstall,operations:O=root.CxxPlayerOperations,ui:UI=root.CxxPlayerUI,identities:I=root.CxxIdentity,saveTimeout=10000,openingReadyTimeout=10000}){
+  function create({api=root,host,read,assertIdle=()=>{},waitForInstall,operations:O=root.CxxPlayerOperations,ui:UI=root.CxxPlayerUI,identities:I=root.CxxIdentity,saveTimeout=10000,openingReadyTimeout=10000,workshopSource}){
     const top=root.parent||root,ctx=()=>api.SillyTavern.getContext(),owner=ctx().characters?.[ctx().characterId]?.avatar;
     let stopped=false,epoch=0,state=null,refreshTimer=null,preparation=null,sendPreparation=null,sendPermit=null;
     const mounted=new Set(),subscribers=new Set(),disposers=[];
@@ -55,7 +55,7 @@
       const A=actors(),requestedStat=read.local().stat,registered=requestedStat.terminal?.ensemble!==undefined;
       if(registered&&!A)throw Error('人物状态服务尚未就绪。');
       const actorBinding=registered?A.binding(requestedStat,request.actorId||(request.action==='initialize'?'player':A.registry(requestedStat).control.actorId)):undefined;
-      const s=getState(),requestedBranch=stamp(ctx().chat);await enqueue(s,async()=>{
+      const s=getState(),requestedBranch=stamp(ctx().chat);let applied=false;try{await enqueue(s,async()=>{
         await writable(s);if(stamp(ctx().chat)!==requestedBranch)throw Error('回复分支已变化，请从当前分支重新操作。');const snapshot=read.local(),branches=stamp(ctx().chat),floor=snapshot.floor,choice=copy(snapshot.growthIdentity),newChat=isOpening(),operation={request:copy(request),identity:choice,newChat};
         if(actorBinding){A.assertBinding(snapshot.stat,actorBinding);operation.actorBinding=copy(actorBinding);if(request.actorBinding&&!same(request.actorBinding,actorBinding))throw Error('人物操作草稿已过期，请重新打开当前人物。');}
         if(request.floor!==undefined&&(request.floor!==floor||request.swipe!==(ctx().chat[floor].swipe_id||0)))throw Error('结算目标楼层或分支已变化。');
@@ -71,6 +71,7 @@
           if(!same(profile,snapshot.storyProfile)||!same(table,snapshot.itemArt)){ctx().chatMetadata[Art.key]=table;ctx().chatMetadata[P.KEY]=profile;ctx().chatMetadata.tainted=true;dirty(s);}
           return;
         }
+        if(request.action==='workshop-action')operation.workshop=copy(workshopSource());
         if(request.action.startsWith('quest-')){trace?.stage('validating');Object.assign(operation,quests.authorize(request,snapshot));}
         top.__cxx_battle__?.assertOperation?.(request);
         if(request.action.startsWith('tactical-'))top.__cxx_tactical__?.assertOperation(request,snapshot);
@@ -91,8 +92,8 @@
           let applied;try{applied=applyVariables(value,request,operation);}catch(error){error.diagnosticKind='rule-rejected';throw error;}
           if(trace){const before=value.stat_data.terminal||{},after=applied.stat_data.terminal||{};trace.stage('planned',{writes:['terminal.quests','terminal.questJournal','terminal.wallet'].filter(key=>!same(before[key.split('.').at(-1)],after[key.split('.').at(-1)])),revision:after.questJournal?.revision||0});trace.stage('applying');}
           return applied;
-        },{type:'message',message_id:floor});assertCurrent(s);dirty(s);trace?.stage('applied');
-      });return flush(s,{trace});
+        },{type:'message',message_id:floor});applied=true;assertCurrent(s);dirty(s);trace?.stage('applied');
+      });return await flush(s,{trace});}catch(error){if(request.action==='workshop-action')error.actionPending=applied;throw error;}
     }
     async function ensureReady(){const s=getState();if(s.flight||s.needsSave)return waitForSaved();const snapshot=read.local();if(!snapshot.stat.terminal?.gameplay?.growth||snapshot.stat.terminal.gameplay.numeric?.rulesRef?.version===1)return commit({action:'initialize'});if(snapshot.stat.terminal?.roster?.seedVersion!=='2051-npc-1')return commit({action:'roster-initialize'});return read({reuse:true});}
     async function waitOpeningRow(s){
@@ -296,7 +297,7 @@ function prepareOpening(value,target=1){
       }
     }
     function stop(){quests.destroy();stopped=true;epoch++;sendPreparation=null;sendPermit=null;top.__cxx_battle__?.cancelPreparation?.();clearTimeout(refreshTimer);close();for(const v of [...mounted])v.destroy();subscribers.clear();disposers.splice(0).forEach(fn=>fn());if(top.__cxx_player__===service)delete top.__cxx_player__;}
-    const service={menuStatus(){const snapshot=read.local(),L=typeof module==='object'&&module.exports?require('./loadout.js'):root.CxxLoadout;return {load:L.list(actors().selected(snapshot.stat).gameplay||{}).filter(r=>r.definition.category==='cyberware').reduce((sum,r)=>sum+(Number(r.definition.load)||0),0)};},read:ensureReady,commit,quests,prepareOpening,completeOpening,setOpeningMessages,saveState,subscribeSave:subscribe,retrySave,waitForSaved,assertOpeningSaved,requestSend,mountSaveStatus,mount,open,close,start,stop,draft};return service;
+    const service={async workshop(){const snapshot=await ensureReady();const actor=actors().selected(snapshot.stat),source=copy(workshopSource()),G=typeof module==='object'&&module.exports?require('./gameplay.js'):root.CxxGameplay;return {...G.playView({terminal:{...snapshot.stat.terminal,gameplay:actor.gameplay,wallet:actor.wallet}},source),actorId:actor.actorId,actorBinding:actor.binding,actorName:actor.record.name,context:snapshot.expected,floor:snapshot.floor,swipe:ctx().chat[snapshot.floor].swipe_id||0};},menuStatus(){const snapshot=read.local(),L=typeof module==='object'&&module.exports?require('./loadout.js'):root.CxxLoadout;return {load:L.list(actors().selected(snapshot.stat).gameplay||{}).filter(r=>r.definition.category==='cyberware').reduce((sum,r)=>sum+(Number(r.definition.load)||0),0)};},read:ensureReady,commit,quests,prepareOpening,completeOpening,setOpeningMessages,saveState,subscribeSave:subscribe,retrySave,waitForSaved,assertOpeningSaved,requestSend,mountSaveStatus,mount,open,close,start,stop,draft};return service;
   }
   return {create,createReader};
 });

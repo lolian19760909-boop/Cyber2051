@@ -256,17 +256,18 @@ const officialRelease = require('./official-release.cjs').createOfficialRelease(
     keyId: process.env.CXX_OFFICIAL_KEY_ID,
   },
   afterCommit: (id,payload,finishedAt)=>workshopCommunity.recordCommitted(id,payload,finishedAt),
-  beforeCommit: ({ db: transactionDb, packages }) => {
+  beforeCommit: ({ db: transactionDb, packages,preview }) => {
     if (transactionDb !== db) throw new Contract.ContractError('来源检查必须使用同一事务数据库', 'source_transaction_mismatch', 409);
-    workshopBridge.assertSources(packages);
+    workshopBridge.assertSources(packages);workshopBridge.assertCollections(packages,JSON.parse(preview.payload).catalog);
   },
 });
 const Contract = require('./workshop-contract.cjs');
+const workshopLinks=require('./workshop-links.cjs').createLinks({db,pagination});
 const workshopBridge = require('./workshop-bridge.cjs').createWorkshopBridge({
-  db, send, readBody, ownerSession, officialRelease, modulePath: process.env.CXX_FORMAT3_PACKAGES_MODULE,
+  db, send, readBody, ownerSession, officialRelease, modulePath: process.env.CXX_FORMAT3_PACKAGES_MODULE,links:workshopLinks,
 });
 const rateMap = new Map();
-const workshopCommunity=require('./workshop-community.cjs').createCommunity({db,send,readBody,authorize:sessionPublisherRow,rateLimited,pagination,bridge:workshopBridge});
+const workshopCommunity=require('./workshop-community.cjs').createCommunity({db,send,readBody,authorize:sessionPublisherRow,rateLimited,pagination,bridge:workshopBridge,links:workshopLinks});
 const bugReports = require('./bug-reports.cjs').createBugReports({ db, send, readRawBody, authorize: sessionPublisherRow, pagination, rateLimited });
 const playConnect = require('./play-connect.cjs').createPlayConnect({ send, readRawBody, authorize: sessionPublisherRow });
 const temporarySaves = require('./temporary-saves.cjs').createTemporarySaves({ db, send, readRawBody, authorize: sessionPublisherRow });
@@ -284,7 +285,7 @@ function publicSub(s) {
   const packageRef = workshopBridge.packageRef(s);
   return { ...workshopCommunity.decorate(s),publicationMetadata:Contract.publicationMetadata(s.publication_metadata||{}),createdAt:s.created_at,id: s.id, type: s.type, title: s.title, summary: s.summary, authorName: s.author_name, tags: JSON.parse(s.tags || '[]'), revision: s.revision, updatedAt: s.updated_at, hasFile: !!att, fileSize: att ? att.fileSize : 0, fileExt: att ? att.fileExt : null, verified: !!s.publisher_id, ...(packageRef ? { packageRef } : {}) };
 }
-function parseSubInput(data, res) {
+function parseSubInput(data, res,previous) {
   const type = String(data.type || '');
   if (!ALLOWED_TYPES.includes(type)) { send(res, 400, { ok: false, error: 'type_not_allowed', allowed: ALLOWED_TYPES }); return null; }
   const title = cleanText(String(data.title ?? '')).trim();
@@ -300,7 +301,7 @@ function parseSubInput(data, res) {
   if (payload === null || typeof payload !== 'object' || Array.isArray(payload)) { send(res, 400, { ok: false, error: 'payload_must_be_object' }); return null; }
   try {
     if ((type === 'contract' || payload.templateKind) && Object.keys(data).some(key => !['type','title','summary','authorName','tags','payload','baseRevision','editKey','publication'].includes(key))) throw new Contract.ContractError('投稿不接受客户端权威字段');
-    payload = Contract.validateIncoming(type,payload,{ title, summary, authorName, tags });
+    payload = workshopLinks.normalize(Contract.validateIncoming(type,payload,{ title, summary, authorName, tags }),previous);
   }
   catch (e) { send(res, e.status || 400, { ok: false, error: e.code || 'invalid_contract', message: e.message }); return null; }
   let publication;try{publication=Contract.publicationMetadata(data.publication||{});}catch(e){send(res,e.status||400,{ok:false,error:e.code,message:e.message});return null;}
@@ -496,7 +497,7 @@ const server = http.createServer(async (req, res) => {
         authorName: data.authorName ?? s.author_name, tags: data.tags ?? JSON.parse(s.tags || '[]'),
         payload: data.payload ?? JSON.parse(s.payload),publication:data.publication??JSON.parse(s.publication_metadata),
       };
-      const parsed = parseSubInput(merged, res); if (!parsed) return;
+      const parsed = parseSubInput(merged, res,s); if (!parsed) return;
       const clientRev = Number(data.baseRevision);
       if (!Number.isInteger(clientRev) || clientRev !== s.revision) return send(res, 409, { ok: false, error: 'revision_conflict', currentRevision: s.revision });
       const newRev = s.revision + 1;

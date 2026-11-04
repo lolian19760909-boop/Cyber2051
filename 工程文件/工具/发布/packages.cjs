@@ -207,6 +207,7 @@ function validatePackage(pkg, options = {}) {
   } else {
     if (Object.hasOwn(pkg, 'components')) fail('内容包不能携带正则或助手脚本');
     if ((pkg.content?.gameplay || pkg.content?.worldbook?.some(e=>e.extra?.__cxx_player_start || e.extra?.__cxx_npc)) && compareVersion(pkg.requires.engine,'1.2.0')<0) fail('正文玩法及新人物出身包须声明1.2.0以上消费者');
+    if(pkg.content?.worldbook?.some(e=>e.extra?.__cxx_collection)&&compareVersion(pkg.requires.engine,'1.5.0')<0)fail('合集包须声明1.5.0以上消费者');
     if(pkg.content?.worldbook?.some(e=>e.extra?.__cxx_event_media) && compareVersion(pkg.requires.engine,'1.3.0')<0)fail('事件插画包须声明1.3.0以上消费者');
     validateContent(pkg.content, options);
   }

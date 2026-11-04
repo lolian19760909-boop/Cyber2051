@@ -21,7 +21,7 @@ test('My submissions routes the three active types to the owner guided page and 
  for(const type of ['character','world_factor','user_identity','contract','shop_item','blueprint','recipe','skill','function','code_component','future_type']){
   context.location.href='';const card=context.makeCard({id:42,type,revision:3,status:'approved',title:'合成稿',tags:[],payload:{content:'旧正文'}});
   const actions=card.children.find(n=>n.className==='toolbar'),button=actions.children.find(n=>['改稿','查看原稿'].includes(n.textContent));button.click();
-  assert.equal(context.location.href,'/workshop/submit.html?edit=42');assert.equal(button.textContent,['character','user_identity','contract'].includes(type)?'改稿':'查看原稿');
+  assert.equal(context.location.href,'/workshop/submit.html?edit=42');assert.equal(button.textContent,C.Writing.isOpen(type)?'改稿':'查看原稿');
  }
 });
 test('actual guided edit source restores the three active templates and legacy JSON with owner GET and original revision',async()=>{
@@ -30,7 +30,7 @@ test('actual guided edit source restores the three active templates and legacy J
   const payload=require('../../网站/gateway/workshop-gameplay-fixtures.cjs').payload(form.id);
   await run(form.type,payload,false);
  }
- await run('world_factor',{legacy:'只读静态正文'},true);
+ await run('future_type',{legacy:'只读静态正文'},true);
  async function run(type,payload,raw){
   const d=dom(),calls=[],item={id:42,type,revision:4,status:'approved',title:'合成改稿',summary:'简介',authorName:'已绑定作者',tags:['验收'],payload,publication:{version:1,updateNote:'修订说明',credits:'原创',rightsStatement:'作者原创',adaptation:'ask'}};
   d.document.getElementById('type').value='contract';

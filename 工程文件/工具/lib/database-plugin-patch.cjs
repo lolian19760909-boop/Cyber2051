@@ -1,11 +1,18 @@
 /* Pinned ACU 1.3 compatibility fixes shared by browser and native builds. */
 const fs=require('node:fs'),path=require('node:path'),{createHash}=require('node:crypto');
-function patchDatabasePlugin(source,{stack=true}={}){
+function patchDatabasePlugin(source,{stack=true,programCheckpoints=false}={}){
  const changes=[
   ['I={...C?.backend??(i?o:{}),getLorebooks:u.entries?', 'I={...(i?o:C?.backend??{}),getLorebooks:u.entries?'],
   ['m={...C?.capabilities,getLorebooks:', "m={...C?.capabilities,...(i?{setLorebookEntries:'native',createLorebookEntries:'native',deleteLorebookEntries:'native'}:{}),getLorebooks:"]
  ];
  if(stack)changes.push(['var s=null,l=null,g=null;try{g=l=fa(n);var u=xe(4);','var s=null,l=null,g=null,cxxStack=Ne();try{g=l=fa(n);var u=xe(4);'],['finally{l&&ve(l)}},e.prototype.Mb=','finally{l&&ve(l),Re(cxxStack)}},e.prototype.Mb=']);
+ if(programCheckpoints)changes.push(
+  ['async function ensureV2BoundaryCheckpointForRetainedBufferCore_ACU(t,n,o={},i="compaction"){','async function ensureV2BoundaryCheckpointForRetainedBufferCore_ACU(t,n,o={},i="compaction"){const cxxProgramBoundary=o.cxxProgramBoundary===true;'],
+  ['if(I&&!u){logDebug_ACU(`[V2 Compaction] AI 保留边界楼层','if(I&&!u&&!cxxProgramBoundary){logDebug_ACU(`[V2 Compaction] AI 保留边界楼层'],
+  ['if(I&&u){const o=await loadTableStateFromFramesV2Detailed_ACU(t,g,','if(I&&u&&!cxxProgramBoundary){const o=await loadTableStateFromFramesV2Detailed_ACU(t,g,'],
+  ['if(n>0){const i=resolveRetainedCheckpointBoundary_ACU(o,n);','if(t.cxxProgramBoundary===true){const cxxTarget=findTargetAiMessage_ACU(o);if(!cxxTarget)return{success:false,changed:false,error:"程序状态缺少数据库承载楼层"};return ensureV2BoundaryCheckpointForRetainedBufferCore_ACU(o,{shouldRotateCheckpoint:true,indicesToPurge:[cxxTarget.index],anchorIndex:cxxTarget.index},t,"compaction");}if(n>0){const i=resolveRetainedCheckpointBoundary_ACU(o,n);'],
+  ['await refreshMergedDataAndNotifyWithUI_ACU();const t=Object.keys(i.tableData||{}).find','await refreshMergedDataAndNotifyWithUI_ACU();if(n?.cxxProgramBoundary===true){const cxxCheckpoint=await ensureV2BoundaryCheckpointForRetainedBuffer_ACU({cxxProgramBoundary:true,save:false});if(!cxxCheckpoint.success)throw Error(cxxCheckpoint.error||"程序数据库检查点保存失败");await refreshMergedDataAndNotifyWithUI_ACU();}const t=Object.keys(i.tableData||{}).find']
+ );
  let code=source;for(const [from,to]of changes){if(code.split(from).length!==2)throw Error('数据库兼容补丁锚点变化：'+from);code=code.replace(from,to);}
  const B=require('./card-ast.cjs'),tree=B.acorn.parse(code,{ecmaVersion:'latest'}),edits=[],methods=new Set(['setLorebookEntries','createLorebookEntries','deleteLorebookEntries']);let backend;
  B.walk(tree,n=>{if(n.type==='FunctionDeclaration'&&n.id?.name==='createNativeStBackend_ACU'){backend=n;return false;}});
