@@ -46,11 +46,10 @@ test('immutable artifact preserves owner snapshot and refuses metadata mutation 
 module.exports={draft};
 test('all guided templates compile to existing consumers and bind only known map locations',()=>{
   const forms=C.schema().templates.filter(t=>['contract','world_factor','character','user_identity'].includes(t.type));
-  for(const form of forms){let payload;if(form.type==='contract'){payload=draft();if(form.id==='side_story')payload.templateKind='side_story';}
-   else{payload={format:1,templateKind:form.id,mapId:'tokyo-central',placeId:'beni-street',keywords:['合成关键词']};for(const [field,,required]of form.fields)if(required)payload[field]='静态测试内容';}
+  for(const form of forms){const payload=require('../../网站/gateway/workshop-gameplay-fixtures.cjs').payload(form.id);(payload.contract||payload).placeId='beni-street';
    const r={...row(),type:form.type,payload:JSON.stringify(payload)};r.content_hash=P.sha256(r.payload);const a=C.compile(r,identity,P);
    assert.equal(a.package.kind,'content');assert.equal(a.package.optional,true);assert.equal(a.package.activation,'opt_in');assert.equal(a.package.content.gallery.length,0);assert.equal(a.package.components,undefined);
-   if(form.type==='contract'){assert.equal(a.package.content.quests.length,1);assert.ok(!a.package.content.worldbook[0].content.includes(payload.contract.goal));}
+   if(form.type==='contract'){assert.equal(a.package.content.quests.length,1);assert.ok(!a.package.content.worldbook[0].content.includes(payload.sections.goal));}
    else{assert.equal(a.package.content.quests.length,0);assert.deepEqual(a.package.content.worldbook[0].extra.__cxx_workshop_location,{mapId:'tokyo-central',placeId:'beni-street',title:r.title,templateKind:form.id});assert.equal(a.package.content.worldbook[0].strategy.type,'selective');}
    const wrong=structuredClone(payload);(wrong.contract||wrong).placeId='invented-map-point';assert.throws(()=>C.validateSubmission(form.type,wrong),/地点/);
   }

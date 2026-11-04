@@ -40,12 +40,4 @@ for(const form of C.schema().templates.filter(t=>t.type!=='code_component'))test
   assert.ok(fs.existsSync(path.join(f.root,'releases/v3/packages',packageId,'1.0.1.json')));assert.deepEqual(player,original);assert.deepEqual(registry.packages[packageId].history['1.0.1'],first.content);
  }finally{await f.close();}
 });
-test('code proposal passes review only for next card; attachments never become a signed install package',async()=>{
- const f=await startFixture();try{const api=call(f),data={type:'code_component',title:'隔离代码提案',payload:F.payload('code_component')};assert.equal((await api('/api/workshop/content/preview',null,data)).body.preview.delivery,'next_card');
- const c=await api('/api/workshop/submissions','ordinary',data);assert.equal(c.status,201);const id=c.body.id;
- const u=await fetch(f.baseUrl+'/api/workshop/submissions/'+id+'/attachment',{method:'POST',headers:{Authorization:'Bearer '+f.session('ordinary').token,'X-Filename':'source.js'},body:'throw Error("DO NOT EXECUTE");'});assert.equal(u.status,201);
- const approved=await api('/api/admin/submissions/'+id+'/approve','admin',{baseRevision:2});assert.equal(approved.status,200);assert.equal(approved.body.artifact,undefined);
- assert.equal((await api('/api/workshop/submissions/'+id+'/content-package')).status,404);assert.equal((await api('/api/official/workshop/'+id+'/preview','authorized',{baseRevision:2})).status,404);
- const download=await fetch(f.baseUrl+'/api/workshop/submissions/'+id+'/download');assert.equal(download.headers.get('content-type'),'application/octet-stream');assert.match(download.headers.get('content-disposition'),/^attachment/);assert.match(await download.text(),/DO NOT EXECUTE/);
- }finally{await f.close();}
-});
+test('paused code proposals cannot create or preview installable submissions',async()=>{const f=await startFixture();try{const api=call(f),data={type:'code_component',title:'隔离历史提案',payload:F.legacyPayload('code_component')};assert.equal((await api('/api/workshop/content/preview',null,data)).status,409);assert.equal((await api('/api/workshop/submissions','ordinary',data)).status,409);assert.equal((await api('/api/official/workshop/9999/preview','authorized',{baseRevision:1})).status,404);}finally{await f.close();}});

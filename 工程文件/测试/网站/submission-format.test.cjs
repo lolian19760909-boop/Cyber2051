@@ -25,8 +25,8 @@ test('three writing templates compile without losing sections or changing runtim
     if(kind==='contract'){
       const q=a.package.content.quests[0];assert.equal(q.pay,3000);assert.equal(q.id,'ugc.contract.42.01');assert.equal(view.panels[1].text,W.questText(q));
       // 对比现役 controller 的实际投影函数，而不是只比较两次相同实现。
-      const source=fs.readFileSync(path.join(__dirname,"../../卡片源码/运行时/controller.js"),'utf8'),start=source.indexOf('    function questEntry(quest) {'),end=source.indexOf('    async function syncChat()',start);
-      const actual=vm.runInNewContext(source.slice(start,end)+'\nquestEntry;', {error:(code,message)=>Error(message)})(q);
+      const source=fs.readFileSync(path.join(__dirname,"../../卡片源码/运行时/business-content-sync.js"),'utf8'),B=require('../../工具/lib/card-ast.cjs');let entry;B.walk(B.acorn.parse(source,{ecmaVersion:'latest'}),node=>{if(node.type==='FunctionDeclaration'&&node.id?.name==='questEntry'){entry=node;return false;}});
+      const actual=vm.runInNewContext(source.slice(entry.start,entry.end)+'\nquestEntry;', {error:(code,message)=>Error(message)})(q);
       assert.equal(view.panels[1].text,actual.content);
     }else{
       assert.equal(view.panels[0].text,a.package.content.worldbook[0].content);

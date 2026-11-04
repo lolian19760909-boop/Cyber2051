@@ -12,13 +12,13 @@ function gameplay(){return {schema:1,
  services:[{id:'heal',name:'测试治疗',description:'隔离服务',location,service:'heal',cost:2,effects:{resources:{condition:10}}}],
  encounters:[{id:'sighting',name:'测试目击',description:'隔离事件',requires:{location},outcomes:[{id:'accept',name:'记录',items:{supply:1}}]}]};}
 function payload(kind,revision=1){
- const form=C.schema().templates.find(t=>t.id===kind);
- if(form.type==='contract')return {format:1,...(kind==='side_story'?{templateKind:kind}:{}),contract:{fixer:'隔离联系人',type:'调查',difficulty:'低',pay:10+revision,...location,brief:'测试简报 '+revision,goal:'核对隔离地点'}};
- const p={format:form.format||1,templateKind:kind,...(kind==='code_component'?{}:{...location,keywords:['隔离测试']})};
- for(const [key,,required]of form.fields)if(required)p[key]='隔离 '+key+' '+revision;
- if(form.gameplay||['encounter','function_zone'].includes(kind))p.gameplay=gameplay();
+ const schema=C.schema(),form=schema.templates.find(t=>t.id===kind);if(!form)throw Error('该投稿模板当前暂停：'+kind);
+ const sections=Object.fromEntries(form.writingFields.filter(f=>f.required).map(f=>[f.name,'隔离 '+f.name+' '+revision])),p={format:form.format,templateVersion:schema.templateVersion,templateKind:kind,sections};
+ if(form.type==='contract'){p.contract={type:'调查',difficulty:'低',pay:10+revision,prerequisites:[],...location};return p;}
+ Object.assign(p,location,{keywords:['隔离测试']});
  if(kind==='npc')p.media=[{id:'portrait',url:'https://cyber2051.top/img/test-only.png',alt:'隔离素材占位，测试不加载'}];
- if(kind==='user_identity')p.opening='隔离通用开场 '+revision;
+ if(kind==='user_identity')p.sections.opening='隔离通用开场 '+revision;
  return p;
 }
-module.exports={gameplay,payload,location};
+function legacyPayload(kind,revision=1){const form=C.schema().legacyTemplates.find(t=>t.id===kind);if(!form)throw Error('缺少历史模板：'+kind);const p={format:form.format||1,templateKind:kind,...(kind==='code_component'?{}:{...location,keywords:['隔离历史']})};for(const [key,,required]of form.fields)if(required)p[key]='隔离 '+key+' '+revision;if(form.gameplay)p.gameplay=gameplay();return p;}
+module.exports={gameplay,payload,legacyPayload,location};

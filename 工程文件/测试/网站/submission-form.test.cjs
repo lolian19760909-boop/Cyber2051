@@ -15,7 +15,7 @@ function harness(){
     Object.defineProperties(e,{id:{get:()=>id,set:x=>{id=x;nodes.set(x,e);}},value:{get:()=>value,set:x=>{value=String(x??'');}},options:{get:()=>e.children.filter(c=>c?.tag==='option')},textContent:{get:()=>text,set:x=>{text=String(x);e.children=[];}}});return e;
   }
   const document={createElement:element,addEventListener(k,f){(events[k]??=[]).push(f);},getElementById(id){if(!nodes.has(id)){const e=element();e.id=id;}return nodes.get(id);}};
-  const context=vm.createContext({document,fetch:async()=>({ok:true,json:async()=>({ok:true,schema:C.schema()})}),console,URL,URLSearchParams});context.window=context;context.CXXI18N={current:()=>lang};
+  const context=vm.createContext({CxxThemeRuntime:{install(){}},document,fetch:async()=>({ok:true,json:async()=>({ok:true,schema:C.schema()})}),console,URL,URLSearchParams});context.window=context;context.CXXI18N={current:()=>lang};
   for(const name of ['submission-template.js','contract-form.js','submission-view.js'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../../网站/gateway/public',name),'utf8'),context);
   const container=element(),form=context.CxxContractForm(container);
   return {form,container,nodes,context,element,async language(next){lang=next;for(const f of events['cxx-lang-changed']||[])await f();}};
