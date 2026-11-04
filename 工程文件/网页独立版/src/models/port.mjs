@@ -44,33 +44,34 @@ export async function* iterateSSE(response){
 async function* events(response){let event='',data=[];for await(const line of iterateSSE(response)){if(line===''){if(data.length)yield {event,data:data.join('\n')};event='';data=[];}else if(line.startsWith('event:'))event=line.slice(6).trim();else if(line.startsWith('data:'))data.push(line.slice(5).trimStart());}if(data.length)yield {event,data:data.join('\n')};}
 async function readText(response,onRead){const lines=[];for await(const line of iterateSSE(response))lines.push(line);const text=lines.join('\n');onRead?.({characters:text.length});return text;}
 async function readJson(response,onRead){const text=await readText(response,onRead);try{return JSON.parse(text);}catch{throw new ModelError('bad_response','模型响应不是完整 JSON');}}
-function responseErrorDetail(detail,text,request){
+function responseErrorDetail(detail,text,headers){
  const value=typeof detail==='string'?detail:detail?.error?.message??detail?.message??detail?.detail??detail?.error_description??(typeof detail?.error==='string'?detail.error:undefined);
  let message=typeof value==='string'?value:Array.isArray(value)?value.map(row=>typeof row==='string'?row:row?.msg||row?.message||'').filter(Boolean).join('；'):detail===undefined?text:'';
  message=String(message||'').replace(/\s+/g,' ').trim();
- for(const name of ['authorization','x-api-key','api-key','x-goog-api-key','apikey']){const secret=request.headers[name]?.replace(/^Bearer\s+/i,'');if(secret)message=message.split(secret).join('[密钥已隐藏]');}
+ for(const name of ['authorization','x-api-key','api-key','x-goog-api-key','apikey']){const secret=headers[name]?.replace(/^Bearer\s+/i,'');if(secret)message=message.split(secret).join('[密钥已隐藏]');}
  return message.length>500?message.slice(0,500)+'…':message;
 }
-function frame(value,event,family,source,diagnostics,reply){
+function frame(value,event,family,source,diagnostics,reply,upstreamError){
   diagnostics.report.frames++;diagnostics.report.payloadCharacters+=value.length;
   if(value==='[DONE]'){diagnostics.report.doneMarker=true;return {done:true,text:''};}
   let data;try{data=JSON.parse(value);}catch{throw new ModelError('bad_stream','模型流包含损坏的数据帧');}
   diagnostics.observe(data);
-  if(data.error||event==='error')throw new ModelError('upstream_error','模型服务在生成期间返回错误',{origin:'upstream'});
+  if(data.error||event==='error')throw upstreamError(data,'模型服务在生成期间返回错误');
   if(data.promptFeedback?.blockReason)throw new ModelError('model_blocked','模型服务拒绝了此请求');
   const before=reply.result.text.length,part=reply.consume(data,{family,source,stream:true}),text=reply.result.text.slice(before);
   diagnostics.report.selectedContentCharacters+=text.length;return {text,...part};
 }
 const goodReason=reason=>!reason||['stop','end_turn','stop_sequence','STOP','COMPLETE','complete','eos_token','stop_sequence_reached','tool_calls','function_call','tool_use'].includes(reason);
-function jsonText(data,family,source,reply){
-  if(data.error||data.success===false)throw new ModelError('upstream_error','模型服务返回错误',{origin:'upstream'});
+function jsonText(data,family,source,reply,upstreamError){
+  if(data.error||data.success===false)throw upstreamError(data,'模型服务返回错误');
   const result=data.result||data;
-  if(result.error||result.success===false)throw new ModelError('upstream_error','模型服务返回错误',{origin:'upstream'});
+  if(result.error||result.success===false)throw upstreamError(result,'模型服务返回错误');
   if(result.promptFeedback?.blockReason)throw new ModelError('model_blocked','模型服务拒绝了此请求');
   const part=reply.consume(result,{family,source,stream:false});return {text:reply.result.text,reason:part.reason};
 }
-export async function decodeReply(response,{family,source,onDelta,onReasoning,onUsage,onProgress,signal,stream=true}){
+export async function decodeReply(response,{family,source,onDelta,onReasoning,onUsage,onProgress,signal,stream=true,requestHeaders={}}){
   const diagnostics=responseDiagnostics(response,{family,source}),d=diagnostics.report;
+  const upstreamError=(detail,summary)=>{const message=responseErrorDetail(detail,'',requestHeaders);if(message)d.errorDetail=message;return new ModelError('upstream_error',summary+(message?'：'+message:''),{origin:'upstream'});};
   const reply=createReplyState({onReasoning,onUsage,onProgress});
   const type=response.headers.get('content-type')||'';let text='',reason,finished=false,streamed=false;
   try{
@@ -79,14 +80,14 @@ export async function decodeReply(response,{family,source,onDelta,onReasoning,on
     // OpenAI-compatible streams end at DONE or clean HTTP EOF, not a per-choice finish field.
     // Match Tavern: consume every delta before completion and retain a separate cumulative body.
     const readUntilEnd=family!=='claude-messages';
-    for await(const event of events(response)){if(signal?.aborted)throw new DOMException('已停止','AbortError');const part=frame(event.data,event.event,family,source,diagnostics,reply);if(part.text){text+=part.text;onDelta?.(part.text);}if(part.reason)reason=part.reason;if(part.done){finished=true;if(!readUntilEnd||d.doneMarker)break;}}
+    for await(const event of events(response)){if(signal?.aborted)throw new DOMException('已停止','AbortError');const part=frame(event.data,event.event,family,source,diagnostics,reply,upstreamError);if(part.text){text+=part.text;onDelta?.(part.text);}if(part.reason)reason=part.reason;if(part.done){finished=true;if(!readUntilEnd||d.doneMarker)break;}}
     // These native protocols define clean HTTP EOF as the end; they do not promise OpenAI's DONE.
     if(['openai-chat','azure-openai','text-generic','kobold-lite','novelai','kobold-classic','workersai'].includes(family))finished=true;
   }else if(type.includes('ndjson')||stream&&source==='ollama'&&type.includes('json')){
     streamed=true;d.format='ndjson';
-    for await(const line of iterateSSE(response)){if(!line.trim())continue;const part=frame(line,'',family,source,diagnostics,reply);if(part.text){text+=part.text;onDelta?.(part.text);}if(part.reason)reason=part.reason;if(part.done){finished=true;break;}}
+    for await(const line of iterateSSE(response)){if(!line.trim())continue;const part=frame(line,'',family,source,diagnostics,reply,upstreamError);if(part.text){text+=part.text;onDelta?.(part.text);}if(part.reason)reason=part.reason;if(part.done){finished=true;break;}}
   }else{
-    d.format='json';const data=await readJson(response);d.frames=1;d.payloadCharacters=JSON.stringify(data).length;diagnostics.observe(data);const part=jsonText(data,family,source,reply);text=part.text;d.selectedContentCharacters=characterCounts(text).characters;reason=part.reason;finished=true;if(text)onDelta?.(text);
+    d.format='json';const data=await readJson(response);d.frames=1;d.payloadCharacters=JSON.stringify(data).length;diagnostics.observe(data);const part=jsonText(data,family,source,reply,upstreamError);text=part.text;d.selectedContentCharacters=characterCounts(text).characters;reason=part.reason;finished=true;if(text)onDelta?.(text);
   }
   if(signal?.aborted)throw new DOMException('已停止','AbortError');
   // 与酒馆一致：截断或连接中断时保留已生成的正文，标记 complete:false 交给回合层决定；空正文仍按失败处理。
@@ -131,14 +132,14 @@ function makePort(kind,transport){
       try{text=await readText(response,summary=>{diagnostic.report.errorBodyCharacters=summary.characters;});detail=JSON.parse(text);diagnostic.observe(detail);diagnostic.report.format='json';diagnostic.report.frames=1;diagnostic.report.payloadCharacters=text.length;}catch{diagnostic.report.format='unreadable';}
       const marker=response.headers.get('x-cxx-error-origin'),origin=['gateway','upstream','transport'].includes(marker)?marker:kind==='direct'?'upstream':'unknown';
       diagnostic.report.responseOrigin=origin;diagnostic.report.errorBodyState=diagnostic.report.format==='json'?'json':diagnostic.report.errorBodyCharacters===0?'empty':diagnostic.report.errorBodyCharacters>0?'not_json':'read_failed';
-      const errorDetail=responseErrorDetail(detail,text,request);if(errorDetail)diagnostic.report.errorDetail=errorDetail;
+      const errorDetail=responseErrorDetail(detail,text,request.headers);if(errorDetail)diagnostic.report.errorDetail=errorDetail;
       await response.body?.cancel().catch(()=>{});
       const auth=[401,403].includes(response.status),code=auth?(origin==='gateway'?'site_auth':origin==='upstream'?'model_auth':'auth_unknown'):response.status===429?'rate_limited':'model_request_failed';
       const summary=auth?(origin==='gateway'?(response.status===401?'本站登录已失效，请重新登录；模型配置已保留。':'本站账号当前无权调用模型转发服务；模型配置已保留。'):origin==='upstream'?'模型接口拒绝鉴权（'+response.status+'），请核对该接口使用的 API Key；本站登录与模型密钥是两套凭据。':'请求被拒绝（'+response.status+'），响应未标明来自本站还是模型服务；模型配置已保留。'):origin==='gateway'&&errorDetail?errorDetail:'模型请求失败（'+response.status+'）';
       const message=errorDetail&&summary!==errorDetail?summary+'：'+errorDetail:summary;
       throw new ModelError(code,message,{origin,status:response.status,warnings,parameterWarnings:warnings,diagnostics:{...diagnostic.report,...identity,stage:'http'}});
     }
-    let result;try{result=operation!=='chat'||selected.family==='horde'?(operation==='chat'?await readJson(response):normalizeResult(operation,await readJson(response))):await decodeReply(response,{family:selected.family,source:selected.id,onDelta:options.onDelta,onReasoning:options.onReasoning,onUsage:options.onUsage,onProgress:options.onProgress,signal:options.signal,stream:request.stream});}catch(error){if(error.diagnostics)Object.assign(error.diagnostics,identity);throw error;}
+    let result;try{result=operation!=='chat'||selected.family==='horde'?(operation==='chat'?await readJson(response):normalizeResult(operation,await readJson(response))):await decodeReply(response,{family:selected.family,source:selected.id,onDelta:options.onDelta,onReasoning:options.onReasoning,onUsage:options.onUsage,onProgress:options.onProgress,signal:options.signal,stream:request.stream,requestHeaders:request.headers});}catch(error){if(error.diagnostics)Object.assign(error.diagnostics,identity);throw error;}
     if(result.diagnostics)Object.assign(result.diagnostics,identity);
     return {...result,warnings,parameterWarnings:warnings};
   }
