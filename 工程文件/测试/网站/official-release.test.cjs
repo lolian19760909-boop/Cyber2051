@@ -221,3 +221,18 @@ for(const interrupted of [false,true])test('modern channel preserves old clients
  assert.ok(fs.existsSync(path.join(e.config.outputDirectory,'packages/legacy.optional/1.0.0.json')));assert.ok(fs.existsSync(path.join(e.config.outputDirectory,'packages/modern.optional/1.0.0.json')));
  const head=JSON.parse(e.db.prepare('SELECT registry FROM official_release_head').get().registry);assert.ok(head.packages['legacy.optional']);assert.ok(head.packages['modern.optional']);
 }));
+
+
+test('modern card keeps independently versioned bundled stories through preview, publish and readback', () => fixture(e => {
+  const card=F.card(e.key.pem,'3.0.0'),seed=card.data.extensions.tavern_helper.scripts[0].data.__cxx_update_seed;
+  seed.engineVersion='1.4.0';seed.catalogUrl='https://cyber2051.top/updates/v3/component-manifest.json';
+  const story=F.content('cyber2051.chip-night','1.0.0');
+  seed.registry.packages[story.id]={version:story.version,optional:true,activation:'new_chat',content:story.content,history:{},historyActivation:{}};
+  const wrong=structuredClone(card);wrong.data.extensions.tavern_helper.scripts[0].data.__cxx_update_seed.registry.packages['cyber2051.base-content'].version='2.0.0';
+  assert.throws(()=>e.api.preview(authorized,{card:wrong}),code('invalid_card'));
+  const preview=e.api.preview(authorized,{card});
+  assert.deepEqual(preview.packages.map(p=>[p.id,p.version]),[['cyber2051.base-content','3.0.0'],['cyber2051.chip-night','1.0.0']]);
+  assert.equal(e.confirm(preview).published,true);
+  const reopened=createOfficialRelease(e.options),packages=reopened.me(authorized).packages;
+  assert.deepEqual(packages.map(p=>[p.id,p.version]),[['cyber2051.base-content','3.0.0'],['cyber2051.chip-night','1.0.0']]);
+}));
