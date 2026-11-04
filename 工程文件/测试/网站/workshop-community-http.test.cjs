@@ -53,3 +53,9 @@ test('旧空发布资料保留原指纹，新授权进入审核指纹和编译�
  const expected=P.sha256(P.canonical({id:row.id,revision:1,type:row.type,title:row.title,summary:row.summary,authorName:row.author_name,tags:[],payload:JSON.parse(payload),publisherId:row.publisher_id}));assert.equal(C.snapshotHash(row,P),expected);assert.equal(C.snapshotHash({...row,publication_metadata:'{}'},P),expected);
  const next={...row,publication_metadata:JSON.stringify(publication('新版'))};assert.notEqual(C.snapshotHash(next,P),expected);assert.deepEqual(C.compile(next,{publisher_id:row.publisher_id,status:'active'},P).source.publication,publication('新版'));assert.throws(()=>C.publicationMetadata({...publication('x'),rightsStatement:''}));
 });
+
+
+test('反馈表升级从中断的旧库继续，保留原反馈和未知字段',async()=>{
+ const initialDatabase="CREATE TABLE feedback(id INTEGER PRIMARY KEY AUTOINCREMENT,created_at TEXT NOT NULL,nickname TEXT,body TEXT NOT NULL,ip_hash TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'pending',submission_id INTEGER,future_flag TEXT);INSERT INTO feedback(created_at,body,ip_hash,future_flag)VALUES('2026-11-04','原反馈','synthetic','keep');";
+ const f=await startFixture(0,{initialDatabase});try{const db=new DatabaseSync(path.join(f.root,'workshop.db'));try{const columns=db.prepare('PRAGMA table_info(feedback)').all().map(row=>row.name);assert(columns.includes('content_version'));assert.equal(db.prepare("SELECT name FROM sqlite_master WHERE type='index' AND name='idx_feedback_submission'").get().name,'idx_feedback_submission');assert.equal(db.prepare('SELECT body,future_flag FROM feedback WHERE id=1').get().future_flag,'keep');assert.equal(db.prepare('SELECT body FROM feedback WHERE id=1').get().body,'原反馈');}finally{db.close();}}finally{await f.close();}
+});

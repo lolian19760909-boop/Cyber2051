@@ -100,7 +100,9 @@ try { db.exec("ALTER TABLE publishers ADD COLUMN banned_at TEXT"); } catch {}
 try { db.exec("ALTER TABLE feedback ADD COLUMN publisher_id TEXT"); } catch {}
 try { db.exec("CREATE INDEX IF NOT EXISTS idx_sub_publisher ON submissions (publisher_id)"); } catch {}
 const submissionHistory = require('./submission-history.cjs').createHistory(db);
-if(!db.prepare('PRAGMA table_info(feedback)').all().some(column=>column.name==='submission_id'))db.exec('ALTER TABLE feedback ADD COLUMN submission_id INTEGER; ALTER TABLE feedback ADD COLUMN content_version TEXT; CREATE INDEX IF NOT EXISTS idx_feedback_submission ON feedback(submission_id,status,id)');
+const feedbackColumns=new Set(db.prepare('PRAGMA table_info(feedback)').all().map(column=>column.name));
+for(const [name,type]of [['submission_id','INTEGER'],['content_version','TEXT']])if(!feedbackColumns.has(name))db.exec('ALTER TABLE feedback ADD COLUMN '+name+' '+type);
+db.exec('CREATE INDEX IF NOT EXISTS idx_feedback_submission ON feedback(submission_id,status,id)');
 
 const nowIso = () => new Date().toISOString();
 const ipHashOf = (ip) => crypto.createHash('sha256').update(IP_SALT + ip).digest('hex').slice(0, 16);
