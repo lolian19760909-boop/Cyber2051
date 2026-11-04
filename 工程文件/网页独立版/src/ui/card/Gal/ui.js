@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/Gal/ui.js; source SHA256 1cef1c8dac4845a8de909ec9be8bd064b05ae3887d86e79185f96687881a9d7f. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/Gal/ui.js; source SHA256 7cf60d137c8626ccc7add58125a3de50f5f040c5f58684fbf033c7ff747ec075. Rebuild with tools/p3a-adapt-views.mjs. */
 (function (root, factory) {
   'use strict';
   const Popover=typeof module==='object'&&module.exports?require('../共享/popover.js'):globalThis.CxxPopover;
@@ -436,7 +436,7 @@
     const readInfo=element('p','','');audioPanel.append(readInfo);readInfo.hidden=true;
     const readStatus=element('div');readStatus.setAttribute('role','status');audioPanel.append(readStatus);let stopReadStatus;
     const bindReadStatus=()=>{stopReadStatus?.();stopReadStatus=mailWindow.CxxReading?.subscribe(s=>{readStatus.textContent=s.status;voiceButton.setAttribute('aria-pressed',String(s.playing&&s.floor===model.selectedFloor&&s.index===(model.paragraphIndex||0)));});};listen(mailWindow,'cxx-phone-ready',bindReadStatus);bindReadStatus();disposers.push(()=>stopReadStatus?.());
-    const auxiliaryMenu=element('details','cxx-gal-audio-tools'),auxiliaryToggle=element('summary','cxx-gal-button','附属内容'),auxiliaryBody=element('div','cxx-gal-audio-panel');auxiliaryMenu.append(auxiliaryToggle,auxiliaryBody);tools.prepend(auxiliaryMenu);let auxiliarySignature='';
+    const auxiliaryMenu=element('details','cxx-gal-audio-tools'),auxiliaryToggle=element('summary','cxx-gal-button','附属内容'),auxiliaryBody=element('div','cxx-gal-audio-panel cxx-gal-preset-details');auxiliaryMenu.append(auxiliaryToggle,auxiliaryBody);tools.prepend(auxiliaryMenu);let auxiliarySignature='';
     const readingBody = element('div', 'cxx-gal-reading-body');
     readingBody.append(dialogue, stats);
     const combatView=(doc.defaultView).CxxCombatView?.mount({document:doc,parent:readingBody,compact:true});
@@ -780,7 +780,7 @@
 
     function render(nextModel) {
       if (destroyed) return;
-      model = nextModel || {};const auxiliary=JSON.stringify(model.auxiliary||[]);if(auxiliary!==auxiliarySignature){auxiliarySignature=auxiliary;auxiliaryBody.replaceChildren();for(const item of model.auxiliary||[]){const fold=element('details'),heading=element('summary','',item.label||'更多'),body=element('pre','',item.text||item.body||'');fold.append(heading,body);auxiliaryBody.append(fold);}auxiliaryMenu.hidden=!auxiliaryBody.children.length;} 
+      model = nextModel || {};const items=model.auxiliary||model.presetAuxiliary||[],signature=JSON.stringify(items);if(signature!==auxiliarySignature){auxiliarySignature=signature;auxiliaryBody.replaceChildren();for(const item of items){const fold=element('details','cxx-gal-preset-detail'),heading=element('summary','',item.label||'更多'),body=element('div','',item.text||item.body||'');fold.append(heading,body);auxiliaryBody.append(fold);}auxiliaryMenu.hidden=!auxiliaryBody.children.length;}
       if(model.opening){boot?.destroy();boot=null;}else if(boot&&!bootParsed){bootParsed=true;boot.log('story','parse',Number.isInteger(model.floor)?'第 '+model.floor+' 楼':'当前正文',(model.paragraphs||[]).length+' 段');boot.stage(1,'done',Number.isInteger(model.floor)?'第 '+model.floor+' 楼':'');boot.stage(2,'now');}
       backgroundButton.hidden=Boolean(model.opening);backgroundButton.disabled=!model.backgroundInfo?.key;backgroundButton.textContent=model.backgroundInfo?.manual?'背景 · 手动':'背景';
       if(backgroundDialog.open&&backgroundChoiceKey!==model.backgroundInfo?.key)backgroundDialog.close();

@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/Gal/controller.js; source SHA256 d033e4c3400b9438eb6616a6a7854d7201b40795b8b6ab767111a3e0fe059c91. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/Gal/controller.js; source SHA256 b00ac4ac54446d4e7d3bda8fced22a54f918f08ad870e55d77a852c87581a1fa. Rebuild with tools/p3a-adapt-views.mjs. */
 /* G1: view state only; native messages and draft remain authoritative. */
 (function (root, factory) {
   const api = factory(typeof module === 'object' && module.exports ? require('./sprites.js') : root.CxxGalSprites);
@@ -18,7 +18,7 @@
     };
     let view = null, chatKey = '', selected = null, paragraphIndex = 0;
     let follow = true, error = '', pending = false, disposed = false, sendTimer, lastChoice;
-    let parsedDisplayRevision,parsedRaw, parsed, parsedMessage, parsedSwipe,parseTask=null,parseSequence=0;
+    let parsedDisplayRevision,parsedRaw, parsed, parsedMessage, parsedSwipe,parsedOptions='',parseTask=null,parseSequence=0;
     const parseRevisions=new WeakMap(),parseNamespace=Date.now().toString(36)+Math.random().toString(36).slice(2);
     const positions = new Map(), ids = new WeakMap();
     let nextId = 0,indexedChat=null,indexedLength=-1,indexedRevision=-1,indexedOpening=null,indexedKey='',messages=[],floorNumbers=new Map(),messageSet=new Set(),labels=[];
@@ -60,21 +60,21 @@
         const mirrorSource=globalThis?.CxxSource,floor=floorNumbers.get(selected),hostRaw=selected?.mes||'';
         const raw = selected&&!snapshot.generating&&!selected.is_user&&mirrorSource?mirrorSource.sync(floor):hostRaw;
         if(!snapshot.generating&&!snapshot.opening)view.beginReading?.({floor,scope:chatKey});
-        if (parsedDisplayRevision !== snapshot.displayRevision || parsedMessage !== selected || parsedRaw !== raw || parsedSwipe !== selected?.swipe_id) {
+        const parseOptions=snapshot.readingOptions||{},optionKey=JSON.stringify(parseOptions);if (parsedMessage !== selected || parsedRaw !== raw || parsedSwipe !== selected?.swipe_id || parsedOptions!==optionKey || parsedDisplayRevision !== snapshot.displayRevision) {
           const switched = parsedMessage !== selected || parsedSwipe !== selected?.swipe_id;
           const history=typeof globalThis!=='undefined'&&globalThis?.Cxx249History;
           if(history&&selected){
-            let source=parseRevisions.get(selected);if(!source||source.raw!==raw||source.swipe!==selected.swipe_id){source={raw,swipe:selected.swipe_id,revision:++parseSequence};parseRevisions.set(selected,source);}
+            let source=parseRevisions.get(selected);if(!source||source.raw!==raw||source.swipe!==selected.swipe_id||source.options!==optionKey){source={raw,swipe:selected.swipe_id,options:optionKey,revision:++parseSequence};parseRevisions.set(selected,source);}
             if(!parseTask||parseTask.source!==source||parseTask.message!==selected){const task=parseTask={source,message:selected,scope:chatKey,view};const valid=()=>!disposed&&view===task.view&&parseTask===task&&chatKey===task.scope&&selected===task.message&&selected.mes===hostRaw&&selected.swipe_id===source.swipe;
               const sharedSource=history.messageSource?.(selected,chatKey,'parse')||{key:'parse:'+parseNamespace+':'+chatKey+':'+idFor(selected),revision:source.revision,scope:chatKey};
-              history.submit('parse',{raw},{...sharedSource,isCurrent:valid}).then(value=>{if(!valid())return;parsed=value;parsedRaw=raw;parsedMessage=task.message;parsedSwipe=source.swipe;parseTask=null;if(switched)paragraphIndex=0;refresh();}).catch(e=>{if(valid()){parseTask=null;if(e.code!=='cxx-history-stale'){if(view.readingFailed)view.readingFailed(e.message,refresh,{floor,scope:chatKey});else close('Gal 阅读失败，已恢复原生聊天。'+e.message);}}});
+              history.submit('parse',{raw,options:parseOptions},{...sharedSource,key:sharedSource.key+':'+optionKey,isCurrent:valid}).then(value=>{if(!valid())return;parsed=value;parsedRaw=raw;parsedMessage=task.message;parsedSwipe=source.swipe;parsedOptions=optionKey;parseTask=null;if(switched)paragraphIndex=0;refresh();}).catch(e=>{if(valid()){parseTask=null;if(e.code!=='cxx-history-stale'){if(view.readingFailed)view.readingFailed(e.message,refresh,{floor,scope:chatKey});else close('Gal 阅读失败，已恢复原生聊天。'+e.message);}}});
             }
             if(view.renderStream)view.renderStream({paragraphs:switched?[]:parsed?.paragraphs||[],paragraphIndex:switched?0:paragraphIndex,busy:true,canStop:snapshot.canStop,status:snapshot.generating?'正文正在生成…':'正在读取正文…'});
             else view.setBusy?.('正在读取正文…');
             return;
           }
-          parsed = parser.parseMessage(raw,{nodeId:selected?.nodeId,key:selected?'gal:'+parseNamespace+':'+idFor(selected):'empty'});
-          parsedDisplayRevision=snapshot.displayRevision;parsedRaw = raw; parsedMessage = selected; parsedSwipe = selected?.swipe_id;
+          parsed = parser.parseMessage(raw,{...parseOptions,key:selected?'gal:'+parseNamespace+':'+idFor(selected):'empty'});
+          parsedDisplayRevision=snapshot.displayRevision;parsedRaw = raw; parsedMessage = selected; parsedSwipe = selected?.swipe_id;parsedOptions=optionKey;
           if (switched) paragraphIndex = 0;
         }
         paragraphIndex = Math.max(0, Math.min(paragraphIndex, Math.max(0, parsed.paragraphs.length - 1)));
@@ -89,7 +89,7 @@
         const illustration=selected&&!selected.is_user?globalThis?.CxxPlot?.illustrationsAt?.(selected,floor)?.at(-1):null;
         view.render({
           auxiliary:parsed.auxiliary||[],
-          opening: Boolean(snapshot.opening),
+          opening: Boolean(snapshot.opening),presetAuxiliary:(parsed.auxiliary||[]).filter(item=>item.kind==='preset-detail'),
           openingMessage: snapshot.openingMessage,
           openingSwipe: snapshot.swipeId ?? snapshot.openingMessage?.swipe_id,
           openingRaw: snapshot.openingMessage?.mes,

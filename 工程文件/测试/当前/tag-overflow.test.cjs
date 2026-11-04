@@ -63,6 +63,7 @@ test('reinstall uses one formatter dispatcher and releases owned listeners',()=>
   const x=rendering(),stop2=guard.install({top:x.top,api:x.api,runtime:x.runtime,parser});x.stop();
   assert.match(x.render(f.reported),/cxx-update-diagnostic/);assert.equal(x.doc.listeners.get('toggle').size,1);stop2();assert.equal(x.doc.listeners.get('toggle').size,0);
 });
+test('native preset notes fold at the formatter boundary with escaped content and raw retained',()=>{const x=rendering(),raw='<cxx-story>街角亮起灯。</cxx-story><details><summary>小猫之神的留言</summary>记得带伞。<img src=x onerror=alert(1)></details>';x.api.getLoadedPresetName=()=> '喵赛亚';const html=x.render(raw);assert.match(html,/cxx-preset-detail/);assert.match(html,/<summary>小猫之神的留言<\/summary>/);assert.match(html,/&lt;img/);assert(!html.includes('<img src=x'));assert.equal(parser.parseMessage(raw,{presetName:'nya'}).raw,raw);x.stop();});
 test('current bundled parser accepts valid input; staged main and worker agree and preserve unrelated card data',async()=>{
   const s=stage(),oldCore=s.original.data.extensions.tavern_helper.scripts.find(x=>x.id==='cxx-business-core-241').content,old=vm.createContext({});
   vm.runInContext(extract(oldCore,['CxxGalParser'])[0].source,old);assert.equal(old.CxxGalParser.inspect(f.valid).roots.find(r=>r.kind==='UpdateVariable').valid,true);
