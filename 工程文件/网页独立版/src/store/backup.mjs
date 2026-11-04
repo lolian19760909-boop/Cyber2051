@@ -47,6 +47,11 @@ export async function prepareImportedSnapshot(snapshot,{accountId,runId=newId('r
   next.tables.branches||=[];next.tables.branches.push({runId:oldRunId,branchId,headNodeId:nodeId,revision:next.run.revision+1,label:'从原档状态恢复'});Object.assign(next.run,{headNodeId:nodeId,branchId,revision:next.run.revision+1});
  }
  next=await (await import('../memory/rebase.mjs')).rebaseImportedMemory(next,{oldRunId,newRunId:runId,accountId,parser});
+ for(const row of next.tables.media||[])if(row.kind==='generated-image'){
+  const original=snapshot.tables.nodes.find(node=>node.nodeId===row.nodeId),target=next.tables.nodes.find(node=>node.nodeId===row.nodeId),record=row.record;
+  if(row.mediaId!=='illustration:'+row.nodeId||!original||!target||record?.format!==1||record.mime!=='image/png'||typeof record.image!=='string'||record.sourceKey!==JSON.stringify([originalAccount,oldRunId,row.nodeId,original.message?.raw]))throw fault('image_source','插图来源与原存档正文不一致');
+  row.record={...record,sourceKey:JSON.stringify([accountId,runId,row.nodeId,target.message.raw])};
+ }
  next.run={...next.run,runId,accountId,mode,importedFrom:{runId:oldRunId,accountId:originalAccount,at:new Date().toISOString(),issues:inspection.issues}};
  for(const name of SAVE_TABLES){next.tables[name]||=[];next.tables[name]=next.tables[name].map(row=>({...row,runId,...(Object.hasOwn(row,'accountId')?{accountId}:{})}));}
  const data=stateAt(next.tables.nodes,next.run.headNodeId);next.tables.states=next.tables.states.filter(row=>row.branchId!==next.run.branchId).concat({runId,branchId:next.run.branchId,data,revision:next.run.revision});

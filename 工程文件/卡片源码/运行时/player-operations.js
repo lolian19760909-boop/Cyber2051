@@ -9,7 +9,7 @@
     if(request.action.startsWith('quest-'))return Q.plan(stat,request,{questDefinitions,questSource,questCalibration});
     const next=copy(stat),previous=next.terminal.gameplay||{};let game=E.migrate(previous);
     if(request.action==='initialize'){
-      let existed=game.growth!==undefined;if(existed)E.growth.read(game.growth);
+      let existed=game.growth!==undefined;const openingFunds=!existed&&newChat&&identity?.setupToken?identity.openingFunds:undefined;if(existed)E.growth.read(game.growth);
       // A new scenario keeps its authored values and unknown fields. Only the
       // player fields follow the already configured opening, once per branch.
       if(!existed&&newChat&&startGame?.growth&&startGame.loadoutStart?.token===identity?.setupToken){
@@ -26,6 +26,8 @@
         game.loadoutStart={token:identity.setupToken,version:L.version};
       }
       if(!existed&&!game.numeric)game.numeric=E.initialNumeric(game,undefined,L.effects(game));
+      if(!existed&&newChat&&identity?.communityStart)game.origin={...copy(identity.communityStart),identityId:identity.communityStart.id,identityName:identity.communityStart.name,body:identity.communityStart.opening,definitionRef:copy(identity.communityStart.definitionRef)};
+      if(openingFunds!==undefined){const I=typeof module==='object'&&module.exports?require('./identity.js'):globalThis.CxxIdentity;next.terminal.wallet={...next.terminal.wallet,yen:I.normalizeFunds(openingFunds)};}
     }else{
       E.growth.read(game.growth);
       if(game.tactical?.encounter?.active&&!request.action.startsWith('tactical-'))throw Error('请先将战況交回剧情，再改变配点或装备。');

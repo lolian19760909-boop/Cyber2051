@@ -3123,3 +3123,8 @@
 
 #cxx-galgame-root .cxx-gal-growth{flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:8px 12px;border-left:3px solid var(--cxx-cyan);background:var(--cxx-panel);font-size:14px;line-height:1.5;overflow-wrap:anywhere}#cxx-galgame-root .cxx-gal-growth[hidden]{display:none}#cxx-galgame-root .cxx-gal-growth strong{flex:1 1 220px}#cxx-galgame-root .cxx-gal-growth button{min-height:44px;white-space:normal}
 #cxx-galgame-root .cxx-gal-read-bar:has(>.cxx-gal-growth:not([hidden])){flex-wrap:wrap}
+/* Preset-owned notes live with the existing reading tools. */
+.cxx-gal-preset-details:empty{display:none}
+.cxx-gal-preset-detail{min-width:220px;max-width:min(480px,80vw);padding:10px;border-top:1px solid var(--cxx-line);font-size:14px;line-height:1.7}
+.cxx-gal-preset-detail summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
+.cxx-gal-preset-detail>div{max-height:42vh;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}

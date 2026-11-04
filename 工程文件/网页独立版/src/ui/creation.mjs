@@ -4,6 +4,7 @@ import { parseReply } from '../app/parse.mjs';
 import {openingAction} from '../app/opening.mjs';
 import { appUrl } from '../platform/paths.mjs';
 import {sourceScripts,sourceText} from './source.mjs';
+import {createWorkshopView} from './workshop.mjs';
 const url=file=>appUrl('card/'+file.split('/').map(encodeURIComponent).join('/'));
 async function json(file){const response=await fetch(url(file));if(!response.ok)throw new Error('开局数据读取失败：'+file);return response.json();}
 async function text(file){const response=await fetch(url(file));if(!response.ok)throw new Error('开局样式读取失败：'+file);return response.text();}
@@ -24,15 +25,17 @@ export async function mountCreation({parent,session,statePort,contentVersion,gam
   // Do not ask an independent page to import ST's personas module.
   globalThis.CxxStoryProfile={...originalProfile,currentAvatar:async()=>'',hostPersona:()=>''};
   let view,previewNode,disposed=false,createdNode=null,frame=null,previewId=null,previewEpoch=0,bandId=null,personId=null,pendingCommand=null,authoredText='',stopAssets=null,stopSounds=null,stopSetup=null;
+  const workshopView=await createWorkshopView({session,onChanged:()=>flow.refresh()});
   const identity=globalThis.CxxIdentity,Flow=globalThis.CxxOpeningFlow;
   const flow=Flow.create({key:session.identity.runId,scope:{instanceId:session.identity.mode+':'+session.identity.accountId,slot:session.identity.runId},identity,loadout:globalThis.CxxLoadout,storage:localStorage,
-    readIdentity:()=>null,readPreferences:()=>({device:'auto',level:'medium',gal:true,mirror:false}),readProfile:()=>originalProfile.seed(window),readOpening:id=>groups.beginnings.find(row=>row.id===id)?.text||'',prepare:async()=>{},
+    readIdentity:()=>null,readPreferences:()=>({device:'auto',level:'medium',gal:true,mirror:false}),readProfile:()=>originalProfile.seed(window),readStarts:()=>session.content.startChoices(),readOpening:id=>groups.beginnings.find(row=>row.id===id)?.text||'',prepare:async()=>{},
     async submit(selection){
       const head=await statePort.readHead(session.identity.runId),operationId='creation:'+selection.creationId,nodeId='opening_'+selection.creationId;
       const existing=await statePort.readReceipt(session.identity.runId,operationId);
       if(existing){createdNode=existing.nodeId;return;}
       if(head.headNodeId)throw new Error('此故事已有正式开局，请返回继续，或新建故事');
       const value={...selection.value,setupToken:selection.creationId};
+      if(value.communityStart)await session.workshop.command({command:'enable',id:value.definitionRef.packageId,version:value.definitionRef.version,enabled:true});
       const initial=globalThis.CxxPlayerOperations.plan(session.rules.emptyRoot(),{action:'initialize'},{identity:value,newChat:true});
       initial.__cxx_identity=value;
       value.openingScenario=selection.swipe;if(selection.openingText!==undefined)value.openingKind='written';
@@ -46,7 +49,7 @@ export async function mountCreation({parent,session,statePort,contentVersion,gam
       if(result.status==='conflict')throw new Error('另一页面已建立开局，请重新读取');
       createdNode=result.nodeId;
     },
-    async verify(){if(!createdNode||!(await statePort.readNode(session.identity.runId,createdNode)))throw new Error('开局尚未保存完成');},send:async command=>{pendingCommand=command;},onFailure:onError,
+    async verify(){if(!createdNode||!(await statePort.readNode(session.identity.runId,createdNode)))throw new Error('开局尚未保存完成');await statePort.createCheckpoint(session.identity.runId,'开局存档',{nodeId:createdNode,checkpointId:'opening_'+createdNode});},send:async command=>{pendingCommand=command;},onFailure:onError,
     onComplete(){if(disposed)return;queueMicrotask(async()=>{try{await onComplete?.({pendingCommand,handoff:async()=>{await session.restore();destroy();}});}catch(error){onError?.(error);}});},
   });
   const preview={
@@ -83,6 +86,6 @@ export async function mountCreation({parent,session,statePort,contentVersion,gam
 
   parent.replaceChildren(view.root);
 
-  function destroy(){if(disposed)return;disposed=true;stopSetup?.();clearPreview();view?.destroy();flow.destroy();globalThis.CxxStoryProfile=originalProfile;globalThis.Cxx236OpeningHost=priorOpeningHost;}
+  function destroy(){if(disposed)return;disposed=true;stopSetup?.();workshopView.destroy();clearPreview();view?.destroy();flow.destroy();globalThis.CxxStoryProfile=originalProfile;globalThis.Cxx236OpeningHost=priorOpeningHost;}
   return {flow,destroy};
 }

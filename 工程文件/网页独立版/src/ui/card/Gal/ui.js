@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/Gal/ui.js; source SHA256 1cef1c8dac4845a8de909ec9be8bd064b05ae3887d86e79185f96687881a9d7f. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/Gal/ui.js; source SHA256 7239485b3a0d2937b65ce11d62c5440405a2dfae87c78ed62f876ebdad0d04e4. Rebuild with tools/p3a-adapt-views.mjs. */
 (function (root, factory) {
   'use strict';
   const Popover=typeof module==='object'&&module.exports?require('../共享/popover.js'):globalThis.CxxPopover;
@@ -191,7 +191,8 @@
     const closeButton = button('正文', function () { call('onClose'); });
     closeButton.title = '关闭 Galgame 界面，保留聊天和输入草稿';
     const workshopButton = button('工坊', function () { call('onWorkshop'); });
-    workshopButton.title = '确认后前往官网创意工坊';
+    const imageButton=button('插图',()=>{const host=doc.defaultView,images=host.CxxImages||host.parent?.CxxImages;if(images)void images.open(model.selectedFloor??model.floor).catch(error=>call('onError',error.message));});imageButton.title='编辑提示词、生成或重画本楼插图';
+    workshopButton.title = '订阅工坊内容与选择本存档版本';
     navSubtitle(statusButton, 'CHARACTERS'); navSubtitle(terminalButton, 'TERMINAL');
     navSubtitle(workshopButton, 'WORKSHOP');
     navSubtitle(mapButton, 'CITY MAP');
@@ -221,7 +222,7 @@
     moreItems.append(button('电台',()=>{closeMore(true);try{mailWindow.Cxx233Terminal?.openPage('network',2);}catch(e){call('onError',e.message);}}));
     const settingsButton=button('设置',()=>call('onSettings'));
     const backgroundButton=button('背景',openBackground);backgroundButton.setAttribute('aria-haspopup','dialog');
-    const backupButton=button('备份',()=>call('onBackup'));tools.replaceChildren(closeButton,backgroundButton,terminalButton,backupButton,settingsButton,menuButton);header.append(brand, tools);
+    const backupButton=button('备份',()=>call('onBackup'));tools.replaceChildren(closeButton,workshopButton,imageButton,backgroundButton,terminalButton,backupButton,settingsButton,menuButton);header.append(brand, tools);
     const backgroundDialog=element('dialog','cxx-gal-background-picker'),backgroundTitle=element('h2','','选择当前场景背景'),backgroundNote=element('p','','仅用于当前回复。'),backgroundSelect=element('select'),backgroundPreview=element('img'),backgroundActions=element('div','cxx-gal-background-actions');
     backgroundSelect.setAttribute('aria-label','背景图片');backgroundPreview.alt='背景预览';let backgroundChoiceKey='';
     const backgroundAuto=button('恢复自动',()=>{call('onBackground',{filename:'',key:backgroundChoiceKey});backgroundDialog.close();}),backgroundApply=button('使用这张',()=>{call('onBackground',{filename:backgroundSelect.value,key:backgroundChoiceKey});backgroundDialog.close();}),backgroundCancel=button('关闭',()=>backgroundDialog.close());
@@ -264,7 +265,7 @@
     // Story pictures behave like a galgame CG: they cover the scene on their own floor while dialogue continues.
     let storyCgImage=null,storyCgUrl='';
     function renderStoryCg(value){
-      const url=safeSpriteUrl(value?.url);
+      if(value?.url===storyCgUrl)return;const url=/^data:image\/png;base64,[A-Za-z0-9+/]+={0,2}$/.test(value?.url||'')?value.url:safeSpriteUrl(value?.url);
       if(storyCgUrl===url)return;
       storyCgUrl=url;
       const old=storyCgImage;storyCgImage=null;
@@ -436,7 +437,7 @@
     const readInfo=element('p','','');audioPanel.append(readInfo);readInfo.hidden=true;
     const readStatus=element('div');readStatus.setAttribute('role','status');audioPanel.append(readStatus);let stopReadStatus;
     const bindReadStatus=()=>{stopReadStatus?.();stopReadStatus=mailWindow.CxxReading?.subscribe(s=>{readStatus.textContent=s.status;voiceButton.setAttribute('aria-pressed',String(s.playing&&s.floor===model.selectedFloor&&s.index===(model.paragraphIndex||0)));});};listen(mailWindow,'cxx-phone-ready',bindReadStatus);bindReadStatus();disposers.push(()=>stopReadStatus?.());
-    const auxiliaryMenu=element('details','cxx-gal-audio-tools'),auxiliaryToggle=element('summary','cxx-gal-button','附属内容'),auxiliaryBody=element('div','cxx-gal-audio-panel');auxiliaryMenu.append(auxiliaryToggle,auxiliaryBody);tools.prepend(auxiliaryMenu);let auxiliarySignature='';
+    const auxiliaryMenu=element('details','cxx-gal-audio-tools'),auxiliaryToggle=element('summary','cxx-gal-button','附属内容'),auxiliaryBody=element('div','cxx-gal-audio-panel cxx-gal-preset-details');auxiliaryMenu.append(auxiliaryToggle,auxiliaryBody);tools.prepend(auxiliaryMenu);let auxiliarySignature='';
     const readingBody = element('div', 'cxx-gal-reading-body');
     readingBody.append(dialogue, stats);
     const combatView=(doc.defaultView).CxxCombatView?.mount({document:doc,parent:readingBody,compact:true});
@@ -780,7 +781,7 @@
 
     function render(nextModel) {
       if (destroyed) return;
-      model = nextModel || {};const auxiliary=JSON.stringify(model.auxiliary||[]);if(auxiliary!==auxiliarySignature){auxiliarySignature=auxiliary;auxiliaryBody.replaceChildren();for(const item of model.auxiliary||[]){const fold=element('details'),heading=element('summary','',item.label||'更多'),body=element('pre','',item.text||item.body||'');fold.append(heading,body);auxiliaryBody.append(fold);}auxiliaryMenu.hidden=!auxiliaryBody.children.length;} 
+      model = nextModel || {};const items=model.auxiliary||model.presetAuxiliary||[],signature=JSON.stringify(items);if(signature!==auxiliarySignature){auxiliarySignature=signature;auxiliaryBody.replaceChildren();for(const item of items){const fold=element('details','cxx-gal-preset-detail'),heading=element('summary','',item.label||'更多'),body=element('div','',item.text||item.body||'');fold.append(heading,body);auxiliaryBody.append(fold);}auxiliaryMenu.hidden=!auxiliaryBody.children.length;}
       if(model.opening){boot?.destroy();boot=null;}else if(boot&&!bootParsed){bootParsed=true;boot.log('story','parse',Number.isInteger(model.floor)?'第 '+model.floor+' 楼':'当前正文',(model.paragraphs||[]).length+' 段');boot.stage(1,'done',Number.isInteger(model.floor)?'第 '+model.floor+' 楼':'');boot.stage(2,'now');}
       backgroundButton.hidden=Boolean(model.opening);backgroundButton.disabled=!model.backgroundInfo?.key;backgroundButton.textContent=model.backgroundInfo?.manual?'背景 · 手动':'背景';
       if(backgroundDialog.open&&backgroundChoiceKey!==model.backgroundInfo?.key)backgroundDialog.close();

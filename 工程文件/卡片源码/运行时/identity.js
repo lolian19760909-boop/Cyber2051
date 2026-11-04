@@ -39,16 +39,17 @@
     }
     if(value.perks&&Object.keys(value.perks).length)result.perks=structuredClone(value.perks);return result;
   }
-  function snapshot(id,custom='',growthSetup,loadoutSetup){
+  function normalizeFunds(value){if(typeof value!=='number'&&typeof value!=='string'||String(value).trim()===''||!Number.isSafeInteger(Number(value)))throw Object.assign(Error('请填写整数开局资金，0也可以。'),{code:'identity-funds-input',field:'openingFunds',label:'开局资金'});return Number(value);}
+  function snapshot(id,custom='',growthSetup,loadoutSetup,openingFunds){
     const entry=entries.find(e=>e.id===id);
     if(id==='custom'){
       if(typeof custom!=='string'||/<\s*\/?(?:script|iframe)|<[%]/i.test(custom))throw Object.assign(Error('出身背景只接受纯文字，也可以留空。'),{code:'identity-background-input'});
-      return {schema:1,id,name:'自定义身份',background:custom.trim(),...(growthSetup===undefined?{}:{growthSetup:normalizeSetup(id,growthSetup)}),...(loadoutSetup===undefined?{}:{loadoutSetup:L.normalizeSetup(id,loadoutSetup)})};
+      return {schema:1,id,name:'自定义身份',background:custom.trim(),...(growthSetup===undefined?{}:{growthSetup:normalizeSetup(id,growthSetup)}),...(loadoutSetup===undefined?{}:{loadoutSetup:L.normalizeSetup(id,loadoutSetup)}),...(openingFunds===undefined?{}:{openingFunds:normalizeFunds(openingFunds)})};
     }
     if(!entry)throw Error('身份编号无效。');
-    return {schema:1,id,name:entry.name,background:entry.background,...(growthSetup===undefined?{}:{growthSetup:normalizeSetup(id,growthSetup)}),...(loadoutSetup===undefined?{}:{loadoutSetup:L.normalizeSetup(id,loadoutSetup)})};
+    return {schema:1,id,name:entry.name,background:entry.background,...(growthSetup===undefined?{}:{growthSetup:normalizeSetup(id,growthSetup)}),...(loadoutSetup===undefined?{}:{loadoutSetup:L.normalizeSetup(id,loadoutSetup)}),...(openingFunds===undefined?{}:{openingFunds:normalizeFunds(openingFunds)})};
   }
-  function valid(value){if(!(value?.schema===1&&['street','corpo','student','custom'].includes(value.id)&&typeof value.background==='string'))return false;try{if(value.growthSetup!==undefined)normalizeSetup(value.id,value.growthSetup);if(value.loadoutSetup!==undefined)L.normalizeSetup(value.id,value.loadoutSetup);return true;}catch(_){return false;}}
+  function valid(value){if(!(value?.schema===1&&['street','corpo','student','custom'].includes(value.id)&&typeof value.background==='string'))return false;try{if(value.growthSetup!==undefined)normalizeSetup(value.id,value.growthSetup);if(value.loadoutSetup!==undefined)L.normalizeSetup(value.id,value.loadoutSetup);if(value.openingFunds!==undefined&&normalizeFunds(value.openingFunds)!==value.openingFunds)return false;return true;}catch(_){return false;}}
   function promptContext(value){
     if(!valid(value))return '';
     const publicValue={...value};delete publicValue.setupToken;delete publicValue.loadoutSetup;
@@ -56,5 +57,5 @@
   }
   const css=(typeof CxxIdentityStyle==='string'?CxxIdentityStyle:'');
   const setupCss='';
-  return Object.freeze({KEY,entries,attributes,anchors,initialSetup,normalizeSetup,snapshot,valid,promptContext,css});
+  return Object.freeze({KEY,entries,attributes,anchors,initialSetup,normalizeSetup,normalizeFunds,snapshot,valid,promptContext,css});
 });

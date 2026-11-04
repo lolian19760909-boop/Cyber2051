@@ -114,6 +114,7 @@
  let shown=false;
  // Leaving the city page closes a phone detail, so coming back always starts at the list.
  const stop=app.subscribe(event=>{if(disposed)return;if(event?.preferences)tool()?.preferences();if(event?.data||event?.route)render();if(event?.route){const now=app.page==='city'&&!city.hidden;if(!now)page.dataset.view='list';if(now&&!shown)requestAnimationFrame(()=>motion('enter'));shown=now;}});
- window.TOKYO_TERMINAL_MAP_CONTROL={focus(mapId,placeId){return !disposed&&openMap({mapId,placeId})||false;},escape:()=>!disposed&&showList(),read:()=>tool()?.read().shell,destroy(){if(disposed)return;disposed=true;stop();resize.disconnect();phone.removeEventListener('change',layout);nav.removeEventListener('click',launch);animations.forEach(a=>a.cancel());}};
- window.addEventListener('pagehide',()=>window.TOKYO_TERMINAL_MAP_CONTROL.destroy(),{once:true});render();
+ const onPageHide=()=>control.destroy();
+ const control=window.TOKYO_TERMINAL_MAP_CONTROL={focus(mapId,placeId){return !disposed&&openMap({mapId,placeId})||false;},escape:()=>!disposed&&showList(),read:()=>tool()?.read().shell,destroy(){if(disposed)return;disposed=true;stop();resize.disconnect();phone.removeEventListener('change',layout);nav.removeEventListener('click',launch);window.removeEventListener('pagehide',onPageHide);animations.forEach(a=>a.cancel());}};
+ window.addEventListener('pagehide',onPageHide,{once:true});render();
 })();

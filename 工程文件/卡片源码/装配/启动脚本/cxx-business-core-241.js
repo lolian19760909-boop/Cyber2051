@@ -1462,7 +1462,7 @@ const publish=(name,value,dispose)=>runtime.register(name,value,dispose,["Cxx233
 (function(root,factory){root.Cxx249HistoryRuntime=factory();})(globalThis,function(){throw Error("Unassembled module: Cxx249HistoryRuntime");});
 
 const CXX249_HISTORY_WORKER_SOURCE="";
-const parser249=CxxGalParser;const history249=Cxx249HistoryRuntime.create({workerSource:CXX249_HISTORY_WORKER_SOURCE,run:(kind,payload)=>kind==='parse'?parser249.parseMessage(payload.raw,{cache:false}):CxxStorySummaries.row(payload.message,payload.floor,parser249)});parent.Cxx233Runtime.register('Cxx249History',history249,()=>{history249.destroy();parser249.setCacheEnabled(true);});parser249.clearCache();parser249.setCacheEnabled(false);
+const parser249=CxxGalParser;const history249=Cxx249HistoryRuntime.create({workerSource:CXX249_HISTORY_WORKER_SOURCE,run:(kind,payload)=>kind==='parse'?parser249.parseMessage(payload.raw,{...payload.options,cache:false}):CxxStorySummaries.row(payload.message,payload.floor,parser249)});parent.Cxx233Runtime.register('Cxx249History',history249,()=>{history249.destroy();parser249.setCacheEnabled(true);});parser249.clearCache();parser249.setCacheEnabled(false);
 const newsService=CxxExperienceHost.create();own(publish('Cxx233News',newsService,()=>newsService.destroy()));newsService.start();
 })().catch(error=>{__cxxStageError("[新闻与论坛]",error);parent.toastr?.error(error.message,"新闻与论坛");});
 

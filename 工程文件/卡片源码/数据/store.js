@@ -204,7 +204,13 @@
       target.mate ||= JSON.parse(JSON.stringify(template.mate));
       // A saved template may omit optional display/export settings which the live
       // table already owns. Preserve them when changing our DDL; absence keeps data.
-      for (const [key, sheet] of Object.entries(exported || {})) if (/^sheet_/.test(key)) target[key] = { ...JSON.parse(JSON.stringify(sheet)), ...target[key] };
+      for (const [key, sheet] of Object.entries(exported || {})) if (/^sheet_/.test(key)) {
+        const savedKey = Object.keys(target).find(candidate => /^sheet_/.test(candidate) && (candidate === key || sheet.uid && target[candidate]?.uid === sheet.uid || sheet.name && target[candidate]?.name === sheet.name));
+        const saved = target[savedKey] || {}, wasTemplate = existingTemplateKeys.delete(savedKey);
+        target[key] = { ...JSON.parse(JSON.stringify(sheet)), ...saved, uid: sheet.uid || key };
+        if (savedKey && savedKey !== key) delete target[savedKey];
+        if (wasTemplate) existingTemplateKeys.add(key);
+      }
       for (const key of Object.keys(template).filter(key => /^sheet_/.test(key))) {
         const wanted = template[key];
         const exists = Object.entries(target).some(([savedKey, saved]) => /^sheet_/.test(savedKey) && (savedKey === key || saved?.uid === wanted.uid || saved?.name === wanted.name));

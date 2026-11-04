@@ -4,6 +4,7 @@
   const steps=['origin','profile','growth','loadout','scenario','review'],labels=['人生出身','捏人与背景','能力配点','初始装备','乐队与开局','确认开始'];
   const scenarioTitle=id=>id==='custom-opening'?'自己写第一幕':global.CxxOpeningGroups?.beginnings?.find(x=>x.id===id)?.title||global.CxxOpeningCatalog?.find(x=>x.id===id)?.title||'';
   function mount({document:doc,flow,identity:I,setup:Setup,css,preview,resolveDevice,manageViewport=true}){
+    const openWorkshop=()=>{if(preview.openWorkshop)return preview.openWorkshop();const win=doc.defaultView.parent||doc.defaultView;return win.CxxWorkshopWebsite.open();};
     let state=flow.state(),viewKey='',loadout=null,updates=[],destroyed=false,avatarEpoch=0,creator=null,creatorView={},guidedRevision=0,markedInput=null,detailKey='',selectedItem=null,forge=null,forgeEpoch=0,forgeClosing=Promise.resolve(),itemSource='';
     const node=(tag,cls,text)=>{const n=doc.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
     const button=(text,run,cls='')=>{const b=node('button',cls,text);b.type='button';b.onclick=()=>{try{Promise.resolve(run()).catch(e=>flow.markError(e));}catch(e){flow.markError(e);}};return b;};
@@ -61,6 +62,7 @@
         b.append(node('span','identity-copy',e.intro));updates.push(()=>{const selected=state.draft.origin===e.id;b.setAttribute('aria-checked',String(selected));b.tabIndex=selected?0:-1;});
         b.onkeydown=ev=>{if(!['ArrowLeft','ArrowRight'].includes(ev.key))return;ev.preventDefault();const next=all[(i+(ev.key==='ArrowRight'?1:all.length-1))%all.length];flow.chooseOrigin(next.id);cards.querySelector('[data-identity="'+next.id+'"]').focus();};cards.append(b);
       });
+      const workshop=node('section','identity-panel');workshop.append(node('h3','','工坊人设'));const select=node('select');select.setAttribute('aria-label','工坊人设模板');select.dataset.cxxNativeSelect='';let choices='';updates.push(()=>{const list=flow.starts?.()||[],stamp=JSON.stringify(list.map(row=>[row.id,row.definitionRef]));if(stamp!==choices){choices=stamp;select.replaceChildren();const none=node('option','','选择已订阅的人设');none.value='';select.append(none);for(const row of list){const option=node('option','',row.name);option.value=row.id;select.append(option);}}select.value=state.draft.communityStart?.id||'';});select.onchange=()=>{if(select.value)flow.chooseStart(select.value);};workshop.append(select,button('打开工坊',openWorkshop));body.append(workshop);
       mirrorChoice(body);
     }
     function growth(){
@@ -87,7 +89,7 @@
     }
     function review(){
       heading('准备好，走进这座城市。','检查最后一遍。点击开始游戏后，才会建立故事并进入所选开局。');const d=state.draft,layout=node('div','opening-review'),info=node('section','opening-review-card');layout.append(info);body.append(layout);info.append(node('small','','YOUR STORY / 档案确认'),node('h3','',d.profile?.name||'沿用当前人物'),node('p','',I.entries.find(e=>e.id===d.origin)?.name||'自定义出身'),node('p','',d.profile?.personality||'性格交由故事逐渐展现'),node('h3','',scenarioTitle(d.scenario)||'尚未选择'),node('p','','能力与装备按上一页的选择建立。返回任何步骤都不会提前发放或消耗。'));
-      info.append(node('p','opening-worldbook-notice','人物资料保存在原世界书内属于本存档的 user 条目中；每条新路线各有自己的条目。'));
+      info.append(node('p','opening-starting-funds',d.openingFunds===undefined?'沿用已保存的钱包':'开局资金 · ¥ '+I.normalizeFunds(d.openingFunds).toLocaleString('zh-CN')));info.append(node('p','opening-worldbook-notice','人物资料保存在原世界书内属于本存档的 user 条目中；每条新路线各有自己的条目。'));
       if(global.CxxOpeningFlow.isDirect(d.scenario)){info.append(node('h3','','第一幕原文'),node('div','opening-written-preview',d.scenario==='custom-opening'?d.openingText:global.CxxOpeningGroups?.beginnings?.find(x=>x.id===d.scenario)?.text||''));}
       const settings=node('section','opening-review-card');layout.append(settings);settings.append(node('h3','','阅读偏好'));for(const [key,title,opts]of [['gal','阅读方式',[[false,'原生阅读'],[true,'Gal 阅读']]],['level','画面特效',[['medium','标准'],['low','低特效'],['high','完整']]],['device','布局',[['auto','自动适配'],['desktop','桌面'],['mobile','手机']]]]){const label=node('label','',title),select=node('select','');for(const [value,name]of opts){const option=node('option','',name);option.value=String(value);select.append(option);}select.value=String(d.preferences[key]);select.onchange=()=>flow.patch({preferences:{[key]:key==='gal'?select.value==='true':select.value}});label.append(select);settings.append(label);}mirrorChoice(settings);
     }
@@ -98,7 +100,7 @@
         if(state.restoreChoice){heading('发现一份人物草稿',state.restoreChoice.legacy?'这是旧版或归属未确认的草稿，可手动恢复文字；恢复后会重新确认人物设定。':'档位中保留了 '+state.restoreChoice.name+' 的草稿。');body.append(button('继续草稿',()=>flow.resolveDraft(true),'opening-next'),button('重新填写',()=>flow.resolveDraft(false),'opening-back'));}
         else if(step==='preferences')preferenceScreen();
         else if(step==='origin')origins();else if(step==='profile')persona();else if(step==='review')review();else if(step==='growth')growth();
-        else if(step==='loadout'){heading('你的初始装备','确认开局携带与已安装的物品，正式建档时生效。');loadout=Setup.mount({document:doc,parent:body,origin:state.draft.origin,initial:state.draft.loadouts[state.draft.origin],onChange:loadout=>flow.patch({loadout}),onSelect:item=>{selectedItem=item;paintStage('loadout');}});}
+        else if(step==='loadout'){heading('你的初始装备','填写开局资金，选择随身物品。确认开局时保存。');const funds=node('label','opening-funds'),label=node('span','','开局资金'),money=node('input','');money.type='number';money.step='1';money.value=state.draft.openingFunds??'';money.placeholder='由你填写，0也可以';money.setAttribute('aria-label','开局资金');money.dataset.openingField='openingFunds';money.oninput=()=>flow.patch({openingFunds:money.value});funds.append(label,money,node('small','','¥ · 可填写负数作为初始负债'));body.append(funds);loadout=Setup.mount({document:doc,parent:body,origin:state.draft.origin,initial:state.draft.loadouts[state.draft.origin],onChange:loadout=>flow.patch({loadout}),onSelect:item=>{selectedItem=item;paintStage('loadout');}});}
         else{heading('故事从哪一幕开始','先浏览剧情，再确认全部配置。');const pane=node('div','opening-scenario');body.append(pane);preview.mount(pane);}
         body.scrollTop=0;enterRows();
       }
@@ -203,8 +205,9 @@
     const motionHost=doc.defaultView.parent||doc.defaultView,reducedMotion=doc.defaultView.matchMedia('(prefers-reduced-motion: reduce)');
     function settleMotion(){const closing=stopForge();for(const animation of root.getAnimations({subtree:true}))animation.cancel();const hero=stageArt.querySelector('.opening-forge-hero');if(hero)hero.style.visibility='';return closing;}
     motionHost.addEventListener('cxx-theme-change',settleMotion);motionHost.addEventListener('cxx-ui-preferences-changed',settleMotion);reducedMotion.addEventListener('change',settleMotion);
+    const workshopChanged=()=>flow.refresh();motionHost.addEventListener('cxx-workshop-changed',workshopChanged);
     const off=flow.subscribe(s=>{const restored=state.restoreChoice&&!s.restoreChoice;state=s;if(restored)preferScreen=!s.draft.preferences?.nsfwChosen;if(!destroyed)paint();});
-    return {root,refresh:paint,destroy(){const closing=settleMotion();motionHost.removeEventListener('cxx-theme-change',settleMotion);motionHost.removeEventListener('cxx-ui-preferences-changed',settleMotion);reducedMotion.removeEventListener('change',settleMotion);creator?.destroy();fullTalent?.destroy();stopLayout?.();resizeObserver?.disconnect();sizeWindow.cancelAnimationFrame(layoutFrame);sizeWindow.removeEventListener('resize',resizeLayout);destroyed=true;stopOrientation?.();off();loadout?.destroy();preview.unmount();root.hidden=true;void closing.then(()=>root.remove());}};
+    return {root,refresh:paint,destroy(){motionHost.removeEventListener('cxx-workshop-changed',workshopChanged);const closing=settleMotion();motionHost.removeEventListener('cxx-theme-change',settleMotion);motionHost.removeEventListener('cxx-ui-preferences-changed',settleMotion);reducedMotion.removeEventListener('change',settleMotion);creator?.destroy();fullTalent?.destroy();stopLayout?.();resizeObserver?.disconnect();sizeWindow.cancelAnimationFrame(layoutFrame);sizeWindow.removeEventListener('resize',resizeLayout);destroyed=true;stopOrientation?.();off();loadout?.destroy();preview.unmount();root.hidden=true;void closing.then(()=>root.remove());}};
   }
   return {mount};
 });

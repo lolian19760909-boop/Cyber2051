@@ -68,6 +68,7 @@
           }
           record={...record,status:'awaiting-reload',sessionId};state=host.readState();state.updaterUpgrade=record;await host.saveState(state,expected);
           report('正在保存新版更新器；请勿切换聊天');host.assertContext(expected);
+          await host.assertCharacterWritable(expected);
           api.updateScriptTreesWith(value=>patch(value,before,content,Core),{type:'character'});
           let confirmed=false;for(const delay of [0,250,500,1000,2000,4000]){if(delay)await wait(delay);host.assertContext(expected,true);const disk=await host.persisted(expected);const got=flat(disk.extensions.tavern_helper.scripts).find(s=>s.id===ID);if(got&&await Core.sha256(got.content)===manifest.targetHash){const expectedScript={...before,content};if(Core.canonical(got)!==Core.canonical(expectedScript))fail('upgrade-data-changed','代码已保存，但脚本数据读回不同，保留原备份等待核对');confirmed=true;break;}}
           if(!confirmed)fail('upgrade-save-unconfirmed','尚未确认落盘，保留原件和升级记录；请刷新后用同一工具核对');

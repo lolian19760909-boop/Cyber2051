@@ -20,18 +20,8 @@ for (const mapId of C.schema().maps.map(map => map.id)) test(mapId + ' drafts pa
       // Stay within the real per-author limit; never disable rate limiting for a test.
       const owner = owners[caseIndex++ % owners.length];
       const place = map.places.at(-1);
-      const payload = form.gameplay ? require("../../网站/gateway/workshop-gameplay-fixtures.cjs").payload(form.id) : { format: 1, templateKind: form.id };
-      if (form.gameplay) {
-        payload.mapId = map.id; payload.placeId = place.id;
-        for (const row of [...payload.gameplay.shops, ...payload.gameplay.services]) row.location = { mapId: map.id, placeId: place.id };
-        for (const row of payload.gameplay.encounters) row.requires.location = { mapId: map.id, placeId: place.id };
-      } else if (form.type === 'contract') payload.contract = { fixer: '隔离投稿', type: '调查', difficulty: '低', pay: 0,
-        brief: '隔离测试，不发布正式内容。', goal: '核对地点身份', mapId: map.id, placeId: place.id };
-      else {
-        Object.assign(payload, { mapId: map.id, placeId: place.id, keywords: ['隔离地点'] });
-        for (const [field, , required] of form.fields) if (required) payload[field] = '隔离文字';
-      }
-      const draft = { type: form.type, title: '地点隔离验证', summary: '', authorName: '', tags: [], payload };
+      const payload=require('../../网站/gateway/workshop-gameplay-fixtures.cjs').payload(form.id);Object.assign(payload.contract||payload,{mapId:map.id,placeId:place.id});if(payload.contract)payload.contract.pay=0;else payload.keywords=['隔离地点'];
+      const draft = { type: form.type, title: '地点隔离验证', summary: '隔离地图身份测试', authorName: '', tags: [], payload };
       const created = await call('/api/workshop/submissions', owner, draft); assert.equal(created.status, 201, JSON.stringify({ template: form.id, body: created.body }));
       const id = created.body.id, first = await call(`/api/admin/submissions/${id}/approve`, admin, { baseRevision: 1 });
       assert.equal(first.status, 200); const package1 = first.body.artifact.package;

@@ -363,7 +363,7 @@
       }
       return refreshEmbeddedProjection(left,right,expected,name,raw,route,stillCurrent);
     }
-    async function assertFreshCharacter(expected, allowPendingRead = false) {
+    async function assertFreshCharacter(expected, allowPendingRead = false, {fullWrite=false}={}) {
       await context().unshallowCharacter(String(context().characterId)); assertContext(expected, true);
       const disk = await persisted(expected); assertContext(expected, true);
       const cached = api.getCharData('current');
@@ -374,7 +374,7 @@
       assertContext(expected, true);
       if (cachedText !== api.getCharData('current')?.json_data) throw error('stale-character-cache', '检查时本地角色再次变化，已停止更新');
       const outer=typeof cachedText==='string'?JSON.parse(cachedText):cached;
-      for (const key of topKeys) if (!outerCharacterKeys.has(key)&&!Comparison.mirroredOuterField(outer,key)) throw error('unsupported-character-field', '助手存盘不能保留角色 JSON 顶层字段 ' + key + '，已停止更新');
+      if(fullWrite)for (const key of topKeys) if (!outerCharacterKeys.has(key)&&!Comparison.mirroredOuterField(outer,key)) throw error('unsupported-character-field', '助手存盘不能保留角色 JSON 顶层字段 ' + key + '，已停止更新');
       let left = comparableCharacter(cached); let right = comparableCharacter(disk);
       if (!same(left, right)) {
         const pending = allowPendingRead && await mirror(expected.characterKey, 'readonly', row => ({ result: row }));
@@ -409,7 +409,7 @@
         if (!same(left, right) && await refreshUpdaterProjection(left,right,expected)) left=comparableCharacter(api.getCharData('current'));
         if (!same(left, right)) throw error('stale-character-cache', '当前窗口的角色缓存与磁盘不一致，已停止更新；请先保存本地修改，再刷新该窗口');
       }
-      await guardCharacter(left, expected); assertContext(expected, true);
+      if(fullWrite)await guardCharacter(left, expected); assertContext(expected, true);
     }
     async function confirm(test, expected, code = 'save-not-confirmed', message = '尚未确认角色已保存到磁盘，保留恢复记录') {
       for (const delay of [0, 250, 500, 1000, 2000, 3000, 4000]) {
@@ -431,7 +431,7 @@
       const scriptsBefore = clone(api.getScriptTrees({type:'character'}));
       // The recovery surface also serves TT's main-thread virtual API. Use the
       // helper writer and ordinary fetch there, not the ST-only worker shortcut.
-      if (recoveryOnly || !await stateStore?.write(value,expected)) await api.updateVariablesWith(vars => { vars[NAMESPACE] = clone(value); return vars; }, { type: 'character' });
+      if (recoveryOnly || !await stateStore?.write(value,expected)) {await assertFreshCharacter(expected,false,{fullWrite:true});await api.updateVariablesWith(vars => { vars[NAMESPACE] = clone(value); return vars; }, { type: 'character' });}
       assertContext(expected, true);
       await confirm(data => {
         if (!same(settings(data).scripts || [], scriptsBefore)) throw error('script-persistence-mismatch', '角色脚本与保存前不一致，已停止后续写入；请导出诊断，并使用脚本诊断恢复工具。');
@@ -440,6 +440,7 @@
       const win=root.parent||root;win.dispatchEvent?.(new win.CustomEvent('cxx-content-changed',{detail:{revision:value.contentRevision}}));
     }
     async function readRawBook(name, expected = operationContext()) { return name ? post('worldinfo/get', { name }, expected) : { entries: {} }; }
+    async function saveChatPointer(chatId){const expected=getContext();if(expected.chatId!==chatId)throw error('context-changed','故事已切换，停止保存旧聊天指针');const response=await fetcher(new URL('/api/characters/merge-attributes',options.hostOrigin||root.parent.location.origin).href,{method:'POST',headers:context().getRequestHeaders(),credentials:'same-origin',cache:'no-store',body:JSON.stringify({avatar:expected.characterKey,chat:chatId})});assertContext(expected,true);if(!response.ok)throw error('chat-pointer-unconfirmed','最近故事指针保存失败：HTTP '+response.status);await response.text();const saved=await post('characters/get',{avatar_url:expected.characterKey},expected);if(saved.chat!==chatId)throw error('chat-pointer-unconfirmed','故事已载入，最近故事指针尚未确认，请重试进入');}
     let worldbookRuntimePromise;
     function worldbookRuntime() {
       return worldbookRuntimePromise ||= Promise.resolve().then(() => options.loadWorldInfoRuntime ? options.loadWorldInfoRuntime() : root.document ? ChatSaveGuard.importHostModule(api.parent||root.parent,'/scripts/world-info.js','未能读取宿主世界书缓存。') : null).then(runtime => {
@@ -447,7 +448,7 @@
         return runtime?.saveWorldInfo===c.saveWorldInfo && typeof runtime?.worldInfoCache?.set==='function' && typeof c.eventSource?.emit==='function' && c.eventTypes?.WORLDINFO_UPDATED ? runtime : null;
       }).catch(() => null);
     }
-    async function writeRawBook(name, value, expected = operationContext(), updateCache = false) {
+    async function writeRawBook(name, value, expected = operationContext(), updateCache = false, notify = true) {
       const ack = await post('worldinfo/edit', { name, data: value }, expected);
       if (ack.ok !== true) throw error('worldbook-not-saved', '世界书没有返回保存确认');
       if (updateCache) {
@@ -456,7 +457,7 @@
         // above already persisted this record; do not upload its full backup twice.
         // Hosts without that verified API retain the existing save/cache path.
         const runtime=await worldbookRuntime();assertContext(expected);
-        if(runtime){const c=context();runtime.worldInfoCache.set(name,clone(value));await c.eventSource.emit(c.eventTypes.WORLDINFO_UPDATED,name,clone(value));}
+        if(runtime){const c=context();runtime.worldInfoCache.set(name,clone(value));if(notify)await c.eventSource.emit(c.eventTypes.WORLDINFO_UPDATED,name,clone(value));}
         else await context().saveWorldInfo(name, clone(value), true);
       }
       const actual = await readRawBook(name, expected);
@@ -489,7 +490,7 @@
       if (recoveryOnly && (!currentJournal || !Object.hasOwn(currentJournal.before || {}, stage) || !same(value, currentJournal.before[stage]))) throw error('recovery-write-scope', '恢复模式只能恢复已核对安装记录中的原组件');
       const expected = operationContext(); assertContext(expected);
       if (!Object.hasOwn(expectedSnapshot, stage) || !same(await snapshot(expected, Object.keys(expectedSnapshot),{freshWorldbook:stage==='worldbook'}), expectedSnapshot)) throw error('concurrent-change', '组件已被其他操作修改，停止覆盖');
-      if (stage !== 'worldbook' || scope !== 'chat') await assertFreshCharacter(expected);
+      if (stage !== 'worldbook' || scope !== 'chat') await assertFreshCharacter(expected,false,{fullWrite:stage==='scripts'||stage==='regex'&&!options.rawRegex});
       if (stage === 'worldbook') {
         const old = expectedSnapshot.worldbook;
         let raw = await readRawBook(old.internalName, expected);
@@ -638,7 +639,7 @@
       const book=await readRawBook(name,expected);
       const all=book.extensions?.__cxx_update_journals||{};
       const slot={...all[instanceId],[kind]:{format:2,instanceId,journal:clone(journal)}};
-      await writeRawBook(name,{...book,extensions:{...book.extensions,__cxx_update_journals:{...all,[instanceId]:slot}}},expected,true);
+      await writeRawBook(name,{...book,extensions:{...book.extensions,__cxx_update_journals:{...all,[instanceId]:slot}}},expected,true,false);
     }
     async function readReleaseBackup(name) { const state=readState();return journalBackup(await readRawBook(name),state.instanceId,'release'); }
     function createStorage() {
@@ -876,7 +877,7 @@
       return acquire(async lock => {
         if (!lock) throw error('update-already-running', '另一个窗口正在更新');
         locked = true; lockedContext = captured; currentJournal = null;
-        try { assertContext(captured); await openMirror(); await assertFreshCharacter(captured, true); assertContext(captured); return await work(); }
+        try { assertContext(captured); await openMirror(); await assertFreshCharacter(captured, true); assertContext(captured); const book=readState(captured).journalName||api.getCharWorldbookNames?.('current')?.primary||getBookName(),run=()=>{assertContext(captured);return work(Object.freeze({worldbook:book}));};return await (book?queuedLock(locks,'cxx-worldbook:'+book,'exclusive',run):run()); }
         finally { locked = false; lockedContext = null; currentJournal = null; }
       });
     }
@@ -901,7 +902,8 @@
       if(!reading&&options.rawRegex)for(const name of ['writeExtensionField','getOneCharacter'])if(typeof c[name]!=='function')missing.push(name);
       return {operation,ok:missing.length===0,missing};
     }
-    return { getContext, assertContext, snapshot, capabilities, writeStage, readState, saveState, persisted, readRawBook, readReleaseBackup, writeRawBook, createStorage, withLock, withReadLock, withRescueReadLock, withChatSave, startChatSaveGuard, resetChatSaveGuard, stopChatSaveGuard, inspectChatSave, inspectInstall, assertNoPendingInstall, journalForeign, journalOrphan, assertPlayerWritable,
+    return { getContext, assertContext, snapshot, capabilities, writeStage, readState, saveState, saveChatPointer, persisted, readRawBook, readReleaseBackup, writeRawBook, createStorage, withLock, withReadLock, withRescueReadLock, withChatSave, startChatSaveGuard, resetChatSaveGuard, stopChatSaveGuard, inspectChatSave, inspectInstall, assertNoPendingInstall, journalForeign, journalOrphan, assertPlayerWritable,
+      assertCharacterWritable:(expected=operationContext())=>assertFreshCharacter(expected,false,{fullWrite:true}),
       confirmUpdaterWrite:expected=>assertFreshCharacter(expected),
       worldbookEntries: Object.freeze({ normalizeEntry, rawEntryRuntime, mergeRawEntry }),
       setScope: value => { if (!['character', 'chat'].includes(value)) throw error('invalid-scope', '未支持的世界书作用范围'); scope = value; }, getScope: () => scope,

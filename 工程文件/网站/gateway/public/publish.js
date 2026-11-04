@@ -2,6 +2,7 @@
 window.CXXOfficialRelease = ({ request, isAuthenticated, setBusy }) => {
   const $ = id => document.getElementById(id);
   let generation = 0, busy = false, ready = false, preview = null;
+  let queue=new Map();const queueSelect=$('release-queue');
   const t = (...strings) => window.CXXUI.t(...strings);
   let accountText = () => '', messageText = () => '', messageError = false;
   const MAX_BYTES = 8 * 1024 * 1024;
@@ -55,7 +56,7 @@ window.CXXOfficialRelease = ({ request, isAuthenticated, setBusy }) => {
   }
   function controls() {
     $('file-controls').disabled = busy || !ready;
-    $('preview').disabled = busy || !ready || (!$('files').files.length&&!$('withdraw-packages').selectedOptions.length);
+    $('preview').disabled = busy || !ready || (!$('files').files.length&&!$('withdraw-packages').selectedOptions.length&&!queueSelect?.selectedOptions.length);
     $('publish').disabled = busy || !ready || !preview || !$('confirm').checked;
     $('confirm').disabled = busy;
   }
@@ -63,6 +64,14 @@ window.CXXOfficialRelease = ({ request, isAuthenticated, setBusy }) => {
     try { return await request(path, body); }
     catch (e) { if (errors[e.code]) e.uiMessage = () => t(...errors[e.code]); throw e; }
   }
+  async function loadQueue(){
+    if(!queueSelect)return;const ticket=generation,selected=new Set([...queueSelect.selectedOptions].map(option=>option.value));$('queue-state').textContent='正在读取待发行投稿…';
+    try{const result=await api('/api/admin/workshop/release-queue');if(ticket!==generation||!isAuthenticated())return;queue=new Map(result.items.map(row=>[String(row.id),row]));queueSelect.replaceChildren();for(const [id,row]of queue){const option=document.createElement('option');option.value=id;option.textContent='#'+id+' · '+row.title+' · 修订'+row.revision+(row.needsCompilation?' · 待生成审核产物':' · '+row.packageRef.version);option.selected=selected.has(id);queueSelect.append(option);}$('queue-state').textContent=queue.size?'选择投稿后，与本次文件一起检查并预览。':'已通过的投稿均已发行。';}
+    catch(error){if(ticket===generation)$('queue-state').textContent=errorText(error);}finally{if(ticket===generation)controls();}
+  }
+  queueSelect?.addEventListener('change',()=>{invalidate();message('');});
+  $('queue-refresh')?.addEventListener('click',()=>{if(!busy){invalidate();loadQueue();}});
+  $('queue-compile')?.addEventListener('click',async()=>{if(busy)return;invalidate();const ticket=generation;busy=true;controls();try{for(const option of queueSelect.selectedOptions){const row=queue.get(option.value);if(row.needsCompilation)await api('/api/admin/submissions/'+row.id+'/contract-package',{baseRevision:row.revision});}if(ticket===generation)await loadQueue();}catch(error){if(ticket===generation)$('queue-state').textContent=errorText(error);}finally{if(ticket===generation){busy=false;controls();}}});
   async function load() {
     if (busy) return;
     invalidate(); message(''); ready = false; $('release').hidden = true; controls();
@@ -74,7 +83,7 @@ window.CXXOfficialRelease = ({ request, isAuthenticated, setBusy }) => {
       if (ticket !== generation) return;
       if (!j.publishingReady) account(() => t('发布服务尚未就绪，请检查服务配置。', 'The publishing service is not ready. Check its configuration.', '公開サービスが準備できていません。設定を確認してください。'));
       else {
-        ready = true; $('release').hidden = false;
+        ready = true; $('release').hidden = false;await loadQueue();if(ticket!==generation)return;
         $('withdraw-packages').replaceChildren();for(const p of j.packages||[])if(p.kind==='content'&&p.optional){const o=document.createElement('option');o.value=p.id;o.textContent=p.id+' · '+p.version;$('withdraw-packages').append(o);}
         account(() => t('管理员已验证，可以发布官方更新。', 'Administrator verified. Official publishing is ready.', '管理者確認済み。公式更新を公開できます。'));
       }
@@ -93,7 +102,7 @@ window.CXXOfficialRelease = ({ request, isAuthenticated, setBusy }) => {
     try {
       const files = [...$('files').files];
       const totalBytes = files.reduce((sum, f) => sum + f.size, 0);
-      if (files.length > 20 || totalBytes > MAX_CARD_BYTES) throw translatedError('本次最多选择 20 个文件；含完整角色卡时总大小不超过 16 MiB，纯内容不超过 8 MiB。', 'Select up to 20 files: 16 MiB total with a full card, or 8 MiB for content only.', '20ファイルまで。完全版カードを含む場合は合計16MiB、コンテンツのみは8MiB以下です。');
+      if (files.length+(queueSelect?.selectedOptions.length||0) > 20 || totalBytes > MAX_CARD_BYTES) throw translatedError('本次最多选择 20 个文件；含完整角色卡时总大小不超过 16 MiB，纯内容不超过 8 MiB。', 'Select up to 20 files: 16 MiB total with a full card, or 8 MiB for content only.', '20ファイルまで。完全版カードを含む場合は合計16MiB、コンテンツのみは8MiB以下です。');
       const body = { contents: [],withdraw:[...$('withdraw-packages').selectedOptions].map(o=>o.value) };
       for (const file of files) {
         let data;
@@ -106,6 +115,7 @@ window.CXXOfficialRelease = ({ request, isAuthenticated, setBusy }) => {
           body.core = data;
         } else body.contents.push(data);
       }
+      for(const option of queueSelect?.selectedOptions||[]){const row=queue.get(option.value);if(row.needsCompilation)throw Error('请先生成所选投稿的审核产物');const result=await api('/api/workshop/submissions/'+row.id+'/content-package');if(result.artifact.packageSha256!==row.packageRef.packageSha256)throw Error('投稿已变化，请刷新待发行队列');if(body.contents.some(pkg=>pkg.id===result.artifact.package.id))throw Error('同一内容包已在文件中选择，请保留一个来源');body.contents.push(result.artifact.package);}
       if (!body.card && totalBytes > MAX_BYTES) throw translatedError('纯内容或旧核心包的文件总大小不超过 8 MiB。', 'Content or legacy core files must total no more than 8 MiB.', 'コンテンツまたは旧コアのファイル合計は8MiB以下です。');
       if (ticket !== generation || !isAuthenticated()) return;
       const j = await api('/api/official/preview', body);
@@ -125,7 +135,7 @@ window.CXXOfficialRelease = ({ request, isAuthenticated, setBusy }) => {
       await api('/api/official/publish', { previewId: current.previewId, previewHash: current.previewHash });
       if (ticket !== generation) return;
       const withdrawn=new Set(current.packages.filter(p=>p.withdrawn).map(p=>p.id));
-      busy = false; setBusy(false); invalidate(); $('files').value = '';for(const o of [...$('withdraw-packages').options]){o.selected=false;if(withdrawn.has(o.value))o.remove();}renderFiles();
+      busy = false; setBusy(false); invalidate(); $('files').value = '';for(const o of [...$('withdraw-packages').options]){o.selected=false;if(withdrawn.has(o.value))o.remove();}renderFiles();if(queueSelect){for(const option of queueSelect.options)option.selected=false;await loadQueue();}
       message(() => withdrawn.size===current.packages.length
         ? t('已撤回公开发行。新的目录不再提供这些包；已安装内容与历史记录保留。','Public distribution withdrawn. New catalogs omit these packages; installed content and history remain.','公開配布を撤回しました。新しい一覧から除外されますが、インストール済みの内容と履歴は残ります。')
         : t('更新清单已发布。新增内容由玩家选择安装；本次撤回的包停止公开分发，历史记录保留。','Catalog published. Players choose whether to install new content; withdrawn packages leave public distribution while history remains.','更新一覧を公開しました。新しい内容の導入はプレイヤーが選び、撤回したパッケージの履歴は保持します。'));
@@ -135,7 +145,7 @@ window.CXXOfficialRelease = ({ request, isAuthenticated, setBusy }) => {
   });
   function reset() {
     ready = false; busy = false; invalidate(); $('release').hidden = true;
-    $('files').value = ''; $('withdraw-packages').replaceChildren(); $('preview-list').replaceChildren();
+    $('files').value = '';if(queueSelect){queueSelect.replaceChildren();queue.clear();$('queue-state').textContent='';} $('withdraw-packages').replaceChildren(); $('preview-list').replaceChildren();
     $('preview-state').textContent = ''; account(''); message(''); renderFiles();
   }
   document.addEventListener('cxx-lang-changed', () => { account(accountText); message(messageText, messageError); renderFiles(); renderPreview(); });

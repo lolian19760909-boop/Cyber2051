@@ -2,8 +2,8 @@
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.CxxReadingProjection=api;})(globalThis,function(){
  'use strict';
  const safeStates=new Set(['ready','partial']),escape=s=>s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
- function project(snapshot,parser,mode='original'){
-  const raw=snapshot.sourceMessage,parsed=parser.parseMessage(raw,{cache:false});let cursor=parsed.ranges.find(r=>r.kind==='cxx-story'&&r.valid&&r.complete)?.bodyStart||0,unmapped=0,available=0;
+ function project(snapshot,parser,mode='original',options={}){
+  const raw=snapshot.sourceMessage,parsed=parser.parseMessage(raw,{...options,cache:false});let cursor=parsed.ranges.find(r=>r.kind==='cxx-story'&&r.valid&&r.complete)?.bodyStart||0,unmapped=0,available=0;
   const segments=safeStates.has(snapshot.state)?snapshot.segments.filter(s=>s.reading?.text):[];
   const paragraphs=parsed.paragraphs.map(p=>{
    const original=p.text,plain=p.dialogueText||original,variants=[plain,escape(plain)];let at=-1,needle=plain;for(const v of variants){at=raw.indexOf(v,cursor);if(at>=0){needle=v;break;}}const end=at<0?-1:at+needle.length;if(at>=0)cursor=end;

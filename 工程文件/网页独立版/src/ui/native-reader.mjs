@@ -1,5 +1,5 @@
 /** Reading a floor does not move the committed story head. */
-export function createNativeReader({stage,parser,onEdit,onDelete,onVersion,busy=()=>false,onPosition=()=>{}}){
+export function createNativeReader({stage,parser,onEdit,onDelete,onVersion,busy=()=>false,onPosition=()=>{},onImage=()=>{},images=()=>[]}){
   const doc=stage.ownerDocument,scroll=stage.closest('.stage'),windowSize=40,views=new Map();
   let nodes=[],versions={},floor=0,index=0,follow=true,start=0,end=0,pending=false,dead=false,frame=0,displayKey,streamView=null;
   const n=(tag,text,where,cls)=>{const el=doc.createElement(tag);if(text!=null)el.textContent=text;if(cls)el.className=cls;where.append(el);return el;};
@@ -8,13 +8,14 @@ export function createNativeReader({stage,parser,onEdit,onDelete,onVersion,busy=
   const nav=n('nav',null,stage,'cxx-native-floors');nav.setAttribute('aria-label','正文楼层');
   const previous=button('上一层',()=>select(floor-1),nav),choose=n('select',null,nav),next=button('下一层',()=>select(floor+1),nav),latest=button('最新',()=>select(nodes.length-1),nav);
   choose.setAttribute('aria-label','选择正文楼层');choose.onchange=()=>select(Number(choose.value));
+  const illustration=button('剧情插图',()=>onImage(floor),nav);
   const edit=button('编辑原文',()=>onEdit(nodes[floor].nodeId),nav),remove=button('删除此层起',()=>onDelete(nodes[floor].nodeId),nav),version=n('span',null,nav);
   const earlier=button('显示更早楼层',()=>{const height=scroll.scrollHeight;start=Math.max(0,start-windowSize);render();scroll.scrollTop+=scroll.scrollHeight-height;},stage);
   const list=n('div',null,stage,'cxx-native-layout');
   function position(){return {floor,index,follow};}
   function refreshBusy(){
     previous.disabled=floor<=0;next.disabled=floor>=nodes.length-1;latest.disabled=follow;choose.value=String(floor);
-    edit.disabled=!nodes[floor]||pending||busy();remove.disabled=!nodes[floor]?.parentId||pending||busy();version.replaceChildren();
+    illustration.disabled=!nodes[floor];edit.disabled=!nodes[floor]||pending||busy();remove.disabled=!nodes[floor]?.parentId||pending||busy();version.replaceChildren();
     const node=nodes[floor],ids=versions[node?.nodeId]||[],at=ids.indexOf(node?.nodeId);
     if(ids.length>1&&onVersion){const a=button('上一版',()=>changeVersion(ids[at-1]),version);a.disabled=at<=0||pending||busy();n('span',(at+1)+' / '+ids.length,version);const b=button('下一版',()=>changeVersion(ids[at+1]),version);b.disabled=at>=ids.length-1||pending||busy();}
   }
@@ -47,7 +48,7 @@ export function createNativeReader({stage,parser,onEdit,onDelete,onVersion,busy=
     const visible=new Set(nodes.slice(start,end).map(row=>row.nodeId));
     for(const [id,view]of views)if(!visible.has(id)){view.prose?.destroy();view.row.remove();views.delete(id);}
     let cursor=list.firstElementChild;
-    for(let at=start;at<end;at++){const node=nodes[at];let view=views.get(node.nodeId);if(!view){view=createView(node,at);views.set(node.nodeId,view);}else if(view.raw!==node.message.raw||view.depth!==nodes.length-at-1)paint(view,node.message.raw);view.depth=nodes.length-at-1;if(view.row!==cursor)list.insertBefore(view.row,cursor);cursor=view.row.nextElementSibling;}
+    for(let at=start;at<end;at++){const node=nodes[at];let view=views.get(node.nodeId);if(!view){view=createView(node,at);views.set(node.nodeId,view);}else if(view.raw!==node.message.raw||view.depth!==nodes.length-at-1)paint(view,node.message.raw);view.depth=nodes.length-at-1;const pictures=images(node),artKey=JSON.stringify(pictures.map(row=>[row.id,row.url]));if(view.artKey!==artKey){view.art?.remove();view.art=null;view.artKey=artKey;if(pictures.length){view.art=n('section',null,view.row,'cxx-story-illustrations cxx-generated-illustrations');for(const picture of pictures){const figure=n('figure',null,view.art,'cxx-story-figure'),image=n('img',null,figure);image.src=picture.url;image.alt='本楼剧情插图';n('figcaption',picture.caption,figure);}}}if(view.row!==cursor)list.insertBefore(view.row,cursor);cursor=view.row.nextElementSibling;}
     if(streamView)list.append(streamView.row);earlier.hidden=start===0;refreshBusy();
   }
   function select(value,at=0){

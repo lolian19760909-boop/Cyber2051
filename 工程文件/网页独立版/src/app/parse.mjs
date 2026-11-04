@@ -32,9 +32,9 @@ export function displayProjection(parsed){
   result.display.choices = parsed.choices || [];
   result.display.scene = parsed.scene || null;
   result.display.warnings = parsed.warnings || [];
-  const auxiliary = (parsed.auxiliary || []).map(item => ({ label: item.label, body: String(item.text || '').replace(/^<[^>]+>|<\/[^>]+>$/g, ''), thinking: /^\s*<(?:think|thinking|konatan_planning~)>/i.test(item.text || '') }));
+  const auxiliary = (parsed.auxiliary || []).map(item => ({ label: item.label, kind:item.kind, body: String(item.text || '').replace(/^<[^>]+>|<\/[^>]+>$/g, ''), thinking: /^\s*<(?:think|thinking|konatan_planning~)>/i.test(item.text || '') }));
   result.thinking = auxiliary.filter(item => item.thinking).map(({label,body}) => ({label,body}));
-  result.auxiliary = auxiliary.filter(item => !item.thinking).map(({label,body}) => ({label,body}));
+  result.auxiliary = auxiliary.filter(item => !item.thinking).map(({label,body,kind}) => ({label,body,...(kind?{kind}:{})}));
   result.display.auxiliary = result.auxiliary;
   return result;
 }
@@ -74,8 +74,8 @@ export function parseReply(raw, options = {}) {
   } catch (error) {
     base.protocol.issues.push(String(error.message || error));
   }
-  for (const item of parsed.diagnostics || []) base.protocol.issues.push(item.message);
-  try { parser.settlementParts?.(normalized); } catch(error) { base.protocol.issues.push(error.message); }
+  base.display.warnings = [...new Set([...base.display.warnings,...(parsed.diagnostics || []).map(item=>item.message)])];
+  try { parser.settlementParts?.(normalized); } catch(error) { base.display.warnings = [...new Set([...base.display.warnings,error.message])]; }
   base.protocol.issues = [...new Set(base.protocol.issues)];
   return base;
 }

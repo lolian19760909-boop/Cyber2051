@@ -15,6 +15,9 @@ export function createMemoryStatePort({ accountId } = {}) {
     kind:'memory',
     readMacroGlobals:async()=>clone(tables.settings.get('macro-globals')?.value||{}),
     writeMacroGlobals:async value=>{tables.settings.set('macro-globals',{value:clone(value)});return clone(value);},
+    updateStorySettings:async(runId,update)=>serial(()=>{getRun(runId);const value=update(clone(tables.settings.get(key(runId,'story'))?.value??null));tables.settings.set(key(runId,'story'),{runId,id:'story',value:clone(value),updatedAt:new Date().toISOString()});return clone(value);}),
+    readWorkshopLibrary:async()=>clone(tables.settings.get('workshop')?.value??null),
+    updateWorkshopLibrary:async update=>serial(()=>{const value=update(clone(tables.settings.get('workshop')?.value??null));tables.settings.set('workshop',{value:clone(value)});return clone(value);}),
     readContentLibrary:async()=>clone(tables.settings.get('content-library')?.value??null),
     writeContentLibrary:async value=>{tables.settings.set('content-library',{value:clone(value)});return clone(value);},
     async withRunLock(runId,fn){if(generating)throw Object.assign(new Error('已有回合正在处理'),{code:'turn_busy'});generating=true;try{return await fn();}finally{generating=false;}},
@@ -34,7 +37,7 @@ export function createMemoryStatePort({ accountId } = {}) {
     readNodeState:async(runId,nodeId)=>{getRun(runId);const node=tables.nodes.get(key(runId,nodeId));if(node?.snapshot!==undefined)return clone(node.snapshot);return stateAt(rows('nodes',runId),nodeId);},
     listBranches:async runId=>{getRun(runId);return clone(rows('branches',runId));},
     listTasks:async(runId,status='pending')=>{getRun(runId);return clone(rows('tasks',runId).filter(row=>!status||row.status===status));},
-    listRecords:async(name,runId)=>{getRun(runId);return clone(rows(name,runId));},
+    listRecords:async(name,runId,{prefix}={})=>{getRun(runId);return clone(rows(name,runId).filter(row=>name!=='media'||prefix===undefined||String(row.mediaId||row.id).startsWith(prefix)));},
     readRecord:async(name,runId,id)=>{getRun(runId);return clone(tables[name].get(key(runId,id))||null);},
     putRecords:async(name,runId,records)=>serial(()=>{getRun(runId);if(!['tasks','drafts','memories','summaries','indices','media','backups'].includes(name))throw new Error('不可写记录类型');for(const row of records)tables[name].set(key(runId,row.id||row.taskId||row.mediaId),clone({...row,runId}));}),
     async commit(operation){return serial(()=>{
@@ -57,7 +60,7 @@ export function createMemoryStatePort({ accountId } = {}) {
       }catch(error){for(const name of Object.keys(tables))tables[name]=backups[name];throw error;}
     });},
     commitProfile:operation=>serial(()=>{const current=getRun(operation.runId);if(accountId&&operation.accountId!==accountId)throw Object.assign(new Error('存档身份不匹配'),{code:'account_mismatch'});const prior=tables.receipts.get(key(operation.runId,operation.operationId));if(prior)return {status:'replayed',revision:prior.revision,nodeId:prior.nodeId};const prepared=prepareProfileCommit(operation,current);if(!prepared)return {status:'conflict',currentRevision:current.revision};for(const media of operation.media||[])tables.media.set(key(current.runId,media.mediaId||media.id),clone({...media,runId:current.runId}));tables.runs.set(current.runId,prepared.run);tables.receipts.set(key(current.runId,operation.operationId),prepared.receipt);return {status:'committed',revision:prepared.run.revision,nodeId:prepared.run.headNodeId};}),
-    async createCheckpoint(runId,label='存档点',{nodeId}={}){return serial(()=>{const h=head(runId);if(!h.headNodeId)throw new Error('还没有已保存回合');if(nodeId)stateAt(rows('nodes',runId),nodeId);const row={runId,checkpointId:newId('checkpoint'),nodeId:nodeId||h.headNodeId,branchId:h.branchId,label,createdAt:new Date().toISOString()};tables.checkpoints.set(key(runId,row.checkpointId),row);return clone(row);});},
+    async createCheckpoint(runId,label='存档点',{nodeId,checkpointId}={}){return serial(()=>{const h=head(runId);if(!h.headNodeId)throw new Error('还没有已保存回合');if(nodeId)stateAt(rows('nodes',runId),nodeId);const target=nodeId||h.headNodeId,prior=checkpointId&&tables.checkpoints.get(key(runId,checkpointId));if(prior){if(prior.nodeId!==target)throw new Error('存档点编号已用于另一处进度');return clone(prior);}const row={runId,checkpointId:checkpointId||newId('checkpoint'),nodeId:target,branchId:h.branchId,label,createdAt:new Date().toISOString()};tables.checkpoints.set(key(runId,row.checkpointId),row);return clone(row);});},
     listCheckpoints:async runId=>{getRun(runId);return clone(rows('checkpoints',runId));},
     async deleteCheckpoint(runId,checkpointId){return serial(()=>{getRun(runId);if(!tables.checkpoints.delete(key(runId,checkpointId)))throw new Error('存档点不存在');return {deleted:checkpointId};});},
     async deleteRun(runId){return serial(()=>{getRun(runId);for(const name of SAVE_TABLES)for(const row of rows(name,runId))tables[name].delete(key(runId,row[SAVE_KEYS[name]]));tables.runs.delete(runId);tables.settings.delete(key(runId,'story'));tables.settings.delete(key(runId,'agent'));return {deleted:runId};});},

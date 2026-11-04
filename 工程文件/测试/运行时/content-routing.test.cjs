@@ -9,7 +9,7 @@ function fixture(){
  const api={getLastMessageId:()=>0,getVariables:({type})=>type==='message'?{stat_data:{terminal:{gameplay:{}}}}:{}};
  const host={readState:()=>state,setScope(){},snapshot:async()=>({worldbook:clone(f.book),registry:clone(state.registry)}),saveState:async()=>{}};
  const Gameplay={promptEntries:()=>[{owner:'sample',id:'gameplay.items.test.1',version:'1',entry:{name:'玩法定义·测试物品',content:'测试物品的真实定义',extra:{keep:'unchanged'}}}]};
- const options={api,Core,Content,Host,Gameplay,host,readSeed:()=>({characterIds:[],mapIndex:[]}),transaction:async(_before,after)=>{f.book=clone(after.worldbook);f.writes++;}};
+ const options={api,Core,Content,Host,Gameplay,host,readSeed:()=>({characterIds:[],mapIndex:[]}),writeProjection:async(_before,after)=>{f.book=clone(after);f.writes++;},transaction:async(_before,after)=>{f.book=clone(after.worldbook);f.writes++;}};
  f.sync=Sync.create(options);f.options=options;return f;
 }
 test('generated books route narrative to plot, item and quest facts to both, keeping explicit routes',async()=>{
@@ -58,4 +58,8 @@ test('a worldbook writer that drops our entry marker adopts the old entries inst
  assert.equal(f.book.entries.length,duplicated-3,'stale byte-identical copies are collapsed');
  for(const e of f.book.entries) if(names.has(e.name)) assert.equal(e.extra?.__cxx_official_content?.instanceId,'routing','ownership marker is restored');
  const writes=f.writes;await f.sync();assert.equal(f.writes,writes,'a second sync is a no-op');
+});
+
+test('投影移除未改的旧条目，保留玩家新增的extra字段',async()=>{
+ const f=fixture();await f.sync();const edited=f.book.entries.find(row=>row.name.includes('明确的变量规则'));edited.extra.playerMemo='玩家补充';f.state.registry.packages.sample.content.worldbook=[];await f.sync();assert(!f.book.entries.some(row=>row.name==='[mvu_plot]街区设定'));assert.equal(f.book.entries.find(row=>row.uid===edited.uid).extra.playerMemo,'玩家补充');
 });

@@ -38,9 +38,9 @@ export function editBooks({parent,session,data,onError,changed}){
     }
     search.oninput=()=>{entryCollect();fillEntries();};list.onchange=paint;
     action('新增条目',()=>{entryCollect();const id=String(Date.now());book.entries.push({id,uid:id,comment:'新条目',content:'',keys:[],secondary_keys:[],enabled:true,constant:false,insertion_order:100,extensions:{}});selectedId=id;entryCollect=()=>{};fillEntries();},actions);
-    action('保存世界书',async()=>{collect();const saved=await session.saveWorldbook(book);Object.assign(book,saved);await changed();fill(book.bookId);},actions);
+    action('保存世界书',async()=>{collect();const target=book,saved=await session.saveWorldbook(target);Object.assign(target,saved);await changed();if(book===target){collect=()=>{};entryCollect=()=>{};}fill(book.bookId);},actions);
     action('导出',()=>{collect();exportJSON(book.name,exportWorldbook(book));},actions);
-    action('删除世界书',async()=>{if(!confirm('从本局移除“'+book.name+'”？'))return;await session.saveWorldbook({...book,enabled:false,entries:[]});book.enabled=false;book.entries=[];await changed();show();},actions);
+    action('删除世界书',async()=>{const target=book;if(!confirm('从本局移除“'+target.name+'”？'))return;await session.saveWorldbook({...target,enabled:false,entries:[]});target.enabled=false;target.entries=[];await changed();if(book===target){collect=()=>{};entryCollect=()=>{};}fill(book.bookId);},actions);
     fillEntries();
   }
   select.onchange=show;

@@ -1,12 +1,14 @@
-/* Derived from 卡片源码/终端/terminal.js; source SHA256 460b882ff15ce05905da6e08132d640dd86d4b737cf248a4b12afd634a769b8b. Rebuild with tools/p3a-adapt-views.mjs. */
-(() => {
+/* Derived from 卡片源码/终端/terminal.js; source SHA256 27758f131ea4f61dbe1d2dfe96dd3ac9e47200c0f495dbde3e219c3b6d67c6cb. Rebuild with tools/p3a-adapt-views.mjs. */
+window.CxxWebTerminalFactory=(bridge)=>{
   'use strict';
-  const document=window.CxxWebTerminal.document;
+  const document=bridge.document;
   const Popover=typeof module==='object'&&module.exports?require('../共享/popover.js'):globalThis.CxxPopover;
   let activeModulePage=null;
   const $ = id => id==='page-other'&&activeModulePage?activeModulePage:document.getElementById('t2051x-' + id);
   const rootEl = document.getElementById('t2051x-root');
   if (!rootEl) return;
+  let destroyed=false;const instanceStops=[];
+  const listen=(target,name,handler,options)=>{target.addEventListener(name,handler,options);instanceStops.push(()=>target.removeEventListener(name,handler,options));};
   const motion = globalThis.CxxMotion.mount(rootEl);
   const pageNode = id => moduleViews.get(id)?.root || $('page-' + id);
   const legacyTaskLocations=[{"questId":"q01","mapId":"tokyo-central","placeId":"a-yang-clinic","evidenceField":"goal","source":{"title":"巴的采购单","district":"红花街","brief":"巴的诊所你总该听过——收费实在，手艺好，能扛事。她订了批皮下护甲，卖家临时放了鸽子，货现在蹲在清道夫的抛货点里落灰。你去把它端回来，巴付账，我抽一成。别问货是哪来的，你也没看见，对吧。","goal":"到抛货点清点并取回整批皮下护甲（六套），送到巴的诊所后账。"}},{"questId":"q02","mapId":"tokyo-central","placeId":"a-yang-clinic","evidenceField":"goal","source":{"title":"被盯上的壳","district":"红花街","brief":"有个机偶姑娘在红花街西口被人盯上了——清道夫那帮摘器官的把她当成行走的备件库。她弟弟在我的柜台上押了最后一枚旧币换消息，我收下了，也打算把事情办了。把人带去巴的诊所，别让她变成夜市摊上的零件。","goal":"找到她（西口夜市一带），把她完整地送到巴的诊所。"}},{"questId":"q03","mapId":"tokyo-central","placeId":"ring-live","evidenceField":"brief","source":{"title":"把吉他送过铁丝网","district":"RiNG 社区","brief":"河沿那边有支小乐队租了排练房，一把旧世代的贝斯还押在我们仓库。明晚他们要用——但这把琴比在场一半人的年纪都大，磕一下就是事故。你腿脚利索，帮我把它从 RING-Live! 后门送到荒川河沿。都是街坊的事，别让我失望。","goal":"明晚八点前，把贝斯完好送到荒川河沿的排练房，拿回签收条。"}},{"questId":"q04","mapId":"tokyo-central","placeId":"ring-community","evidenceField":"brief","source":{"title":"谁在偷我们的电","district":"RiNG 社区","brief":"RiNG 社区这礼拜跳了三次闸，全楼道的义眼都得重启。电是我管的，账是我平的，跳下去我先倒霉。社区管道图上多出一条不存在的支线——顺着它查，看看是哪路神仙在偷电。查清楚了就行，怎么处理等我发话。","goal":"查明偷电支线的源头与用途，回报玲姐。"}}];
@@ -43,7 +45,7 @@
     { id: 'media', name: '影像', en: 'MEMORY INDEX', tabs: ['插画', '事件 CG', '特殊场景 CG', '剧情插图'], empty: '暂无可读取的影像', description: '独立保存事件与场景中的记忆。', customTab: 0 },
     { id: 'archive', name: '资料库', en: 'ARCHIVE' },
     { id: 'settings', name: '设置', en: 'PREFERENCES' },
-    ...(window.CxxWebTerminal?.mountDatabase?[{id:'database',name:'数据库',en:'DATABASE',tabs:['表格']}]:[])
+    ...(bridge?.mountDatabase?[{id:'database',name:'数据库',en:'DATABASE',tabs:['表格']}]:[])
   ];
   const storageKey = 'tokyo2051-terminal-v1';
   const mainModules=['characters','city','operations','network','archive','settings'].map(id=>modules.find(m=>m.id===id));
@@ -113,7 +115,7 @@
   const LEDGER_DEMO_KEY = storageKey + '-ledger-demo';
   // 同一帧内多次渲染共用一次读取：整份 stat_data 实测约 280 KB，逐次 JSON 序列化会拖慢终端。
   let statCache=null;const STAT_TTL=120;
-  function readStatDataUncached(){return window.CxxWebTerminal.readState().statData;}
+  function readStatDataUncached(){return bridge.readState().statData;}
   function readStatData(){stats.reads++;const now=Date.now();if(statCache&&now-statCache.at<STAT_TTL)return statCache.value;const value=readStatDataUncached();statCache={at:now,value};return value;}
   function invalidateStatCache(){statCache=null;}
   const ledgerMvu = () => true;
@@ -228,7 +230,7 @@
   }
   let mapNavigation=0;
   function switchPage(id,options={}) {
-    const request=++mapNavigation;if(['city','archive'].includes(id)&&!window.CxxAtlasTool){announce('正在准备地图…');void window.CxxWebTerminal.prepareMap().then(()=>{if(request===mapNavigation&&rootEl.isConnected)switchPage(id,options);}).catch(error=>announce(error.message));return false;}
+    const request=++mapNavigation;if(['city','archive'].includes(id)&&!window.CxxAtlasTool){announce('正在准备地图…');void bridge.prepareMap().then(()=>{if(request===mapNavigation&&rootEl.isConnected)switchPage(id,options);}).catch(error=>announce(error.message));return false;}
     const config=modules.find(m=>m.id===id);if(!config)return false;const changedPage=state.page!==id;
     const previous=pageNode(state.page),from=changedPage?motion.capture(previous):null,direction=options.direction||Math.sign(modules.findIndex(m=>m.id===id)-modules.findIndex(m=>m.id===state.page))||1;
     if(state.page!==id){saveView();if(!options.replace){history.push(state.page);if(history.length>30)history.shift();}stopNetwork();stopPageMotion();}
@@ -275,7 +277,7 @@
   });
   function renderModule(config) {
     const page = $('page-other');
-    if(config.id==='database'){page.replaceChildren();const view=window.CxxWebTerminal.mountDatabase(page);Object.assign(moduleViews.get(config.id),{update:view.refresh,destroy:view.destroy});return;}
+    if(config.id==='database'){page.replaceChildren();const view=bridge.mountDatabase(page);Object.assign(moduleViews.get(config.id),{update:view.refresh,destroy:view.destroy});return;}
     if(config.id==='characters'){renderCharacterModule(page);return;}
     if(config.id==='operations'){renderQuestModule(page);return;}
     if(config.id==='network'){renderNetworkModule(page);return;}
@@ -366,10 +368,10 @@
       const grid=element('div','event-grid');media.forEach((m,i)=>{const b=button('','event-card',()=>openViewer(m.name,media.map(x=>x.url),i,b)),img=element('img');img.loading='lazy';img.alt=m.alt;contentClient.bindImage(img,m.url);img.addEventListener('error',()=>{img.hidden=true;b.append(element('p','','图片暂不可用，已保留解锁记录。'));},{once:true});b.append(img,element('h3','',m.name));grid.append(b);});root.append(grid);
       }).catch(e=>{if(!request.signal.aborted&&root.isConnected)root.replaceChildren(element('p','setting-note',e.message));}).finally(()=>{if(entry.request===request)entry.request=null;});return root;
     }
-    function nsfwAllowed(){return window.CxxWebTerminal.preferences().nsfw===true;}
+    function nsfwAllowed(){return bridge.preferences().nsfw===true;}
   function buildGalleryPanel() {
       const chars = data.gallery.characters;
-      try { if (!buildGalleryPanel.listening) { buildGalleryPanel.listening = true; window.addEventListener('cxx-ui-preferences-changed', () => { try { renderGrid(); } catch { /* 面板已卸载 */ } }); } } catch { /* 跨域或已卸载 */ }
+      try { if (!buildGalleryPanel.listening) { buildGalleryPanel.listening = true; listen(parent,'cxx-ui-preferences-changed',renderGrid); } } catch { /* 宿主跨域时当前图库仍可阅读 */ }
       const catLabel = key => key === 'standard' ? '立绘' : key === 'daily' ? '日常' : '瑟瑟';
       const root = element('div', 'gallery-root');
       const head = element('div', 'gallery-head');
@@ -775,12 +777,12 @@
     $('archive-selected-title').textContent = record.name;
     $('archive-selected-description').textContent = recordCover(record) + (!region && !record.desc ? ' · 暂无正式档案' : '');
     const facts = $('archive-facts'); facts.replaceChildren();
-    if (window.CxxWebTerminal?.native2x && record.desc) facts.append(element('p', 'archive-summary', record.desc));
+    if (bridge?.native2x && record.desc) facts.append(element('p', 'archive-summary', record.desc));
     if (record.dims) facts.append(dimensions(record));
-    else if (!window.CxxWebTerminal?.native2x || !record.desc) facts.append(element('p', 'archive-summary', record.desc || '暂无收录该地点的正式档案。可以先在地图中查看位置与已有关联。'));
+    else if (!bridge?.native2x || !record.desc) facts.append(element('p', 'archive-summary', record.desc || '暂无收录该地点的正式档案。可以先在地图中查看位置与已有关联。'));
     $('archive-map').hidden = region;
     $('archive-read').textContent = region ? '阅读当前档案 ↗' : '在地图中打开 ↗';
-    if (!window.CxxWebTerminal?.native2x) showArchiveFigure(record);
+    if (!bridge?.native2x) showArchiveFigure(record);
     scheduleView();
     if (focus) $('archive-grid').querySelector('.archive-row[aria-pressed=true]')?.focus({ preventScroll: true });
   }
@@ -828,7 +830,7 @@
   }
   function useHostViewport(){releaseHostViewport();}
   useHostViewport(false);
-  window.addEventListener('pageshow', () => useHostViewport(false));
+  listen(window,'pageshow', () => useHostViewport(false));
   let booted = false;
   function boot() {
     if (booted) return; booted = true;
@@ -842,7 +844,7 @@
     switchPage('city',{replace:true});terminalVisible=true;emitApp({route:true});
     $('system-nav').querySelector('[data-page=' + groupOf(state.page) + ']').focus({ preventScroll: true });
   });
-  document.addEventListener('keydown', e => {
+  listen(document,'keydown', e => {
     if (e.key !== 'Escape' || $('reader').open || $('gallery-viewer').open || $('terminal').hidden) return;
     e.preventDefault();
     if(state.page==='city'&&window.TOKYO_TERMINAL_MAP_CONTROL?.escape())return;
@@ -888,15 +890,14 @@
   $('texture').addEventListener('input', e => { prefs.texture = Number(e.target.value); applyPrefs(); save(); });
   $('restore-view').addEventListener('change', e => { prefs.restore = e.target.checked; save(); });
   $('reset-settings').addEventListener('click', () => { Object.assign(prefs, defaults); applyPrefs(); save(); announce('显示设置已恢复默认值'); });
-  reducedQuery.addEventListener('change', applyPrefs);
-  window.addEventListener('cxx-ui-preferences-changed',applyPrefs);
-  window.addEventListener('pagehide',()=>window.removeEventListener('cxx-ui-preferences-changed',applyPrefs),{once:true});
-  document.addEventListener('visibilitychange',()=>{if(document.hidden){stopNetwork();stopPageMotion();}});
+  listen(reducedQuery,'change',applyPrefs);
+  listen(parent,'cxx-ui-preferences-changed',applyPrefs);
+  listen(document,'visibilitychange',()=>{if(document.hidden){stopNetwork();stopPageMotion();}});
   let contentStamp = '';
   function checkContent(event={}) {
     hasInstalledSnapshot=false;const sd=readStatData()||{},revision=contentClient.readHost()?.contentRevision||'';
     const storyArt=Object.entries(sd.terminal?.quests||{}).filter(([,record])=>record.line?.illustrations||record.graph).map(([id,record])=>[id,record.line?.illustrations,record.line?null:record.graph?.nodes,record.line?null:record.graph?.unlocked]);
-    const signatures={characters:JSON.stringify([sd.terminal?.gameplay,sd.terminal?.wallet,sd.terminal?.ensemble,window.CxxWebTerminal.profile()]),operations:JSON.stringify([sd.terminal?.quests,sd.terminal?.questJournal,sd.terminal?.wallet,sd.terminal?.ensemble?.control,window.CxxQuests?.actor?.(sd)?.wallet]),media:revision+JSON.stringify([sd.terminal?.gameplay?.events||{},storyArt]),network:revision+JSON.stringify(sd.terminal?.net||{})};
+    const signatures={characters:JSON.stringify([sd.terminal?.gameplay,sd.terminal?.wallet,sd.terminal?.ensemble,bridge.profile()]),operations:JSON.stringify([sd.terminal?.quests,sd.terminal?.questJournal,sd.terminal?.wallet,sd.terminal?.ensemble?.control,window.CxxQuests?.actor?.(sd)?.wallet]),media:revision+JSON.stringify([sd.terminal?.gameplay?.events||{},storyArt]),network:revision+JSON.stringify(sd.terminal?.net||{})};
     if(event.topic==='news')signatures.network+=':'+String(event.revision||++netDynamicVersion);
     if(revision!==contentStamp){contentStamp=revision;refreshContent();locationCache=null;}
     for(const [id,entry]of moduleViews){if(id!=='database'&&entry.signature===signatures[id])continue;entry.signature=signatures[id];entry.dirty=true;if(terminalVisible&&state.page===id){entry.dirty=false;entry.update?.();}}
@@ -913,8 +914,8 @@
       if(!contentClient?.request('migration'))announce('迁移入口需要新版角色卡；这里只读取内容，不上传存档。');
     }));
   }
-  window.addEventListener('pagehide', () => { clearTimeout(viewTimer);saveView();releaseHostViewport(); stopNetwork();  stopPageMotion(); save(); });
-  window.addEventListener('pageshow', () => checkContent());
+  listen(window,'pagehide', () => { clearTimeout(viewTimer);saveView();releaseHostViewport(); stopNetwork();  stopPageMotion(); save(); });
+  listen(window,'pageshow', () => checkContent());
 
   const atlasLocations=[{"id":"tokyo-central","places":[{"id":"plaza","name":"新日本时代广场"},{"id":"tsurumaki-tower","name":"弦卷塔"},{"id":"tsukinomori","name":"月之森女子学园"},{"id":"hanasakigawa","name":"花咲川女子学院"},{"id":"ring-community","name":"RiNG社区"},{"id":"ring-live","name":"RING-Live!"},{"id":"space-site","name":"SPACE 旧址"},{"id":"circle","name":"CiRCLE"},{"id":"beni-street","name":"红花街"},{"id":"a-yang-clinic","name":"宇田川巴的老街诊所"},{"id":"haneoka","name":"羽丘女子学园"},{"id":"akabane","name":"赤羽街区"},{"id":"sakiko-rental","name":"祥子的赤羽出租屋"},{"id":"akabane-clinic","name":"赤羽黑诊所"},{"id":"rana-shifune-home","name":"乐奈与诗船的公寓"},{"id":"ring-instruments","name":"RING-Live! · 乐器店"},{"id":"ring-records","name":"RING-Live! · 旧唱片店"},{"id":"ring-cafe","name":"RING-Live! · 咖啡馆"},{"id":"ring-studio","name":"RING-Live! · 录音与租赁"},{"id":"ring-basement-bar","name":"Lust？Love？Live！"},{"id":"service-imperial-weapon","name":"皇核 · 武器店"},{"id":"service-imperial-implant","name":"皇核 · 义体医生"},{"id":"service-imperial-hospital","name":"皇核 · 医疗点"},{"id":"service-imperial-market","name":"皇核 · 垃圾商店"},{"id":"service-imperial-transit","name":"皇核 · 交通设施"},{"id":"service-underpool-weapon","name":"暗池 · 武器店"},{"id":"service-underpool-implant","name":"暗池 · 义体医生"},{"id":"service-underpool-hospital","name":"暗池 · 医疗点"},{"id":"service-underpool-market","name":"暗池 · 垃圾商店"},{"id":"service-underpool-transit","name":"暗池 · 交通设施"},{"id":"service-lowtown-weapon","name":"荒川下城 · 武器店"},{"id":"service-lowtown-implant","name":"荒川下城 · 义体医生"},{"id":"service-lowtown-hospital","name":"荒川下城 · 医疗点"},{"id":"service-lowtown-market","name":"荒川下城 · 垃圾商店"},{"id":"service-lowtown-transit","name":"荒川下城 · 交通设施"},{"id":"service-neonring-weapon","name":"山手霓环 · 武器店"},{"id":"service-neonring-implant","name":"山手霓环 · 义体医生"},{"id":"service-neonring-hospital","name":"山手霓环 · 医疗点"},{"id":"service-neonring-market","name":"山手霓环 · 垃圾商店"},{"id":"service-neonring-transit","name":"山手霓环 · 交通设施"},{"id":"service-tsurumaki-weapon","name":"弦卷台 · 武器店"},{"id":"service-tsurumaki-implant","name":"弦卷台 · 义体医生"},{"id":"service-tsurumaki-hospital","name":"弦卷台 · 医疗点"},{"id":"service-tsurumaki-market","name":"弦卷台 · 垃圾商店"},{"id":"service-tsurumaki-transit","name":"弦卷台 · 交通设施"},{"id":"service-keihin-weapon","name":"京滨方舟 · 武器店"},{"id":"service-keihin-implant","name":"京滨方舟 · 义体医生"},{"id":"service-keihin-hospital","name":"京滨方舟 · 医疗点"},{"id":"service-keihin-market","name":"京滨方舟 · 垃圾商店"},{"id":"service-keihin-transit","name":"京滨方舟 · 交通设施"},{"id":"service-west-weapon","name":"西郊净土 · 武器店"},{"id":"service-west-implant","name":"西郊净土 · 义体医生"},{"id":"service-west-hospital","name":"西郊净土 · 医疗点"},{"id":"service-west-market","name":"西郊净土 · 垃圾商店"},{"id":"service-west-transit","name":"西郊净土 · 交通设施"},{"id":"service-saitama-weapon","name":"埼玉 · 武器店"},{"id":"service-saitama-implant","name":"埼玉 · 义体医生"},{"id":"service-saitama-hospital","name":"埼玉 · 医疗点"},{"id":"service-saitama-market","name":"埼玉 · 垃圾商店"},{"id":"service-saitama-transit","name":"埼玉 · 交通设施"},{"id":"service-hokuen-weapon","name":"所泽 · 武器店"},{"id":"service-hokuen-implant","name":"所泽 · 义体医生"},{"id":"service-hokuen-hospital","name":"所泽 · 医疗点"},{"id":"service-hokuen-market","name":"所泽 · 垃圾商店"},{"id":"service-hokuen-transit","name":"所泽 · 交通设施"},{"id":"service-kai-weapon","name":"奥多摩 · 武器店"},{"id":"service-kai-implant","name":"奥多摩 · 义体医生"},{"id":"service-kai-hospital","name":"奥多摩 · 医疗点"},{"id":"service-kai-market","name":"奥多摩 · 垃圾商店"},{"id":"service-kai-transit","name":"奥多摩 · 交通设施"},{"id":"service-fuji-transit","name":"丹泽 · 交通设施"},{"id":"service-fuji-hospital","name":"丹泽 · 医疗点"},{"id":"service-sagami-weapon","name":"川崎 · 武器店"},{"id":"service-sagami-implant","name":"川崎 · 义体医生"},{"id":"service-sagami-hospital","name":"川崎 · 医疗点"},{"id":"service-sagami-market","name":"川崎 · 垃圾商店"},{"id":"service-sagami-transit","name":"川崎 · 交通设施"},{"id":"service-chiba-weapon","name":"千叶 · 武器店"},{"id":"service-chiba-implant","name":"千叶 · 义体医生"},{"id":"service-chiba-hospital","name":"千叶 · 医疗点"},{"id":"service-chiba-market","name":"千叶 · 垃圾商店"},{"id":"service-chiba-transit","name":"千叶 · 交通设施"},{"id":"service-docks-weapon","name":"木更津 · 武器店"},{"id":"service-docks-implant","name":"木更津 · 义体医生"},{"id":"service-docks-hospital","name":"木更津 · 医疗点"},{"id":"service-docks-market","name":"木更津 · 垃圾商店"},{"id":"service-docks-transit","name":"木更津 · 交通设施"},{"id":"west-terminal","name":"湾西货运港"},{"id":"bay-terminal","name":"湾岸客运码头"},{"id":"east-terminal","name":"木更津发射中心"},{"id":"sunken-market","name":"暗池层叠市场"},{"id":"arakawa-hospital","name":"荒川综合医院"},{"id":"neon-forum","name":"霓环中央演艺场"},{"id":"hill-estate","name":"弦卷台庭园会馆"},{"id":"ark-logistics","name":"方舟联运总站"},{"id":"west-market","name":"武藏野农产市场"},{"id":"saitama-housing","name":"埼玉连廊住区"},{"id":"tokorozawa-assembly","name":"所泽机造总装厂"},{"id":"valley-terraces","name":"多摩山前阶庭"},{"id":"fuji-observatory","name":"丹泽边境观测站"},{"id":"kawasaki-refinery","name":"川崎能源联合厂"},{"id":"chiba-waterhall","name":"千叶滨水会展馆"},{"id":"dock-ruins","name":"木更津旧港遗构"},{"id":"catalog-tsurumaki-apartment","name":"栈桥公寓"},{"id":"catalog-saitama-apartment","name":"朝班公寓"},{"id":"catalog-keihin-drop","name":"九号交接棚"},{"id":"catalog-docks-drop","name":"潮窗交货柜"},{"id":"catalog-neonring-clothing","name":"反光线改衣台"},{"id":"catalog-chiba-clothing","name":"千叶 · 服装"},{"id":"catalog-underpool-netrunner","name":"回声线缆台"},{"id":"catalog-kai-netrunner","name":"奥多摩 · 网络黑客"},{"id":"catalog-underpool-melee","name":"暗池 · 近战武器商贩"},{"id":"catalog-lowtown-melee","name":"荒川下城 · 近战武器商贩"},{"id":"catalog-west-food","name":"雨棚青菜饭"},{"id":"catalog-lowtown-food","name":"河闸食堂"},{"id":"catalog-neonring-bar","name":"山手霓环 · 酒吧"},{"id":"catalog-underpool-bar","name":"暗池 · 酒吧"},{"id":"catalog-neonring-joytoy","name":"山手霓环 · 性偶"},{"id":"catalog-underpool-fixer","name":"暗池转单台"},{"id":"catalog-keihin-fixer","name":"京滨夜班调度"},{"id":"catalog-imperial-client","name":"皇核资产事务窗口"},{"id":"catalog-chiba-client","name":"千叶试音室联络台"},{"id":"catalog-lowtown-police","name":"退水线上的白漆"},{"id":"catalog-underpool-assault","name":"走廊里的第二把锁"},{"id":"catalog-sagami-assault","name":"下班口的欠薪单"},{"id":"catalog-docks-organized","name":"空箱也要过秤"},{"id":"catalog-saitama-reported","name":"不在名册上的房间"},{"id":"catalog-hokuen-cyberpsycho","name":"别把警报当成病历"},{"id":"catalog-kai-tarot","name":"奥多摩 · 塔罗牌"},{"id":"catalog-west-tarot","name":"西郊净土 · 塔罗牌"},{"id":"catalog-chiba-sidejob","name":"给海风留一个麦克风"},{"id":"catalog-saitama-sidejob","name":"末班车前的灯"},{"id":"catalog-lowtown-recovery","name":"一只饭盒的重量"},{"id":"catalog-underpool-theft","name":"借条背面"},{"id":"catalog-keihin-escort","name":"冷链不等人"},{"id":"catalog-tsurumaki-escort","name":"体面地搬出去"},{"id":"catalog-sagami-hitman","name":"请把收据留下"},{"id":"catalog-hokuen-sabotage","name":"请勿恢复出厂"},{"id":"catalog-fuji-sos","name":"山路上的第三张床"},{"id":"catalog-docks-sos","name":"潮汐表没有名字"},{"id":"bay-mid-bridge","name":"中湾跨海大桥"},{"id":"bay-lower-bridge","name":"下湾跨海大桥"},{"id":"tokyo-skytree","name":"东京天空塔"},{"id":"m8-site-ryomo","name":"两毛制造联合厂"},{"id":"m8-site-north-gateway","name":"北门户综合站城"},{"id":"m8-site-mito-oarai","name":"水户大洗港城中心"},{"id":"m8-site-saitama-north","name":"北埼玉轨道生活组团"},{"id":"m8-site-tsukuba-north","name":"筑波研究园"},{"id":"m8-site-tone-south","name":"利根南岸换装场"},{"id":"m8-site-kashima-kamisu","name":"鹿岛港后炼化厂"},{"id":"m8-site-narita-hokuso","name":"北总航空物流组团"},{"id":"m8-site-chiba-extension","name":"千叶东部复合站城"},{"id":"m8-site-choshi","name":"銚子河港市场"},{"id":"m8-site-kujukuri","name":"九十九里滨海加工场"},{"id":"m8-site-okutama","name":"奥多摩谷口站城"},{"id":"m8-site-tanzawa","name":"丹泽山前院落中心"},{"id":"m8-site-yokohama-miura","name":"横滨湾岸复合中心"},{"id":"m8-site-boso-kisarazu","name":"木更津港城生活组团"},{"id":"m8-site-boso-kimitsu","name":"君津重件总装厂"},{"id":"m8-site-boso-futtsu","name":"富津渔港换装场"},{"id":"m8-site-boso-interior","name":"房总谷地水源园"},{"id":"m8-site-boso-pacific","name":"外房航天勤务中心"}]},{"id":"west-expansion","places":[{"id":"west-kofu-civic","name":"甲府城下综合诊疗院"},{"id":"west-katsunuma-depot","name":"胜沼农产交易所"},{"id":"west-lake-waterworks","name":"河口湖水源维护站"},{"id":"west-yoshida-textile","name":"富士吉田织物工坊"},{"id":"west-gotemba-logistics","name":"御殿场山麓物流院"},{"id":"west-fuji-peak","name":"富士山"},{"id":"west-lake-motosu","name":"本栖湖"},{"id":"west-lake-shoji","name":"精进湖"},{"id":"west-lake-saiko","name":"西湖"},{"id":"west-lake-kawaguchi","name":"河口湖"},{"id":"west-lake-yamanaka","name":"山中湖"},{"id":"west-service-kai","name":"甲斐·韮崎 · 饮食"},{"id":"west-service-kofu","name":"甲府城下 · 医疗点"},{"id":"west-service-katsunuma","name":"笛吹·胜沼 · 交货点"},{"id":"west-service-otsuki","name":"大月谷口 · 垃圾商店"},{"id":"west-service-kawaguchi","name":"河口湖南岸 · 义体医生"},{"id":"west-service-yoshida","name":"富士吉田 · 酒吧"},{"id":"west-service-narusawa","name":"鸣泽林缘 · 武器店"},{"id":"west-service-gotemba","name":"御殿场下城 · 网络黑客"}]}];
   let locationCache=null;
@@ -923,7 +924,7 @@
     const current=installed?contentClient.view(locationBase,installed.registry,sd?.terminal?.quests||{},{subscriptions:installed.subscriptions,pins:contentClient.chatPins(),mediaPreferences:installed.mediaPreferences,initialContent:installed.initialContent,initialAvatars:installed.initialAvatars}):baseData;
     return locationCache={...current,quests:(current.quests||[]).map(bindLegacyLocation)};
   }
-  const hostBridge=window.TOKYO_TERMINAL_HOST=window.CxxWebTerminal.bridge;
+  const hostBridge=window.TOKYO_TERMINAL_HOST=bridge.bridge;
   netState=window.TOKYO_TERMINAL_NEWS=CxxNewsState.create({read:()=>hostBridge.read(),storage:{getItem:key=>{try{return localStorage.getItem(key);}catch{return null;}},setItem:(key,value)=>{try{localStorage.setItem(key,value);}catch{}}}});
   window.TOKYO_TERMINAL_MAP_LINKS={openQuest:id=>{refreshContent();const q=mapQuests().find(q=>q.id===id);if(!q?.visible){announce('这份任务暂不可用，请查看当前行动列表。');return false;}return openQuest(id);},closeTerminal,
     record:(mapId,placeId)=>recordOf({kind:'place',mapId,id:placeId}),
@@ -946,7 +947,7 @@
       view:viewState.journal||{},onView:v=>{viewState.journal=v;scheduleView();},
       commit:request=>window.CxxWebPlayer.commit(request),
       observer:window.CxxWebPlayer?.quests?.registerView(),
-      viewSource:()=>window.CxxWebTerminal.viewSource(),
+      viewSource:()=>bridge.viewSource(),
       source:()=>{const quests=window.CxxWebPlayer?.quests;if(!quests?.source)throw Error('任务保存服务尚未就绪，请等待剧情核心加载完成。');return quests.source();},
       compose:(q,r)=>{const top=window,input=top.document.querySelector('#input');if(!input)throw Error('正文输入框尚未就绪。');if(input.value.trim())throw Error('行动输入框已有草稿，已保留。请先发送或清空原草稿。');input.value='我准备继续'+(q.chapterId?'章节':'委托')+'「'+q.title+'」。当前目标：'+(r.objective||q.goal)+'\n委托人：'+(q.fixer||'原委托人')+'。简报：'+(q.brief||'按已知记录继续')+'\n请承接已保存进展与我的行动，不重复发放已经收到的款项。';input.dispatchEvent(new top.Event('input',{bubbles:true}));},
       map:id=>window.TOKYO_TERMINAL_MAP_LINKS.goToQuest(id),
@@ -958,7 +959,7 @@
     const tabs=element('nav','sec-tabs');tabs.setAttribute('aria-label','人物分类');head.append(title,element('span','sec-grow'),tabs);
     const body=element('div','terminal-player-body');page.append(head,body);
     const service=window.CxxWebPlayer,entry=moduleViews.get('characters');
-    if(service)entry.player=service.mount(body,viewState.player?.tab||'人物',{navigation:false,native2x:window.CxxWebTerminal?.native2x===true,appearanceStyle:window.CxxTerminalPlayerStyle,viewState:viewState.player,onViewChange:value=>{if(value?.tab){viewState.player={...viewState.player,tab:value.tab};for(const b of tabs.querySelectorAll('button'))b.setAttribute("aria-pressed",String(b.textContent===value.tab));sectionMotion('tab',page);}scheduleView();emitApp({player:true});}});
+    if(service)entry.player=service.mount(body,viewState.player?.tab||'人物',{navigation:false,native2x:bridge?.native2x===true,appearanceStyle:window.CxxTerminalPlayerStyle,viewState:viewState.player,onViewChange:value=>{if(value?.tab){viewState.player={...viewState.player,tab:value.tab};for(const b of tabs.querySelectorAll('button'))b.setAttribute("aria-pressed",String(b.textContent===value.tab));sectionMotion('tab',page);}scheduleView();emitApp({player:true});}});
     else body.append(element('p','setting-note','人物服务尚未就绪，请重新打开终端。'));
     const select=async tab=>{if(tab==='行动记录'){if(await entry.player?.canLeave?.()===false)return;switchPage('operations');return;}await entry.player?.setTab(tab);const current=entry.player?.readViewState?.().tab||tab;for(const b of tabs.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.textContent===current));sectionMotion('sync',page);scheduleView();};
     for(const tab of ['人物表','人物','天赋','物品栏','义体','战斗','行动记录']){const b=button(tab,'',()=>select(tab));if(['人物','物品栏','义体'].includes(tab))b.dataset.cp2Main='';tabs.append(b);}
@@ -971,7 +972,7 @@
     const archived=viewState.archive;if(archived){archiveKind=['city','setting','library'].includes(archived.kind)?archived.kind:'city';archiveIndex=Number(archived.index)||0;$('archive-search').value=archived.query||'';}
     for(const name of ['input','change'])rootEl.addEventListener(name,scheduleView);
     rootEl.addEventListener('scroll',scheduleView,{capture:true,passive:true});
-    window.CxxTerminalApp={motion,navigate:switchPage,close:closeTerminal,saveView,state:viewState,
+    const app=window.CxxTerminalApp={motion,navigate:switchPage,close:closeTerminal,saveView,state:viewState,
       get visible(){return terminalVisible&&!$('terminal').hidden;},get page(){return state.page;},
       subscribe(fn){appListeners.add(fn);return()=>appListeners.delete(fn);},
       open(route={}){boot();terminalVisible=true;$('terminal').hidden=false;switchPage(route.page||'city',{replace:true,tab:route.tab});checkContent();useHostViewport(false);emitApp({route:true});},
@@ -979,11 +980,12 @@
       back(){const id=history.pop();if(id)switchPage(id,{replace:true,direction:-1});else closeTerminal();},
       read:()=>({...stats,motion:motion.diagnostics(),pages:[...moduleViews.keys()],page:state.page,visible:terminalVisible}),
       canLeave:()=>state.page==='characters'?moduleViews.get('characters')?.player?.canLeave?.()??true:true,
-      destroy(){motion.dispose();netRadioView?.destroy();netRadioView=null;clearTimeout(viewTimer);saveView();stopNetwork();stopPageMotion();releaseHostViewport();for(const e of moduleViews.values()){e.hide?.();e.commsStop?.();e.player?.destroy();e.journal?.destroy();e.destroy?.();}moduleViews.clear();appListeners.clear();}
+      destroy(){if(destroyed)return;destroyed=true;for(const stop of instanceStops.splice(0))stop();motion.dispose();netRadioView?.destroy();netRadioView=null;clearTimeout(viewTimer);saveView();stopNetwork();stopPageMotion();releaseHostViewport();for(const e of moduleViews.values()){e.hide?.();e.commsStop?.();e.player?.destroy();e.journal?.destroy();e.destroy?.();}moduleViews.clear();appListeners.clear();}
     };
     const oldOpening=button('开场设置','quiet',()=>{const opening=window.Cxx236OpeningHost;if(opening?.hasUnconfirmed?.()){closeTerminal();opening.open();}else announce('开场设置位于新聊天的六步开场；已建档人物请使用人物页。');});
     document.querySelector('.settings-form')?.append(oldOpening);
-    window.addEventListener('pagehide',()=>window.CxxTerminalApp.destroy(),{once:true});
+    listen(window,'pagehide',()=>app.destroy(),{once:true});
   }
 
-})();
+return window.CxxTerminalApp;
+};

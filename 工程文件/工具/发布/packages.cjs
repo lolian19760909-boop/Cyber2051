@@ -330,6 +330,7 @@ function buildRelease({ packages, privateKey, keyId, previousCatalog = null, wit
     seen.add(pkg.id);
     const signed = signDocument(pkg, privateParsed, keyId), bytes = Buffer.from(canonical(signed));
     const entry = { id: pkg.id, version: pkg.version, kind: pkg.kind, optional: pkg.optional, activation: pkg.activation || 'compatible', requires: clone(pkg.requires), url: packageUrl(pkg), sha256: sha256(bytes), bytes: bytes.length };
+    const display=pkg.content?.worldbook?.find(e=>e.extra?.__cxx_workshop_display)?.extra.__cxx_workshop_display;if(display)entry.display=clone(display);
     const old = entries.get(pkg.id);
     if (old && (old.kind !== entry.kind || old.optional !== entry.optional || compareVersion(entry.version, old.version) < 0)) fail('不能降低版本或更换包的基础/DLC分类');
     if (old && entry.version === old.version && old.sha256 !== entry.sha256) fail('同版本不能改写内容');

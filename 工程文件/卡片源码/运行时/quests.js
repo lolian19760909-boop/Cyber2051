@@ -10,6 +10,7 @@
  const chapter=()=>typeof module==='object'&&module.exports?require('./chapter.js'):root.CxxChapter||root.parent?.CxxChapter;
  const chapterId='q_chip_night',legacyStarted=stat=>['objective','knownFacts','rank','acceptedFloor','startedFloor','paidYen','refundedYen','settled'].some(k=>Boolean(record(stat,'q_heist')[k]))||record(stat,'q_heist').state!=='已发布';
  const idPattern=/^[a-zA-Z][a-zA-Z0-9_-]{0,79}$/;
+ const questIdPattern=/^[a-zA-Z][a-zA-Z0-9_.-]{0,79}$/;
  const numberInput=v=>typeof v==='string'&&/^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$/.test(v.trim())?Number(v.trim()):v;
  const record=(stat,id)=>stat?.terminal?.quests?.[id]||{state:'已发布'};
  const fromRecord=(id,r)=>r?.definition?.source==='story'?{...r.definition,id}:null;
@@ -113,7 +114,7 @@
    for(const change of receipt.changes){let target=next;for(const k of change.parts.slice(0,-1))target=target?.[k];const last=change.parts.at(-1);if(!target||!equal(target[last],change.after))throw Error('关联记录已变化，不能单独撤销旧识别。');if(change.missing)delete target[last];else target[last]=copy(change.before);}
    out.receipts[request.receiptId]={...receipt,reverted:true};
   }else{
-   if(!idPattern.test(request.questId||''))throw Error('委托编号无效。');
+   if(!questIdPattern.test(request.questId||''))throw Error('委托编号无效。');
    const known=q||t.quests[request.questId]&&{id:request.questId};
    if(!q&&action!=='track')throw Error('内容定义未加载，暂不可推进旧记录。');
    const reason=available(stat,known,action,questDefinitions);if(reason)throw Error(reason);
@@ -147,7 +148,7 @@
   patches=patches.map(p=>{
    const parts=p.path.split('/'),id=parts[3],previous=before.terminal?.quests?.[id];
    if(parts.length!==4||parts[1]!=='terminal'||parts[2]!=='quests'||previous&&!fromRecord(id,previous)||policy.plot?.owns(id)||id===chapterId)return p;
-   if(!idPattern.test(id))throw Error('委托编号无效。');
+   if(!questIdPattern.test(id))throw Error('委托编号无效。');
    const value=storyRecord(before,id,p.value,source,policy.questDefinition?.(id,previous||{}),previous);
    wholeRecords.add(id);return {...p,op:previous?'replace':'add',value};
   });

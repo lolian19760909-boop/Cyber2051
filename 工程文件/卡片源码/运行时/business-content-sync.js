@@ -1,36 +1,31 @@
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.CxxBusinessContentSync=api;})(globalThis,function(){
 'use strict';
   const CryptoCompat=typeof module==='object'&&module.exports?require('./crypto-compat.js'):globalThis.CxxCrypto;
-function create({api,Core,Content,Host,Gameplay,host,readSeed,transaction}){
+function create({api,Core,Content,Host,Gameplay,host,readSeed,writeProjection}){
 const clone=x=>JSON.parse(JSON.stringify(x)),same=(a,b)=>Core.canonical(a)===Core.canonical(b),error=(code,message)=>Object.assign(Error(message),{code});
 let confirmed='';
-    function readRecords() {
-      try {
-        for (let floor = api.getLastMessageId(); floor >= 0; floor--) {
-          const value = api.getVariables({ type: 'message', message_id: floor });
-          if (value?.stat_data) return value.stat_data.terminal?.quests || {};
-        }
-      } catch { /* Missing MVU is a read-only empty ledger, never initialization. */ }
-      return {};
-    }
-    function readGameplay() {
-      try {for(let floor=api.getLastMessageId();floor>=0;floor--){const value=api.getVariables({type:'message',message_id:floor});if(value?.stat_data)return value.stat_data.terminal?.gameplay || {};}}catch{}
+    function readTerminal() {
+      for (let floor = api.getLastMessageId(); floor >= 0; floor--) {
+        const value = api.getVariables({ type: 'message', message_id: floor });
+        if (value?.stat_data) return value.stat_data.terminal || {};
+      }
       return {};
     }
     function chatVars() { return api.getVariables({ type: 'chat' }); }
     function pins() { return chatVars().__cxx_content_pins || {}; }
 
-    function selectedWorldbook(registry, state, chatPins) {
-      const result = [],selectedOrigin=readGameplay().origin?.definitionRef;
+    function selectedWorldbook(registry, state, chatPins, gameplay) {
+      const result = [],selectedOrigin=gameplay.origin?.definitionRef;
       for (const [id, r] of Object.entries(registry.packages)) {
         if (r.optional && !state.subscriptions[id] || ['new_chat', 'opt_in'].includes(r.activation) && !chatPins[id]) continue;
         const version = chatPins[id] || r.version, content = Content.packageContent(r, version);
         if (!content) continue;
         for (const entry of content.worldbook || []) {
-          if(entry.extra?.__cxx_player_start && !(selectedOrigin?.packageId===id && selectedOrigin.version===version && selectedOrigin.uid===entry.uid))continue;
+          if(entry.extra?.__cxx_player_start)continue;
           result.push({ owner: id, id: 'worldbook.' + entry.uid, version, entry });
         }
       }
+      if(selectedOrigin){const id=selectedOrigin.packageId,record=registry.packages[id],entry=record&&Content.packageContent(record,selectedOrigin.version)?.worldbook?.find(row=>row.uid===selectedOrigin.uid&&row.extra?.__cxx_player_start);if(entry)result.push({owner:id,id:'worldbook.'+entry.uid,version:selectedOrigin.version,entry:{...clone(entry),strategy:{...entry.strategy,type:'constant'}}});}
       return result;
     }
     function questEntry(quest) {
@@ -47,12 +42,12 @@ let confirmed='';
     }
     function selection() {
       const rawState = host.readState(), state = Content.withMigration ? Content.withMigration(rawState, chatVars()) : rawState;
-      const chatPins = pins(), initial = state.initialContent;
+      const chatPins = pins(), initial = state.initialContent,terminal=readTerminal(),gameplay=terminal.gameplay||{};
       const gallery = { characters: (readSeed().characterIds || []).map(id => ({ id, standard: [], daily: [], av: '' })) };
-      const view = Content.view({ quests: initial.quests, gallery }, state.registry, readRecords(), {
+      const view = Content.view({ quests: initial.quests, gallery }, state.registry, terminal.quests||{}, {
         subscriptions: state.subscriptions, pins: chatPins, initialContent: initial });
-      const wanted = selectedWorldbook(state.registry, state, chatPins);
-      if(Gameplay)wanted.push(...Gameplay.promptEntries(state.registry,{mapIndex:readSeed().mapIndex,subscriptions:state.subscriptions,pins:chatPins},readGameplay()));
+      const wanted = selectedWorldbook(state.registry, state, chatPins, gameplay);
+      if(Gameplay)wanted.push(...Gameplay.promptEntries(state.registry,{mapIndex:readSeed().mapIndex,subscriptions:state.subscriptions,pins:chatPins},gameplay));
       for (const q of view.quests) if (q.definitionRef) wanted.push({ owner: q.definitionRef.packageId,
         id: 'quest.' + q.id, version: q.definitionRef.version, entry: questEntry(q) });
       return {rawState,state,wanted};
@@ -109,7 +104,7 @@ let confirmed='';
       // Installation metadata is ours. Remove only that marker while checking
       // upstream removals; otherwise the marker itself looks like a player edit.
       const local = clone(before);
-      for (const e of local.worldbook.entries) if (owned(e)) delete e.extra.__cxx_official_content;
+      for (const e of local.worldbook.entries) if (owned(e)) {const info=e.extra.__cxx_official_content;delete e.extra.__cxx_official_content;if(!Object.keys(e.extra).length&&!Object.hasOwn(info.baseline.retained||{},'extra'))delete e.extra;}
       const claimed = new Set([...adoptedUids, ...staleCopies]);
       local.worldbook.entries = local.worldbook.entries.filter(e => !claimed.has(e.uid));
       const metadata = (await Core.fingerprints({ worldbook: before.worldbook })).worldbook.metadata;
@@ -128,12 +123,12 @@ let confirmed='';
         return;
       }
       after.worldbook.internalName = before.worldbook.internalName;
-      await transaction(before, after, state.installed, state.baseline, conflicts, 'character');
+      await writeProjection(before.worldbook,after.worldbook,{registry:before.registry,conflicts});
       remember();
     }
 
 syncChat.isCurrent=()=>!!confirmed&&confirmed===signature();
-const run=()=>{const win=api.parent||api,P=win.CxxStoryProfile||api.CxxStoryProfile,book=api.getCharWorldbookNames?.('current')?.primary;return P?.withBookLock&&book?P.withBookLock(win,book,syncChat):syncChat();};run.isCurrent=syncChat.isCurrent;return run;
+const run=({worldbook:lockedBook}={})=>{const win=api.parent||api,P=win.CxxStoryProfile||api.CxxStoryProfile,book=api.getCharWorldbookNames?.('current')?.primary;return P?.withBookLock&&book&&book!==lockedBook?P.withBookLock(win,book,syncChat):syncChat();};run.isCurrent=syncChat.isCurrent;return run;
 }
 return {create};
 });

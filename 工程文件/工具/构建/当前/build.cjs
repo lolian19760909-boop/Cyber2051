@@ -229,6 +229,8 @@ async function build({write = false, assemblyFile = input, includeResources = fa
   };
   assert(!scripts.some(s => s.id === phone.id));
   scripts.push(phone);
+  sourceTarget='script:cxx-image-generation-300';
+  scripts.push({type:'script',enabled:true,id:'cxx-image-generation-300',name:'2051 剧情插图',content:inlineSource(['运行时/image-generation.js','运行时/image-generation-ui.js','运行时/image-generation-host.js'].map(file=>source(file)).join('\n;\n')+'\n(()=>{let ended=false,runtime;const owner=SillyTavern.getContext().characters?.[SillyTavern.getContext().characterId]?.avatar;const destroy=()=>{ended=true;runtime?.destroy();};window.addEventListener(\'pagehide\',destroy,{once:true});$(async()=>{await waitGlobalInitialized(\'Cxx233Updater\');if(ended||owner!==SillyTavern.getContext().characters?.[SillyTavern.getContext().characterId]?.avatar)return;runtime=CxxNativeImageHost.install({window:parent,api:{SillyTavern,getVariables,updateVariablesWith,eventOn,eventRemoveListener,getButtonEvent,tavern_events},Generation:CxxImageGeneration,UI:CxxImageGenerationUI,css:'+JSON.stringify(require('../../lib/ui-theme.cjs').sheet(source,'运行时/image-generation.css'))+'});});})();'),info:'默认手动；可选随正文生成。NovelAI Key仅在当前页面使用，插图随对应回复保存。',button:{enabled:true,buttons:[{name:'剧情插图',visible:true}]},data:{},export_with:{data:false,button:true}});
   sourceTarget = 'script:cxx-long-memory-p1';
   source('剧情/build.cjs');
   const storyResourceProfile = JSON.parse(source('../资源/resource-profile.json', 'build:story-assets'));
@@ -507,9 +509,7 @@ async function build({write = false, assemblyFile = input, includeResources = fa
       o = o[k];
     o[e.parts.at(-1)] = e.old;
   }
-  restored.data.extensions.tavern_helper.scripts.pop();
-  restored.data.extensions.tavern_helper.scripts.pop();
-  restored.data.extensions.tavern_helper.scripts.pop();
+  for(const id of ['cxx-phone-v1','cxx-image-generation-300','cxx-long-memory-p1','cxx-runtime-bootstrap']){const index=restored.data.extensions.tavern_helper.scripts.findIndex(script=>script.id===id);assert(index>=0,'Owned added script '+id);restored.data.extensions.tavern_helper.scripts.splice(index,1);}
   assert.deepEqual(restored, original, 'Unrelated R1 fields preserved');
   scripts.unshift(scripts.pop());
   assert.equal(handoffRequirement.version,version,'Business updater requirement version');
@@ -538,6 +538,7 @@ async function build({write = false, assemblyFile = input, includeResources = fa
       'CxxReadingGuard',
       'CxxMirrorSource',
       'cxx-phone-v1',
+      'cxx-image-generation-300',
       'cxx-long-memory-p1',
       'cxx-runtime-bootstrap',
       'CxxResources',

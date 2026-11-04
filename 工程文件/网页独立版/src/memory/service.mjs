@@ -122,7 +122,7 @@ export function createMemoryService(options){
   }
   async function processOne(task,signal){
     if(task.status==='done'||task.status==='obsolete')return task;
-    let row;try{row=await sourceForTask(task);}catch(error){return taskUpdate(task,{status:'obsolete',error:{code:error.code,message:error.message}});}
+    let row=await sourceForTask(task);
     if(task.prepared||unsaved.has(task.taskId))return savePrepared(task);await assets();if(!requestPurpose)throw fail('memory_model_missing','填表模型尚未配置');
     const state=await statePort.readNodeState(owner.runId,task.source.nodeId),actors=actorRoster(state,context.profile),segments=narrativeSegments(row.node.message.raw,parser,actors),chunks=chunksOf(segments,task.splitChars||settings.splitChars);let current=await taskUpdate(task,{status:'running',totalChunks:chunks.length,error:null});
     for(let index=current.nextChunk||0;index<chunks.length;index++){

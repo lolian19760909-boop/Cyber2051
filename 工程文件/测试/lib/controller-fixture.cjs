@@ -44,12 +44,12 @@ function fixture(release, overrides = {}) {
   const host = {
     getContext: () => copy(currentContext), assertContext(expected) { if (expected.characterKey !== currentContext.characterKey || expected.chatId !== currentContext.chatId) { const error = Error('context changed'); error.code = 'context-changed'; throw error; } },
     ready: async () => ({ st: '1.19.0', helper: '4.11.2' }),
-    readState: () => copy(state), async saveState(value) { saves.push(copy(value)); state = copy(value); },
+    readState: () => copy(state), async saveState(value) { saves.push(copy(value)); state = copy(value); if(value.registry)snapshot.registry=copy(value.pendingRegistry||value.registry); },
     setScope(value) { scope = value; }, getScope: () => scope,
     async withLock(work) { assert.equal(locked, false); locked = true; try { return await work(); } finally { locked = false; } },
-    async snapshot() { return copy(snapshot); },
+    async snapshot(_expected,fields=Object.keys(snapshot)) { return copy(Object.fromEntries(fields.map(key=>[key,snapshot[key]]))); },
     async writeStage(stage, value, expected) {
-      assert.equal(locked, true); assert.equal(Core.canonical(expected), Core.canonical(snapshot)); writes.push({ stage, scope }); snapshot[stage] = copy(value);
+      assert.equal(locked, true); assert.equal(Core.canonical(expected), Core.canonical(Object.fromEntries(Object.keys(expected).map(key=>[key,snapshot[key]])))); writes.push({ stage, scope }); snapshot[stage] = copy(value);
       if (stage === 'scripts' && overrides.helperScriptDefaults) for (const script of snapshot.scripts.trees) {
         script.info ??= ''; script.button ??= { enabled: true, buttons: [] }; script.export_with ??= { data: true, button: true };
       }

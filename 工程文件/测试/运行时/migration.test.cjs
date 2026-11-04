@@ -27,6 +27,11 @@ function fixture(build = 'old', accepts = [], hooks = {}) {
 }
 const exported = async f => (await f.client.captureMigration()).document;
 
+test('opening checkpoint captures a completed player while the original route retains its creation journal',async()=>{
+ const f=fixture(),metadata=f.header.chat_metadata;metadata.__cxx_story_v1={schema:1,kind:'route',stage:'creating',creationId:'creation-one',openingDraft:{keep:true}};metadata.variables.__cxx_identity={setupToken:'player-start-token'};f.messages[0].variables[0].stat_data.terminal.gameplay={schema:1,growth:{schema:1,level:1},loadoutStart:{token:'player-start-token'}};
+ await assert.rejects(f.client.captureMigration(),{code:'migration-creation-pending'});const result=await f.client.captureMigration({openingCreationId:'creation-one'});assert.equal(result.document.payload.header.chat_metadata.__cxx_story_v1.stage,'playing');assert.equal(result.document.payload.header.chat_metadata.__cxx_story_v1.openingDraft,undefined);assert.equal(metadata.__cxx_story_v1.stage,'creating');assert.deepEqual(metadata.__cxx_story_v1.openingDraft,{keep:true});assert.deepEqual(result.document.payload.messages,f.messages);await assert.rejects(f.client.captureMigration({openingCreationId:'other-creation'}),{code:'migration-creation-owner'});f.messages[0].variables[0].stat_data.terminal.gameplay.loadoutStart.token='wrong-player-token';await assert.rejects(f.client.captureMigration({openingCreationId:'creation-one'}),{code:'migration-creation-owner'});
+});
+
 test('direct migration export refreshes hand-edited user text before taking the archive lock',async()=>{
  const f=fixture();let refreshed=0;
  const api={parent:{CxxStoryProfile:{async selected(){assert.equal(f.locked,false);refreshed++;f.header.chat_metadata.__cxx_story_profile={schema:1,id:'profile_test',name:'人物',binding:{schema:4,worldbook:'original',entryUid:9,routeId:'route'},worldbookContent:'世界书内最新手改正文'};}}}};

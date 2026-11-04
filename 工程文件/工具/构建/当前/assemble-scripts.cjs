@@ -21,6 +21,7 @@ function assembleScript(s, {source, useSource, code, counts, historyWorker, open
     assert(html.includes('/*__CXX_STATUS_STANDING__*/{}'),'Native standing placeholder');
     return html.replace('/*__CXX_STATUS_STANDING__*/{}',JSON.stringify(fallback));
   };
+  if(s.id==='9a9d6e73-5111-4c64-89c7-98717bbbdf3b')return inlineSource('globalThis.CxxWorkshopStyle='+JSON.stringify(style('运行时/workshop-panel.css'))+';\n'+source('运行时/workshop-panel.js')+';\n'+source('运行时/workshop-client.js'));
   let text = s.content;
   if (!text)
     return text;
@@ -150,6 +151,7 @@ function assembleScript(s, {source, useSource, code, counts, historyWorker, open
     });
   if (s.id === 'cxx-business-core-241')
     walk(tree, n => {
+      if(n.type==='CallExpression'&&n.callee.object?.name==='CxxBusinessContentSync'&&n.callee.property?.name==='create'){const binding=n.arguments[0].properties.find(p=>p.key.name==='transaction');assert(binding?.value?.object?.name==='updater'&&binding.value.property.name==='transaction','One content projection writer binding');changes.push({start:binding.start,end:binding.end,value:'writeProjection:updater.writeContentProjection'});counts.businessProjection=1;}
       if (n.type === 'CallExpression' && n.callee.object?.name === 'Cxx236Variables') {
         const greetings = n.arguments[0].properties.find(p => p.key.name === 'greetings');
         if (greetings)

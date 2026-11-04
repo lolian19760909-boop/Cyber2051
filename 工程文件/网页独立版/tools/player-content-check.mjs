@@ -76,5 +76,12 @@ await check('阅读按节点取当前响应元数据，思考附属内容随节�
   assert.ok(parser.parseMessage(raw,{nodeId:'two'}).auxiliary.some(row=>row.body==='第二段原生思考'));
   assert.ok(!parser.parseMessage(raw).auxiliary.some(row=>row.body?.includes('原生思考')));
 });
+await check('预设配置折叠同一留言，双阅读入口与节点投影一致，切换后重新显示',async()=>{
+ const raw='<cxx-story>门外雨停了。</cxx-story><details><summary>小猫之神的留言</summary>把雨伞带上。</details>',saved=app.preset,savedId=app.presetId;
+ app.setPreset({...preset,extensions:{cxx_reading:{details:['小猫之神的留言']}}},{id:'nya'});
+ const reading=createReadingParser({parser:chain.parser,session:app}).parseMessage(raw);assert.deepEqual(reading.paragraphs.map(p=>p.text),['门外雨停了。']);assert.equal(reading.auxiliary.at(-1).label,'小猫之神的留言');assert.equal(reading.auxiliary.at(-1).kind,'preset-detail');
+ const {parseReply}=await import('../src/app/parse.mjs'),node=app.projectParsed(parseReply(raw,{parser:chain.parser}));assert.deepEqual(node.display.paragraphs,reading.paragraphs);assert.equal(node.display.auxiliary.at(-1).body,'把雨伞带上。');assert.equal(node.raw,raw);
+ app.setPreset({...preset},{id:'unconfigured'});assert.match(createReadingParser({parser:chain.parser,session:app}).parseMessage(raw).paragraphs.map(p=>p.text).join(''),/把雨伞带上/);app.setPreset(saved,{id:savedId});
+});
 const report={ok:true,checks,scope:'synthetic memory storage and model; no visual or live API acceptance'};
 fs.mkdirSync(new URL('../../.cache/player-controls-20261029/',import.meta.url),{recursive:true});fs.writeFileSync(new URL('../../.cache/player-controls-20261029/content-check.json',import.meta.url),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));

@@ -5,10 +5,11 @@ const {spawn}=require('node:child_process'),{DatabaseSync}=require('node:sqlite'
 const F=require('./official-release-fixtures.cjs'),C=require('./workshop-contract.cjs');
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function freePort(){for(let n=0;n<32;n++){const s=net.createServer(),p=crypto.randomInt(20000,60000);try{await new Promise((resolve,reject)=>{s.once('error',reject);s.listen(p,'127.0.0.1',resolve);});await new Promise(r=>s.close(r));return p;}catch(e){if(e.code!=='EADDRINUSE')throw e;}}throw Error('no available fixture port');}
-async function startFixture(port=0,{evidenceDirectory}={}){
+async function startFixture(port=0,{evidenceDirectory,initialDatabase}={}){
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'cxx-p3-contract-fixture-')),pair=F.keys(),keyFile=path.join(root,'TEST-ONLY-private.pem');
  fs.writeFileSync(keyFile,pair.privateKey.export({type:'pkcs8',format:'pem'}),{mode:0o600});
  const gatewayPort=await freePort(),dbFile=path.join(root,'workshop.db'),adminToken=crypto.randomBytes(32).toString('hex'),secret=crypto.randomBytes(32).toString('hex');
+ if(initialDatabase){const initial=new DatabaseSync(dbFile);try{initial.exec(initialDatabase);}finally{initial.close();}}
  const child=spawn(process.execPath,[path.join(__dirname, "server.js")],{windowsHide:true,stdio:['ignore','pipe','pipe'],env:{...(process.env.SystemRoot?{SystemRoot:process.env.SystemRoot}:{}),
   CXX_GATEWAY_PORT:String(gatewayPort),CXX_DB_PATH:dbFile,CXX_STORAGE:path.join(root,'workshop-storage'),CXX_ADMIN_TOKEN:adminToken,CXX_IPSALT:'TEST-ONLY-ip-salt',SESSION_SECRET:secret,
   CXX_FORMAT3_PACKAGES_MODULE:path.resolve(__dirname,"../../工具/发布/packages.cjs"),CXX_OFFICIAL_RELEASE_DIR:path.join(root,'releases/v3'),CXX_OFFICIAL_SIGNING_KEY_FILE:keyFile,CXX_OFFICIAL_KEY_ID:'test.key'}});
@@ -45,7 +46,7 @@ async function startFixture(port=0,{evidenceDirectory}={}){
    const pathname=url.pathname.startsWith('/workshop/')?url.pathname.slice('/workshop'.length):url.pathname;
    const publicRoot=path.join(__dirname, "public"),file=path.resolve(publicRoot,'.'+(pathname==='/'?'/submit.html':decodeURIComponent(pathname)));
    if(!file.startsWith(publicRoot+path.sep)||!fs.existsSync(file)||!fs.statSync(file).isFile())return json(res,404,{ok:false,error:'not_found'});
-   res.writeHead(200,{'Content-Type':{'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8'}[path.extname(file)]||'application/octet-stream','Cache-Control':'no-store'});fs.createReadStream(file).pipe(res);
+   res.writeHead(200,{'Content-Type':{'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8'}[path.extname(file)]||'application/octet-stream','Cache-Control':'no-store'});fs.createReadStream(file).pipe(res);
   }catch{json(res,500,{ok:false,error:'fixture_error'});}});
   const publicPort=port||await freePort();await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(publicPort,'127.0.0.1',resolve);});
   const baseUrl='http://127.0.0.1:'+server.address().port;publicFixture();

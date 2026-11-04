@@ -15,6 +15,9 @@
     for(const name of [p.name,...p.aliases]){aliases[name]={id:p.id,name:p.name};aliases[name.toLowerCase()]=aliases[name];}
   });
   const expressions=new Set(dialogueCodec.expressions);
+  const readingProfiles=Object.freeze([{names:['喵赛亚','nya','Reborn'],details:['小猫之神的留言']}]);
+  function detailSummaries({presetName='',preset={},foldDetails}={}){const configured=foldDetails??preset.extensions?.cxx_reading?.details;if(Array.isArray(configured))return [...new Set(configured.filter(s=>typeof s==='string'&&s.trim()).map(s=>s.trim()))];return [...new Set(readingProfiles.filter(p=>p.names.some(name=>String(presetName).toLowerCase().includes(name.toLowerCase()))).flatMap(p=>p.details))];}
+  function detailBlocks(text,options={}){const names=detailSummaries(options);if(!names.length)return [];const protection=protectedText(text).all,stack=[],found=[];for(const m of text.matchAll(/<(\/?)details\b[^<>]*>/gi)){if(protection[m.index]||indentedTag(text,m.index))continue;if(!m[1]){stack.push({start:m.index,bodyStart:m.index+m[0].length});continue;}const open=stack.pop();if(!open)continue;const content=text.slice(open.bodyStart,m.index),summary=/^\s*<summary\b[^>]*>([\s\S]*?)<\/summary\s*>/i.exec(content),label=summary?.[1].replace(/<[^>]*>/g,'').trim();if(names.includes(label))found.push({...open,end:m.index+m[0].length,label,body:content.slice(summary[0].length).trim()});}return found.filter(r=>!found.some(p=>p!==r&&p.start<r.start&&p.end>=r.end)).sort((a,b)=>a.start-b.start);}
 
   function mark(mask, start, end) { mask.fill(1, start, end); }
 
@@ -443,11 +446,11 @@
   }
   function parseMessage(raw,options={}) {
     if (typeof raw !== 'string') throw new TypeError('parseMessage expects a string');
-    const cache=cacheEnabled&&options.cache!==false,cacheKey=options.key??raw,hit=cache&&cacheRead(cacheKey,raw);
+    const cache=cacheEnabled&&options.cache!==false,cacheKey=JSON.stringify([options.key??raw,detailSummaries(options)]),hit=cache&&cacheRead(cacheKey,raw);
     if(hit)return hit;
     var result = { paragraphs: [], choices: [], scene: null, terminal: null, warnings: [], raw: raw, dialogueRanking: [] };
     raw=dialogueCodec.normalize(readingText(raw),dialogueProtection);
-    result.auxiliary = auxiliaryBlocks(raw);
+    const folded=detailBlocks(raw,options);for(const item of folded.slice().reverse())raw=raw.slice(0,item.start)+raw.slice(item.start,item.end).replace(/[^\r\n]/g,' ')+raw.slice(item.end);result.auxiliary=[...auxiliaryBlocks(raw),...folded.map(item=>({label:item.label,text:item.body,kind:'preset-detail'}))];
     const inspected=inspect(raw);
     // Reuse ranges only while this parse's text is identical. Auxiliary removal
     // and story unwrapping can change offsets and must trigger a fresh scan.
@@ -563,7 +566,7 @@
     return line.length>60?line.slice(0,59)+'…':line;
   }
   function componentValidation(raw,checked=inspect(raw)){return {roots:checked.roots.map(r=>({kind:r.kind,valid:r.valid,complete:r.complete})),statusPlaceholder:[...raw.matchAll(/^ {0,3}<StatusPlaceHolderImpl\/>[ \t]*$/gm)].some(m=>m.index>=(checked.planning?.end||0)&&!checked.protection.all[m.index])};}
-  return Object.freeze({ characterAliases:Object.freeze(Object.fromEntries(Object.entries(aliases).map(([name,value])=>[name,Object.freeze({...value})]))), parseMessage: parseMessage, auxiliaryBlocks: auxiliaryBlocks, inspect, settlementParts, variableUpdates, readUpdate, readingText, componentValidation, firstLine, clearCache,
+  return Object.freeze({ characterAliases:Object.freeze(Object.fromEntries(Object.entries(aliases).map(([name,value])=>[name,Object.freeze({...value})]))), parseMessage: parseMessage, auxiliaryBlocks: auxiliaryBlocks, detailSummaries, detailBlocks, inspect, settlementParts, variableUpdates, readUpdate, readingText, componentValidation, firstLine, clearCache,
     setCacheEnabled:value=>{cacheEnabled=Boolean(value);if(!cacheEnabled)clearCache();},cacheStats:()=>({entries:parsedCache.size,bytes:cacheBytes}),
     prepareDialogue:text=>dialogueCodec.normalize(text,dialogueProtection),
     nativeDialogue:(text,save)=>dialogueCodec.native(text,save,dialogueProtection),

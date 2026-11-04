@@ -5,6 +5,8 @@ const helperId='7d1f1956-d354-4cc2-90c3-358be1d9aa6d',styleId='99628814-5206-428
 function build({write=false}={}){
  const bytes=fs.readFileSync(input);
  const preset=JSON.parse(bytes),original=structuredClone(preset),script=preset.extensions.tavern_helper.scripts.find(s=>s.id===helperId),source=script.content;
+ const skinMarker='/* ===== 赛博小祥2051 皮肤覆写 BEGIN',skinEnd='/* ===== 赛博小祥2051 皮肤覆写 END ===== */',skins=[];
+ for(const item of preset.extensions.tavern_helper.scripts){const start=item.content?.indexOf(skinMarker);if(start===undefined||start<0)continue;const end=item.content.indexOf(skinEnd,start);assert.ok(end>=start,'legacy skin source boundary');skins.push({id:item.id,content:item.content});item.content=item.content.slice(0,start)+read('卡片源码/预设/皮肤-2051.js').trimEnd()+item.content.slice(end+skinEnd.length);}
  const body=acorn.parse(source,{ecmaVersion:'latest'}).body,declarations=new Map(body.filter(n=>n.type==='VariableDeclaration').map(n=>[n.declarations[0].id.name,n]));
  assert.ok(!declarations.has('BDA_ASSETS'));assert.equal(body.at(-1).type,'ExpressionStatement');
  const fields=['BDA_META','CXX_BDA_NAMES','CXX_BDA_MEDIA','BDA_CSS','CXX_BDA_GROUPS','CXX_BDA_CROPS'];
@@ -28,12 +30,14 @@ function build({write=false}={}){
  const help=preset.prompts.find(p=>p.identifier==='bdc-toggle-21');help.content='{{//配套气泡：开启预设正则“2051 台词显示｜气泡与上色样式”，在酒馆助手上方“2051 · 台词显示”选择头像气泡、首字气泡、对白上色或关闭美化。可按角色选择，用户头像可选当前人设或首字占位；设置保存在当前浏览器。Gal 隐藏原生气泡，返回恢复。生成完成后刷新头像；禁用样式正则并重绘楼层后保留纯台词。}}';
  preset.name='Izumi_东京都2051改版V0.9';
  const preserved=structuredClone(preset);preserved.name=original.name;preserved.extensions.tavern_helper.scripts.find(s=>s.id===script.id).content=source;
+ for(const item of skins)preserved.extensions.tavern_helper.scripts.find(s=>s.id===item.id).content=item.content;
  for(const patch of rules){const i=preserved.extensions.regex_scripts.findIndex(r=>r.id===patch.id);preserved.extensions.regex_scripts[i]=original.extensions.regex_scripts[i];}
  preserved.prompts.find(p=>p.identifier===help.identifier).content=original.prompts.find(p=>p.identifier===help.identifier).content;
  assert.deepEqual(preserved,original,'only bubble helper, three display rules, display help and preset name may change');
  const bubbleStage=structuredClone(preset),baselineBytes=fs.readFileSync(baseline);
  const displayPreserved=structuredClone(bubbleStage);displayPreserved.name=original.name;
  displayPreserved.extensions.tavern_helper.scripts.find(s=>s.id===helperId).content=source;
+ for(const item of skins)displayPreserved.extensions.tavern_helper.scripts.find(s=>s.id===item.id).content=item.content;
  displayPreserved.extensions.regex_scripts.find(r=>r.id===styleId).replaceString=original.extensions.regex_scripts.find(r=>r.id===styleId).replaceString;
  displayPreserved.prompts.find(p=>p.identifier===help.identifier).content=original.prompts.find(p=>p.identifier===help.identifier).content;
  assert.deepEqual(displayPreserved,JSON.parse(baselineBytes),'V0.9 only changes bubble helper content, display stylesheet, paired help and preset name');

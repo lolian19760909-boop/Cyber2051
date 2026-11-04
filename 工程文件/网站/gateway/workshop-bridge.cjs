@@ -54,7 +54,7 @@ function createWorkshopBridge({ db, send, readBody, ownerSession, officialReleas
   function handle(req, res, p, method) {
     if(p==='/api/workshop/content/preview' && method==='POST'){
       readBody(req,res,raw=>{try{
-        const data=JSON.parse(raw);Contract.validateMetadata({title:data.title,summary:data.summary||'',tags:data.tags||[]});
+        const data=JSON.parse(raw);Contract.validateMetadata({title:data.title,summary:data.summary||'',tags:data.tags||[],publication:data.publication||{}});
         const payload=Contract.validateIncoming(data.type,data.payload,{title:data.title,summary:data.summary||'',authorName:data.authorName,tags:data.tags||[]});
         const preview={delivery:data.type==='code_component'?'next_card':'signed_content',template:payload.templateKind||data.type,mapId:payload.contract?.mapId||payload.mapId,placeId:payload.contract?.placeId||payload.placeId,
           definitions:payload.gameplay?Object.fromEntries(Object.entries(payload.gameplay).filter(([k,v])=>Array.isArray(v)).map(([k,v])=>[k,v.length])):{},installsAssets:false};
@@ -74,7 +74,7 @@ function createWorkshopBridge({ db, send, readBody, ownerSession, officialReleas
     else if (edit && method === 'GET') respond(() => {
       const row = db.prepare('SELECT * FROM submissions WHERE id=?').get(Number(edit[1]));
       if (!row || !ownerSession(req, row)) throw new Contract.ContractError('只有作者可以读取改稿', 'unauthorized_for_submission', 403);
-      return { item: { id: row.id, type: row.type, title: row.title, summary: row.summary, authorName: row.author_name, tags: JSON.parse(row.tags), payload: JSON.parse(row.payload), revision: row.revision, status: row.status } };
+      return { item: { id: row.id, type: row.type, title: row.title, summary: row.summary, authorName: row.author_name,publication:Contract.publicationMetadata(row.publication_metadata||{}), tags: JSON.parse(row.tags), payload: JSON.parse(row.payload), revision: row.revision, status: row.status } };
     });
     else if (publicPackage && method === 'GET') respond(() => {
       const row = approved(Number(publicPackage[1])), artifact = getArtifact(row.id, row.revision);

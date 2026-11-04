@@ -72,6 +72,11 @@
     const host=win.Cxx233Updater?.host;let owner;try{owner=JSON.parse(expectedScope);}catch{}
     if(host?.withChatSave&&Array.isArray(owner)&&owner.length===2)await host.withChatSave({characterKey:owner[0],chatId:owner[1]},save);else await save();if(cached?.receipt===value.receipt)cached.savePending=false;
   }
+  async function preserveNative(floor,row,raw,state,reason,container){
+    const value=rememberNative(floor,row,raw,state,localReceipt(floor,row,raw),state,[],true);
+    if(reason){value.status='rejected';value.reason=reason;}
+    await persistNative(floor,row,raw,value,container);
+  }
   function matches(r,floor,raw=rawAt(floor)){const row=context().chat[floor];
     if(!r||r.scope!==runtime.key()||r.floor!==floor||r.swipe!==(row?.swipe_id||0)||(r.messageId?rowId(row)!==r.messageId:row!==r.row)||r.raw!==normal(raw))return false;
     const hostRaw=normal(row?.mes);if(r.hostRaw!==hostRaw){
@@ -153,7 +158,7 @@
     const floor=context().chat.length-1,row=context().chat[floor],raw=rawAt(floor);
     tx.receipt={scope:runtime.key(),floor,swipe:row?.swipe_id||0,messageId:rowId(row),row,raw:normal(raw),fingerprint:textKey(raw),hostRaw:normal(row?.mes),hostFingerprint:textKey(row?.mes),phase:'parsed',revision:0};record(tx,'parsed','正在解析变量更新。');
     if(!Parser?.variableUpdates)throw Error('变量解析器尚未就绪。');
-    const decoded=Parser.variableUpdates(source);if(decoded.issues.length)throw Error(decoded.issues.join('；'));
+    const decoded=Parser.variableUpdates(source);if(decoded.issues.length){tx.inputRejected=true;throw Error(decoded.issues.join('；'));}
     if(!decoded.found){commands.length=0;tx.skipped=true;record(tx,'missing','本轮未提供可执行的变量更新。');return;}
     const patches=decoded.patches;
     const options=narrativePolicy(floor,row,raw);
@@ -177,6 +182,7 @@
     }record(tx,'applied','变量已应用，保存待核对。');
     const floor=tx.receipt?.floor,row=context().chat[floor];if(row&&!row.is_user){const raw=rawAt(floor),captured=rememberNative(floor,row,raw,data.stat_data,localReceipt(floor,row,raw),tx.before.stat_data,tx.transaction?.patches);if(webChat())try{await persistNative(floor,row,raw,captured,data);}catch(error){report('完整楼层快照保存待恢复：'+error.message);}}
    }
+   if(final&&(tx.skipped||tx.inputRejected)&&tx.before.stat_data?.terminal){const floor=tx.receipt?.floor??context().chat.length-1,row=context().chat[floor];if(row&&!row.is_user)try{await preserveNative(floor,row,rawAt(floor),tx.before.stat_data,tx.inputRejected?tx.rejected:null,data);}catch(error){report('完整楼层快照保存待恢复：'+error.message);}}
    if(final){tx.finished=true;legacyIssues=schema?schema.audit(data.stat_data):[];}
   }
   on(events.ended,(data,before)=>finish(data,before));
@@ -258,7 +264,7 @@
     // source receipt still prevents replaying the story; an inherited receipt never matches this row.
     const prior=nativeCommit(floor,row,raw,false);
     if(prior&&!completedNative.get(floor)?.savePending)return prior.status==='rejected'?{ok:false,status:'rejected',persisted:true,reason:prior.reason}:{ok:true,status:'duplicate',persisted:true,reason:'原生回合已结算。'};
-    let state=localState(),complete=stateComplete;
+    let state=localState(),complete=stateComplete,parentSaved=!!state;
     if(!state&&openingFloor(floor)){const empty=Applier()?.emptyRoot?.();if(empty?.terminal){state={terminal:copy(empty.terminal)};complete=true;}}
     if(webChat()&&!complete)return {ok:false,status:'snapshot-pending',reason:'此网页聊天缺少可验证的完整父状态，未用数据库显示投影继续结算。'};
     let result;
@@ -269,12 +275,11 @@
     if(result.ok){
       const captured=captureNativeState({floor});if(!captured.ok||!captured.complete)result={...result,ok:false,status:'snapshot-pending',reason:captured.reason||'此楼没有完整父状态，未把显示投影保存为完整快照。'};
       else try{await persistNative(floor,row,raw,captured);result={...result,floorSaved:true};}catch(error){result={...result,ok:false,status:'snapshot-pending',reason:'原生表已结算，完整楼层快照保存待恢复：'+error.message};}
-    }else if(result.status==='rejected'&&complete&&state?.terminal){
-      const value=rememberNative(floor,row,raw,state,localReceipt(floor,row,raw),state,[],true);value.status='rejected';value.reason=result.reason;
-      try{await persistNative(floor,row,raw,value);result={...result,persisted:true,rawSaved:true};}catch(error){result={...result,status:'snapshot-pending',reason:'正文与父状态快照保存待恢复：'+error.message};}
+    }else if(complete&&state?.terminal&&(result.status==='rejected'||result.status==='skipped'&&parentSaved)){
+      try{await preserveNative(floor,row,raw,state,result.status==='rejected'?result.reason:null);result={...result,persisted:true,rawSaved:true,...(result.status==='skipped'?{floorSaved:true}:{})};}catch(error){result={...result,status:'snapshot-pending',reason:'正文与父状态快照保存待恢复：'+error.message};}
     }
     recordLocal(floor,row,raw,result);
-    if(result.ok){lastError='';}else if(result.status!=='skipped'&&result.status!=='duplicate'){report(result.reason);}
+    if(result.ok||result.status==='skipped'&&result.floorSaved){lastError='';}else if(result.status!=='skipped'&&result.status!=='duplicate'){report(result.reason);}
     // 迁移期可选双写：宿主仍在渲染 stat_data 时把新状态镜像回去，权威位置仍是表。
     if(result.ok&&mirror&&result.root){
       try{const stat=row.variables?.[row.swipe_id||0]?.stat_data;if(stat)restore(stat,result.root);}catch{}

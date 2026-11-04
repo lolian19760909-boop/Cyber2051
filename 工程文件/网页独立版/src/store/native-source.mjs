@@ -33,7 +33,7 @@ export async function reconcileNative({document,actual,projected,projectRows,par
     prepared.node.hostRowsDelta=rowDelta(parentRows(prepared.node),hostRows.slice(0,floor+1));if(native){prepared.node.native=true;prepared.node.nativeFloor=floor;}
     next.schema=2;next.nodes.push(prepared.node);next.receipts.push(prepared.receipt);next.run=prepared.run;next.branches=next.branches.filter(branch=>branch.branchId!==prepared.branch.branchId).concat(prepared.branch);changed=true;return prepared.node;
   }
-  function parsedAt(floor){const value=parse(raw(actual[floor]));if(!value.supported||value.protocol?.issues?.length)throw fail('host_edit_invalid','酒馆正文协议未通过校验，请保留原文后修正，或恢复原回复');if(!value.display?.paragraphs?.some(p=>String(p.text||'').trim()))throw fail('host_edit_invalid','酒馆回复没有可读取的完整正文，请先恢复原回复');return value;}
+  function parsedAt(floor){const value=parse(raw(actual[floor]));if(!value.supported)throw fail('host_edit_invalid','酒馆正文协议未通过校验，请保留原文后修正，或恢复原回复');if(!value.display?.paragraphs?.some(p=>String(p.text||'').trim()))throw fail('host_edit_invalid','酒馆回复没有可读取的完整正文，请先恢复原回复');return value.protocol?.issues?.length?{...value,protocol:{...value.protocol,patches:[]}}:value;}
   if(fingerprint(raw(row))===fingerprint(known.message.raw)){
     const prior=stateAt(document.nodes,stateNode.nodeId);
     if(same(vars.stat_data,prior)){

@@ -89,12 +89,12 @@
     else Object.assign(out, { mapId: source.mapId, placeId: source.placeId, keywords: source.keywords || [] }, source.media ? {media:source.media} : {});
     return out;
   }
-  // 与现行 controller.questEntry 的可见正文一致；不改变卡内结算。
+  // 与现行 business-content-sync.questEntry 的可见正文一致。
   function questText(q) {
     return ['任务编号：' + q.id, '任务名称：' + q.title, '委托人：' + q.fixer,
       '地点：' + q.district, '简报：' + q.brief, '目标：' + q.goal, '报酬：' + q.pay + '日元',
       ...['terms','risk','bonus','unlock'].filter(k => q[k]).map(k => ({terms:'条款：',risk:'风险：',bonus:'加成：',unlock:'解锁条件：'}[k]) + q[k]),
-      '仅在玩家接取后推进。既有任务状态和账目按原委托系统处理，不因安装内容包自动接单、结算或改写历史。'].join('\n');
+      '玩家接取后开始推进，任务进度与账目使用当前故事记录。'].join('\n');
   }
   return { version, templates, byKind, kindOf, isOpen, sectionsText, toLegacy, upgradeLegacy, questText };
 });

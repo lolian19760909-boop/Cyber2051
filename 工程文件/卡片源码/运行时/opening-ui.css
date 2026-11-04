@@ -2,6 +2,9 @@
    Steps on the left, a stage that follows the current choice in the middle, the options panel on the right,
    and the command bar across the foot. Profile and story steps bring their own two-column view,
    so their panel spans the stage. */
+.opening-funds{display:grid;grid-template-columns:minmax(90px,1fr) minmax(130px,2fr);gap:9px 14px;align-items:center;padding:16px 0;border-block:1px solid var(--cxx-line);margin-bottom:18px;color:var(--cxx-text)}
+.opening-funds input{min-width:0;min-height:44px;padding:9px 12px;font:inherit;font-variant-numeric:tabular-nums;color:var(--cxx-text);background:var(--cxx-panel);border:1px solid var(--cxx-line)}
+.opening-funds small{grid-column:2;color:var(--cxx-muted);font-size:11px}.opening-starting-funds{font-variant-numeric:tabular-nums}
 .cxx-opening-flow {
   box-sizing: border-box;
   container-type: inline-size;

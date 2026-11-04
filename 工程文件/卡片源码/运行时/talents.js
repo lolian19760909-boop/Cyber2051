@@ -2,9 +2,9 @@
   const local=typeof module==='object'&&module.exports;
   const api=factory(local?require('./gameplay.js'):root.CxxGameplay,local?require("../数值引擎/src/growth.js"):root.CxxNumericGrowth,
     local?require("../数值引擎/adapters/mvu.js"):root.CxxNumericMvu,local?require("../数值引擎/src/engine.js"):root.CxxNumericEngine,
-    local?require("../数值引擎/src/talent-data.js"):root.CxxTalentData,local?require("../数值引擎/src/growth-rules.js"):root.CxxGrowthRules);
+    local?require("../数值引擎/src/talent-data.js"):root.CxxTalentData,local?require("../数值引擎/src/growth-rules.js"):root.CxxGrowthRules,root);
   if(local)module.exports=api;else root.CxxTalents=api;
-})(globalThis,function(G,R,M,E,data,curve){
+})(globalThis,function(G,R,M,E,data,curve,root){
   'use strict';
  const structuredClone=(typeof module==='object'&&module.exports?require('../共享/data-clone.js'):globalThis.CxxDataClone).clone;
   const clone=v=>structuredClone(v),fail=(code,message)=>{throw Object.assign(new Error(message),{code});};

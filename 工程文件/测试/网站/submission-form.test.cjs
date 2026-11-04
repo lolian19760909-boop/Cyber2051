@@ -9,13 +9,13 @@ function harness(){
       appendChild(x){this.append(x);return x;},replaceChildren(...items){this.children=[];text='';if(tag==='select')value='';this.append(...items);},
       setAttribute(k,v){this.attributes[k]=v;},removeAttribute(k){delete this.attributes[k];},addEventListener(k,f){this.listeners[k]=f;},
       async fire(k){return this.listeners[k]?.({target:this,preventDefault(){}});},remove(){this.parent.children=this.parent.children.filter(x=>x!==this);},
-      reportValidity(){return !this.required||Boolean(this.value.trim());},contains(x){return this===x||this.children.some(c=>c&&typeof c==='object'&&c.contains?.(x));},
+      reportValidity(){return !this.required||(this.type==='checkbox'?this.checked:Boolean(this.value.trim()));},contains(x){return this===x||this.children.some(c=>c&&typeof c==='object'&&c.contains?.(x));},
       querySelectorAll(selector){let root=this;if(selector.includes('#guided-prerequisites'))root=nodes.get('guided-prerequisites')||this;const found=[];function walk(n){if(!n||typeof n!=='object')return;if(n.tag==='input'&&n.type==='checkbox'&&(!selector.endsWith(':checked')||n.checked))found.push(n);for(const c of n.children)walk(c);}walk(root);return found;},
     };
     Object.defineProperties(e,{id:{get:()=>id,set:x=>{id=x;nodes.set(x,e);}},value:{get:()=>value,set:x=>{value=String(x??'');}},options:{get:()=>e.children.filter(c=>c?.tag==='option')},textContent:{get:()=>text,set:x=>{text=String(x);e.children=[];}}});return e;
   }
   const document={createElement:element,addEventListener(k,f){(events[k]??=[]).push(f);},getElementById(id){if(!nodes.has(id)){const e=element();e.id=id;}return nodes.get(id);}};
-  const context=vm.createContext({document,fetch:async()=>({ok:true,json:async()=>({ok:true,schema:C.schema()})}),console,URL,URLSearchParams});context.window=context;context.CXXI18N={current:()=>lang};
+  const context=vm.createContext({CxxThemeRuntime:{install(){}},document,fetch:async()=>({ok:true,json:async()=>({ok:true,schema:C.schema()})}),console,URL,URLSearchParams});context.window=context;context.CXXI18N={current:()=>lang};
   for(const name of ['submission-template.js','contract-form.js','submission-view.js'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../../网站/gateway/public',name),'utf8'),context);
   const container=element(),form=context.CxxContractForm(container);
   return {form,container,nodes,context,element,async language(next){lang=next;for(const f of events['cxx-lang-changed']||[])await f();}};
@@ -49,17 +49,18 @@ test('actual submission-page editor loads legacy and new posts, renders preview 
   const html=fs.readFileSync(path.join(__dirname,'../../网站/gateway/public/submit.html'),'utf8'),inline=[...html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g)].map(m=>m[1]).join('\n');
   for(const kind of ['npc','user_identity','contract','paused','legacy','withdrawn']){
     const h=harness();await h.form.ready;
-    for(const m of html.matchAll(/<(select|input|textarea|div|button|pre|details|a|span)[^>]*\bid="([^"]+)"[^>]*>/g)){const node=h.element(m[1]);node.id=m[2];node.required=m[0].includes(' required');}
+    for(const m of html.matchAll(/<(select|input|textarea|div|button|pre|details|a|span)[^>]*\bid="([^"]+)"[^>]*>/g)){const node=h.element(m[1]);node.id=m[2];node.required=m[0].includes(' required');node.type=m[0].match(/type="([^"]+)"/)?.[1]||'';}
     const d=sample(['npc','user_identity','contract'].includes(kind)?kind:'npc');
     if(kind==='paused'){d.type='world_factor';d.payload={format:1,templateKind:'world_factor',content:'关闭类别原稿'};}
     if(kind==='legacy')d.payload={format:1,templateKind:'npc',name:'旧人物',identity:'旧身份',background:'旧背景',mapId:'tokyo-central',placeId:'plaza',keywords:['旧人物']};
+    d.publication={version:1,updateNote:'修订说明',credits:'原创素材',rightsStatement:'作者原创',adaptation:'ask'};
     const item={...d,id:42,revision:4,status:kind==='withdrawn'?'withdrawn':'approved'},calls=[],saved=[];
     Object.assign(h.context,{location:{search:'?edit=42'},navigator:{},setTimeout,Blob,URL:{createObjectURL:x=>{saved.push(x);return 'blob:fixture';},revokeObjectURL(){}},CXXUser:{headers:x=>x||{},check:async()=>({displayName:'合成作者'}),cancelLogin(){},logout(){}}});
     h.context.addEventListener=()=>{};
     h.context.fetch=async(url,options={})=>{calls.push({url,options});return {ok:true,json:async()=>url.endsWith('/schema')?{ok:true,schema:C.schema()}:url.endsWith('/preview')?{ok:true,preview:C.presentation(JSON.parse(options.body))}:{ok:true,item}};};
     // 下载只记录 Blob，不触发本机保存。
     const create=h.context.document.createElement;h.context.document.createElement=tag=>{const e=create(tag);e.click=()=>{};return e;};
-    vm.runInContext(inline+'\nglobalThis.loaded=editReady;globalThis.pageForm=formData;',h.context);await h.context.loaded;
+    vm.runInContext(inline+'\nglobalThis.loaded=editReady;globalThis.pageForm=formData;',h.context);await h.context.loaded;h.nodes.get('rights-confirm').checked=true;
     assert.equal(h.nodes.get('payload').textContent,JSON.stringify(item.payload,null,2));assert.equal(h.nodes.get('original-draft').hidden,false);
     if(kind==='paused'||kind==='withdrawn'){assert.equal(h.nodes.get('send').disabled,true);assert.equal(h.nodes.get('preview-content').disabled,true);await h.nodes.get('export-draft').fire('click');assert.deepEqual(JSON.parse(await saved[0].text()),item);}
     else if(kind==='legacy'){assert.equal(h.nodes.get('guided-background').value,'旧背景');assert.equal(h.nodes.get('guided-personality').value,'');await h.nodes.get('export-draft').fire('click');assert.equal(JSON.parse(await saved[0].text()).payload.sections.background,'旧背景');}

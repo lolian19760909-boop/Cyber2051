@@ -26,3 +26,14 @@ test('a saved story item can be used by the existing battle ability path',()=>{
 test('a new generic item keeps its supplied description and metadata when its category is outside the equipment vocabulary',()=>{
  const event={id:'part_gain',kind:'item-gain',item:{id:'old_part',name:'旧设备零件',category:'misc',description:'摊位购得的维修零件',tags:'repair, component',future:{keep:true}},quantity:2,reason:'购买所得'},g=E.settle(game(),[event]).state,d=L.get(g,'old_part');assert.equal(g.inventory.old_part.quantity,2);assert.equal(d.category,'text');assert.equal(d.description,event.item.description);assert.deepEqual(d.tags,['repair','component']);assert.deepEqual(d.future,{keep:true});assert.deepEqual(g.itemReceipts.part_gain,event);assert.match(L.context(g),/维修零件/);
 });
+
+test('a replayed purchase item and a fresh item settle together with the readable wallet',async()=>{
+ const A=require('../../卡片源码/数据/applier.js'),old={id:'old_purchase',kind:'item-gain',item:{id:'old_weapon',name:'旧购手枪',template:'pistol'},reason:'已经购买的手枪'},fresh={id:'new_purchase',kind:'item-gain',item:{id:'new_weapon',name:'新购步枪',template:'rifle'},reason:'本轮新购买的步枪'};
+ const before={terminal:{gameplay:E.settle(game(),[old]).state,wallet:{yen:800,earned:1000,spent:200}}},patches=[{op:'replace',path:'/terminal/wallet/yen',value:650},{op:'replace',path:'/terminal/wallet/spent',value:350},{op:'add',path:M.inputPath,value:[old,fresh]}];
+ const tx=M.prepare(before,patches),applied=A.applyOps(before,tx.patches);assert.equal(applied.ok,true,applied.reason);const after=applied.root;
+ assert.equal(after.terminal.wallet.yen,650);assert.equal(after.terminal.wallet.spent,350);assert.equal(after.terminal.gameplay.inventory.old_weapon.quantity,1);assert.equal(after.terminal.gameplay.inventory.new_weapon.quantity,1);assert(tx.duplicates.includes(old.id));assert(tx.applied.includes(fresh.id));
+ const replay=M.prepare(after,patches),again=A.applyOps(after,replay.patches);assert.equal(again.ok,true);assert.deepEqual(again.root,after);assert.equal(replay.withheld.length,2);
+ const duplicateOnly=M.prepare(before,[...patches.slice(0,2),{op:'add',path:M.inputPath,value:[old]}]);assert.equal(duplicateOnly.withheld.length,2);assert.deepEqual(A.applyOps(before,duplicateOnly.patches).root,before);
+ const schema=require('../../卡片源码/MVU/schema.js').build(require('../../卡片源码/数据/validator.js').z),runner=A.create({schema,write:{state:()=>null,apply:async()=>({ok:true,state:'applied'})},sync:{push:async()=>({ok:true})}});
+ try{const settled=await runner.apply('<cxx-story>你核对了旧手枪的收据，又支付150购得新步枪。</cxx-story><UpdateVariable>'+JSON.stringify(patches)+'</UpdateVariable>',{state:before,receipt:'mixed-purchase',turn:2});assert.equal(settled.ok,true,settled.reason);assert.equal(settled.root.terminal.wallet.yen,650);assert.equal(settled.root.terminal.gameplay.inventory.old_weapon.quantity,1);assert.equal(settled.root.terminal.gameplay.inventory.new_weapon.quantity,1);}finally{runner.destroy();}
+});

@@ -528,7 +528,7 @@
       }
       fail('backup-chat-not-persisted', '聊天尚未完整保存，暂不能导出迁移存档；请等待保存完成');
     }
-    async function captureMigration({completeDisk=false}={}) {
+    async function captureMigration({completeDisk=false,openingCreationId}={}) {
       const win=api.parent||api;
       await win.CxxStoryProfile?.selected?.(win,{api});
       return (host.withReadLock||host.withLock)(async () => {
@@ -539,6 +539,7 @@
         const state = full.payload.updateState, old = full.payload.header.chat_metadata.variables?.[MIGRATION_KEY];
         const header = copy(full.payload.header); delete header[MARKER];
         if (header.chat_metadata.variables) delete header.chat_metadata.variables[MIGRATION_KEY];
+        if(openingCreationId){const route=header.chat_metadata.__cxx_story_v1,choice=header.chat_metadata.variables?.__cxx_identity,first=full.payload.messages[0],game=first?.variables?.[first.swipe_id||0]?.stat_data?.terminal?.gameplay;if(route?.creationId!==openingCreationId||!choice?.setupToken||game?.loadoutStart?.token!==choice.setupToken||!game?.growth)fail('migration-creation-owner','开局存档点与已保存的人物创建记录不一致');if(route.stage==='creating'){route.stage='playing';delete route.openingDraft;}}
         const doc = { format: 1, type: MIGRATION_TYPE, createdAt: new Date().toISOString(), source, sourceContext: full.context,
           payload: { header, messages: full.payload.messages, archive, playerStores,
             preferences: { subscriptions: { ...(old?.preferences?.subscriptions || {}), ...(state.subscriptions || {}) }, mediaPreferences: { ...(old?.preferences?.mediaPreferences || {}), ...(state.mediaPreferences || {}) } },

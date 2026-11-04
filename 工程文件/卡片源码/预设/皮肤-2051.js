@@ -7,6 +7,7 @@
    ④ 精修层：面板/标题/页签/按钮/开关/输入框/滚动条对齐 theme/status.css 语义
    色值来源：工程文件/二创工作版/theme/status.css（红=强调，青=交互，琥珀=提示） */
 (function () {
+  var closed=false,observer=null,timers=[];
   'use strict';
   var STYLE_ID = 'izumi-floating-window-v1-style';
   var MARK = '/*cp2051*/';
@@ -209,6 +210,7 @@
     try { return (window.parent && window.parent.document) ? window.parent.document : document; } catch (e) { return document; }
   }
   function apply() {
+    if(closed)return;
     var d = pdoc();
     clampFloat();
     var st = d.getElementById(STYLE_ID);
@@ -216,6 +218,7 @@
     try { st.textContent = restyle2051(st.textContent); } catch (e) { /* 皮肤失败不得影响引擎 */ }
   }
   function clampFloat() {
+    if(closed)return;
     var d=pdoc(),w=d.defaultView,n=d.getElementById('izumi-floating-window-v1');if(!n)return;
     var r=n.getBoundingClientRect(),v=w.visualViewport,left=(v?v.offsetLeft:0)+8,top=(v?v.offsetTop:0)+8,width=v?v.width:w.innerWidth,height=v?v.height:w.innerHeight;
     if(!r.width||!r.height)return;
@@ -224,15 +227,16 @@
     if(Math.abs(y-r.top)>.5){n.style.top=y+'px';n.style.bottom='auto';}
   }
   function boot() {
+    if(closed)return;
     apply();
     try {
       var d = pdoc();
-      var mo = new MutationObserver(function () { apply(); });
-      mo.observe(d.head || d.documentElement, { childList: true, subtree: true, characterData: true });
+      observer = new MutationObserver(function () { apply(); });
+      observer.observe(d.head || d.documentElement, { childList: true, subtree: true, characterData: true });
     } catch (e) { /* 观察失败则仅靠轮询 */ }
-    setTimeout(apply, 300); setTimeout(apply, 1500); setTimeout(apply, 5000);
+    timers=[300,1500,5000].map(delay=>setTimeout(apply,delay));
     var w=pdoc().defaultView;w.addEventListener('resize',clampFloat);w.addEventListener('pointerup',clampFloat);w.visualViewport?.addEventListener('resize',clampFloat);
-    window.addEventListener('pagehide',function(){w.removeEventListener('resize',clampFloat);w.removeEventListener('pointerup',clampFloat);w.visualViewport?.removeEventListener('resize',clampFloat);},{once:true});
+    window.addEventListener('pagehide',function(){closed=true;observer?.disconnect();timers.forEach(clearTimeout);timers=[];w.removeEventListener('resize',clampFloat);w.removeEventListener('pointerup',clampFloat);w.visualViewport?.removeEventListener('resize',clampFloat);},{once:true});
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
   else boot();

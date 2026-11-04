@@ -51,6 +51,7 @@
     if(aiBusy)return;
     const gens=collectGenerators(win);
     if(!gens.length){aiState.textContent='当前环境没有可用的生成接口：需要酒馆助手（JS-Slash-Runner）就绪；仍不行请刷新酒馆页面再试。';return;}
+    const initial=read();let edited=false;const markEdited=()=>{edited=true;};input.addEventListener('input',markEdited);
     aiBusy=true;aiButton.disabled=true;aiButton.setAttribute('aria-busy','true');aiState.textContent='正在让 AI 起草…';
     try{
      const payload={should_silence:true,ordered_prompts:[{role:'system',content:'你是《东京都 2051》的人物设定助手。只输出可以直接采用的简体中文正文，不要标题、不要解释、不要引号，180 字以内。'},{role:'user',content:'【已有设定】\n'+(digest()||'（尚未填写）')+'\n\n【需要写】'+name+'：'+prompt}]};
@@ -58,10 +59,10 @@
      for(const gen of gens){
       try{const draft=String(await gen(payload)||'').trim();if(draft){text=draft;break;}}catch(e){last=e;}
      }
-     if(!text)throw last||Error('生成结果为空。');
+     if(disposed)return;if(edited||read()!==initial){aiState.textContent='已保留你刚填写的内容。';return;}if(!text)throw last||Error('生成结果为空。');
      input.value=text;change(text);aiState.textContent='已生成草稿，可直接修改。';
     }catch(e){aiState.textContent='生成失败：'+((e&&e.message)||e)+'。可稍后重试。';}
-    finally{aiBusy=false;aiButton.disabled=false;aiButton.removeAttribute('aria-busy');}
+    finally{input.removeEventListener('input',markEdited);aiBusy=false;if(!disposed){aiButton.disabled=false;aiButton.removeAttribute('aria-busy');}}
    }
    }
    controls.push({input,read,sync:()=>clear?.setAttribute('aria-pressed',String(!read().trim()))});return input;
@@ -89,6 +90,7 @@
    const optionsBox=node('details','creator-options',undefined,row);node('summary','',f.color?'色彩 / 自定义':f.measure?'快捷数值 / 自定义':'选择 / 自定义',optionsBox);const choices=node('div','creator-presets',undefined,optionsBox);
    if(f.color){const pick=node('label','creator-color-pick',undefined,choices);node('span','','调色盘',pick);const picker=node('input',undefined,undefined,pick);picker.type='color';picker.value=appearance.colors[value(f.id)]||'#8a6a8f';picker.setAttribute('aria-label',f.label+'调色盘');picker.oninput=()=>{const name=nearestName(picker.value),desc=name+'（'+picker.value.toUpperCase()+'）';write(desc);};const empty=button('清除发色色值',()=>write(''),pick,'creator-color-clear');empty.type='button';}
    for(const option of options){const b=button(option?(unit?option+' '+unit:option):'无（留空）',()=>{write(option);optionsBox.open=false;},choices);if(appearance.colors[option])b.style.setProperty('--swatch',appearance.colors[option]);}
+   const customLabel=node('label','creator-custom-trait',undefined,optionsBox);node('span','','自定义'+f.label,customLabel);const customInput=node('input','',undefined,customLabel);customInput.setAttribute('aria-label','自定义'+f.label);customInput.value=value(f.id);customInput.maxLength=500;customInput.placeholder=unit?'填写数值，单位 '+unit:'填写自己的描述，也可以留空';customInput.oninput=()=>write(customInput.value);controls.push({input:customInput,read:()=>value(f.id)});
    traitRows.push({field:f,row,input,shown,sync:()=>{const v=value(f.id);if(doc.activeElement!==input)input.value=v;row.hidden=!visibleTrait(f);}});
   }
   function syncTraitVisibility(){for(const t of traitRows)t.sync();}

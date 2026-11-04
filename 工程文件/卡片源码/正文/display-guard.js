@@ -6,7 +6,7 @@
     thoughtStyle.textContent=globalThis.CxxDisplayGuardStyle||'';
     top.document.head.append(thoughtStyle);
   }
-  const toggleDiagnostic=event=>{const detail=event.target;if(!detail?.matches?.('.cxx-update-diagnostic'))return;const body=detail.querySelector(':scope > .cxx-native-aux-body');if(body){body.hidden=!detail.open;body.style?.setProperty('display',detail.open?'block':'none','important');}};
+  const toggleDiagnostic=event=>{const detail=event.target;if(!detail?.matches?.('.cxx-native-aux'))return;const body=detail.querySelector(':scope > .cxx-native-aux-body');if(body){body.hidden=!detail.open;body.style?.setProperty('display',detail.open?'block':'none','important');}};
   top.document?.addEventListener('toggle',toggleDiagnostic,true);
   const mirrorEnabled=()=>api.getVariables?.({type:'chat'})?.__cxx_ui_preferences?.mirror!==false;
   const mirrorStyle=top.document?.createElement('style');if(mirrorStyle)mirrorStyle.textContent='html[data-cxx-mirror-off] #chat :is(.jy-tts-bar,.jy-tts-line,.jy-tts-play,.jy-tts-edit){display:none!important}';mirrorStyle&&top.document.head.append(mirrorStyle);
@@ -70,7 +70,9 @@
           const token='CXXSOURCE'+nonce+'X'+(++sequence)+'END';saved.set(token,sourceStatus(floor,result));return token;
         }
       }
-      text=parser.prepareDialogue(parser.readingText(text));
+      text=parser.readingText(text);const presetName=api.getLoadedPresetName?.()||api.SillyTavern.getContext().chatCompletionSettings?.preset_settings_openai||'',preset=api.SillyTavern.getContext().chatCompletionSettings||{};
+      for(const item of (parser.detailBlocks?.(text,{presetName,preset})||[]).slice().reverse()){const token='CXXPROTECTED'+nonce+'X'+(++sequence)+'END';saved.set(token,'<details class="cxx-native-aux cxx-preset-detail" data-cxx-aux="native"><summary>'+escape(item.label)+'</summary><pre class="cxx-native-aux-body" hidden style="display:none!important">'+escape(item.body)+'</pre></details>');text=text.slice(0,item.start)+token+text.slice(item.end);}
+      text=parser.prepareDialogue(text);
       let parsed=parser.inspect(text);
       const updates=parsed.roots.filter(r=>r.kind==='UpdateVariable');
       // Display copies are inert. The same decoder supplies their format result;

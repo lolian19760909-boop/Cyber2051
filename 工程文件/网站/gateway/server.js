@@ -100,6 +100,9 @@ try { db.exec("ALTER TABLE publishers ADD COLUMN banned_at TEXT"); } catch {}
 try { db.exec("ALTER TABLE feedback ADD COLUMN publisher_id TEXT"); } catch {}
 try { db.exec("CREATE INDEX IF NOT EXISTS idx_sub_publisher ON submissions (publisher_id)"); } catch {}
 const submissionHistory = require('./submission-history.cjs').createHistory(db);
+const feedbackColumns=new Set(db.prepare('PRAGMA table_info(feedback)').all().map(column=>column.name));
+for(const [name,type]of [['submission_id','INTEGER'],['content_version','TEXT']])if(!feedbackColumns.has(name))db.exec('ALTER TABLE feedback ADD COLUMN '+name+' '+type);
+db.exec('CREATE INDEX IF NOT EXISTS idx_feedback_submission ON feedback(submission_id,status,id)');
 
 const nowIso = () => new Date().toISOString();
 const ipHashOf = (ip) => crypto.createHash('sha256').update(IP_SALT + ip).digest('hex').slice(0, 16);
@@ -252,6 +255,7 @@ const officialRelease = require('./official-release.cjs').createOfficialRelease(
     privateKeyFile: process.env.CXX_OFFICIAL_SIGNING_KEY_FILE,
     keyId: process.env.CXX_OFFICIAL_KEY_ID,
   },
+  afterCommit: (id,payload,finishedAt)=>workshopCommunity.recordCommitted(id,payload,finishedAt),
   beforeCommit: ({ db: transactionDb, packages }) => {
     if (transactionDb !== db) throw new Contract.ContractError('来源检查必须使用同一事务数据库', 'source_transaction_mismatch', 409);
     workshopBridge.assertSources(packages);
@@ -262,6 +266,7 @@ const workshopBridge = require('./workshop-bridge.cjs').createWorkshopBridge({
   db, send, readBody, ownerSession, officialRelease, modulePath: process.env.CXX_FORMAT3_PACKAGES_MODULE,
 });
 const rateMap = new Map();
+const workshopCommunity=require('./workshop-community.cjs').createCommunity({db,send,readBody,authorize:sessionPublisherRow,rateLimited,pagination,bridge:workshopBridge});
 const bugReports = require('./bug-reports.cjs').createBugReports({ db, send, readRawBody, authorize: sessionPublisherRow, pagination, rateLimited });
 const playConnect = require('./play-connect.cjs').createPlayConnect({ send, readRawBody, authorize: sessionPublisherRow });
 const temporarySaves = require('./temporary-saves.cjs').createTemporarySaves({ db, send, readRawBody, authorize: sessionPublisherRow });
@@ -277,7 +282,7 @@ function rateLimited(ipHash, max, windowMs = RATE_WINDOW_MS) {
 function publicSub(s) {
   const att = attachmentMeta(s.id);
   const packageRef = workshopBridge.packageRef(s);
-  return { id: s.id, type: s.type, title: s.title, summary: s.summary, authorName: s.author_name, tags: JSON.parse(s.tags || '[]'), revision: s.revision, updatedAt: s.updated_at, hasFile: !!att, fileSize: att ? att.fileSize : 0, fileExt: att ? att.fileExt : null, verified: !!s.publisher_id, ...(packageRef ? { packageRef } : {}) };
+  return { ...workshopCommunity.decorate(s),publicationMetadata:Contract.publicationMetadata(s.publication_metadata||{}),createdAt:s.created_at,id: s.id, type: s.type, title: s.title, summary: s.summary, authorName: s.author_name, tags: JSON.parse(s.tags || '[]'), revision: s.revision, updatedAt: s.updated_at, hasFile: !!att, fileSize: att ? att.fileSize : 0, fileExt: att ? att.fileExt : null, verified: !!s.publisher_id, ...(packageRef ? { packageRef } : {}) };
 }
 function parseSubInput(data, res) {
   const type = String(data.type || '');
@@ -294,13 +299,14 @@ function parseSubInput(data, res) {
   if (typeof payload === 'string') { try { payload = JSON.parse(payload); } catch { send(res, 400, { ok: false, error: 'payload_not_json' }); return null; } }
   if (payload === null || typeof payload !== 'object' || Array.isArray(payload)) { send(res, 400, { ok: false, error: 'payload_must_be_object' }); return null; }
   try {
-    if ((type === 'contract' || payload.templateKind) && Object.keys(data).some(key => !['type','title','summary','authorName','tags','payload','baseRevision','editKey'].includes(key))) throw new Contract.ContractError('投稿不接受客户端权威字段');
+    if ((type === 'contract' || payload.templateKind) && Object.keys(data).some(key => !['type','title','summary','authorName','tags','payload','baseRevision','editKey','publication'].includes(key))) throw new Contract.ContractError('投稿不接受客户端权威字段');
     payload = Contract.validateIncoming(type,payload,{ title, summary, authorName, tags });
   }
   catch (e) { send(res, e.status || 400, { ok: false, error: e.code || 'invalid_contract', message: e.message }); return null; }
+  let publication;try{publication=Contract.publicationMetadata(data.publication||{});}catch(e){send(res,e.status||400,{ok:false,error:e.code,message:e.message});return null;}
   const payloadText = JSON.stringify(payload);
   if (Buffer.byteLength(payloadText, 'utf8') > BODY_KEY_MAX) { send(res, 400, { ok: false, error: 'payload_too_big', maxBytes: BODY_KEY_MAX }); return null; }
-  return { type, title, summary, authorName, tags, payloadText };
+  return { type, title, summary, authorName, tags, payloadText,publication };
 }
 
 const server = http.createServer(async (req, res) => {
@@ -330,6 +336,7 @@ const server = http.createServer(async (req, res) => {
   if (playConnect.handle(req, res, url, m)) return;
   if (temporarySaves.handle(req, res, url, m)) return;
   if (bugReports.handle(req, res, url, m)) return;
+  if (workshopCommunity.handle(req,res,url,m)) return;
   if (workshopBridge.handle(req, res, p, m)) return;
   if (officialRelease.handle(req, res, p, m)) return;
 
@@ -348,7 +355,9 @@ const server = http.createServer(async (req, res) => {
 
   // ================= 工坊 A：留言墙（原契约不变）=================
   if (m === 'GET' && p === '/api/workshop/feedback') {
-    const rows = db.prepare("SELECT id, nickname, body, created_at FROM feedback WHERE status='approved' ORDER BY id DESC LIMIT 100").all();
+    const submissionId=url.searchParams.has('submissionId')?Number(url.searchParams.get('submissionId')):null;
+    if(submissionId!==null&&(!Number.isSafeInteger(submissionId)||submissionId<1||!db.prepare("SELECT 1 FROM submissions WHERE id=? AND status='approved'").get(submissionId)))return send(res,404,{ok:false,error:'not_found'});
+    const rows = db.prepare("SELECT id, nickname, body, created_at,submission_id,content_version FROM feedback WHERE status='approved' AND submission_id IS ? ORDER BY id DESC LIMIT 100").all(submissionId);
     return send(res, 200, { ok: true, items: rows });
   }
   if (m === 'POST' && p === '/api/workshop/feedback') {
@@ -363,8 +372,11 @@ const server = http.createServer(async (req, res) => {
       if (authz.error === 'banned') return send(res, 403, { ok: false, error: 'banned', reason: authz.reason });
       if (db.prepare('SELECT COUNT(*) AS n FROM feedback WHERE created_at>=?').get(new Date(Date.now() - 24 * 3600 * 1000).toISOString()).n >= 500) return send(res, 429, { ok: false, error: 'daily_limit' }, { 'Retry-After': '3600' });
       if (rateLimited('feedback:' + authz.row.publisher_id, 3, 600000)) return send(res, 429, { ok: false, error: 'rate_limited' }, { 'Retry-After': '600' });
+      const submissionId=data.submissionId===undefined?null:Number(data.submissionId),contentVersion=data.version===undefined?null:String(data.version);
+      if(submissionId!==null&&(!Number.isSafeInteger(submissionId)||!db.prepare("SELECT 1 FROM submissions WHERE id=? AND status='approved'").get(submissionId)))return send(res,404,{ok:false,error:'not_found'});
+      if(contentVersion!==null&&(!/^\d+\.\d+\.\d+$/.test(contentVersion)||!db.prepare('SELECT 1 FROM workshop_published_versions WHERE submission_id=? AND version=?').get(submissionId,contentVersion)))return send(res,400,{ok:false,error:'invalid_version'});
       if (!nickname) nickname = authz.sess.displayName || null;
-      const info = db.prepare('INSERT INTO feedback (created_at, nickname, body, ip_hash, status, publisher_id) VALUES (?, ?, ?, ?, ?, ?)').run(nowIso(), nickname, body, ipHashOf(clientIp(req)), 'pending', authz.row.publisher_id);
+      const info = db.prepare('INSERT INTO feedback (created_at, nickname, body, ip_hash, status, publisher_id,submission_id,content_version) VALUES (?, ?, ?, ?, ?, ?,?,?)').run(nowIso(), nickname, body, ipHashOf(clientIp(req)), 'pending', authz.row.publisher_id,submissionId,contentVersion);
       return send(res, 201, { ok: true, id: Number(info.lastInsertRowid), status: 'pending', notice: '留言已提交，审核通过后展示' });
     });
   }
@@ -372,21 +384,7 @@ const server = http.createServer(async (req, res) => {
   // ================= 工坊 B：内容目录 =================
   // 公开目录（只含 approved）
   if (m === 'GET' && p === '/api/workshop/submissions') {
-    const type = url.searchParams.get('type');
-    const q = cleanText(url.searchParams.get('q') || '').trim().toLowerCase();
-    let sql = "SELECT id, type, title, summary, author_name, tags, revision, updated_at, publisher_id, status FROM submissions WHERE status='approved'";
-    const args = [];
-    if (type && ALLOWED_TYPES.includes(type)) { sql += ' AND type=?'; args.push(type); }
-    if (q) { sql += ' AND (LOWER(title) LIKE ? OR LOWER(summary) LIKE ?)'; args.push('%' + q + '%', '%' + q + '%'); }
-    const paged = pagination.page(db, url.searchParams, {
-      scope: ['public-submissions', ALLOWED_TYPES.includes(type) ? type : '', q, 'id-desc'],
-      from: 'submissions', select: 'id, type, title, summary, author_name, tags, revision, updated_at, publisher_id, status',
-      where: sql.split(' WHERE ')[1], args, keys: [{ column: 'id', type: 'number' }], map: publicSub,
-    });
-    if (paged) return send(res, 200, paged);
-    sql += ' ORDER BY id DESC LIMIT 200';
-    const rows = db.prepare(sql).all(...args).map(publicSub);
-    return send(res, 200, { ok: true, items: rows });
+    return send(res,200,workshopCommunity.list(url.searchParams,publicSub));
   }
   // 公开详情（只含 approved；含 payload 与附件元数据）
   const mPub = p.match(/^\/api\/workshop\/submissions\/(\d+)$/);
@@ -462,9 +460,9 @@ const server = http.createServer(async (req, res) => {
       if (!parsed.authorName && authz.sess.displayName) parsed.authorName = authz.sess.displayName;
       const editKey = crypto.randomBytes(24).toString('base64url');
       const t = nowIso();
-      const info = db.prepare(`INSERT INTO submissions (created_at, updated_at, type, title, summary, author_name, tags, payload, content_hash, edit_key_hash, ip_hash, revision, status, publisher_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 'pending', ?)`)
-        .run(t, t, parsed.type, parsed.title, parsed.summary, parsed.authorName, JSON.stringify(parsed.tags), parsed.payloadText, sha256hex(parsed.payloadText), encKey(editKey), ih, publisherId);
+      const info = db.prepare(`INSERT INTO submissions (created_at, updated_at, type, title, summary, author_name, tags, payload, content_hash, edit_key_hash, ip_hash, revision, status, publisher_id, publication_metadata)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 'pending', ?, ?)`)
+        .run(t, t, parsed.type, parsed.title, parsed.summary, parsed.authorName, JSON.stringify(parsed.tags), parsed.payloadText, sha256hex(parsed.payloadText), encKey(editKey), ih, publisherId,JSON.stringify(parsed.publication));
       console.log(`[submission] create id=${info.lastInsertRowid} iph=${ih} publisher=${publisherId || 'anon'} outcome=ok`);
       // 编辑密钥只在本次响应出现
       return send(res, 201, { ok: true, id: Number(info.lastInsertRowid), revision: 1, status: 'pending', editKey, notice: '投稿已提交待审。编辑密钥只显示这一次，请立即保存！' });
@@ -491,19 +489,19 @@ const server = http.createServer(async (req, res) => {
         console.log(`[submission] withdraw id=${id} outcome=ok`);
         return send(res, 200, { ok: true, id, status: 'withdrawn', notice: '投稿已撤下；已签名发行的包还需发行者在发布页撤回目录。历史已装内容保留。' });
       }
-      if (s.status === 'approved' && data.title === undefined && data.payload === undefined) return send(res, 400, { ok: false, error: 'nothing_to_update' });
+      if (s.status === 'approved' && !['title','summary','authorName','tags','payload','publication'].some(key=>Object.hasOwn(data,key))) return send(res, 400, { ok: false, error: 'nothing_to_update' });
       try { Contract.assertOpen(s.type,JSON.parse(s.payload)); } catch(e) { return send(res,e.status,{ok:false,error:e.code,message:e.message}); }
       const merged = {
         type: data.type ?? s.type, title: data.title ?? s.title, summary: data.summary ?? s.summary,
         authorName: data.authorName ?? s.author_name, tags: data.tags ?? JSON.parse(s.tags || '[]'),
-        payload: data.payload ?? JSON.parse(s.payload),
+        payload: data.payload ?? JSON.parse(s.payload),publication:data.publication??JSON.parse(s.publication_metadata),
       };
       const parsed = parseSubInput(merged, res); if (!parsed) return;
       const clientRev = Number(data.baseRevision);
       if (!Number.isInteger(clientRev) || clientRev !== s.revision) return send(res, 409, { ok: false, error: 'revision_conflict', currentRevision: s.revision });
       const newRev = s.revision + 1;
-      db.prepare("UPDATE submissions SET updated_at=?, type=?, title=?, summary=?, author_name=?, tags=?, payload=?, content_hash=?, revision=?, status='pending' WHERE id=?")
-        .run(nowIso(), parsed.type, parsed.title, parsed.summary, parsed.authorName, JSON.stringify(parsed.tags), parsed.payloadText, sha256hex(parsed.payloadText), newRev, id);
+      db.prepare("UPDATE submissions SET updated_at=?, type=?, title=?, summary=?, author_name=?, tags=?, payload=?, content_hash=?, publication_metadata=?, revision=?, status='pending' WHERE id=?")
+        .run(nowIso(), parsed.type, parsed.title, parsed.summary, parsed.authorName, JSON.stringify(parsed.tags), parsed.payloadText, sha256hex(parsed.payloadText),JSON.stringify(parsed.publication), newRev, id);
       console.log(`[submission] update id=${id} rev=${newRev} outcome=ok`);
       return send(res, 200, { ok: true, id, revision: newRev, status: 'pending', notice: '改稿已提交，重新进入待审' });
     });
@@ -782,11 +780,11 @@ const server = http.createServer(async (req, res) => {
         if (q) { where += ' AND (LOWER(nickname) LIKE ? OR LOWER(body) LIKE ?)'; args.push('%' + q + '%', '%' + q + '%'); }
         return send(res, 200, pagination.page(db, url.searchParams, {
           scope: ['admin-feedback', ['pending', 'approved', 'rejected'].includes(st) ? st : '', q, 'id-desc'],
-          from: 'feedback', select: 'id, nickname, body, created_at, ip_hash, status', where, args, keys: [{ column: 'id', type: 'number' }],
+          from: 'feedback', select: 'id, nickname, body, created_at, ip_hash, status,submission_id,content_version', where, args, keys: [{ column: 'id', type: 'number' }],
         }));
       }
       const where = ['pending', 'approved', 'rejected'].includes(st) ? `WHERE status='${st}'` : '';
-      return send(res, 200, { ok: true, items: db.prepare(`SELECT id, nickname, body, created_at, ip_hash, status FROM feedback ${where} ORDER BY id DESC LIMIT 200`).all() });
+      return send(res, 200, { ok: true, items: db.prepare(`SELECT id, nickname, body, created_at, ip_hash, status,submission_id,content_version FROM feedback ${where} ORDER BY id DESC LIMIT 200`).all() });
     }
     const mFb = p.match(/^\/api\/admin\/feedback\/(\d+)\/(approve|reject|delete)$/);
     if (m === 'POST' && mFb) {
@@ -865,7 +863,7 @@ const server = http.createServer(async (req, res) => {
 
   if (m !== 'GET' && m !== 'POST') return send(res, 405, { ok: false, error: 'method_not_allowed', method: m });
   return send(res, 404, { ok: false, error: 'not_found', path: p });
-  } catch (e) { send(res, e instanceof PaginationError ? 400 : 500, { ok: false, error: e instanceof PaginationError ? e.code : 'internal_error' }); }
+  } catch (e) { const client=e instanceof PaginationError||e instanceof Contract.ContractError;send(res,client?e.status:500,{ok:false,error:client?e.code:'internal_error',...(e instanceof Contract.ContractError?{message:e.message}:{})}); }
 });
 
 const STARTED = nowIso();

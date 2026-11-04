@@ -755,3 +755,6 @@
   color: var(--cxx-muted);
   line-height: 1.5;
 }
+
+.creator-custom-trait { display:grid; gap:8px; padding:12px; border-top:1px solid var(--cxx-line); font-size:14px; }
+.creator-custom-trait input { width:100%; min-height:44px; box-sizing:border-box; }

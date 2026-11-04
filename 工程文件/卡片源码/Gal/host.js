@@ -224,7 +224,7 @@
     onOpened: expectedKey => saveMode(expectedKey, true),
     onUserClose: expectedKey => saveMode(expectedKey, false),
     readCombat(floor) { return win.CxxCombatView?.forFloor(context().chat,floor)||[]; },
-    read() { const c = context(); return { key: key(c), messages: c.chat, listRevision, draft: input()?.value || '', busy: busy(), generating: nativeBusy() && !mvuBusy() && !mvuSeen, canStop: nativeBusy() && !mvuBusy() && !mvuSeen, status: mvuStatus, ...openingState(c) }; },
+    read() { const c = context(); return { key: key(c), messages: c.chat, listRevision,readingOptions:{foldDetails:CxxGalParser.detailSummaries({presetName:typeof getLoadedPresetName==='function'?getLoadedPresetName():c.chatCompletionSettings?.preset_settings_openai,preset:c.chatCompletionSettings||{}})}, draft: input()?.value || '', busy: busy(), generating: nativeBusy() && !mvuBusy() && !mvuSeen, canStop: nativeBusy() && !mvuBusy() && !mvuSeen, status: mvuStatus, ...openingState(c) }; },
     readHud(options) { return CxxGalHud.read({ ...options,receipt:win.Cxx236VariableGuard?.state?.({floor:options.messageId})?.receipt,
       getVariables: typeof getVariables === 'function' ? getVariables : undefined }); },
     resolveScene({floor,scene}){const c=context();return sceneResolver.resolve({key:key(c),messages:c.chat,floor,scene,locate:(map,id)=>win.CxxAtlasTool?.location(map,id)});},

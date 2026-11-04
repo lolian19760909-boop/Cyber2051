@@ -1,0 +1,6 @@
+/** Same-origin subscription intent, bound to the verified website account. */
+export function createWorkshopAccount({publisherId,token,currentPublisher,isCurrent=()=>true,fetch:fetcher=globalThis.fetch.bind(globalThis)}){
+ function assert(owner){if(!isCurrent()||currentPublisher()!==publisherId||!owner||token()!==owner)throw Object.assign(Error('账号已变化，请在当前账号重新打开工坊'),{code:'workshop_account_changed'});}
+ async function request(path,body){const owner=token();assert(owner);const response=await fetcher(path,{credentials:'same-origin',cache:'no-store',headers:{Authorization:'Bearer '+owner,...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{method:'POST',body:JSON.stringify(body)})});assert(owner);const data=await response.json();assert(owner);if(!response.ok||!data.ok)throw Error(data.message||data.error||'账号订阅读取失败');return data;}
+ return {async read(){const data=await request('/api/workshop/me/subscriptions');if(data.publisherId!==publisherId)throw Object.assign(Error('订阅记录属于另一账号'),{code:'workshop_account_changed'});return data.items;},async set({submissionId,subscribed}){if(!Number.isSafeInteger(submissionId)||submissionId<1)throw Error('作品尚未提供可用的投稿编号，请刷新目录');return request('/api/workshop/submissions/'+submissionId+'/subscribe',{subscribed});}};
+}
