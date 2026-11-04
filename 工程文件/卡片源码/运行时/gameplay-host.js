@@ -92,7 +92,7 @@
     }
     const playerRead=root.CxxPlayerHost.createReader({api,host});
     async function readMedia(){const saved=await playerRead({reuse:true});return {...saved,busy:extraBusy()};}
-    const player=root.CxxPlayerHost.create({api,host,read:playerRead,assertIdle:assertMvuIdle,waitForInstall});
+    const player=root.CxxPlayerHost.create({api,host,read:playerRead,assertIdle:assertMvuIdle,waitForInstall,workshopSource(){const vars=api.getVariables({type:'chat'}),state=Content.withMigration(host.readState(),vars);return {registry:state.registry,subscriptions:state.subscriptions,pins:vars.__cxx_content_pins||{},mapIndex:getSeed().mapIndex};}});
     let panel=null,body=null,message=null,preview=null,activeTab='天赋',last=null,busy=false,returnFocus=null,timer=null,waiting=null,waitPaused=false,talentView=null,growthStatus='';
     const disposers=[];
     function element(tag,text,parent,cls){const n=doc.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;parent?.append(n);return n;}
@@ -190,6 +190,7 @@
     }
     function close(){cancelWait();waitPaused=false;talentView?.destroy();talentView=null;panel?.remove();panel=null;body=null;message=null;preview=null;last=null;growthStatus='';if(returnFocus?.isConnected)returnFocus.focus();}
     async function open(tab){
+      if(['商店','蓝图','配方','技能','服务','目击','资源','槽位'].includes(tab)){close();const workshop=(root.parent||root).CxxWorkshopWebsite;if(!workshop?.open)throw Error('工坊面板尚未就绪，请稍后重试。');return workshop.open({tab:'玩法'});}
       const playerTabs={'人物':'人物','User':'人物','天赋':'天赋','装备':'物品栏','库存':'物品栏','物品栏':'物品栏','义体':'义体'};
       if(playerTabs[tab]){close();return player.open(playerTabs[tab]);}
       if(['天赋','商店','库存','蓝图','配方','装备','技能','服务','目击','资源','槽位','人物资料','出身开场','行动记录'].includes(tab))activeTab=tab;
@@ -199,7 +200,7 @@
       const head=element('header',undefined,panel);element('h2','正文玩法',head);const closeButton=element('button','关闭正文玩法',head);closeButton.type='button';closeButton.addEventListener('click',close);
       
       message=element('p','所有交易和效果以AI回复后的MVU保存记录为准。',panel);message.setAttribute('role','status');
-      const nav=element('nav',undefined,panel);for(const name of ['天赋','商店','库存','蓝图','配方','装备','技能','服务','目击','资源','槽位','人物资料','出身开场','行动记录']){const enabled=['天赋','人物资料','出身开场','行动记录'].includes(name),b=button(name,async()=>{activeTab=name;preview=null;await render();},nav);b.dataset.gameplayTab=name;if(!enabled){const badge=element('small','待更新',b);badge.className='cxx-game-pending';b.disabled=true;b.title='将在后续版本开放';b.setAttribute('aria-description','将在后续版本开放');}}
+      const nav=element('nav',undefined,panel);for(const name of ['天赋','人物资料','出身开场','行动记录']){const b=button(name,async()=>{activeTab=name;preview=null;await render();},nav);b.dataset.gameplayTab=name;}button('工坊玩法',()=>open('商店'),nav);
       button('读取已保存状态',async()=>{waitPaused=false;await render();if(!extraBusy())status(growthStatus||'已从酒馆存档读回当前状态');},panel);body=element('div',undefined,panel);
       panel.addEventListener('keydown',e=>{if(e.key==='Escape'){e.stopPropagation();close();}if(e.key==='Tab'){const nodes=[...panel.querySelectorAll('button,input'),...(talentView?.shadow.querySelectorAll('button,input,[tabindex="0"]')||[])].filter(n=>!n.disabled&&n.getClientRects().length);const focus=talentView?.shadow.activeElement||doc.activeElement;if(e.shiftKey && focus===nodes[0]){e.preventDefault();nodes.at(-1)?.focus();}else if(!e.shiftKey && focus===nodes.at(-1)){e.preventDefault();nodes[0]?.focus();}}});
       // Popover's auto-sized centered box can place its close button above a short viewport.

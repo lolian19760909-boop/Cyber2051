@@ -2,7 +2,7 @@
 const test=require('node:test'),assert=require('node:assert/strict'),C=require("../../网站/gateway/workshop-contract.cjs"),F=require("../../网站/gateway/workshop-gameplay-fixtures.cjs"),P=C.library(),G=require("../../卡片源码/运行时/gameplay.js"),Content=require("../../卡片源码/运行时/content.js");
 const identity={publisher_id:'2222222222222222',status:'active'},mapIndex=Object.fromEntries(C.schema().maps.map(m=>[m.id,m.places.map(p=>p.id)]));
 function compile(kind,revision=1,id=9){const payload=JSON.stringify((C.schema().templates.some(t=>t.id===kind)?F.payload(kind,revision):F.legacyPayload(kind,revision))),type=[...C.schema().templates,...C.schema().legacyTemplates].find(t=>t.id===kind).type;return C.compile({id,revision,type,title:'隔离 '+kind,payload,content_hash:P.sha256(payload),publisher_id:identity.publisher_id,tags:'[]'},identity,P).package;}
-for(const form of C.schema().templates.filter(t=>t.id!=='code_component'))test(form.id+' has stable two-version definitions and a real consumer',()=>{
+for(const form of C.schema().templates.filter(t=>!['code_component','collection'].includes(t.id)))test(form.id+' has stable two-version definitions and a real consumer',()=>{
  const a=compile(form.id),b=compile(form.id,2);assert.equal(a.id,b.id);assert.equal(a.version,'1.0.1');assert.equal(b.version,'1.0.2');
  const registry={packages:{[b.id]:{...b,history:{[a.version]:a.content}}}},options={subscriptions:{[a.id]:true},pins:{[a.id]:a.version},mapIndex};
  const choices=Content.storyChoices(registry,options);

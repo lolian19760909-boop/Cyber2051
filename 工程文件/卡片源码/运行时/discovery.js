@@ -35,5 +35,9 @@
     }
     return {check,state,setEnabled:enabled,stop(){stopped=true;active?.abort();}};
   }
-  return {create,readCatalog,downloadContent,verifyDocument,URL,DAY,LIMIT};
+  async function prepareContent(entry,{catalog,Content,...options}){
+    const root=await downloadContent(entry,options),members=Content.collectionMembers({version:root.pack.version,content:root.pack.content});const items=[root];
+    for(let i=0;i<members.length;i+=4){const batch=await Promise.all(members.slice(i,i+4).map(async m=>{const selected=catalog.packages.find(p=>p.id===m.packageId&&p.kind==='content'&&p.optional);if(!selected||options.Core.compareVersions(selected.version,m.minVersion)<0)throw Error('合集成员暂不可下载：'+m.packageId+' ≥ '+m.minVersion);const item=await downloadContent(selected,options);if(Content.collectionMembers({version:item.pack.version,content:item.pack.content}).length)throw Error('合集成员需要普通内容');const source=item.pack.content.worldbook?.[0]?.extra?.__cxx_workshop_source;if(source?.submissionId!==m.submissionId)throw Error('合集成员来源编号不符');return item;}));items.push(...batch);}return [...items.slice(1),root];
+  }
+  return {create,readCatalog,prepareContent,downloadContent,verifyDocument,URL,DAY,LIMIT};
 });

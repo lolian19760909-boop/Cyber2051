@@ -6,7 +6,7 @@ const S=require('../../卡片源码/MVU/schema.js').build(require('D:/SillyTaver
 const {executor}=require('../MVU/mvu-fixture.cjs');
 const clone=structuredClone,pause=()=>new Promise(r=>setImmediate(r));
 function gate(){let release;const promise=new Promise(r=>release=r);return {promise,release};}
-function fixture(t){
+function fixture(t,{workshopSource}={}){
   const game=E.loadout.base();game.growth=E.growth.initialize({level:1,xp:0,attributePoints:7,perkPoints:0,attributes:{body:3,reflexes:3,intelligence:3,technical:3,cool:3}},'legacy');game.numeric=E.initialNumeric(game);
   const stat={futureRoot:{keep:false},terminal:{wallet:{yen:777,earned:0,spent:0,external:'keep'},gameplay:{...game,external:7},external:{zero:0}}};
   const ex=executor(async()=>{}),value={stat_data:stat,schema:clone(ex.schema(clone(stat))),external:{keep:true}};
@@ -19,7 +19,7 @@ function fixture(t){
   const read=H.createReader({api,readDisk:async()=>{reads++;return clone(disk);}});
   const host={async assertPlayerWritable(){if(writeGate)await writeGate.promise;},withChatSave:async(_,fn)=>fn()};
   const prior=global.Cxx236VariableGuard;global.Cxx236VariableGuard={validateProgram:S.program};
-  const player=H.create({api,host,read,operations:O,ui:{},saveTimeout:1000});
+  const player=H.create({api,host,read,operations:O,ui:{},saveTimeout:1000,workshopSource});
   t.after(()=>{player.stop();global.Cxx236VariableGuard=prior;});
   return {player,row,c,read,ex,value,stat:()=>row.variables[row.swipe_id].stat_data,disk:()=>clone(disk),stats:()=>({writes,saves,reads}),holdSave:g=>saveGate=g,holdWrite:g=>writeGate=g,corrupt:v=>corrupt=v,switchChat:()=>chatId='other'};
 }
@@ -28,7 +28,7 @@ test('approved actors persist through existing host, strict MVU schema and disk 
   let finished=false;const saving=f.player.commit({action:'ensemble-initialize'}).then(x=>{finished=true;return x;});
   await pause();assert.equal(finished,false);assert.equal(f.player.saveState().status,'saving');assert.equal(f.stats().writes,1);
   g.release();const saved=await saving;assert.equal(f.player.saveState().status,'saved');assert.deepEqual(saved.stat,f.disk()[2].variables[0].stat_data);
-  assert.deepEqual(f.stat().terminal.gameplay,before[0].stat_data.terminal.gameplay);assert.deepEqual(f.stat().terminal.wallet,before[0].stat_data.terminal.wallet);assert.deepEqual(f.row.variables[1],before[1]);assert.deepEqual(f.row.variables[0].external,{keep:true});
+  for(const [key,value]of Object.entries(before[0].stat_data.terminal.gameplay))assert.deepEqual(f.stat().terminal.gameplay[key],value);assert.equal(f.stat().terminal.gameplay.sanity.value,100);assert.deepEqual(f.stat().terminal.wallet,before[0].stat_data.terminal.wallet);assert.deepEqual(f.row.variables[1],before[1]);assert.deepEqual(f.row.variables[0].external,{keep:true});
   assert.equal(f.row.variables[0].schema.properties.terminal.properties.ensemble.recursiveExtensible,true);
   const initial=clone(f.stat());await f.player.commit({action:'ensemble-initialize'});assert.deepEqual(f.stat(),initial);
   const reopening=O.plan(initial,{action:'initialize'});assert.deepEqual(reopening.terminal.ensemble,initial.terminal.ensemble);assert.deepEqual(reopening.terminal.wallet,initial.terminal.wallet);
@@ -73,3 +73,5 @@ test('a delayed send preparation cannot send the input under a newly selected ac
  const f=fixture(t);await f.player.commit({action:'ensemble-initialize'});await f.player.commit({action:'actor-switch',actorId:'wb_10'});const prior=global.__cxx_battle__,g=gate();global.__cxx_battle__={preflight:()=>g.promise};t.after(()=>{if(prior===undefined)delete global.__cxx_battle__;else global.__cxx_battle__=prior;});let sends=0;
  const pending=f.player.requestSend(()=>sends++);await pause();await f.player.commit({action:'actor-switch',actorId:'wb_6'});g.release();await assert.rejects(pending,/人物.*变化/);assert.equal(sends,0);assert.equal(A.registry(f.stat()).control.actorId,'wb_6');
 });
+
+test('workshop retry after native HTTP save failure retains one financial action and one receipt',async t=>{const GF=require('../lib/fixture-loader.cjs')('gameplay.test.cjs',['fixture']).fixture(),game=require('../lib/tactical-fixtures.cjs').game();for(const key of ['inventory','blueprints','skills','resources','events','results','location'])game[key]=clone(GF.stat.terminal.gameplay[key]);GF.stat.terminal.gameplay=game;const f=fixture(t,{workshopSource:()=>({registry:GF.registry,mapIndex:{'tokyo-central':['ring']}})});f.row.variables[0].stat_data=clone(GF.stat);await f.c.saveChat();const save=f.c.saveChat,request={action:'workshop-action',id:'act_same_service',command:{action:'service',id:'clinic'}};f.c.saveChat=async()=>{throw Error('合成HTTP503');};await assert.rejects(f.player.commit(request),e=>e.actionPending===true);assert.equal(f.stat().terminal.wallet.yen,92);assert.equal(f.disk()[2].variables[0].stat_data.terminal.wallet.yen,100);f.c.saveChat=save;await f.player.commit(request);const saved=f.disk()[2].variables[0].stat_data;assert.equal(saved.terminal.wallet.yen,92);assert.equal(saved.terminal.gameplay.resources.health,90);assert.deepEqual(Object.keys(saved.terminal.gameplay.results),['act_same_service']);});

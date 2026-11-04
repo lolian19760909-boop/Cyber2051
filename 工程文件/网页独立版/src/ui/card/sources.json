@@ -193,7 +193,7 @@
   },
   {
     "source": "卡片源码/运行时/player-operations.js",
-    "sha256": "0d6a61840176012c5dbe1c0622689eddb23a8cb0c4b00c1a442b27a7fab5c543",
+    "sha256": "6eee5b8543453895352f1c708effdeecff7d49cd292a3308d725cbb12d3dc18e",
     "target": "src/ui/card/运行时/player-operations.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },

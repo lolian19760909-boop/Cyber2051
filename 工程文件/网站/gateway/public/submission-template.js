@@ -51,6 +51,23 @@
       f('clues', ['额外线索与不同处理方式', 'Clues and approaches', '手掛かりと別の方法'], false, 900, '提供可用线索和选择，不规定唯一通关路线。', '可询问周围摊主，也可请值班员出示寄存单，让误取者自行核对。', '1—3段'),
     ] },
   ];
+  templates.push(
+    {id:'world_factor',type:'world_factor',title:['世界因子','World factor','世界設定'],format:2,consumer:'关键词世界书',fields:[
+      f('content',['设定正文','Setting','設定本文'],true,4000,'写清适用情境和可观察的变化。','雨夜维修摊仍在营业，灯下摆着修理用的旧零件。','1—3段')
+    ]},
+    {id:'side_story',type:'contract',title:['侧剧情','Side story','サイドストーリー'],format:1,consumer:'quests',fields:templates.find(form=>form.id==='contract').fields},
+    {id:'code_component',type:'code_component',title:['代码集成提案','Code proposal','コード提案'],format:1,location:false,consumer:'next_card',fields:[
+      f('proposal',['功能说明','Proposed behavior','機能説明'],true,4000,'说明触发条件和玩家看到的结果。','终端任务页显示当前任务的实际进度。','1—3段'),
+      f('entrypoints',['接入点与影响范围','Integration points','接続点と影響範囲'],true,4000,'列出现有模块、调用入口和受影响的使用方。','复用任务读取接口，在终端任务详情显示进度。','1—3段'),
+      f('compatibility',['兼容与测试说明','Compatibility and checks','互換性と検証'],true,4000,'说明旧数据处理、验证方法及附件用途。','保留已有任务字段，验证新建、读取、刷新与旧档。','1—3段')
+    ]}
+  );
+  for(const [id,type,title,names]of [
+    ['encounter','world_factor','遭遇 / 目击',[['witness','目击者'],['event','发生的事件'],['clue','线索']]],
+    ['function_zone','world_factor','功能区',[['purpose','用途'],['access','开放条件说明'],['services','提供的服务说明']]],
+    ...[['shop_item','商店物品'],['blueprint','蓝图'],['recipe','配方'],['skill','技能'],['function','功能服务']].map(([id,title])=>[id,id,title,[['description','用途与操作说明']]])
+  ])templates.push({id,type,title:[title,title,title],format:2,gameplay:true,consumer:'gameplay',fields:names.map(([name,label],index)=>f(name,[label,label,label],index===0||name==='event',4000,'说明玩家如何遇到或使用它，以及费用、条件和结果。','可在选定地点使用；具体条件和效果由下方玩法定义给出。','1—3段'))});
+  templates.push({id:'collection',type:'collection',title:['合集','Collection','コレクション'],format:1,location:false,consumer:'collection',fields:[f('description',['合集说明','Description','合集の説明'],true,4000,'说明这组作品的主题与使用顺序。','围绕同一街区的一组人物、委托和地点资料。','1—3段')]});
   const byKind = id => templates.find(t => t.id === id);
   const kindOf = (type, payload = {}) => payload.templateKind || (type === 'character' ? 'npc' : type);
   const isOpen = (type, payload = {}) => Boolean(byKind(kindOf(type, payload))?.type === type);
@@ -63,19 +80,24 @@
   function toLegacy(type, payload) {
     if (payload.templateVersion !== version) return JSON.parse(JSON.stringify(payload));
     const s = payload.sections, kind = kindOf(type, payload);
-    if (kind === 'contract') {
+    if (byKind(kind)?.type === 'contract') {
       const q = { ...payload.contract };
       for (const key of ['fixer','goal','risk','fixerNote','deadline','payNote','bonus','unlock']) if (value(s[key])) q[key] = value(s[key]);
       q.brief = sectionsText(kind, s, ['brief','fixerNote','deadline','payNote','clues']);
       q.terms = sectionsText(kind, s, ['terms','outcome']);
-      return { format: 1, templateKind: 'contract', contract: q };
+      return { format: 1, templateKind: kind, contract: q };
     }
+    if(kind==='collection')return {format:1,templateKind:kind,description:value(s.description),members:payload.members};
+    if(kind==='code_component')return {format:1,templateKind:kind,...Object.fromEntries(['proposal','entrypoints','compatibility'].map(name=>[name,value(s[name])]))};
     const p = { format: 2, templateKind: kind, mapId: payload.mapId, placeId: payload.placeId, keywords: payload.keywords };
+    if(byKind(kind)?.gameplay)return {...p,...Object.fromEntries(byKind(kind).fields.map(field=>[field.name,value(s[field.name])])),gameplay:payload.gameplay};
+    if(kind==='world_factor')return {...p,content:value(s.content)};
     if (kind === 'npc') return { ...p, name: value(s.name), identity: value(s.identity),
       background: sectionsText(kind, s, ['appearance','personality','background','speech','skills','aliases','habits','dialogue']),
       relationships: value(s.relationships), boundaries: value(s.boundaries), ...(payload.media ? { media: payload.media } : {}) };
-    return { ...p, identity: value(s.identity), background: sectionsText(kind, s, ['social','background','startingPoint','relationships','goals','notes']),
+    if(kind==='user_identity')return { ...p, identity: value(s.identity), background: sectionsText(kind, s, ['social','background','startingPoint','relationships','goals','notes']),
       opening: value(s.opening), appearance: value(s.appearance), skills: value(s.skills) };
+    throw Error('写作模板缺少对应转换：'+kind);
   }
   function upgradeLegacy(type, payload) {
     if (payload.templateVersion === version) return JSON.parse(JSON.stringify(payload));
@@ -85,8 +107,11 @@
     for (const field of form.fields) if (typeof source[field.name] === 'string') sections[field.name] = source[field.name];
     // 不猜测缺栏、不拆解任意旧正文；原稿始终在详情中可查看和导出。
     const out = { format: form.format, templateVersion: version, templateKind: kind, sections };
-    if (kind === 'contract') out.contract = Object.fromEntries(['mapId','placeId','type','difficulty','pay','prerequisites'].filter(k => source[k] !== undefined).map(k => [k,source[k]]));
-    else Object.assign(out, { mapId: source.mapId, placeId: source.placeId, keywords: source.keywords || [] }, source.media ? {media:source.media} : {});
+    if (form.type === 'contract') out.contract = Object.fromEntries(['mapId','placeId','type','difficulty','pay','prerequisites'].filter(k => source[k] !== undefined).map(k => [k,source[k]]));
+    else if(form.location!==false)Object.assign(out, { mapId: source.mapId, placeId: source.placeId, keywords: source.keywords || [] }, source.media ? {media:source.media} : {});
+    if(kind==='collection'&&payload.members)out.members=JSON.parse(JSON.stringify(payload.members));
+    if(payload.references)out.references=JSON.parse(JSON.stringify(payload.references));
+    if(form.gameplay&&payload.gameplay)out.gameplay=JSON.parse(JSON.stringify(payload.gameplay));
     return out;
   }
   // 与现行 business-content-sync.questEntry 的可见正文一致。

@@ -4,9 +4,26 @@
   const copy=v=>structuredClone(v),fields=['growth','numeric','inventory','equipment','itemDefinitions','itemReceipts','loadout','loadoutStart','tactical'];
   const actors=()=>typeof module==='object'&&module.exports?require('./ensemble-state.js'):globalThis.CxxEnsembleState;
   function clamp(game){if(!game.numeric?.vitals)return;const max=E.maximums(game.growth?.perks,undefined,L.effects(game),game.growth);for(const k of Object.keys(max))game.numeric.vitals[k]=Math.min(game.numeric.vitals[k],max[k]);}
-  function playerPlan(stat,request,{identity,newChat=false,startGame,battleEncounter,battleRoster,battleClosure,tacticalScene,questDefinitions,questSource,questCalibration}={}){
+  function workshopRequestKey(command){const Core=typeof module==='object'&&module.exports?require('./core.js'):globalThis.CxxUpdateCore;return Core.canonical(command);}
+  function workshopPlan(stat,request,options){
+    const G=typeof module==='object'&&module.exports?require('./gameplay.js'):globalThis.CxxGameplay;
+    if(typeof request.id!=='string'||!/^[A-Za-z][A-Za-z0-9_-]{0,79}$/.test(request.id))throw Error('工坊行动编号无效。');
+    const requestHash=workshopRequestKey(request.command),prior=stat.terminal.gameplay?.results?.[request.id];
+    if(prior){if(prior.requestHash!==requestHash)throw Error('行动编号已用于另一项操作。');return copy(stat);}
+    if(!options.workshop)throw Error('工坊内容尚未读取。');
+    if(request.workshopKey&&request.workshopKey!==G.contextKey(options.workshop))throw Error('工坊启用内容已变化，请重新读取。');
+    if(stat.terminal.gameplay?.numeric?.combat?.active||stat.terminal.gameplay?.tactical?.encounter?.active)throw Error('请先结束当前交锋，再使用工坊服务。');
+    if(['enable','start','growth-initialize','talent-allocate'].includes(request.command?.action))throw Error('请通过已有开局与成长入口操作。');
+    const catalogue=G.catalogue(options.workshop.registry,options.workshop),plan=G.plan(stat,catalogue,request.command),next=copy(stat);
+    for(const change of plan.changes){let parent=next;for(const key of change.path.slice(0,-1))parent=parent[key]||(parent[key]={});parent[change.path.at(-1)]=copy(change.after);}
+    next.terminal.gameplay.results={...next.terminal.gameplay.results,[request.id]:{requestHash,status:'success',reason:plan.title}};
+    if(G.verify({id:request.id,requestHash,plan},next).status!=='success')throw Error('工坊行动的完整结果未匹配。');
+    return next;
+  }
+  function playerPlan(stat,request,{identity,newChat=false,startGame,workshop,battleEncounter,battleRoster,battleClosure,tacticalScene,questDefinitions,questSource,questCalibration}={}){
     if(!stat?.terminal)throw Error('开场基础变量尚未就绪。');
     if(request.action.startsWith('quest-'))return Q.plan(stat,request,{questDefinitions,questSource,questCalibration});
+    if(request.action==='workshop-action')return workshopPlan(stat,request,{workshop});
     const next=copy(stat),previous=next.terminal.gameplay||{};let game=E.migrate(previous);
     if(request.action==='initialize'){
       let existed=game.growth!==undefined;const openingFunds=!existed&&newChat&&identity?.setupToken?identity.openingFunds:undefined;if(existed)E.growth.read(game.growth);
@@ -93,5 +110,5 @@
   function plan(stat,request,options={}){const after=planCore(stat,request,options);if(request.action==='initialize'&&after.terminal?.gameplay?.numeric&&after.terminal?.roster?.seedVersion!=='2051-npc-1')return (typeof module==='object'&&module.exports?require('./roster.js'):globalThis.CxxRoster).initialize(after);if(['roster-initialize','ensemble-initialize','actor-switch'].includes(request.action))return after;return (typeof module==='object'&&module.exports?require('./roster.js'):globalThis.CxxRoster).program(stat,after,options.actorBinding?.actorId||'player',request);}
   function validate(before,after,operation){if(!operation)throw Error('此改动需要已校验的本地数值操作。');const expected=plan(before,operation.request,operation);if(!E.same(expected,after))throw Error('本地数值结果与引擎计算不一致。');return after;}
   function changes(before,after){const a=before.terminal?.gameplay,b=after.terminal?.gameplay;if(!a)return [{key:null,before:undefined,after:copy(b)}];return Object.keys(b).filter(k=>!E.same(a[k],b[k])).map(key=>({key,before:copy(a[key]),after:copy(b[key])}));}
-  return {fields,clamp,plan,validate,changes};
+  return {fields,clamp,plan,validate,changes,workshopRequestKey};
 });

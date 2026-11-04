@@ -42,8 +42,8 @@ window.CxxContractForm = function (container) {
     const form=schema.templates.find(t=>t.id===kind&&t.enabled);
     if(!form){const p=document.createElement('p');p.className='hint';p.textContent=L('该类别暂停新建和改投。原稿可查看、导出或撤回。','This category is paused. Existing posts can be read, exported or withdrawn.','この種類の新規投稿・改稿は停止中です。既存稿は閲覧・書き出し・取下げができます。');container.append(p);return;}
     const hint=document.createElement('p');hint.className='hint';hint.textContent=L('按栏目写清楚实际内容，不必凑字数。选填栏可以留空；示例仅示范写法，不是正式设定。','Write concrete details; there is no minimum word count. Optional fields may be blank. Chinese examples demonstrate writing only, not canon.','具体的に記入してください。最低文字数はありません。任意欄は空欄可。中国語の記入例は正式設定ではありません。');container.append(hint);
-    const map=select('mapId',L('地图','Map','地図'),schema.maps);select('placeId',L('适用地点','Location','場所'),[]);map.addEventListener('change',updatePlaces);updatePlaces();
-    if(kind==='contract') {
+    if(form.location!==false){const map=select('mapId',L('地图','Map','地図'),schema.maps);select('placeId',L('适用地点','Location','場所'),[]);map.addEventListener('change',updatePlaces);updatePlaces();}
+    if(form.type==='contract') {
       select('type',L('任务类型','Quest type','任務の種類'),schema.taskTypes);select('difficulty',L('难度','Difficulty','難易度'),schema.difficulties);
       const e=field('pay',document.createElement('input'),L('报酬（日元）','Reward (JPY)','報酬（円）'),true);e.type='number';e.min='0';e.max=String(schema.limits.pay);e.step='1';
     }
@@ -53,14 +53,17 @@ window.CxxContractForm = function (container) {
       const help=document.createElement('p');help.className='hint';help.id=e.id+'-help';help.textContent=f.help+' '+L('建议：','Suggested: ','目安：')+f.suggested+' '+L('示例：','Example: ','例：')+f.example;e.setAttribute('aria-describedby',help.id);target.append(help);
       if(f.name===(kind==='npc'?'name':'identity'))e.addEventListener('input',suggestKeywords);
     }
-    if(kind==='contract'){
+    if(form.gameplay){const e=field('gameplay',document.createElement('textarea'),L('玩法定义（JSON）','Gameplay definitions (JSON)','ゲーム定義（JSON）'),true);e.rows=18;e.maxLength=40000;const help=document.createElement('p');help.className='hint';help.textContent=L('沿用已登记的物品、学习、制作、服务和遭遇规则。填写同包依赖；资源可声明 initial 初值，服务影响所列资源。地点须与上方一致。','Use the existing gameplay rules and include dependencies. Resources may declare an initial value; services affect listed resources. Match the selected location.','既存ルールと同梱の依存定義を使用します。資源の初期値は initial に指定でき、サービスは記載資源に作用します。場所を上欄に合わせてください。');container.append(help);if(form.gameplayExample){const sample=document.createElement('details'),title=document.createElement('summary'),pre=document.createElement('pre'),use=document.createElement('button');sample.className='form-options';title.textContent=L('查看玩法填写示例','View gameplay example','ゲーム定義の記入例');pre.className='submission-prose-text';pre.textContent=JSON.stringify(form.gameplayExample,null,2);use.type='button';use.className='btn ghost';use.textContent=L('填入空白定义','Fill empty definition','空の定義に入力');use.disabled=Boolean(saved?.gameplay?.trim());use.addEventListener('click',()=>{if(e.value.trim())return;const data=JSON.parse(pre.textContent),at={mapId:inputs.get('mapId').value,placeId:inputs.get('placeId').value};for(const row of [...data.shops||[],...data.services||[]])row.location=at;for(const row of data.encounters||[])row.requires={...row.requires,location:at};e.value=JSON.stringify(data,null,2);use.disabled=true;});e.addEventListener('input',()=>use.disabled=Boolean(e.value.trim()));sample.append(title,pre,use);container.append(sample);}}
+    if(form.type==='contract'){
       const p=document.createElement('p');p.className='fld';p.textContent=L('已完成的前置任务（选填）','Completed prerequisites (optional)','前提任務（任意・完了済み）');more.append(p);
       const list=document.createElement('div');list.id='guided-prerequisites';more.append(list);
       for(const id of schema.prerequisites){const l=document.createElement('label'),box=document.createElement('input');box.type='checkbox';box.value=id;l.append(box,' '+id);list.append(l);}
-    }else{
+    }else if(form.location!==false){
       const keys=field('keywords',document.createElement('input'),L('触发关键词（逗号分隔，1—8个）','Keywords (1–8, comma separated)','キーワード（1～8個、カンマ区切り）'),true);keys.maxLength=500;keys.addEventListener('input',()=>{keywordsEdited=true;});
       if(kind==='npc')renderMedia(more);
     }
+    if(form.id==='collection')field('members',document.createElement('input'),L('合集成员编号（逗号分隔；可用 编号@最低版本）','Member work IDs (comma separated, up to 32)','収録作品番号（カンマ区切り・32件まで）'),true);
+    field('references',document.createElement('input'),L('引用作品编号（选填，逗号分隔）','Referenced work IDs (optional, comma separated)','参照作品番号（任意・カンマ区切り）'),false,more);
     container.append(more);
     if(saved){if(saved.mapId){inputs.get('mapId').value=saved.mapId;updatePlaces();}for(const [k,e]of inputs)if(k!=='mapId'&&saved[k]!==undefined)e.value=saved[k];for(const box of container.querySelectorAll('#guided-prerequisites input'))box.checked=(saved.prerequisites||[]).includes(box.value);}
     suggestKeywords();
@@ -72,16 +75,19 @@ window.CxxContractForm = function (container) {
       const form=schema?.templates.find(t=>t.id===kind);if(!form)throw Error(L('该模板未开放。','This template is unavailable.','このテンプレートは利用できません。'));
       capture();const values=drafts.get(kind),sections={};
       for(const f of form.writingFields){const e=inputs.get(f.name);if(validate&&!e.reportValidity())throw Error(L('请检查：','Please check: ','確認：')+label(f));if(e.value.trim())sections[f.name]=e.value.trim();}
-      for(const k of ['mapId','placeId',...(kind==='contract'?['type','difficulty','pay']:['keywords'])])if(validate&&!inputs.get(k).reportValidity())throw Error(L('请检查地点、报酬与关键词。','Check location, reward and keywords.','場所・報酬・キーワードを確認してください。'));
+      for(const k of form.location===false?[]:['mapId','placeId',...(form.type==='contract'?['type','difficulty','pay']:['keywords'])])if(validate&&!inputs.get(k).reportValidity())throw Error(L('请检查地点、报酬与关键词。','Check location, reward and keywords.','場所・報酬・キーワードを確認してください。'));
       const p={format:form.format,templateVersion:schema.templateVersion,templateKind:kind,sections};
-      if(kind==='contract')p.contract={mapId:values.mapId,placeId:values.placeId,type:values.type,difficulty:values.difficulty,pay:values.pay===''?null:Number(values.pay),prerequisites:values.prerequisites};
-      else Object.assign(p,{mapId:values.mapId,placeId:values.placeId,keywords:values.keywords.split(/[,，]/).map(s=>s.trim()).filter(Boolean)},values.media.length?{media:values.media}:{});
+      if(form.type==='contract')p.contract={mapId:values.mapId,placeId:values.placeId,type:values.type,difficulty:values.difficulty,pay:values.pay===''?null:Number(values.pay),prerequisites:values.prerequisites};
+      else if(form.location!==false)Object.assign(p,{mapId:values.mapId,placeId:values.placeId,keywords:values.keywords.split(/[,，]/).map(s=>s.trim()).filter(Boolean)},values.media.length?{media:values.media}:{});
+      if(form.id==='collection')p.members=values.members.split(/[,，]/).map(text=>{const [id,minVersion]=text.trim().replace(/^#/,'').split('@');return minVersion?{submissionId:Number(id),minVersion}:Number(id);});
+      if(values.references?.trim())p.references=values.references.split(/[,，]/).map(id=>Number(id.trim().replace(/^#/,'')));
+      if(form.gameplay){try{p.gameplay=JSON.parse(values.gameplay);}catch(error){if(validate)throw Error(L('玩法定义需要完整的 JSON：','Gameplay requires valid JSON: ','ゲーム定義のJSONを確認：')+error.message);p.gameplayDraft=values.gameplay;}}
       return p;
     },
     fill(payload){
       const form=schema.templates.find(t=>t.id===kind);if(!form)return;
       const p=W.upgradeLegacy(form.type,payload),source=p.contract||p;
-      capture();drafts.set(kind,{...source,...p.sections,keywords:(p.keywords||[]).join(','),prerequisites:source.prerequisites||[],media:p.media||[],keywordsEdited:Boolean(p.keywords?.length)});renderedKind=null;render();
+      capture();drafts.set(kind,{...source,...p.sections,keywords:(p.keywords||[]).join(','),prerequisites:source.prerequisites||[],media:p.media||[],keywordsEdited:Boolean(p.keywords?.length),references:(p.references||[]).join(','),members:(p.members||[]).map(m=>typeof m==='number'?m:m.submissionId+'@'+m.minVersion).join(','),...(form.gameplay?{gameplay:p.gameplayDraft||JSON.stringify(p.gameplay||{},null,2)}:{})});renderedKind=null;render();
     },
     reset(){drafts.clear();inputs.clear();renderedKind=null;render();},
   };

@@ -19,8 +19,21 @@
     try { const u = new URL(url); return u.protocol === 'https:' && u.origin === 'https://cyber2051.top' && u.pathname.startsWith('/img/') && !u.username && !u.password && !u.hash; }
     catch { return false; }
   }
+  function validateCollection(value){
+    if(!value||value.format!==1||!Array.isArray(value.members)||!value.members.length||value.members.length>32)throw Error('合集成员格式无效');const ids=new Set();
+    for(const m of value.members){if(!m||!Number.isSafeInteger(m.submissionId)||m.submissionId<1||typeof m.packageId!=='string'||!/^community\.(?!collection\.)[a-z_]+\.\d+$/.test(m.packageId)||!m.packageId.endsWith('.'+m.submissionId)||!/^\d+\.\d+\.\d+$/.test(m.minVersion)||ids.has(m.packageId)||Object.keys(m).some(k=>!['submissionId','packageId','minVersion'].includes(k)))throw Error('合集成员包与版本无效');ids.add(m.packageId);}return value;
+  }
+  function collectionMembers(record,version=record?.version){if(!record)return [];const value=packageContent(record,version)?.worldbook?.find(e=>e.extra?.__cxx_collection)?.extra.__cxx_collection;return value?copy(validateCollection(value).members):[];}
+  function subscriptionsFor(registry,direct={},pins={}){const subscriptions={...direct},requiredBy={};for(const [id,enabled]of Object.entries(direct))if(enabled===true)for(const m of collectionMembers(registry.packages?.[id],pins[id])){subscriptions[m.packageId]=true;(requiredBy[m.packageId]??=[]).push(id);}return {subscriptions,requiredBy};}
+  const compare=(a,b)=>{const x=a.split('.').map(Number),y=b.split('.').map(Number);for(let i=0;i<3;i++)if(x[i]!==y[i])return x[i]-y[i];return 0;};
+  function planPins(registry,story,request){
+    const pinIntent=copy(story.pinIntent||story.pins||{});if(request.enabled)pinIntent[request.id]=request.version;else delete pinIntent[request.id];const pins={...pinIntent},groups={};
+    for(const [id,version]of Object.entries(pinIntent))for(const m of collectionMembers(registry.packages?.[id],version))(groups[m.packageId]??=[]).push({...m,collectionId:id});
+    for(const [id,requirements]of Object.entries(groups)){const record=registry.packages?.[id],minimum=requirements.map(m=>m.minVersion).sort(compare).at(-1);let version=pinIntent[id];if(version&&compare(version,minimum)<0)throw Error('成员 '+id+' 已独立固定在 '+version+'；请先选择 '+minimum+' 或更新版本。');if(!version){const previous=story.pins?.[id];version=previous&&compare(previous,minimum)>=0?previous:record?.version;}if(!version||compare(version,minimum)<0||!packageContent(record,version))throw Error('请先下载合集成员 '+id+' ≥ '+minimum);pins[id]=version;}
+    return {pins,pinIntent};
+  }
   function validateStoryMetadata(entry) {
-    const extra=entry.extra || {};
+    const extra=entry.extra || {};if(extra.__cxx_collection)validateCollection(extra.__cxx_collection);
     if(extra.__cxx_event_media){
       const m=extra.__cxx_event_media;
       if(!m || typeof m!=='object' || Array.isArray(m) || m.format!==1 || Object.keys(m).some(k=>!['format','id','name','category','url','alt','eventId','outcomeId'].includes(k)) ||
@@ -37,6 +50,7 @@
     return entry;
   }
   function storyChoices(registry,options={}) {
+    options={...options,subscriptions:subscriptionsFor(registry,options.subscriptions,options.pins).subscriptions};
     const starts=[],npcs=[];
     for(const [packageId,r]of Object.entries(registry?.packages || {})){
       if(r.optional && options.subscriptions?.[packageId]!==true || ['new_chat','opt_in'].includes(r.activation) && !options.pins?.[packageId])continue;
@@ -58,7 +72,7 @@
     try { return typeof getVariables === 'function' ? getVariables({ type: 'chat' }).__cxx_content_pins || {} : {}; }
     catch { return {}; }
   }
-  function withMigration(state, vars = {}) {
+  function migrationState(state, vars = {}) {
     const saved = vars.__cxx_migration;
     if (saved?.format !== 1 || !saved.archive?.packages) return state;
     // This chat owns its historical data. Never save this effective view back
@@ -82,6 +96,7 @@
     result.mediaPreferences = { ...(saved.preferences?.mediaPreferences || {}), ...(result.mediaPreferences || {}) };
     return result;
   }
+  function withMigration(state,vars={}){const result=copy(migrationState(state,vars));result.directSubscriptions=copy(result.subscriptions||{});Object.assign(result,subscriptionsFor(result.registry||{packages:{}},result.directSubscriptions,vars.__cxx_content_pins||{}));return result;}
   function packageContent(record, version) {
     return !version || version === record.version ? record.content : record.history?.[version];
   }
@@ -103,6 +118,7 @@
   }
   function baseAssetId(characterId, category, index) { return 'base.' + characterId + '.' + category + '.' + (index + 1); }
   function view(base, registry, records = {}, options = {}) {
+    options={...options,subscriptions:subscriptionsFor(registry,options.subscriptions,options.pins).subscriptions};
     const result = { ...base, quests: copy(base.quests || []), gallery: copy(base.gallery || { characters: [] }) };
     result.assetMeta = {}; result.contentWarnings = []; result.workshopNotes = [];
     const locationMaps = base.locationMaps || [{ id: 'tokyo-central', places: base.nodes || [] }];
@@ -299,5 +315,5 @@
     }
     return '';
   }
-  return { NAMESPACE, safeId, safeImage, readHost, withMigration, chatPins, view, request, bindImage, urls, avatar, fallback, baseAssetId, packageContent,validateStoryMetadata,storyChoices,eventMedia,savedEventMedia };
+  return { validateCollection,collectionMembers,subscriptionsFor,planPins,NAMESPACE, safeId, safeImage, readHost, withMigration, chatPins, view, request, bindImage, urls, avatar, fallback, baseAssetId, packageContent,validateStoryMetadata,storyChoices,eventMedia,savedEventMedia };
 });

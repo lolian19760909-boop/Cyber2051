@@ -1,0 +1,307 @@
+{
+  "shop_item": {
+    "schema": 1,
+    "resources": [
+      {
+        "id": "condition",
+        "name": "设备状态",
+        "description": "填写参考，可修改名称、条件和数值。",
+        "min": 0,
+        "max": 100,
+        "initial": 50
+      }
+    ],
+    "items": [
+      {
+        "id": "supply",
+        "name": "维护补给",
+        "description": "填写参考，可修改名称、条件和数值。",
+        "use": {
+          "effects": {
+            "resources": {
+              "condition": 10
+            }
+          }
+        }
+      }
+    ],
+    "shops": [
+      {
+        "id": "store",
+        "name": "街区工坊",
+        "description": "填写参考，可修改名称、条件和数值。",
+        "location": {
+          "mapId": "tokyo-central",
+          "placeId": "plaza"
+        },
+        "offers": [
+          {
+            "id": "supply",
+            "kind": "items",
+            "targetId": "supply",
+            "price": 10
+          }
+        ]
+      }
+    ]
+  },
+  "blueprint": {
+    "schema": 1,
+    "items": [
+      {
+        "id": "material",
+        "name": "维修耗材",
+        "description": "填写参考，可修改名称、条件和数值。"
+      },
+      {
+        "id": "tool",
+        "name": "维修工具",
+        "description": "填写参考，可修改名称、条件和数值。"
+      }
+    ],
+    "recipes": [
+      {
+        "id": "craft",
+        "name": "组装工具",
+        "description": "填写参考，可修改名称、条件和数值。",
+        "materials": {
+          "material": 1
+        },
+        "outputs": {
+          "tool": 1
+        },
+        "cost": 20,
+        "blueprintId": "plan"
+      }
+    ],
+    "blueprints": [
+      {
+        "id": "plan",
+        "name": "工具设计图",
+        "description": "填写参考，可修改名称、条件和数值。",
+        "recipes": [
+          "craft"
+        ],
+        "learnCost": 10
+      }
+    ],
+    "shops": [
+      {
+        "id": "store",
+        "name": "街区工坊",
+        "description": "填写参考，可修改名称、条件和数值。",
+        "location": {
+          "mapId": "tokyo-central",
+          "placeId": "plaza"
+        },
+        "offers": [
+          {
+            "id": "material",
+            "kind": "items",
+            "targetId": "material",
+            "price": 5
+          },
+          {
+            "id": "plan",
+            "kind": "blueprints",
+            "targetId": "plan",
+            "price": 30
+          }
+        ]
+      }
+    ]
+  },
+  "recipe": {
+    "schema": 1,
+    "items": [
+      {
+        "id": "material",
+        "name": "维修耗材",
+        "description": "填写参考，可修改名称、条件和数值。"
+      },
+      {
+        "id": "tool",
+        "name": "维修工具",
+        "description": "填写参考，可修改名称、条件和数值。"
+      }
+    ],
+    "recipes": [
+      {
+        "id": "craft",
+        "name": "组装工具",
+        "description": "填写参考，可修改名称、条件和数值。",
+        "materials": {
+          "material": 1
+        },
+        "outputs": {
+          "tool": 1
+        },
+        "cost": 20
+      }
+    ],
+    "shops": [
+      {
+        "id": "store",
+        "name": "街区工坊",
+        "description": "填写参考，可修改名称、条件和数值。",
+        "location": {
+          "mapId": "tokyo-central",
+          "placeId": "plaza"
+        },
+        "offers": [
+          {
+            "id": "material",
+            "kind": "items",
+            "targetId": "material",
+            "price": 5
+          }
+        ]
+      }
+    ]
+  },
+  "skill": {
+    "schema": 1,
+    "resources": [
+      {
+        "id": "condition",
+        "name": "设备状态",
+        "description": "填写参考，可修改名称、条件和数值。",
+        "min": 0,
+        "max": 100,
+        "initial": 50
+      }
+    ],
+    "skills": [
+      {
+        "id": "focus",
+        "name": "细致维护",
+        "description": "填写参考，可修改名称、条件和数值。",
+        "learnCost": 10,
+        "cost": 2,
+        "effects": {
+          "resources": {
+            "condition": 5
+          }
+        }
+      }
+    ],
+    "shops": [
+      {
+        "id": "store",
+        "name": "街区工坊",
+        "description": "填写参考，可修改名称、条件和数值。",
+        "location": {
+          "mapId": "tokyo-central",
+          "placeId": "plaza"
+        },
+        "offers": [
+          {
+            "id": "focus",
+            "kind": "skills",
+            "targetId": "focus",
+            "price": 20
+          }
+        ]
+      }
+    ]
+  },
+  "function": {
+    "schema": 1,
+    "resources": [
+      {
+        "id": "condition",
+        "name": "设备状态",
+        "description": "填写参考，可修改名称、条件和数值。",
+        "min": 0,
+        "max": 100,
+        "initial": 50
+      }
+    ],
+    "services": [
+      {
+        "id": "maintenance",
+        "name": "设备维护",
+        "description": "填写参考，可修改名称、条件和数值。",
+        "location": {
+          "mapId": "tokyo-central",
+          "placeId": "plaza"
+        },
+        "service": "repair",
+        "cost": 30,
+        "effects": {
+          "resources": {
+            "condition": 20
+          }
+        }
+      }
+    ]
+  },
+  "function_zone": {
+    "schema": 1,
+    "resources": [
+      {
+        "id": "condition",
+        "name": "设备状态",
+        "description": "填写参考，可修改名称、条件和数值。",
+        "min": 0,
+        "max": 100,
+        "initial": 50
+      }
+    ],
+    "services": [
+      {
+        "id": "maintenance",
+        "name": "设备维护",
+        "description": "填写参考，可修改名称、条件和数值。",
+        "location": {
+          "mapId": "tokyo-central",
+          "placeId": "plaza"
+        },
+        "service": "repair",
+        "cost": 30,
+        "effects": {
+          "resources": {
+            "condition": 20
+          }
+        }
+      }
+    ]
+  },
+  "encounter": {
+    "schema": 1,
+    "items": [
+      {
+        "id": "record",
+        "name": "街区记录",
+        "description": "填写参考，可修改名称、条件和数值。"
+      }
+    ],
+    "encounters": [
+      {
+        "id": "encounter",
+        "name": "路边见闻",
+        "description": "填写参考，可修改名称、条件和数值。",
+        "requires": {
+          "location": {
+            "mapId": "tokyo-central",
+            "placeId": "plaza"
+          }
+        },
+        "outcomes": [
+          {
+            "id": "record",
+            "name": "记下见闻",
+            "items": {
+              "record": 1
+            }
+          },
+          {
+            "id": "decline",
+            "name": "谢绝参与",
+            "status": "refused"
+          }
+        ]
+      }
+    ]
+  }
+}

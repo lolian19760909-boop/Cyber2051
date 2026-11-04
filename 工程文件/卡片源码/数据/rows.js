@@ -69,11 +69,12 @@
       const bag = pick(actor, ['gameplay', 'inventory'], {});
       if (!bag || typeof bag !== 'object') continue;
       for (const [slot, entry] of Object.entries(bag)) {
-        const itemKey = text(pick(entry, ['definitionRef', 'id'], slot));
+        const itemKey = text(pick(entry, ['definitionRef', 'id'], slot)),quantity=Math.round(num(entry?.quantity,1));
+        if(quantity<=0)continue;
         rows.push({
           actor_key: text(actor?.actorId || key),
           item_key: itemKey,
-          count: Math.max(1, Math.round(num(entry?.quantity, 1))),
+          count: quantity,
           quality: QUALITY[text(entry?.quality)] || '普通',
           acquired_turn: turn,
           note: entry?.note ? text(entry.note).slice(0, 120) : null,

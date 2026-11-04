@@ -6,7 +6,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function (root) {
   'use strict';
   const CryptoCompat=typeof module==='object'&&module.exports?require('./crypto-compat.js'):root.CxxCrypto;
-  const ENGINE_VERSION = '1.4.0';
+  const ENGINE_VERSION = '1.5.0';
   const Gameplay = typeof module === 'object' && module.exports ? require('./gameplay.js') : root.CxxGameplay;
   const STAGES = ['worldbook', 'regex', 'registry', 'scripts'];
   const CHARACTERS = ['tomori', 'anon', 'soyo', 'taki', 'rana', 'sakiko', 'uika', 'mutsumi', 'umiri', 'nyamu'];

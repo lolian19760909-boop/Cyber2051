@@ -39,7 +39,7 @@
       const rows = defs[kind] || []; if (!Array.isArray(rows) || rows.length > 500) fail('gameplay-list','玩法清单须为最多500项的数组');
       const seen = new Set();
       for (const d of rows) {
-        const fields = { slots: [], resources: ['min','max'], items: ['slots','effects','use'], blueprints: ['recipes','learnCost'],
+        const fields = { slots: [], resources: ['min','max','initial'], items: ['slots','effects','use'], blueprints: ['recipes','learnCost'],
           recipes: ['blueprintId','materials','outputs','cost'], skills: ['learnCost','cost','effects'], shops: ['location','offers'],
           services: ['location','service','recipeId','offer','cost','effects'], encounters: ['outcomes'] }[kind];
         keys(d, ['id','name','description','requires',...fields]); id(d.id); text(d.name,80); text(d.description);
@@ -48,7 +48,7 @@
         if (d.location) location(d.location, options.mapIndex);
         if (d.cost !== undefined) integer(d.cost); if (d.learnCost !== undefined) integer(d.learnCost);
         if (d.effects) effects(d.effects);
-        if (kind === 'resources') { integer(d.min,-1000000000); integer(d.max); if (d.min > d.max) fail('gameplay-range','资源上下限颠倒'); }
+        if (kind === 'resources') { integer(d.min,-1000000000); integer(d.max); if(d.initial!==undefined){integer(d.initial,d.min,d.max);} if (d.min > d.max) fail('gameplay-range','资源上下限颠倒'); }
         if (kind === 'items') {
           if (d.slots !== undefined) { if (!Array.isArray(d.slots) || new Set(d.slots).size !== d.slots.length) fail('gameplay-slots','装备槽位列表无效'); d.slots.forEach(id); }
           if (d.effects?.resources) fail('gameplay-effects','装备不自动改变资源；数值即时效果只放在使用定义里');
@@ -67,7 +67,7 @@
         }
         if (kind === 'encounters') {
           if (!Array.isArray(d.outcomes) || !d.outcomes.length) fail('gameplay-event','事件必须声明可消费的结果');
-          const outcomes = new Set(); for (const o of d.outcomes) { keys(o,['id','name','items','cost','effects']); id(o.id); text(o.name,120); if (outcomes.has(o.id)) fail('gameplay-event','事件结果重复'); outcomes.add(o.id); if (o.items) amounts(o.items); integer(o.cost || 0); if (o.effects) effects(o.effects); }
+          const outcomes = new Set(); for (const o of d.outcomes) { keys(o,['id','name','items','cost','effects','status']); id(o.id); text(o.name,120); if (outcomes.has(o.id)) fail('gameplay-event','事件结果重复'); outcomes.add(o.id); if(o.status!==undefined&&!['completed','refused'].includes(o.status))fail('gameplay-event','事件结局状态无效');if(o.status==='refused'&&(o.cost||o.items&&Object.keys(o.items).length||o.effects?.resources&&Object.keys(o.effects.resources).length))fail('gameplay-event','拒绝结局只记录事件状态');if (o.items) amounts(o.items); integer(o.cost || 0); if (o.effects) effects(o.effects); }
         }
       }
     }
@@ -75,6 +75,7 @@
   }
   function offer(o) { keys(o,['id','kind','targetId','price']); id(o.id); id(o.targetId); integer(o.price); if (!['items','blueprints','skills'].includes(o.kind)) fail('gameplay-offer','商品类型尚无消费者'); }
   function catalogue(registry, options = {}) {
+    const Content=typeof module==='object'&&module.exports?require('./content.js'):globalThis.CxxContent;if(Content?.subscriptionsFor)options={...options,subscriptions:Content.subscriptionsFor(registry,options.subscriptions,options.pins).subscriptions};
     const lists = Object.fromEntries(KINDS.map(k => [k, new Map()])), packages = registry?.packages || {};
     for (const [packageId, record] of Object.entries(packages)) {
       if (record.optional && options.subscriptions?.[packageId] !== true || ['new_chat','opt_in'].includes(record.activation) && !options.pins?.[packageId]) continue;
@@ -136,6 +137,12 @@
     }
     return value;
   }
+  function playView(stat,source){
+    const issues=[],state=read(stat),catalog=catalogue(source.registry,source),lists=Object.fromEntries(KINDS.map(k=>[k,new Map(catalog.lists[k])]));
+    for(const [table,kind]of Object.entries({inventory:'items',blueprints:'blueprints',skills:'skills',equipment:'items'}))for(const [key,record]of Object.entries(state[table]))if(record?.definitionRef){const id=record.itemId||key,ref=record.definitionRef,owner=source.registry.packages?.[ref.packageId],content=owner&&(owner.version===ref.version?owner.content:owner.history?.[ref.version]);if(!content?.gameplay?.[kind]?.some(d=>d.id===id)){if(ref.packageId?.startsWith('community.'))issues.push('缺少 '+id+' 的原版本定义 '+ref.version);continue;}const d=catalog.get(kind,id,ref);lists[kind].set(id,d);for(const slot of d.slots||[])lists.slots.set(slot,catalog.related('slots',slot,d));for(const key of Object.keys({...d.effects?.resources,...d.use?.effects?.resources}))lists.resources.set(key,catalog.related('resources',key,d));if(kind==='blueprints'&&record.learned)for(const id of d.recipes)lists.recipes.set(id,catalog.related('recipes',id,d));}
+    return {state,issues,lists:Object.fromEntries(KINDS.map(k=>[k,[...lists[k].values()].map(d=>{const record=source.registry.packages[d.definitionRef.packageId],content=record.version===d.definitionRef.version?record.content:record.history?.[d.definitionRef.version];return {...d,sourceTitle:content?.worldbook?.[0]?.extra?.__cxx_workshop_display?.title||d.definitionRef.packageId};})])),workshopKey:contextKey(source)};
+  }
+  function contextKey(source){return JSON.stringify(normalized({subscriptions:source.subscriptions,pins:source.pins,versions:Object.fromEntries(Object.entries(source.registry?.packages||{}).map(([id,p])=>[id,p.version]))}));}
   function plan(stat, catalog, request) {
     const state=read(stat), before=clone(stat), changes=[], definitions=[];
     const gpath=k=>['terminal','gameplay',k];
@@ -149,19 +156,19 @@
       for(const id of c.skills || [])if(!state.skills[id]?.learned)fail('gameplay-condition','还没有学会所需技能');
       for(const [id,status]of Object.entries(c.events || {}))if(state.events[id]?.status!==status)fail('gameplay-condition','前置事件尚未满足');
     };
-    const charge=n=>{integer(n);if(state.yen<n)fail('gameplay-funds','余额不足');if(n){change(['terminal','wallet','yen'],state.yen-n);change(['terminal','wallet','spent'],(stat.terminal.wallet.spent || 0)+n);}};
+    const charge=n=>{integer(n);if(n&&state.yen<n)fail('gameplay-funds','余额不足');if(n){change(['terminal','wallet','yen'],state.yen-n);change(['terminal','wallet','spent'],(stat.terminal.wallet.spent || 0)+n);}};
     const item=(key,delta,definition)=>{
       const old=state.inventory[key],qty=old?.quantity || 0,next=qty+delta;integer(next);
-      if(delta>0 && old?.definitionRef && !same(old.definitionRef,definition.definitionRef)) fail('gameplay-definition-conflict','已有物品使用旧定义，不能直接混入不同版本：'+key);
+      if(delta>0 && qty>0 && old?.definitionRef && !same(old.definitionRef,definition.definitionRef)) fail('gameplay-definition-conflict','已有物品使用旧定义，不能直接混入不同版本：'+key);
       const occupied=Object.values(state.equipment).filter(x=>x?.itemId===key).length;
       if(next<occupied)fail('gameplay-equipped','请先卸下要消耗的装备');
-      change([...gpath('inventory'),key],{...(old || {}),quantity:next,definitionRef:clone(old?.definitionRef || definition.definitionRef)});
+      change([...gpath('inventory'),key],{...(old || {}),quantity:next,definitionRef:clone(qty>0&&old?.definitionRef || definition.definitionRef)});
     };
-    const effect=(e,source)=>{for(const [key,n]of Object.entries(e?.resources || {})){const d=related('resources',key,source),value=state.resources[key];if(!Number.isSafeInteger(value))fail('gameplay-resource','资源尚未在剧情中初始化：'+key);if(n<0 && value+n<d.min)fail('gameplay-resource','资源不足：'+d.name);change([...gpath('resources'),key],Math.min(d.max,value+n));}};
+    const effect=(e,source)=>{for(const [key,n]of Object.entries(e?.resources || {})){const d=related('resources',key,source),value=state.resources[key]===undefined?(d.initial??d.min):state.resources[key];if(!Number.isSafeInteger(value))fail('gameplay-resource','资源尚未在剧情中初始化：'+key);if(n<0 && value+n<d.min)fail('gameplay-resource','资源不足：'+d.name);change([...gpath('resources'),key],Math.min(d.max,value+n));}};
     const purchase=o=>{
       const d=def(o.kind,o.targetId);check(d);charge(o.price*quantity);
       if(o.kind==='items')item(d.id,quantity,d);
-      else {if(quantity!==1 || state[o.kind][d.id]?.owned)fail('gameplay-owned','这项蓝图或技能已获得，不能重复购买');change([...gpath(o.kind),d.id],{owned:true,learned:false,definitionRef:d.definitionRef});}
+      else {if(quantity!==1 || state[o.kind][d.id]?.owned)fail('gameplay-owned','这项蓝图或技能已获得，不能重复购买');change([...gpath(o.kind),d.id],{owned:true,learned:false,...(o.kind==='skills'?{active:false}:{}),definitionRef:d.definitionRef});}
       return d.name;
     };
     const craft=(d,n)=>{
@@ -202,7 +209,7 @@
         if(!d.slots?.includes(slot.id) || !old?.quantity)fail('gameplay-slot','没有这件物品，或装备槽位不匹配');
         if(Object.entries(state.equipment).filter(([s,x])=>s!==slot.id && x?.itemId===d.id).length>=old.quantity)fail('gameplay-equipped','没有可用于该槽位的额外装备');
         change([...gpath('equipment'),slot.id],{itemId:d.id,definitionRef:d.definitionRef,effects:d.effects || {}});title='装备 '+d.name+' → '+slot.name;
-      }else if(request.action==='unequip'){id(request.slot);if(!state.equipment[request.slot])fail('gameplay-slot','该槽位没有装备');change([...gpath('equipment'),request.slot],null);title='卸下装备';}
+      }else if(request.action==='unequip'){id(request.slot);const equipped=state.equipment[request.slot];if(!equipped)fail('gameplay-slot','该槽位没有装备');const d=def('items',equipped.itemId,equipped.definitionRef);related('slots',request.slot,d);if(!d.slots?.includes(request.slot))fail('gameplay-slot','该槽位不属于这项工坊装备');change([...gpath('equipment'),request.slot],null);title='卸下装备';}
       else if(['activate-skill','deactivate-skill','use-skill'].includes(request.action)){
         const old=state.skills[request.id];if(!old?.learned)fail('gameplay-learning','技能尚未学会');const d=def('skills',request.id,old.definitionRef);check(d);
         if(request.action==='use-skill'){if(!old.active)fail('gameplay-skill','请先启用该技能');charge(d.cost || 0);effect(d.effects,d);}
@@ -215,7 +222,7 @@
         const d=def('encounters',request.id);check(d);if(state.events[d.id])fail('gameplay-event','此事件已有处理记录，不重复结算');
         const outcome=d.outcomes.find(x=>x.id===request.outcomeId);if(!outcome)fail('gameplay-event','事件结果尚未登记');charge(outcome.cost || 0);effect(outcome.effects,d);
         for(const [key,n]of Object.entries(outcome.items || {}))item(key,n,def('items',key));
-        change([...gpath('events'),d.id],{status:'completed',outcomeId:outcome.id,definitionRef:d.definitionRef});title='尝试事件行动：'+outcome.name;
+        change([...gpath('events'),d.id],{status:outcome.status||'completed',outcomeId:outcome.id,definitionRef:d.definitionRef});title='尝试事件行动：'+outcome.name;
       }else fail('gameplay-action','该行动需要新版角色卡');
     }
     for(const c of changes)if(typeof c.after==='number')integer(c.after,-1000000000);
@@ -265,5 +272,5 @@
   }
   // One numeric implementation serves UI planning, MVU settlement and combat.
   const growth=growthBase;
-  return {KINDS,TABLES,validate,catalogue,read,initializeVariables,validateOpeningManifest,plan,verify,prompt,promptEntries,getPath,same,growth};
+  return {KINDS,TABLES,validate,catalogue,read,initializeVariables,validateOpeningManifest,playView,contextKey,plan,verify,prompt,promptEntries,getPath,same,growth};
 });

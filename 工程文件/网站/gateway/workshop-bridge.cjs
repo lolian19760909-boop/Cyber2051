@@ -1,6 +1,6 @@
 'use strict';
 const Contract = require('./workshop-contract.cjs');
-function createWorkshopBridge({ db, send, readBody, ownerSession, officialRelease, modulePath }) {
+function createWorkshopBridge({ db, send, readBody, ownerSession, officialRelease, modulePath,links }) {
   db.exec(`CREATE TABLE IF NOT EXISTS workshop_contract_packages (
     submission_id INTEGER NOT NULL, revision INTEGER NOT NULL, source_hash TEXT NOT NULL,
     package_hash TEXT NOT NULL, artifact TEXT NOT NULL, created_at TEXT NOT NULL,
@@ -44,6 +44,7 @@ function createWorkshopBridge({ db, send, readBody, ownerSession, officialReleas
       }
     }
   }
+  function assertCollections(packages,catalog){for(const pack of packages)for(const m of Contract.Content.collectionMembers({version:pack.version,content:pack.content})){const entry=catalog.packages.find(p=>p.id===m.packageId&&p.kind==='content');if(!entry||library().compareVersion(entry.version,m.minVersion)<0)throw new Contract.ContractError('合集成员暂不可发行：'+m.packageId,'collection_member_unavailable',409);}}
   function revision(value) { if (!Number.isSafeInteger(value) || value < 1) throw new Contract.ContractError('请提供明确的 baseRevision'); return value; }
   function packageRef(row) {
     const artifact = row.status === 'approved' ? getArtifact(row.id, row.revision) : null;
@@ -55,10 +56,11 @@ function createWorkshopBridge({ db, send, readBody, ownerSession, officialReleas
     if(p==='/api/workshop/content/preview' && method==='POST'){
       readBody(req,res,raw=>{try{
         const data=JSON.parse(raw);Contract.validateMetadata({title:data.title,summary:data.summary||'',tags:data.tags||[],publication:data.publication||{}});
-        const payload=Contract.validateIncoming(data.type,data.payload,{title:data.title,summary:data.summary||'',authorName:data.authorName,tags:data.tags||[]});
+        let previous;if(data.editId!==undefined){previous=db.prepare('SELECT * FROM submissions WHERE id=?').get(data.editId);if(!previous||!ownerSession(req,previous))throw new Contract.ContractError('只有作者可以预览原稿关系','unauthorized_for_submission',403);if(previous.revision!==data.baseRevision)throw new Contract.ContractError('投稿已变化，请重新读取','revision_conflict',409);}
+        const payload=links.normalize(Contract.validateIncoming(data.type,data.payload,{title:data.title,summary:data.summary||'',authorName:data.authorName,tags:data.tags||[]}),previous);
         const preview={delivery:data.type==='code_component'?'next_card':'signed_content',template:payload.templateKind||data.type,mapId:payload.contract?.mapId||payload.mapId,placeId:payload.contract?.placeId||payload.placeId,
           definitions:payload.gameplay?Object.fromEntries(Object.entries(payload.gameplay).filter(([k,v])=>Array.isArray(v)).map(([k,v])=>[k,v.length])):{},installsAssets:false};
-        send(res,200,{ok:true,preview:{...preview,...Contract.presentation(data)}});
+        send(res,200,{ok:true,preview:{...preview,...Contract.presentation({...data,payload})}});
       }catch(e){send(res,e.status||400,{ok:false,error:e.code||'invalid_content',message:e.message});}});return true;
     }
     const edit = p.match(/^\/api\/workshop\/submissions\/(\d+)\/edit$/);
@@ -100,6 +102,6 @@ function createWorkshopBridge({ db, send, readBody, ownerSession, officialReleas
     } else send(res, 404, { ok: false, error: 'not_found' });
     return true;
   }
-  return { handle, ensureArtifact, getArtifact, packageRef, assertSources };
+  return { handle, ensureArtifact, getArtifact, packageRef, assertSources,assertCollections };
 }
 module.exports = { createWorkshopBridge };

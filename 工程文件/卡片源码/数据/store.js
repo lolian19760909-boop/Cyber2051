@@ -358,7 +358,7 @@
       }
       check();
       let saved;
-      try { const prepared=options.prepareTables?options.prepareTables(target):target;saved = await host.importTableAsJson(JSON.stringify(prepared),options.persist===false?{mode:'restore',persist:false}:undefined); }
+      try { const prepared=options.prepareTables?options.prepareTables(target):target;saved = await host.importTableAsJson(JSON.stringify(prepared),options.persist===false?{mode:'restore',persist:false}:options.programCheckpoint===true?{cxxProgramBoundary:true}:undefined); }
       catch (error) { return { ok: false, reason: '整库镜像提交失败：' + error.message }; }
       check();
       if (saved !== true) return { ok: false, reason: '数据库未确认整库镜像提交（回执 ' + String(saved) + '，类型 ' + typeof saved + '）。' };
