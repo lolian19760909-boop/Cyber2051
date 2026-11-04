@@ -193,8 +193,6 @@ function createOfficialRelease({ db, authorize, isAdmin = () => false, send, rea
     fields(definition.requires, ['engine', 'packages'], 'requires');
     for (const dep of definition.requires.packages || []) fields(dep, ['id', 'version'], '依赖');
     fields(definition.content, ['quests', 'gallery', 'worldbook','gameplay'], 'content');
-    for (const quest of definition.content.quests || []) fields(quest, ['id', 'title', 'fixer', 'district', 'type', 'difficulty', 'brief', 'goal', 'pay', 'fixerNote', 'payNote', 'deadline', 'terms', 'risk', 'bonus', 'unlock', 'flagship', 'track', 'mapId', 'placeId', 'prerequisites'], '任务');
-    for (const image of definition.content.gallery || []) fields(image, ['id', 'characterId', 'category', 'url', 'fallbackUrl'], '立绘');
     return P.createContentPackage(definition, options);
   }
   function inputs(ctx, input, state) {
@@ -222,14 +220,16 @@ function createOfficialRelease({ db, authorize, isAdmin = () => false, send, rea
       if (seededKey !== ctx.publicKey.spkiBase64) reject('card_signing_key_mismatch', 400, '新卡信任公钥与当前发布签名不一致');
       if (!Array.isArray(seed.characterIds) || P.canonical([...seed.characterIds].sort()) !== P.canonical([...P.CONSUMED_CHARACTER_IDS].sort())) reject('invalid_card', 400, '角色消费者基线不一致');
       consumers.characterIds = clone(seed.characterIds); consumers.mapIndex = clone(seed.mapIndex || {});
-      // New framework releases travel as full cards. Extract only static base
-      // content here; preserve the old publisher path for legacy baselines.
-      if (P.compareVersion(seed.engineVersion || P.ENGINE_VERSION, '1.2.0') < 0) packages.push(P.createCorePackage(card));
+      // Modern cards carry their bundled stories; export the static base here.
+      // Independently authored packages use contents; legacy cards keep their path.
+      const modern = P.compareVersion(seed.engineVersion || P.ENGINE_VERSION, '1.2.0') >= 0;
+      if (!modern) packages.push(P.createCorePackage(card));
       for (const [id, record] of Object.entries(seed.registry.packages)) {
+        if (modern && id !== BASE_ID) continue;
         if (id === BASE_ID && record.version !== seed.baseVersion) reject('invalid_card', 400, '卡内基础内容版本与新卡不一致');
         packages.push(contentInput(P, { id, version: record.version, optional: record.optional, activation: record.activation || 'compatible', requires: { engine: seed.engineVersion||P.ENGINE_VERSION, packages: [] }, content: record.content }, consumers));
       }
-      if (P.canonical(seed.initialContent) !== P.canonical(seed.registry.packages[BASE_ID].content)) reject('invalid_card', 400, '新卡基础内容与所有权基线不一致');
+      if (!modern && P.canonical(seed.initialContent) !== P.canonical(seed.registry.packages[BASE_ID].content)) reject('invalid_card', 400, '新卡基础内容与所有权基线不一致');
     }
     if (input.core) {
       if (state.catalog && P.compareVersion(state.catalog.engineVersion, '1.2.0') >= 0) reject('next_card_required', 400, '新版程序通过完整角色卡与存档迁移交付，不能发布独立核心代码包');

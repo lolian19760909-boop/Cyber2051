@@ -34,7 +34,7 @@ test('actual gateway HTTP preserves workshop APIs and enforces grant/preview/pub
 });
 
 
-test('HTTP modern full-card publish preserves a bundled story version independent of the card', async () => {
+test('HTTP modern card keeps bundled stories and explicit content publishes independently', async () => {
   const fixture=await startFixture();
   try {
     const authorized=fixture.session('authorized'),card=await(await fetch(fixture.baseUrl+'/__fixture__/card.json')).json();
@@ -44,8 +44,8 @@ test('HTTP modern full-card publish preserves a bundled story version independen
     seed.registry.packages[story.id]={version:story.version,optional:true,activation:'new_chat',content:story.content,history:{},historyActivation:{}};
     const call=async(route,body)=>{const r=await fetch(fixture.baseUrl+route,{method:body?'POST':'GET',headers:{Authorization:'Bearer '+authorized.token,...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});assert.equal(r.status,200);return r.json();};
     const preview=await call('/api/official/preview',{card});
-    assert.equal(preview.packages.find(p=>p.id===story.id).version,'0.9.0');
+    assert.deepEqual(preview.packages.map(p=>p.id),['cyber2051.base-content']);assert.equal(seed.registry.packages[story.id].version,'0.9.0');
     assert.equal((await call('/api/official/publish',{previewId:preview.previewId,previewHash:preview.previewHash})).published,true);
-    const me=await call('/api/official/me');assert.equal(me.packages.find(p=>p.id===story.id).version,'0.9.0');assert.equal(me.packages.find(p=>p.id==='cyber2051.base-content').version,seed.baseVersion);
+    const contentPreview=await call('/api/official/preview',{contents:[story]});await call('/api/official/publish',{previewId:contentPreview.previewId,previewHash:contentPreview.previewHash});const me=await call('/api/official/me');assert.equal(me.packages.find(p=>p.id===story.id).version,'0.9.0');assert.equal(me.packages.find(p=>p.id==='cyber2051.base-content').version,seed.baseVersion);
   } finally { await fixture.close(); }
 });

@@ -223,16 +223,52 @@ for(const interrupted of [false,true])test('modern channel preserves old clients
 }));
 
 
-test('modern card keeps independently versioned bundled stories through preview, publish and readback', () => fixture(e => {
+test('legacy card keeps independently versioned bundled stories through preview, publish and readback', () => fixture(e => {
   const card=F.card(e.key.pem,'3.0.0'),seed=card.data.extensions.tavern_helper.scripts[0].data.__cxx_update_seed;
-  seed.engineVersion='1.4.0';seed.catalogUrl='https://cyber2051.top/updates/v3/component-manifest.json';
+  seed.engineVersion='1.0.0';
   const story=F.content('cyber2051.chip-night','1.0.0');
   seed.registry.packages[story.id]={version:story.version,optional:true,activation:'new_chat',content:story.content,history:{},historyActivation:{}};
   const wrong=structuredClone(card);wrong.data.extensions.tavern_helper.scripts[0].data.__cxx_update_seed.registry.packages['cyber2051.base-content'].version='2.0.0';
   assert.throws(()=>e.api.preview(authorized,{card:wrong}),code('invalid_card'));
   const preview=e.api.preview(authorized,{card});
-  assert.deepEqual(preview.packages.map(p=>[p.id,p.version]),[['cyber2051.base-content','3.0.0'],['cyber2051.chip-night','1.0.0']]);
+  assert.deepEqual(preview.packages.map(p=>[p.id,p.version]),[['cyber2051.core','3.0.0'],['cyber2051.base-content','3.0.0'],['cyber2051.chip-night','1.0.0']]);
   assert.equal(e.confirm(preview).published,true);
   const reopened=createOfficialRelease(e.options),packages=reopened.me(authorized).packages;
-  assert.deepEqual(packages.map(p=>[p.id,p.version]),[['cyber2051.base-content','3.0.0'],['cyber2051.chip-night','1.0.0']]);
+  assert.deepEqual(Object.fromEntries(packages.map(p=>[p.id,p.version])),{'cyber2051.core':'3.0.0','cyber2051.base-content':'3.0.0','cyber2051.chip-night':'1.0.0'});
+}));
+
+
+test('official card publishing delegates quest and gallery details to the shared content schema', () => fixture(e => {
+  const card=F.card(e.key.pem,'3.0.0'),seed=card.data.extensions.tavern_helper.scripts[0].data.__cxx_update_seed;
+  seed.engineVersion='1.4.0';seed.catalogUrl='https://cyber2051.top/updates/v3/component-manifest.json';
+  Object.assign(seed.initialContent.quests[0],{startMode:'narrative',retry:false,releaseOn:'completion'});
+  seed.initialContent.gallery[0].alt='测试立绘说明';
+  P.createContentPackage({id:'test.schema',version:'1.0.0',optional:true,requires:{engine:'1.4.0',packages:[]},content:seed.initialContent},{characterIds:P.CONSUMED_CHARACTER_IDS,mapIndex:{}});
+  const preview=e.api.preview(authorized,{card});e.confirm(preview);
+  const entry=e.api.me(authorized).packages.find(p=>p.id==='cyber2051.base-content'),saved=JSON.parse(fs.readFileSync(path.join(e.config.outputDirectory,P.packageRelativePath(entry))));
+  assert.equal(saved.content.quests[0].startMode,'narrative');assert.equal(saved.content.quests[0].retry,false);assert.equal(saved.content.quests[0].releaseOn,'completion');assert.equal(saved.content.gallery[0].alt,'测试立绘说明');
+  const bad=structuredClone(card);bad.data.extensions.tavern_helper.scripts[0].data.__cxx_update_seed.registry.packages['cyber2051.base-content'].content.quests[0].pay='不可读金额';
+  assert.throws(()=>e.api.preview(authorized,{card:bad}));
+}));
+
+
+test('modern full cards publish the base while bundled chapter content stays on the card', () => fixture(e => {
+  const card=F.card(e.key.pem,'3.0.0'),seed=card.data.extensions.tavern_helper.scripts[0].data.__cxx_update_seed;
+  seed.engineVersion='1.4.0';seed.catalogUrl='https://cyber2051.top/updates/v3/component-manifest.json';
+  const bundled=F.content('cyber2051.chip-night','1.0.0');delete bundled.content.quests[0].difficulty;
+  seed.registry.packages[bundled.id]={version:bundled.version,optional:true,activation:'new_chat',content:bundled.content,history:{},historyActivation:{}};
+  const before=structuredClone(card),preview=e.api.preview(authorized,{card});assert.deepEqual(card,before);
+  assert.deepEqual(preview.packages.map(p=>[p.id,p.version]),[['cyber2051.base-content','3.0.0']]);e.confirm(preview);
+  assert.equal(seed.registry.packages[bundled.id].version,'1.0.0');assert.equal(Object.hasOwn(seed.registry.packages[bundled.id].content.quests[0],'difficulty'),false);
+  assert.deepEqual(e.api.me(authorized).packages.map(p=>p.id),['cyber2051.base-content']);
+}));
+
+
+test('modern publishing uses registry base rather than the legacy aggregate initial view', () => fixture(e => {
+  const card=F.card(e.key.pem,'3.0.0'),seed=card.data.extensions.tavern_helper.scripts[0].data.__cxx_update_seed;
+  seed.engineVersion='1.4.0';seed.catalogUrl='https://cyber2051.top/updates/v3/component-manifest.json';
+  seed.initialContent=structuredClone(seed.initialContent);seed.initialContent.quests.push(F.quest('legacy.aggregate'));
+  const before=structuredClone(card),preview=e.api.preview(authorized,{card});assert.deepEqual(card,before);
+  assert.deepEqual(preview.packages[0].changes.quests.added,['q01']);e.confirm(preview);
+  assert.equal(seed.initialContent.quests.length,2);assert.equal(seed.registry.packages['cyber2051.base-content'].content.quests.length,1);
 }));
