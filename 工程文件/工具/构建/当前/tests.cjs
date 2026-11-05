@@ -61,6 +61,7 @@ files.push(path.join(root,'测试/当前/story-quests.test.cjs'));
 files.push(path.join(root,'测试/当前/announcement-live.test.cjs'));
 files.push(path.join(root,'测试/当前/entry-orientation.test.cjs'));
 files.push(path.join(root,'测试/当前/gal-portraits.test.cjs'));
+files.push(path.join(root,'测试/当前/opening-templates.test.cjs'));
 files.push(path.join(root,'测试/当前/mvu-remote-loader.test.cjs'));
 files.push(path.join(root,'测试/当前/guard-volatile-metadata.test.cjs'),path.join(root,'测试/当前/nsfw-scale.test.cjs'));
 files.push(path.join(root,'测试/当前/battle-mode.test.cjs'),path.join(root,'测试/当前/tactical-resolve.test.cjs'));

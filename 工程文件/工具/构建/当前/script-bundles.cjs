@@ -129,6 +129,8 @@ function prefixModules(text, changes, s, {source, version, chipNightEnabled}) {
       ';\n' +
       source('运行时/story-profile.js') +
       ';\n' +
+      source('运行时/opening-templates.js') +
+      ';\n' +
       'globalThis.CxxCreatorStyle=' +
       JSON.stringify(style('运行时/creator-ui.css')) +
       ';\n' +

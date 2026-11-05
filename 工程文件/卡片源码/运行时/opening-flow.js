@@ -3,6 +3,8 @@
   'use strict';
  const structuredClone=(typeof module==='object'&&module.exports?require('../共享/data-clone.js'):globalThis.CxxDataClone).clone;
   const copy=structuredClone,steps=['origin','profile','growth','loadout','scenario','review'];
+  const templateFields=['origin','custom','openingFunds','growth','loadouts','preferences','scenario','openingText','scenarioState','communityStart'];
+  function templateProfile(value){if(!value||typeof value!=='object'||Array.isArray(value)||value.schema!==1)throw Error('开局方案的人物资料版本无效。');const profile=copy(value);for(const key of ['id','binding','visualReceipt','visualRevision','visualSchema','galPortraits','worldbookContent','origin','preferences','opening'])delete profile[key];return profile;}
   const directOrigins={'origin-street':'street','origin-corpo':'corpo','origin-student':'student','custom-opening':null};
   const isDirect=id=>Object.hasOwn(directOrigins,id),validScenario=id=>Number.isInteger(id)&&id>=2&&id<=11||isDirect(id);
   function create({key,scope,resumeDraft,creationId,identity:I,loadout:L,readIdentity,readPreferences,readProfile=()=>null,readOpening=()=>'',readStarts=()=>[],storage,prepare,withCommit=work=>work(),submit,verify,send,recover,inspect,openRecovery,rescue,onPreview=()=>{},onFailure=()=>{},onComplete=()=>{}}){
@@ -57,6 +59,14 @@
     function advance(command){editable();const i=steps.indexOf(draft.step);if(i>=5)throw Error('请在确认页开始游戏。');if(i>draft.completed.length)throw Error('请先保存并完成前面的步骤。');validate(draft.step);if(i===4&&!draft.scenario)inputHint('请先选择想体验的剧情。','scenario','','剧情');const prior={step:draft.step,completed:[...draft.completed],pendingCommand:draft.pendingCommand};draft.completed=steps.slice(0,i+1);draft.step=steps[i+1];if(i===4)draft.pendingCommand=command??null;try{cache(true);}catch(e){Object.assign(draft,prior);notify();throw e;}error='';lastError=null;guidance=null;notify();if(draft.step==='growth')void Promise.resolve(prepare()).catch(markError);}
     function selectScenario(id){if(id!==null&&!validScenario(id))throw Error('剧情编号无效。');if(isDirect(id)&&directOrigins[id]&&directOrigins[id]!==draft.origin)throw Error('请选择与你当前出身对应的开场。');if(!canGo('scenario'))throw Error('请先保存初始装备。');change(d=>{d.scenario=id;invalidate('scenario');});}
     function rememberScenario(id,value){if(ended||flight||status==='saved')return;draft.scenarioState[id]=copy(value);cache();}
+    function template(){active();return {schema:1,choices:{...Object.fromEntries(templateFields.filter(key=>draft[key]!==undefined).map(key=>[key,copy(draft[key])])),profile:templateProfile(draft.profile)}};}
+    async function applyTemplate(value,{prepare=async()=>{}}={}){
+      editable();if(locked)throw Error('已有开局配置，请新建故事载入方案。');if(value?.schema!==1||!value.choices||typeof value.choices!=='object'||Array.isArray(value.choices))throw Error('开局方案版本无效。');
+      const source=value.choices;if(!['street','corpo','student','custom'].includes(source.origin))throw Error('开局方案的出身无效。');
+      for(const key of ['growth','loadouts','preferences','scenarioState'])if(source[key]!==undefined&&(!source[key]||typeof source[key]!=='object'||Array.isArray(source[key])))throw Error('开局方案字段无效：'+key);
+      const choices={custom:'',openingFunds:'',openingText:'',growth:{},loadouts:{},preferences:{},scenario:null,scenarioState:{},...Object.fromEntries(templateFields.filter(key=>source[key]!==undefined).map(key=>[key,copy(source[key])])),profile:{...templateProfile(source.profile),id:draft.profile?.id||readProfile()?.id||'profile_'+(globalThis.crypto?.randomUUID?.()||Date.now().toString(36)+'-'+Math.random().toString(36).slice(2))}};
+      await prepare();editable();change(()=>{const id=draft.creationId,owner=copy(draft.owner);delete draft.communityStart;adopt({...choices,creationId:id,owner,schema:2,step:'origin',completed:[],pendingCommand:null,dispatchStarted:false});});onPreview(copy(draft.preferences));
+    }
     function commit(command=null){
       active();if(flight)return flight;if(status==='saved')return Promise.resolve();
       if(draft.step!=='review'||draft.completed.length<5)throw Error('请逐步保存开局配置，再确认开始。');validate('scenario');if(!validScenario(draft.scenario))inputHint('请先选择想体验的剧情。','scenario','','剧情');
@@ -80,7 +90,7 @@
       guidance=!locked&&!flight&&target&&canGo(target.step)?{...target,revision:++guidanceRevision}:null;
       if(guidance){lastError=null;draft.step=guidance.step;if(!cache())guidance=null;}else lastError={message:error,code:e.code||'opening-action-failed',detail:e.stack||'',...(e.details?{saveCheck:copy(e.details)}:{}),creationId:draft.creationId};notify();
     }
-    return {state,patch,chooseOrigin,chooseStart,starts:()=>copy(readStarts()),refresh:notify,go,canGo,markError,next:()=>advance(),selectScenario,rememberScenario,review(command=null){if(draft.step!=='scenario')throw Error('请先进入乐队与开局。');advance(command);},commit,retry:()=>commit(draft.pendingCommand),choice,wait:()=>flight||Promise.reject(Error('请先确认开局配置。')),
+    return {state,patch,chooseOrigin,chooseStart,starts:()=>copy(readStarts()),refresh:notify,go,canGo,markError,next:()=>advance(),selectScenario,rememberScenario,template,applyTemplate,review(command=null){if(draft.step!=='scenario')throw Error('请先进入乐队与开局。');advance(command);},commit,retry:()=>commit(draft.pendingCommand),choice,wait:()=>flight||Promise.reject(Error('请先确认开局配置。')),
       resolveDraft(use){active();if(!restoreChoice)return;const old=restoreChoice,oldKey=indexKey+':'+old.draft.creationId;if(use){const freshId=draft.creationId;adopt(old.draft);if(old.legacy){draft.creationId=freshId;draft.dispatchStarted=false;dispatched=false;draft.completed=['origin'];draft.step='profile';}draft.owner=copy(scope);storageKey=indexKey+':'+draft.creationId;draft.completed=steps.filter((s,i)=>i<5&&steps.slice(0,i+1).every(k=>draft.completed?.includes(k)));if(steps.indexOf(draft.step)>draft.completed.length)draft.step=steps[draft.completed.length];}cache(true);if(!use&&!old.legacy)storage?.removeItem(oldKey);restoreChoice=null;notify();},
       inspect:()=>inspect?inspect():Promise.resolve({code:'creation-unavailable',action:'rescue',message:'尚未取得创建记录，请打开救援与导出查看详细诊断。'}),
       openRecovery:id=>openRecovery?.(id),rescue:()=>rescue?.(),
