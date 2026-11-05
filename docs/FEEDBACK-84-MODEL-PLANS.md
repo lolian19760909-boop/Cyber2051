@@ -23,3 +23,9 @@
 证据根为 `.cache/feedback-implementation-20261105/presets84/`，最终实际回执 `api-web-frozen/check.json`，独立审查和 U01 对照在 `review-current/`。截图采用桌面 Edge 156 和 390×844 视口。账号隔离与退出后的会话凭据清理由合成 Storage 和当前生命周期表达式检查覆盖。
 
 复查入口：`tools/model-plans-browser.mjs`、`tools/model-plans-check.mjs`；其余对应上述既有 `*-check.mjs`。本批源码与候选已验收，公开发行沿既有版本，后续接 #85 常用表单与高级游戏变量编辑。
+
+## 2026-11-05 合入前复核
+
+PR #88—#97 的独立需求审查复现：载入方案后，选择策略、Token、三类批量参数、补查次数和重试间隔七个控件仍显示旧值，保存选择设置会覆写已载入参数；合法补查次数 0 也被默认值 2 覆写。现由既有 `refreshModels()` 同步七个控件，空输入采用默认值，数值 0 原样保存。
+
+冻结网页 `2920c2a37a79fb6c6da7` 的实际模型方案检查 7 组通过，包含七控件同步、保存前后分工一致及补查 0；14 个受控 HTTP 请求、付费 0、页面异常 0。独立需求复核的页面探针及真实选择算法也通过。完整回归和数据克隆后备回归各 1629 项通过。证据根 `.cache/pr-review-merge-20261105/`，入口 `models-review/check.json`、`spec/patch-review.md`。
