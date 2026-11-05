@@ -462,6 +462,7 @@ async function prepareSession({ accountId, runId, fromOpening=true, onRestored, 
   const mark=step=>{state.phase=step;try{(globalThis.__cxxBootMark??=[]).push([Date.now(),step]);if(globalThis.__cxxBootMark.length>80)globalThis.__cxxBootMark.shift();}catch{}};
   mark('session:start');
   if(state.mode==='public'&&(!state.tokenStore?.get()||!accountId||globalThis.CXXUser?.current()?.publisherId!==accountId)){setStatus('请登录后进入故事。','warn');return;}
+  const continuingPreset=state.session?.identity.accountId===accountId?{id:state.session.presetId,preset:state.session.preset,promptOptions:state.session.promptOptions}:null;
   const assignmentScope=state.mode+':'+accountId,continuingAssignment=state.session&&state.session.identity.accountId===accountId&&activeAssignmentScope===assignmentScope?modelPlan(settings,state.session.modelOptions({credentials:true})):null;
   if(state.session)storyDrafts.set(draftScope(state.session.identity.accountId,state.session.identity.runId),els.input.value);
   els.input.value=storyDrafts.get(draftScope(accountId,runId))||'';
@@ -503,8 +504,8 @@ async function prepareSession({ accountId, runId, fromOpening=true, onRestored, 
   }
   const modelPort = buildModelPort({ token: state.tokenStore.get() });
 
-  const preferenceKey='cxx2051:prompt:'+state.mode+':'+accountId+':'+runId;let promptPreferences={};try{promptPreferences=JSON.parse(safeStorage()?.getItem(preferenceKey)||'{}');}catch{}
-  let selectedPreset={id:'izumi',preset:state.preset};if(promptPreferences.presetId){const list=state.presets;selectedPreset=list.find(row=>row.id===promptPreferences.presetId)||selectedPreset;}
+  const preferenceKey='cxx2051:prompt:'+state.mode+':'+accountId+':'+runId;let promptPreferences=continuingPreset?{presetId:continuingPreset.id,promptOptions:continuingPreset.promptOptions}:{};try{promptPreferences=JSON.parse(safeStorage()?.getItem(preferenceKey)||'null')||promptPreferences;}catch{}
+  let selectedPreset={id:'izumi',preset:state.preset};if(promptPreferences.presetId){const list=state.presets;selectedPreset=list.find(row=>row.id===promptPreferences.presetId)||(continuingPreset?.id===promptPreferences.presetId?continuingPreset:selectedPreset);}
   const gameSetup=installedGameSetup(state.chain);
   state.session = createWebSession({
     mode: state.mode,
@@ -525,7 +526,13 @@ async function prepareSession({ accountId, runId, fromOpening=true, onRestored, 
   state.database?.connect(state.session);
   modelPlansUI?.refresh();
   mark('session:prepared');
-  if(!fromOpening&&state.mode!=='tavern')return;
+  async function showPromptSettings(){
+    const session=state.session;await session.readContent();if(sequence!==startSequence)return;
+    state.settingsUI?.destroy();
+    const view=await mountSessionSettings({parent:document.getElementById('session-settings'),memoryParent:els.memoryBox,session,presets:state.presets,onSettings:async value=>{saveCurrentModelAssignment();safeStorage()?.setItem(preferenceKey,JSON.stringify(value));await session.saveContentPreferences();await state.ui?.update();},onError:error=>setStatus(error.message,'error')});
+    if(sequence!==startSequence){view.destroy();return;}state.settingsUI=view;
+  }
+  if(!fromOpening&&state.mode!=='tavern'){await showPromptSettings();return;}
   mark('restore:begin');
   const restored=await state.session.restore();
   mark('restore:done');
@@ -557,6 +564,7 @@ async function prepareSession({ accountId, runId, fromOpening=true, onRestored, 
     renderChoices(state.lastParsed?.display?.choices || []);
     if(!node){els.stage.replaceChildren();const notice=document.createElement('p');notice.textContent='已恢复保存的状态，原档没有可读正文。人物与路线保留，可以继续行动。';els.stage.append(notice);}
   } else {
+    await showPromptSettings();if(sequence!==startSequence)return;
     state.booted=false;
     els.send.disabled=true;els.regen.disabled=true;els.continueBtn.disabled=true;
     document.querySelector('.composer').hidden=true;
@@ -564,7 +572,7 @@ async function prepareSession({ accountId, runId, fromOpening=true, onRestored, 
     const session=state.session,setup=gameSetup,target=openingPage.creationTarget(),drafts=await statePort.listRecords('drafts',runId);let setupDraft=drafts.find(row=>row.id==='game-setup')?.value||session.gameSetupBinding||setup.draft();
     if(sequence!==startSequence)return;
     const saveDraft=async value=>{const draft=structuredClone(value);await statePort.putRecords('drafts',runId,[{id:'game-setup',kind:'game-setup',value:draft}]);setupDraft=draft;};
-    const openCreator=async binding=>{const previous=state.gameSetupView,view=await mountCreation({parent:target,session,statePort,gameSetup:binding,applySetup:async value=>{const bound=setup.bind(value);await saveDraft(value);return bound;},onSetup:()=>{void showSetup().catch(error=>setStatus(error.message,'error'));},contentVersion:state.manifest?.contentVersion,isCurrent:()=>sequence===startSequence,onError:error=>setStatus(error.message,'error'),onComplete:async({handoff})=>{if(sequence!==startSequence)return;await openingPage.transition(async()=>{await handoff();state.creation=null;await startSession({accountId,runId});});}});if(sequence!==startSequence){view.destroy();return;}previous?.destroy();state.gameSetupView=null;state.creation=view;setStatus('创建人物');};
+    const openCreator=async binding=>{const previous=state.gameSetupView,view=await mountCreation({parent:target,session,statePort,gameSetup:binding,applySetup:async value=>{const bound=setup.bind(value);await saveDraft(value);return bound;},onSetup:()=>{void showSetup().catch(error=>setStatus(error.message,'error'));},onSettings:()=>settingsSurface.open('play'),contentVersion:state.manifest?.contentVersion,isCurrent:()=>sequence===startSequence,onError:error=>setStatus(error.message,'error'),onComplete:async({handoff})=>{if(sequence!==startSequence)return;await openingPage.transition(async()=>{await handoff();state.creation=null;await startSession({accountId,runId});});}});if(sequence!==startSequence){view.destroy();return;}previous?.destroy();state.gameSetupView=null;state.creation=view;setStatus('创建人物');};
     async function showSetup(){if(sequence!==startSequence)return;state.creation?.destroy();state.creation=null;state.gameSetupView?.destroy();target.replaceChildren();setStatus('新故事设置');state.gameSetupView=mountGameSetup({parent:target,setup,value:setupDraft,onChange:value=>{void saveDraft(value).catch(error=>setStatus(error.message,'error'));},onCancel:()=>{state.gameSetupView?.destroy();state.gameSetupView=null;openingPage.show();},onError:error=>setStatus(error.message,'error'),onContinue:async(binding,draft)=>{await saveDraft(draft);await session.bindGameSetup(binding);if(sequence!==startSequence)return;await openCreator(binding);}});await state.gameSetupView.ready;}
     await showSetup();
     return;
@@ -576,8 +584,8 @@ async function prepareSession({ accountId, runId, fromOpening=true, onRestored, 
   if(sequence!==startSequence){ui.destroy();return;}state.ui=ui;
   els.aux.replaceChildren();
   state.replyUI=mountReplyControls({parent:document.getElementById('reply-controls'),session:state.session,statePort,parser:state.chain.parser,openSettings:()=>settingsSurface.open('stories'),busy:()=>state.busy,onBusy:value=>{state.busy=value;els.stop.disabled=!value;els.send.disabled=value;els.regen.disabled=value||!canRegenerate();els.continueBtn.disabled=value||!state.session.narrativeNode;if(!value)state.ui?.finish();},onCommitted:async()=>{await state.ui.update();await refreshSaves();setStatus('正文已校验保存，旧路线保留。','ok');},onDiscarded:async result=>{if(result.clearedCurrent)state.ui.clearCandidate();await state.ui.update();setStatus('已丢弃待处理回复，可以继续行动。','ok');},onError:error=>setStatus(error.message,'error')});
-  const sessionSettings=await mountSessionSettings({parent:document.getElementById('session-settings'),memoryParent:els.memoryBox,session:state.session,presets:state.presets,onSettings:async value=>{saveCurrentModelAssignment();safeStorage()?.setItem(preferenceKey,JSON.stringify(value));await state.session.saveContentPreferences();await state.ui.update();},onError:error=>setStatus(error.message,'error')});
-  if(sequence!==startSequence){sessionSettings.destroy();return;}state.settingsUI=sessionSettings;
+  await showPromptSettings();
+  if(sequence!==startSequence)return;
   state.contentUI=mountSessionContent({database:state.database,parent:document.getElementById('session-content'),session:state.session,onChanged:async()=>{await state.ui.update();await state.settingsUI.refreshContent();},onError:error=>setStatus(error.message,'error')});
   state.applicationUI=mountApplicationControls({parent:document.getElementById('application-controls'),session:state.session,statePort,manifest:state.manifest,mode:state.mode,busy:()=>state.busy||state.session.running,onError:error=>setStatus(error.message,'error')});
   state.promptUI=mountPromptInspector({parent:document.getElementById('prompt-inspector'),session:state.session});
@@ -734,7 +742,7 @@ async function sendTurn(text, {regenerate=false,nodeId,continues=false}={}) {
   els.choices.innerHTML = '';
   const controller = controllerFor();
   state.abort = controller;
-  let streamed = '',revealOpening=openingDispatching,reasoningStarted=false;
+  let streamed = '',revealOpening=openingDispatching,reasoningStarted=false,result;
   try {
     const hooks = {
       signal: controller?.signal,
@@ -765,7 +773,7 @@ async function sendTurn(text, {regenerate=false,nodeId,continues=false}={}) {
         }
       },
     };
-    globalThis.__cxxTurnMark.push('run:'+Date.now());const result=continues?await session.continueTurn(hooks):regenerate?await session.regenerate({...hooks,nodeId}):await session.runTurn(input,hooks);globalThis.__cxxTurnMark.push('done:'+Date.now()+':'+(result&&result.status));
+    globalThis.__cxxTurnMark.push('run:'+Date.now());result=continues?await session.continueTurn(hooks):regenerate?await session.regenerate({...hooks,nodeId}):await session.runTurn(input,hooks);globalThis.__cxxTurnMark.push('done:'+Date.now()+':'+(result&&result.status));
     if(session!==state.session)return;
     await state.ui?.afterTurn(result);globalThis.__cxxTurnMark.push('after:'+Date.now());
     const parameterWarnings=document.getElementById('parameter-warnings');parameterWarnings.textContent=(result.parameterWarnings||[]).join('\n');parameterWarnings.hidden=!result.parameterWarnings?.length;
@@ -797,11 +805,15 @@ async function sendTurn(text, {regenerate=false,nodeId,continues=false}={}) {
       const head = await state.session.coordinator.snapshot();
       if (state.session.narrativeNode?.message?.complete === false) setStatus('模型回复未完整结束，已保存正文；点“重新生成”刷新本次回复，或点“继续”接上。', 'warn');
       refreshGeneratorInfo({ revision: head.revision });
-      await refreshSaves();
       await state.ui?.update();
+      await refreshSaves();
     }
     return result;
   } catch (error) {
+    if(result?.status==='committed'||result?.status==='replayed'){
+      setStatus(`正文已保存，界面刷新未完成：${error.message}`, 'warn');
+      return result;
+    }
     setStatus(`发送失败：${error.message}`, 'error');
     return {status:'failed',error};
   } finally {
