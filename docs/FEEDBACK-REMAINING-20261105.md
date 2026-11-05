@@ -1,6 +1,6 @@
 # 剩余 Issue 复核与补修
 
-2026-11-05 对当前 13 条开放 Issue 及 #74 的原反馈逐项核对。本轮补修四处本机可复现缺陷，并同步 U01 验收夹具。分支 `codex/remaining-feedback-root-fixes`，基于 #96 的 `b48edce`；公开发行保持 c607。
+2026-11-05 对当前 13 条开放 Issue 及 #74 的原反馈逐项核对。本轮补修四处本机可复现缺陷，并同步 U01 验收夹具。已提交 [PR #97](https://github.com/lolian19760909-boop/Cyber2051/pull/97)，产品提交 `c383ef2`。分支 `codex/remaining-feedback-root-fixes`，基于 #96 的 `b48edce`；公开发行保持 c607。
 
 ## 根因与改动
 
