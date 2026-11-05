@@ -1,3 +1,7 @@
+import {modelPlan,checkedModelPlan,withoutModelCredentials} from '../src/app/model-plan.mjs';
+import {createModelPlanStore} from '../src/platform/model-plans.mjs';
+import {mountModelPlans} from '../src/ui/model-plans.mjs';
+let modelPlansUI=null,activeAssignmentScope=null;
 /**
  * 网页独立版前端：三种运行方式共用这一套界面。
  *
@@ -225,16 +229,16 @@ function buildModelPort() {
   const selected=payload=>(['lan','default'].includes(payload.connection)?payload.connection:settings.connection)==='lan'?direct:relay;
   return {...Object.fromEntries(['models','chat','embeddings','rerank','tokenize','tokenCounter'].map(operation=>[operation,(payload,options)=>selected(payload)[operation](payload,options)])),parameters:payload=>selected(payload).parameters(payload)};
 }
-function modelConfig() {
+function modelConfig(value=settings) {
   return {
-    adapter: settings.adapter,
-    baseUrl: settings.baseUrl,
-    model: settings.model,
-    credential: connectionCredential(settings),
-    provider:settings.provider||{},
-    family: settings.adapter,
-    connection:settings.connection,
-    ...(settings.thinking==='on'?{include_reasoning:true}:settings.thinking==='off'?{include_reasoning:false}:{}),
+    adapter: value.adapter,
+    baseUrl: value.baseUrl,
+    model: value.model,
+    credential: connectionCredential(value),
+    provider:value.provider||{},
+    family: value.adapter,
+    connection:value.connection,
+    include_reasoning:value.thinking==='on'?true:value.thinking==='off'?false:undefined,
   };
 }
 
@@ -458,6 +462,7 @@ async function prepareSession({ accountId, runId, fromOpening=true, onRestored, 
   const mark=step=>{state.phase=step;try{(globalThis.__cxxBootMark??=[]).push([Date.now(),step]);if(globalThis.__cxxBootMark.length>80)globalThis.__cxxBootMark.shift();}catch{}};
   mark('session:start');
   if(state.mode==='public'&&(!state.tokenStore?.get()||!accountId||globalThis.CXXUser?.current()?.publisherId!==accountId)){setStatus('请登录后进入故事。','warn');return;}
+  const assignmentScope=state.mode+':'+accountId,continuingAssignment=state.session&&state.session.identity.accountId===accountId&&activeAssignmentScope===assignmentScope?modelPlan(settings,state.session.modelOptions({credentials:true})):null;
   if(state.session)storyDrafts.set(draftScope(state.session.identity.accountId,state.session.identity.runId),els.input.value);
   els.input.value=storyDrafts.get(draftScope(accountId,runId))||'';
   state.booted=false;
@@ -477,6 +482,7 @@ async function prepareSession({ accountId, runId, fromOpening=true, onRestored, 
   const lastRunKey='cxx2051:last-run:'+state.mode+':'+accountId;
   runId=state.mode==='tavern'?state.host.runId:runId||safeStorage()?.getItem(lastRunKey)||'run-'+accountId;
   loadSettings();
+  const activeModelPlan=continuingAssignment||connectionPlanStore()?.current()?.configuration;activeAssignmentScope=activeModelPlan?assignmentScope:null;if(activeModelPlan)Object.assign(settings,{apiKey:'',serviceAccount:'',...activeModelPlan.main});
   // Query configuration is a test/user convenience; credentials are never read from URLs.
   const query=new URLSearchParams(location.search);
   for(const key of ['adapter','baseUrl','model'])if(query.get(key))settings[key]=query.get(key);
@@ -510,13 +516,14 @@ async function prepareSession({ accountId, runId, fromOpening=true, onRestored, 
     ports: { state: statePort, model: modelPort,...(state.database?{database:state.database}:{}), ...(state.mode==='tavern'&&state.host?.worldbook?{worldbook: state.host.worldbook, worldbookBooks: ()=>state.host.hostBooks?.()??[],worldInfoSettings:()=>state.host.worldInfoSettings?.()??{}}:{}) },
     chain: state.chain,
     gameSetup,
-    preset: selectedPreset.preset,presetId:selectedPreset.id,promptOptions:promptPreferences.promptOptions,
+    preset: selectedPreset.preset,presetId:selectedPreset.id,promptOptions:activeModelPlan?{...promptPreferences.promptOptions,...activeModelPlan.options}:promptPreferences.promptOptions,
     card: state.card,
     catalog: state.knowledge?.status==='ok'?state.knowledge.index:null,
     model: modelConfig(),
   });
 
   state.database?.connect(state.session);
+  modelPlansUI?.refresh();
   mark('session:prepared');
   if(!fromOpening&&state.mode!=='tavern')return;
   mark('restore:begin');
@@ -569,7 +576,7 @@ async function prepareSession({ accountId, runId, fromOpening=true, onRestored, 
   if(sequence!==startSequence){ui.destroy();return;}state.ui=ui;
   els.aux.replaceChildren();
   state.replyUI=mountReplyControls({parent:document.getElementById('reply-controls'),session:state.session,statePort,parser:state.chain.parser,openSettings:()=>settingsSurface.open('stories'),busy:()=>state.busy,onBusy:value=>{state.busy=value;els.stop.disabled=!value;els.send.disabled=value;els.regen.disabled=value||!canRegenerate();els.continueBtn.disabled=value||!state.session.narrativeNode;if(!value)state.ui?.finish();},onCommitted:async()=>{await state.ui.update();await refreshSaves();setStatus('正文已校验保存，旧路线保留。','ok');},onDiscarded:async result=>{if(result.clearedCurrent)state.ui.clearCandidate();await state.ui.update();setStatus('已丢弃待处理回复，可以继续行动。','ok');},onError:error=>setStatus(error.message,'error')});
-  const sessionSettings=await mountSessionSettings({parent:document.getElementById('session-settings'),memoryParent:els.memoryBox,session:state.session,presets:state.presets,onSettings:async value=>{safeStorage()?.setItem(preferenceKey,JSON.stringify(value));await state.session.saveContentPreferences();await state.ui.update();},onError:error=>setStatus(error.message,'error')});
+  const sessionSettings=await mountSessionSettings({parent:document.getElementById('session-settings'),memoryParent:els.memoryBox,session:state.session,presets:state.presets,onSettings:async value=>{saveCurrentModelAssignment();safeStorage()?.setItem(preferenceKey,JSON.stringify(value));await state.session.saveContentPreferences();await state.ui.update();},onError:error=>setStatus(error.message,'error')});
   if(sequence!==startSequence){sessionSettings.destroy();return;}state.settingsUI=sessionSettings;
   state.contentUI=mountSessionContent({database:state.database,parent:document.getElementById('session-content'),session:state.session,onChanged:async()=>{await state.ui.update();await state.settingsUI.refreshContent();},onError:error=>setStatus(error.message,'error')});
   state.applicationUI=mountApplicationControls({parent:document.getElementById('application-controls'),session:state.session,statePort,manifest:state.manifest,mode:state.mode,busy:()=>state.busy||state.session.running,onError:error=>setStatus(error.message,'error')});
@@ -878,21 +885,16 @@ els.modelForm.addEventListener('submit', async (event) => {
   if(state.busy){setStatus('请先结束当前生成，再修改连接。','warn');return;}
   try {readModelForm();const issue=modelConnectionIssue();if(issue)throw Error(issue);state.session?.setModel(modelConfig());}catch(error){setStatus(error.message,'error');return;}
   try {
-    await persistSettings();
+    await persistSettings();saveCurrentModelAssignment();
     setStatus(settings.rememberKey?'设置已保存，密钥已记住。':'设置已保存，密钥仅保留在本次浏览会话。','ok');
   } catch(error) { setStatus('配置已用于当前页面，保存失败：'+error.message,'warn'); }
   await resumeOpening();
 });
-function readModelForm(){
-  const form = new FormData(els.modelForm);
-  settings.adapter = String(form.get('adapter') || 'openai-chat');
-  settings.baseUrl = String(form.get('baseUrl') || '').trim();
-  settings.model = String(form.get('model') || '').trim();
-  settings.apiKey = String(form.get('apiKey') || '').trim();
-  settings.connection=String(form.get('connection')||'default');
-  settings.rememberKey=form.get('rememberKey')==='on';Object.assign(settings,modelConnection.read());
+function readModelForm(){Object.assign(settings,modelFormSettings());}
+function modelFormSettings(){
+  const form=new FormData(els.modelForm);
+  return {...settings,adapter:String(form.get('adapter')||'openai-chat'),baseUrl:String(form.get('baseUrl')||'').trim(),model:String(form.get('model')||'').trim(),apiKey:String(form.get('apiKey')||'').trim(),connection:String(form.get('connection')||'default'),rememberKey:form.get('rememberKey')==='on',thinking:['on','off'].includes(form.get('thinking'))?form.get('thinking'):'default',...modelConnection.read()};
 }
-
 const adapterSelect=els.modelForm.elements.namedItem('adapter');
 const headerResize=new ResizeObserver(()=>document.documentElement.style.setProperty('--cxx-web-header-height',document.querySelector('.topbar').getBoundingClientRect().height+'px'));headerResize.observe(document.querySelector('.topbar'));
 adapterSelect.replaceChildren();
@@ -900,16 +902,23 @@ for(const [label,prefix,rows] of [['聊天服务','chat:',CHAT_SOURCES],['文本
   const group=document.createElement('optgroup');group.label=label;for(const row of rows){const option=document.createElement('option');option.value=prefix+row.id;option.textContent=row.label;group.append(option);}adapterSelect.append(group);
 }
 modelConnection=mountModelConnection(els.modelForm);modelConnection.sync(settings);
+function connectionPlanStore(){if(!state.accountId||state.mode==='tavern')return null;return createModelPlanStore({local:localStorage,session:sessionStorage,scope:state.mode+':'+state.accountId});}
+function saveCurrentModelAssignment(){const store=connectionPlanStore();if(store?.current()&&state.session)store.saveCurrent(modelPlan(settings,state.session.modelOptions({credentials:true})));modelPlansUI?.refresh();}
+modelPlansUI=mountModelPlans({parent:els.modelForm,store:connectionPlanStore,available:()=>!!state.session&&state.mode!=='tavern',snapshot:()=>modelPlan(modelFormSettings(),state.session.modelOptions({credentials:true})),apply:async value=>{
+ if(state.busy)throw Error('请先结束当前操作，再载入 API 方案。');
+ const plan=checkedModelPlan(value),next=modelConfig(plan.main);state.session.checkModelOptions(plan.options);connectionPlanStore().saveCurrent(plan);activeAssignmentScope=state.mode+':'+state.accountId;state.session.replaceModelConfiguration({model:next,options:plan.options});Object.assign(settings,{apiKey:'',serviceAccount:'',...plan.main});syncModelForm();state.settingsUI?.refreshModels?.();window.dispatchEvent(new Event('cxx-variable-mode-changed'));modelPlansUI.refresh();
+}});
+
 function modelConnectionIssue(){
  if(!settings.model&&!settings.provider?.deployment)return '请填写正文模型型号或部署名。';
  try{const config=modelConfig(),request=buildRequest({operation:'chat',...config,payload:{...config.provider,model:config.model,messages:[{role:'user',content:'开始'}],stream:true}});if(new URL(request.url).hostname==='api.deepseek.com'&&!request.headers.authorization)return '当前页面未配置 DeepSeek API Key，请填写并保存模型设置；未选择记住密钥时，新标签页需要重新填写。';return '';}catch(error){return error.message;}
 }
 document.getElementById('login-btn').onclick=()=>doLogin();
 document.getElementById('logout-btn').onclick=()=>{connectionSettingsScope=null;sessionStorage.removeItem(connectionKey()+':key');sessionStorage.removeItem(connectionKey()+':service-account');settings.apiKey='';settings.serviceAccount='';CXXUser.logout();};
-document.getElementById('clear-key').onclick=async()=>{if(state.busy){setStatus('请先中断生成，再清除密钥。','warn');return;}try{settings.apiKey='';settings.serviceAccount='';settings.rememberKey=false;sessionStorage.removeItem(connectionKey()+':key');sessionStorage.removeItem(connectionKey()+':service-account');await persistSettings();syncModelForm();state.session?.setModel(modelConfig());setStatus('此身份记住的模型密钥已清除。','ok');}catch(error){setStatus(error.message,'error');}};
+document.getElementById('clear-key').onclick=async()=>{if(state.busy){setStatus('请先中断生成，再清除密钥。','warn');return;}try{connectionPlanStore()?.clearCredentials();if(state.session){const clean=withoutModelCredentials(modelPlan(settings,state.session.modelOptions({credentials:true})));state.session.replaceModelConfiguration({model:{...modelConfig(),credential:null},options:clean.options});}settings.apiKey='';settings.serviceAccount='';settings.rememberKey=false;sessionStorage.removeItem(connectionKey()+':key');sessionStorage.removeItem(connectionKey()+':service-account');await persistSettings();syncModelForm();state.session?.setModel(modelConfig());state.settingsUI?.refreshModels?.();modelPlansUI?.refresh();setStatus('此身份的正文、用途及已存方案密钥已清除。','ok');}catch(error){setStatus(error.message,'error');}};
 document.getElementById('test-models').onclick=async()=>{try{readModelForm();const result=await buildModelPort().models(modelConfig());setStatus('已读取 '+result.models.length+' 个模型。','ok');const list=document.getElementById('model-options');list.replaceChildren();for(const row of result.models){if(!row.id)continue;const option=document.createElement('option');option.value=row.id;list.append(option);}}catch(error){setStatus(error.message,'error');}};
 // Initial anonymous check is part of boot; only an owned account can be logged out.
-document.addEventListener('cxx-user-changed',event=>{if(state.mode==='public'&&!event.detail.account&&state.accountId){connectionSettingsScope=null;const hadSession=state.booted;bootSequence++;startSequence++;try{sessionStorage.removeItem(connectionKey()+':key');sessionStorage.removeItem(connectionKey()+':service-account');}catch{}state.abort?.abort();state.session?.dispose();state.ui?.destroy();state.settingsUI?.destroy();state.contentUI?.destroy();state.savesUI?.destroy();state.replyUI?.destroy();state.applicationUI?.destroy();state.promptUI?.destroy();state.packUI?.destroy();state.creation?.destroy();state.statePort?.close();state.ui=null;state.settingsUI=null;state.savesUI=null;state.replyUI=null;state.applicationUI=null;state.promptUI=null;state.packUI=null;state.session=null;state.creation=null;state.statePort=null;state.accountId=null;state.temporary?.destroy();state.temporary=null;state.temporaryAccount=null;state.booted=false;state.busy=false;document.getElementById('play-nav').hidden=true;settingsSurface.close();els.input.value='';settings.apiKey='';settings.serviceAccount='';syncModelForm();els.send.disabled=true;els.regen.disabled=true;els.continueBtn.disabled=true;readingSurface.hide();openingPage.show();document.querySelector('.composer').hidden=true;document.getElementById('login-btn').hidden=false;document.getElementById('logout-btn').hidden=true;setStatus(hadSession?'已退出，请登录后继续。':'登录后开始或继续故事。','warn');}});
+document.addEventListener('cxx-user-changed',event=>{if(state.mode==='public'&&!event.detail.account&&state.accountId){connectionSettingsScope=null;activeAssignmentScope=null;const hadSession=state.booted;bootSequence++;startSequence++;try{connectionPlanStore()?.clearSession();sessionStorage.removeItem(connectionKey()+':key');sessionStorage.removeItem(connectionKey()+':service-account');}catch{}state.abort?.abort();state.session?.dispose();state.ui?.destroy();state.settingsUI?.destroy();state.contentUI?.destroy();state.savesUI?.destroy();state.replyUI?.destroy();state.applicationUI?.destroy();state.promptUI?.destroy();state.packUI?.destroy();state.creation?.destroy();state.statePort?.close();state.ui=null;state.settingsUI=null;state.savesUI=null;state.replyUI=null;state.applicationUI=null;state.promptUI=null;state.packUI=null;state.session=null;state.creation=null;state.statePort=null;state.accountId=null;state.temporary?.destroy();state.temporary=null;state.temporaryAccount=null;state.booted=false;state.busy=false;document.getElementById('play-nav').hidden=true;settingsSurface.close();els.input.value='';settings.apiKey='';settings.serviceAccount='';syncModelForm();modelPlansUI?.refresh();els.send.disabled=true;els.regen.disabled=true;els.continueBtn.disabled=true;readingSurface.hide();openingPage.show();document.querySelector('.composer').hidden=true;document.getElementById('login-btn').hidden=false;document.getElementById('logout-btn').hidden=true;setStatus(hadSession?'已退出，请登录后继续。':'登录后开始或继续故事。','warn');}});
 window.addEventListener('storage',event=>{if(state.mode==='public'&&event.key==='cxx-oauth-token'){state.session?.cancel();boot().catch(error=>setStatus(error.message,'error'));}});
 window.addEventListener('cxx-host-close',()=>{state.booted=false;state.abort?.abort();state.session?.dispose();state.ui?.destroy();state.settingsUI?.destroy();state.contentUI?.destroy();state.savesUI?.destroy();state.replyUI?.destroy();state.applicationUI?.destroy();state.promptUI?.destroy();state.packUI?.destroy();state.creation?.destroy();state.statePort?.close();state.packUI=null;});
 window.addEventListener('cxx-web-open-memory',()=>state.settingsUI?.openMemory());
