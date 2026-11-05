@@ -985,34 +985,6 @@
   }
 }
 
-/* ---------- Short landscape windows ---------- */
-@media (max-height:500px) {
-  .opening-steps {
-    padding-top: 8px;
-  }
-
-  .opening-steps>button {
-    min-height: 44px;
-  }
-
-  .opening-step-value {
-    display: none;
-  }
-
-  .opening-stage-caption p {
-    display: none;
-  }
-
-  .opening-footer {
-    min-height: 52px;
-    padding: 4px 16px;
-  }
-
-  .cxx-game-menu .opening-key {
-    display: none;
-  }
-}
-
 @media (prefers-reduced-motion:reduce) {
   .cxx-opening-flow * {
     transition: none!important;

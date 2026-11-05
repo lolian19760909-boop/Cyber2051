@@ -1,6 +1,6 @@
 import {createRequire} from 'node:module';
 const B=createRequire(import.meta.url)('../../工具/lib/card-ast.cjs');
-export const creationFooterCSS=`@media(max-width:620px){
+export const creationFooterCSS=`@container cxx-opening (max-width:620px){
  .cxx-game-menu.cx77[data-page=create] .cxx-opening-flow .opening-footer{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;padding:10px 12px}
  .cxx-game-menu.cx77[data-page=create] .opening-footer>:is(.cx77-cc-emblem,.cx77-audio-dock,.cxx-orientation-toggle){grid-row:1;grid-column:span 2;min-width:0;margin:0}
  .cxx-game-menu.cx77[data-page=create] .opening-footer .cx77-cc-emblem{font-size:10px;gap:5px}
@@ -15,6 +15,33 @@ export function adaptCreationVisuals(code){
  const from='if (sel.dataset.cx77Seg || sel.options.length < 2 || sel.options.length > 5) return;';
  if(code.split(from).length!==2)throw Error('开局选择控件适配接点变化');
  code=code.replace(from,"if (sel.hasAttribute('data-cxx-native-select') || sel.dataset.cx77Seg || sel.options.length < 2 || sel.options.length > 5) return;");
+ code=adaptCreationViewport(code);
  const found=[];B.walk(B.acorn.parse(code,{ecmaVersion:'latest',sourceType:'module'}),n=>{if(n.type==='VariableDeclarator'&&n.id?.name==='THEME_CSS'&&typeof n.init?.value==='string')found.push(n.init);});
  if(found.length!==1)throw Error('开局主题样式接点变化');const value=found[0];return code.slice(0,value.start)+JSON.stringify(value.value+'\n'+creationFooterCSS)+code.slice(value.end);
+}
+
+function adaptCreationViewport(code){
+ const root='.cxx-game-menu.cx77 .cxx-opening-flow';
+ // Root rules use the existing ResizeObserver state; descendants query that same surface.
+ for(const [query,layout]of [['min-width:761px',':not([data-layout=compact])'],['max-width:760px','[data-layout=compact]']]){
+  const marker='@media ('+query+'){',start=code.indexOf(marker),end=code.indexOf('\n}',start);
+  if(start<0||end<0)throw Error('创角响应布局接点变化：'+query);
+  const roots=[],children=[];
+  for(let line of code.slice(start+marker.length,end).trim().split('\n')){
+   line=line.replace(':is([data-step=origin],[data-step=profile]',':is([data-step=preferences],[data-step=origin],[data-step=profile]');
+   const selector=line.trim().split('{')[0];
+   if(selector===root+'[data-step=preferences]')continue;
+   if(selector.startsWith(root)&&!selector.slice(root.length).includes(' ')){
+    let rule=line.trim().replace(root,root+layout);
+    if(selector===root&&layout==='[data-layout=compact]')rule=rule.replace('{','{grid-template-columns:minmax(0,1fr);');
+    roots.push(rule);
+   }else if(line.includes('[data-page=create] .cx77-audio')){
+    roots.push(line.trim().replace('[data-page=create]','[data-page=create]:has(.cxx-opening-flow'+layout+')'));
+   }else children.push(line);
+  }
+  if(layout==='[data-layout=compact]')children.push('  '+root+':is([data-step=preferences],[data-step=origin],[data-step=profile],[data-step=scenario],[data-restore=true]) .opening-body{grid-area:body}');
+  const adapted=roots.join('\n')+'\n@container cxx-opening ('+query+'){\n'+children.join('\n')+'\n}';
+  code=code.slice(0,start)+adapted+code.slice(end+2);
+ }
+ return code;
 }

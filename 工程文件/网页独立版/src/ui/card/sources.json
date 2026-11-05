@@ -217,7 +217,7 @@
   },
   {
     "source": "卡片源码/运行时/entry-experience.js",
-    "sha256": "e36b8064b69fbeefa7f50830e39d115fc36c2f7374721aa4ac395439363301ad",
+    "sha256": "8489b0dc8689dc9eec3fe9ab340b264d85c24dfae3a7bc4b57dd3676237039d9",
     "target": "src/ui/card/运行时/entry-experience.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
