@@ -58,7 +58,7 @@
         const mirrorSource=globalThis.parent?.CxxSource,floor=floorNumbers.get(selected),hostRaw=selected?.mes||'';
         const raw = selected&&!selected.is_user&&mirrorSource?mirrorSource.sync(floor):hostRaw;
         if(!snapshot.generating&&!snapshot.opening)view.beginReading?.({floor,scope:chatKey});
-        const parseOptions=snapshot.readingOptions||{},optionKey=JSON.stringify(parseOptions);if (parsedMessage !== selected || parsedRaw !== raw || parsedSwipe !== selected?.swipe_id || parsedOptions!==optionKey) {
+        const parseOptions={...snapshot.readingOptions,...(adapter.characters?{characters:adapter.characters(floor)}: {})},optionKey=JSON.stringify(parseOptions);if (parsedMessage !== selected || parsedRaw !== raw || parsedSwipe !== selected?.swipe_id || parsedOptions!==optionKey) {
           const switched = parsedMessage !== selected || parsedSwipe !== selected?.swipe_id;
           const history=typeof globalThis!=='undefined'&&globalThis.parent?.Cxx249History;
           if(history&&selected){
@@ -103,7 +103,7 @@
           hud: adapter.readHud?.({ messageId: selected ? floorNumbers.get(selected) : null,
             scene: parsed.scene, characterId: selected?.is_user ? null : parsed.paragraphs[paragraphIndex]?.characterId, history: selected !== latest }),
           draft: snapshot.draft, busy: snapshot.busy || pending, canStop: snapshot.canStop, history: selected !== latest,
-          sprites: selected?.is_user||illustration ? [] : sprites.select(parsed, paragraphIndex, (id, expression, options) => adapter.sprite?.(id, expression, options), adapter.battleBefore?.(floor) || {}),
+          sprites: selected?.is_user||illustration ? [] : sprites.select(parsed, paragraphIndex, (id, expression, options) => adapter.sprite?.(id, expression, options), adapter.battleBefore?.(floor) || {},parseOptions.characters),
           status: snapshot.status || (snapshot.busy ? '酒馆正在生成，结束后显示正文…' : pending ? '正在交给酒馆发送…' :
             parsed.warnings.length ? '部分标签无法识别，已保留原文。' : '草稿已同步'),
           error,

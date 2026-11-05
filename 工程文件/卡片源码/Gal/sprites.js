@@ -44,7 +44,8 @@
 
   // Replay explicit marks only. End-of-reply ztl facts apply at the last paragraph,
   // so a later battle end never rewrites the earlier paragraphs of that reply.
-  function battleState(parsed, paragraphIndex, initial = {}) {
+  function battleState(parsed, paragraphIndex, initial = {}, cast=characters) {
+    const characters=cast,byId=new Map(characters.map(character=>[character.id,character]));
     const state = { ...initial };
     for (const paragraph of (parsed?.paragraphs || []).slice(0, paragraphIndex + 1)) {
       if (byId.has(paragraph.characterId) && typeof paragraph.battle === 'boolean') state[paragraph.characterId] = paragraph.battle;
@@ -58,7 +59,8 @@
     return state;
   }
 
-  function select(parsed, paragraphIndex, resolveUrl, initialBattle = {}) {
+  function select(parsed, paragraphIndex, resolveUrl, initialBattle = {}, cast=characters) {
+    const characters=cast,byId=new Map(characters.map(character=>[character.id,character]));
     if (!Array.isArray(parsed?.paragraphs) || !Array.isArray(parsed.dialogueRanking) ||
         !Number.isInteger(paragraphIndex) || paragraphIndex < 0 || paragraphIndex >= parsed.paragraphs.length) return [];
     const ranked = [], seen = new Set();
@@ -73,7 +75,7 @@
     }
     if (roster) for (const id of roster) if (!seen.has(id)) { seen.add(id); ranked.push(byId.get(id)); }
     const chosen = new Map();
-    const battles = battleState(parsed, paragraphIndex, initialBattle);
+    const battles = battleState(parsed, paragraphIndex, initialBattle,cast);
     const lastExpressions = new Map();
     for (const paragraph of parsed.paragraphs.slice(0, paragraphIndex + 1)) {
       if (byId.has(paragraph?.characterId)) lastExpressions.set(paragraph.characterId, expressionOf(paragraph.expression));

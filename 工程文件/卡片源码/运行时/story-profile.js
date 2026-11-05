@@ -4,7 +4,7 @@
  const cryptoCompat=()=>typeof module==='object'&&module.exports?require('./crypto-compat.js'):root.CxxCrypto;
  const KEY='__cxx_story_profile',fields={name:'姓名',address:'称谓',gender:'性别',age:'年龄',appearance:'外貌',clothing:'服装',personality:'性格',history:'经历',additional:'补充设定'};
  const appearance=()=>typeof module==='object'&&module.exports?require('./appearance.js'):root.CxxAppearance;
- function normalize(p){if(!p||p.schema!==1||!/^profile_[a-z0-9-]+$/i.test(p.id||''))throw Error('人物资料版本或编号无效。');const out=structuredClone(p);for(const k of Object.keys(fields)){out[k]=String(p[k]||'');if(['name','address','gender','age'].includes(k)){out[k]=out[k].trim();if(out[k].length>80)throw Error(fields[k]+'过长。');}}if(!out.name)throw Error('请填写人物姓名。');if(p.appearanceTraits!==undefined)out.appearanceTraits=appearance().normalize(p.appearanceTraits);if(p.portrait!==undefined)out.portrait=portrait(p.portrait);return out;}
+ function normalize(p){if(!p||p.schema!==1||!/^profile_[a-z0-9-]+$/i.test(p.id||''))throw Error('人物资料版本或编号无效。');const out=structuredClone(p);for(const k of Object.keys(fields)){out[k]=String(p[k]||'');if(['name','address','gender','age'].includes(k)){out[k]=out[k].trim();if(out[k].length>80)throw Error(fields[k]+'过长。');}}if(!out.name)throw Error('请填写人物姓名。');if(p.appearanceTraits!==undefined)out.appearanceTraits=appearance().normalize(p.appearanceTraits);if(p.portrait!==undefined)out.portrait=portrait(p.portrait);if(p.galPortraits!==undefined){if(!p.galPortraits||typeof p.galPortraits!=='object'||Array.isArray(p.galPortraits))throw Error('故事立绘配置无效。');out.galPortraits=Object.fromEntries(Object.entries(p.galPortraits).map(([id,value])=>[characterId(id),characterPortrait(value)]));}return out;}
  function description(p){return [Object.entries(fields).filter(([k])=>p[k]).map(([k,v])=>v+'：'+p[k]).join('\n'),p.origin?.name&&'出身：'+p.origin.name,p.origin?.background&&'出身背景：'+p.origin.background,appearance()?.describe(p.appearanceTraits)].filter(Boolean).join('\n');}
  function hostPersona(win){return String(win.SillyTavern?.getContext?.().powerUserSettings?.persona_description||'');}
  function seed(win){const c=win.SillyTavern?.getContext?.()||{},id='profile_'+(win.crypto?.randomUUID?.()||Date.now().toString(36));return {schema:1,id,name:c.name1||'旅人',address:'',gender:'',age:'',appearance:'',clothing:'',personality:'',history:'',additional:'',avatar:{kind:'current'}};}
@@ -64,8 +64,47 @@
  async function currentAvatar(win,{load=()=>modules(win)}={}){const {personas,host}=await load();return avatarSource(personas,host);}
  // Visuals never participate in persona text or avatar binding.
  const portraitGallery=['Saki','Tomorin','Anon','Soyo','Taki','Rana','Uika','Mutsumi','Umiri','Nyamu'];
- function visualStamp(profile){return JSON.stringify([profile?.id||null,profile?.portrait||null,profile?.visualRevision||0]);}
+ function visualStamp(profile){return JSON.stringify([profile?.id||null,profile?.portrait||null,profile?.visualRevision||0,profile?.galPortraits||null]);}
  function portrait(value){if(value==null)return undefined;if(value.schema!==1||!['gallery','asset'].includes(value.kind)||(value.kind==='gallery'?!portraitGallery.includes(value.id):!/^art_[a-f0-9]{64}$/.test(value.id||'')))throw Error('人物主视觉引用无效。');return {schema:1,kind:value.kind,id:value.id};}
  function withPortrait(previous,request){if(!/^visual_[a-z0-9-]+$/i.test(request.id||''))throw Error('人物图片操作编号无效。');if(previous?.visualReceipt===request.id){if(JSON.stringify(previous.portrait||null)!==JSON.stringify(portrait(request.portrait)||null))throw Error('同一人物图片请求不可改变。');return structuredClone(previous);}if(visualStamp(previous)!==request.expectedVisual)throw Error('故事人物图已变化，原选择已保留；请关闭后核对最新人物图。');const ref=portrait(request.portrait),out=previous?structuredClone(previous):normalize(request.legacyProfile);if(ref)out.portrait=ref;else delete out.portrait;out.visualSchema=1;out.visualRevision=(previous?.visualRevision||0)+1;out.visualReceipt=request.id;return out;}
- return {KEY,fields,normalize,description,seed,hostPersona,importPersona,bind,selected,filterEntries,withBookLock,currentAvatar,portraitGallery,portrait,visualStamp,withPortrait};
+ const dialogue=()=>typeof module==='object'&&module.exports?require('../正文/dialogue.js'):root.Cxx238Dialogue||root.parent?.Cxx238Dialogue;
+ function characterId(value){if(typeof value!=='string'||!/^[a-zA-Z][a-zA-Z0-9_-]{0,79}$/.test(value)||['constructor','prototype','__proto__'].includes(value))throw Error('立绘角色编号无效。');return value;}
+ function characterPortrait(value){
+  if(!value||typeof value!=='object'||Array.isArray(value))throw Error('角色立绘配置无效。');
+  const name=String(value.name||'').trim();if(!name||name.length>80)throw Error('请填写80字以内的角色姓名。');
+  if(value.aliases!==undefined&&(!Array.isArray(value.aliases)||value.aliases.some(x=>typeof x!=='string'||!x.trim()||x.length>80)))throw Error('角色别名须为80字以内的文字。');
+  const expressions=value.expressions||{};if(typeof expressions!=='object'||Array.isArray(expressions))throw Error('表情差分配置无效。');
+  const out={...structuredClone(value),name,aliases:[...new Set((value.aliases||[]).map(x=>x.trim()))],expressions:{}};
+  const ref=portrait(value.default);if(ref)out.default=ref;else delete out.default;
+  for(const [key,value]of Object.entries(expressions)){if(!dialogue().expressions.includes(key))throw Error('未登记的立绘表情：'+key);const ref=portrait(value);if(ref)out.expressions[key]=ref;}
+  return out;
+ }
+ function withGalPortraits(previous,request){
+  if(!/^visual_[a-z0-9-]+$/i.test(request.id||''))throw Error('人物图片操作编号无效。');
+  const id=characterId(request.characterId),value=request.character==null?null:characterPortrait(request.character);if(id!=='player'&&value?.aliases.some(name=>name.toLowerCase()==='user'))throw Error('User 用于当前玩家，请为这个角色选择其他别名。');
+  if(previous?.visualReceipt===request.id){if(!same(previous.galPortraits?.[id]||null,value))throw Error('同一人物图片请求不可改变。');return structuredClone(previous);}
+  if(visualStamp(previous)!==request.expectedVisual)throw Error('故事人物图已变化，原选择已保留；请关闭后核对最新人物图。');
+  const out=previous?structuredClone(previous):normalize(request.legacyProfile);out.galPortraits={...out.galPortraits};
+  if(value)out.galPortraits[id]=value;else delete out.galPortraits[id];out.visualSchema=1;out.visualRevision=(previous?.visualRevision||0)+1;out.visualReceipt=request.id;return out;
+ }
+ function characters(profile={},stat={}){
+  const rows=new Map(dialogue().portraits.map(row=>[row.id,{...row,aliases:[...row.aliases]}]));
+  for(const [actorId,actor]of Object.entries(stat?.terminal?.ensemble?.actors||{})){
+   if(actorId==='player'||typeof actor?.name!=='string'||!actor.name.trim())continue;
+   const known=[...rows.values()].find(row=>row.worldbookUid!==undefined&&row.worldbookUid===actor.worldbookUid||row.name===actor.name||row.aliases.includes(actor.name));
+   if(known){known.actorId=actorId;known.aliases.push(actorId);}else rows.set(actorId,{id:actorId,actorId,name:actor.name,aliases:[actorId],anchorX:.5,heightCm:170});
+  }
+  for(const [id,config]of Object.entries(profile?.galPortraits||{})){
+   const prior=rows.get(id);rows.set(id,{...(prior||{id,anchorX:.5,heightCm:170}),name:prior?.name||config.name,aliases:[...new Set([...(prior?.aliases||[]),config.name,...(config.aliases||[])])]});
+  }
+  const player=rows.get('player');rows.set('player',{...player,id:'player',actorId:'player',name:profile?.name||stat?.terminal?.ensemble?.actors?.player?.name||'玩家',aliases:[...new Set(['User','user','玩家',...(player?.aliases||[])])],anchorX:.5,heightCm:170});
+  const controlledId=stat?.terminal?.ensemble?.control?.actorId||'player',controlled=[...rows.values()].find(row=>row.actorId===controlledId)||rows.get('player');for(const row of rows.values()){row.aliases=row.aliases.filter(name=>!['user','玩家'].includes(name.toLowerCase()));row.controlled=row===controlled;}controlled.aliases.push('User','user','玩家');
+  return [...rows.values()].filter(row=>row!==controlled).concat(controlled);
+ }
+ function galImage(profile,id,expression,table={},menu={}){
+  const config=profile?.galPortraits?.[id],ref=config?.expressions?.[expression]||config?.default||(id==='player'?profile?.portrait:null);
+  return ref?.kind==='asset'?table.assets?.[ref.id]?.src||null:ref?.kind==='gallery'?(menu.entries?.[ref.id]?.url||menu.entries?.[ref.id]?.fallback||null):null;
+ }
+ function artReferences(profile){return [...new Set([profile?.portrait,...Object.values(profile?.galPortraits||{}).flatMap(row=>[row.default,...Object.values(row.expressions||{})])].filter(ref=>ref?.kind==='asset').map(ref=>ref.id))];}
+ return {KEY,fields,normalize,description,seed,hostPersona,importPersona,bind,selected,filterEntries,withBookLock,currentAvatar,portraitGallery,portrait,visualStamp,withPortrait,characterId,characterPortrait,withGalPortraits,characters,galImage,artReferences};
 });

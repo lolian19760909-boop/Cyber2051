@@ -301,7 +301,8 @@
       if (typeof win.CxxWorkshopWebsite?.open !== 'function') throw Error('请先启用本卡的创意工坊脚本。');
       win.CxxWorkshopWebsite.open();
     },
-    sprite(characterId, expression, options) { return CxxGalSprites.sprite(characterId, CXX_GAL_MEDIA_BASE, expression, CXX_GAL_STANDING, options); },
+    characters(floor){const c=context(),row=c.chat[floor],stat=row?.variables?.[row.swipe_id||0]?.stat_data||win.Cxx236VariableGuard?.localState?.();return win.CxxStoryProfile.characters(c.chatMetadata.__cxx_story_profile||{name:c.name1},stat);},
+    sprite(characterId, expression, options) {const c=context(),custom=win.CxxStoryProfile.galImage(c.chatMetadata.__cxx_story_profile,characterId,expression,c.chatMetadata.__cxx_item_art,win.CxxMenuArt);return custom||CxxGalSprites.sprite(characterId, CXX_GAL_MEDIA_BASE, expression, CXX_GAL_STANDING, options); },
     subscribe(callback) {
       function schedule(kind) {
         if (destroyed) return;
@@ -376,6 +377,7 @@
         eventOn(events[name], handler);
         disposers.push(() => eventRemoveListener(events[name], handler));
       }
+      const portraitsChanged=()=>schedule('content');win.addEventListener('cxx-story-portraits-changed',portraitsChanged);disposers.push(()=>win.removeEventListener('cxx-story-portraits-changed',portraitsChanged));
       const nativeDraft = event => { if (event.target === input()) schedule('draft'); };
       doc.addEventListener('input', nativeDraft);
       disposers.push(() => doc.removeEventListener('input', nativeDraft));
@@ -448,7 +450,7 @@
     window.removeEventListener('pagehide', destroy);
     if (win[slot]?.destroy === destroy) delete win[slot];
   }
-  win[slot] = { destroy, open:openGal, active:()=>runtime.active,version: CXX_GAL_REVISION, numericBusy: busy, nativeSendReady, background:scene=>adapter.background(scene) };
+  win[slot] = { destroy, open:openGal, active:()=>runtime.active,version: CXX_GAL_REVISION, numericBusy: busy, nativeSendReady, background:scene=>adapter.background(scene),defaultSprite:(id,expression)=>CxxGalSprites.sprite(id,CXX_GAL_MEDIA_BASE,expression,CXX_GAL_STANDING) };
   window.addEventListener('pagehide', destroy, { once: true });
   maybeRestore();
 })();

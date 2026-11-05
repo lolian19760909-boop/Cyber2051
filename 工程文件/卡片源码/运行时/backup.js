@@ -168,6 +168,16 @@
         if(ref.schema!==1||!['asset','gallery'].includes(ref.kind)||typeof ref.id!=='string'||(ref.kind==='asset'&&!/^art_[a-f0-9]{64}$/.test(ref.id)))fail('migration-portrait-invalid',label+'的立绘引用无效。');
         if(ref.kind==='asset'&&!table?.assets?.[ref.id])fail('migration-art-missing',label+'的立绘资源缺失：'+ref.id+'。请在原故事恢复图片后重新导出；原存档已保留。');
       }
+      if(profile?.galPortraits!==undefined){
+        if(!profile.galPortraits||typeof profile.galPortraits!=='object'||Array.isArray(profile.galPortraits))fail('migration-portrait-invalid','故事角色立绘配置无效。');
+        for(const [id,config]of Object.entries(profile.galPortraits)){
+          if(!config||typeof config!=='object'||Array.isArray(config)||config.expressions!=null&&(typeof config.expressions!=='object'||Array.isArray(config.expressions)))fail('migration-portrait-invalid','角色立绘配置无效：'+id);
+          for(const ref of [config.default,...Object.values(config.expressions||{})])if(ref!=null){
+            if(ref.schema!==1||!['asset','gallery'].includes(ref.kind)||typeof ref.id!=='string'||ref.kind==='asset'&&!/^art_[a-f0-9]{64}$/.test(ref.id))fail('migration-portrait-invalid','角色立绘引用无效：'+id);
+            if(ref.kind==='asset'&&!table?.assets?.[ref.id])fail('migration-art-missing','角色“'+String(config.name||id)+'”的立绘资源缺失：'+ref.id);
+          }
+        }
+      }
       for(const vars of tables(messages))for(const item of Object.values(vars.stat_data?.terminal?.gameplay?.itemDefinitions||{})){
         const image=item?.appearance;if(image?.kind==='asset'&&!table?.assets?.[image.id])fail('migration-art-missing','物品“'+String(item.name||item.id)+'”的图片资源缺失：'+image.id);
       }

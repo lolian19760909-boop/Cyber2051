@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/Gal/parser.js; source SHA256 2a87ba33768f4ab04926ce8e658188b7b7460669d3f04261c8a6c4ca2f55c5d1. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/Gal/parser.js; source SHA256 fdf1d6291de82e9abd69b2a6c089eae4cc6d69d78a573074cc77ed4e3514e819. Rebuild with tools/p3a-adapt-views.mjs. */
 /* Read-only adapter: maintained card protocols and the project's Izumi preset.
  * Auxiliary preset output is excluded from Gal narration only.
  * No game variables or source message text are written.
@@ -150,10 +150,10 @@
     return visible.join('');
   }
 
-  function dialogueMarkup(text, warnings, utterances) {
+  function dialogueMarkup(text, warnings, utterances, cast=aliases) {
     return dialogueCodec.transform(text,item=>{
       if(!item.text)return '';
-      const who=aliases[item.speaker];
+      const who=item.speaker?(cast[item.speaker]||cast[item.speaker.toLowerCase()]):null;
       const index=utterances.push({text:item.text,speaker:who?.name||item.speaker,characterId:who?.id||null,expression:item.expression,dialogueText:item.text,...(typeof item.battle==='boolean'?{battle:item.battle}:{}),...(item.kind==='thought'?{kind:'thought'}:{})})-1;
       return '\n\n\uE110CXXD'+index+'\uE111\n\n';
     },protectedText);
@@ -201,14 +201,14 @@
     return { body: pieces.join('\n\n'), protocols: protocols.join('\n\n') };
   }
 
-  function readScene(body, warnings) {
+  function readScene(body, warnings, cast=aliases) {
     var scene = JSON.parse(body);
     if (!object(scene) || !nonempty(scene.location)) throw new Error('地点不完整');
     if (!nonempty(scene.time)) warnings.push('时间未记录，已保留地点');
-    var charactersValid = Array.isArray(scene.characters) && scene.characters.every(function (item) { return object(item) && nonempty(item.name) && !!aliases[item.name]; });
+    var charactersValid = Array.isArray(scene.characters) && scene.characters.every(function (item) { return object(item) && nonempty(item.name) && !!cast[item.name]; });
     var people = charactersValid ? scene.characters.map(function (item) {
       if (typeof item.outfit !== 'string' || typeof item.thought !== 'string') warnings.push('人物详情不完整，已保留场景与人物名单');
-      return { name: aliases[item.name].name, outfit: typeof item.outfit === 'string' ? item.outfit : '', thought: typeof item.thought === 'string' ? item.thought : '', ...(typeof item.battle==='boolean'?{battle:item.battle}:{}) };
+      return { name: cast[item.name].name, outfit: typeof item.outfit === 'string' ? item.outfit : '', thought: typeof item.thought === 'string' ? item.thought : '', ...(typeof item.battle==='boolean'?{battle:item.battle}:{}) };
     }) : [];
     if (!charactersValid) warnings.push('人物名单无效，立绘仅使用本回复明确的说话人');
     return { date: typeof scene.date === 'string' ? scene.date : '', time: nonempty(scene.time) ? scene.time : '', location: scene.location, characters: people, charactersValid: charactersValid, ...(scene.combat?.pending === true ? { combatPending: true } : {}) };
@@ -268,14 +268,14 @@
     }
     return {found:blocks.length>0,patches:normalized,issues,ranges:blocks.map(({start,end})=>({start,end}))};
   }
-  function readDialogue(line) {
+  function readDialogue(line, cast=aliases) {
     var label = /^([ \t]*)([^：:\r\n]+)[：:][ \t]*(\S[\s\S]*)$/.exec(line);
     if (!label) return null;
-    var who = aliases[label[2]];
+    var who = cast[label[2]];
     var expression = 'normal', display = line;
     var expressionLabel = /^([^【】]+)【([^【】]*)】$/.exec(label[2]);
-    if (expressionLabel && aliases[expressionLabel[1]]) {
-      who = aliases[expressionLabel[1]];
+    if (expressionLabel && cast[expressionLabel[1]]) {
+      who = cast[expressionLabel[1]];
       if (expressions.has(expressionLabel[2]) || expressionLabel[2] === 'yandere_trance') {
         expression = dialogueCodec.expression(expressionLabel[2]);
         display = label[1] + expressionLabel[1] + line.slice(label[1].length + label[2].length);
@@ -284,7 +284,7 @@
     // Current worldbook examples do not enforce a dialogue-output grammar.
     // Accept only a small explicit attribution set, never names mentioned in prose.
     var attribution = !who && /^(.*?)(轻声说|低声说|说道|问道|答道|说)$/.exec(label[2]);
-    if (attribution) who = aliases[attribution[1]];
+    if (attribution) who = cast[attribution[1]];
     if (!who) return null;
     var dialogue = label[3];
     var quoteEnd = { '“': '”', '‘': '’', '「': '」', '『': '』', '"': '"', "'": "'" }[dialogue[0]];
@@ -297,7 +297,7 @@
     return { who: who, text: dialogue, display: display, expression: expression, start: label[1].length };
   }
 
-  function paragraphsFrom(text, utterances = []) {
+  function paragraphsFrom(text, utterances = [], cast=aliases) {
     var protection = protectedText(text).all;
     // Only malformed/unclosed protocols remain at this stage. Keep their content
     // visible, but do not mistake lines in diagnostic payloads for spoken dialogue.
@@ -322,7 +322,7 @@
       if (!line.trim()) { flush(); continue; }
       const utterance=/^\uE110CXXD(\d+)\uE111$/.exec(line.trim());
       if(utterance&&utterances[Number(utterance[1])]){flush();paragraphs.push(utterances[Number(utterance[1])]);continue;}
-      var dialogue = readDialogue(line);
+      var dialogue = readDialogue(line,cast);
       if (dialogue && !/^(?: {4}|\t)/.test(line) && !protection[match.index + dialogue.start]) {
         flush();
         paragraphs.push({ text: dialogue.display, speaker: dialogue.who.name, characterId: dialogue.who.id,
@@ -447,7 +447,8 @@
   }
   function parseMessage(raw,options={}) {
     if (typeof raw !== 'string') throw new TypeError('parseMessage expects a string');
-    const cache=cacheEnabled&&options.cache!==false,cacheKey=JSON.stringify([options.key??raw,detailSummaries(options)]),hit=cache&&cacheRead(cacheKey,raw);
+    const cast=Object.assign(Object.create(null),aliases);for(const person of options.characters||[]){for(const name of [person.name,...(person.aliases||[])]){cast[name]={id:person.id,name:person.name};cast[name.toLowerCase()]=cast[name];}}
+    const cache=cacheEnabled&&options.cache!==false,cacheKey=JSON.stringify([options.key??raw,detailSummaries(options),options.characters||null]),hit=cache&&cacheRead(cacheKey,raw);
     if(hit)return hit;
     var result = { paragraphs: [], choices: [], scene: null, terminal: null, warnings: [], raw: raw, dialogueRanking: [] };
     raw=dialogueCodec.normalize(readingText(raw),dialogueProtection);
@@ -534,7 +535,7 @@
         if (body.indexOf(opening) >= 0 || /<\/?(?:ztl|xuan|UpdateVariable|m18-terminal|CityPublicContext)>/.test(body)) {
           throw new Error('协议嵌套或交叉');
         }
-        if (tag === 'ztl') result.scene = readScene(body, result.warnings);
+        if (tag === 'ztl') result.scene = readScene(body, result.warnings,cast);
         else if (tag === 'xuan') result.choices = result.choices.concat(readChoices(body));
         else if (tag === 'm18-terminal') {
           if (body !== '') throw new Error('终端标记必须为空');
@@ -550,7 +551,7 @@
     visible.push(raw.slice(cursor));
     const utterances=[];
     const narration=visible.join('').replace(/^<OpeningPage id="(?:17|18|19)"\/>[ \t]*(?:\r?\n|$)/,'');
-    result.paragraphs = paragraphsFrom(dialogueMarkup(narration, result.warnings, utterances), utterances);
+    result.paragraphs = paragraphsFrom(dialogueMarkup(narration, result.warnings, utterances,cast), utterances,cast);
     if(result.diagnostics.length)result.paragraphs.push({text:'（标签异常，相关原文已保留；不生成对应操作按钮。）',speaker:null,characterId:null,expression:'normal'});
     result.dialogueRanking = rankDialogue(result.paragraphs);
     if(cache)cacheWrite(cacheKey,result);

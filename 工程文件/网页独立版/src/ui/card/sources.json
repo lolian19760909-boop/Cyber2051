@@ -127,7 +127,7 @@
   },
   {
     "source": "卡片源码/Gal/parser.js",
-    "sha256": "2a87ba33768f4ab04926ce8e658188b7b7460669d3f04261c8a6c4ca2f55c5d1",
+    "sha256": "fdf1d6291de82e9abd69b2a6c089eae4cc6d69d78a573074cc77ed4e3514e819",
     "target": "src/ui/card/Gal/parser.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -253,25 +253,25 @@
   },
   {
     "source": "卡片源码/Gal/controller.js",
-    "sha256": "05bd46bbf7337f9558a4e3da3dc14667a9bfa806abce98c18ce38db0114b6aa7",
+    "sha256": "9a64e0db7120a286f69adeccb3649faafd8b006cd50d8b77743559de68e785b5",
     "target": "src/ui/card/Gal/controller.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
   {
     "source": "卡片源码/Gal/ui.js",
-    "sha256": "7239485b3a0d2937b65ce11d62c5440405a2dfae87c78ed62f876ebdad0d04e4",
+    "sha256": "7d3c0b82fbe7bcb6d286848fe20aa60cfe23e2a78d600b21c93f168c138bff27",
     "target": "src/ui/card/Gal/ui.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
   {
     "source": "卡片源码/运行时/player-ui.js",
-    "sha256": "d4f5420f8dc3658813df9b110dd00af64536351fe20e514eff4b9696f3b121a1",
+    "sha256": "0a8e0afbccde6d98ee95e1258f49054d9eb68362e720c02c734c927b2c992549",
     "target": "src/ui/card/运行时/player-ui.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
   {
     "source": "卡片源码/运行时/player-profile-ui.js",
-    "sha256": "018d6dc07039f016b745165026839ef5fa667878354fed88b5464b4984980b20",
+    "sha256": "0ffd25631276144a49b3c0f0a097e4c2530cc43ec731e371021352e3a9e6fa80",
     "target": "src/ui/card/运行时/player-profile-ui.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
