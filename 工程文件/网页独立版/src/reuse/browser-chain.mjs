@@ -74,7 +74,7 @@ export async function loadCardChainInBrowser(options = {}) {
 
   // validator 导出的是 { z, VERSION, ZodLiteError, describe }，schema.build 要的是其中的 z。
   const z = zModule.z || zModule;
-  return { z, schema, applier, parser, actors: globalThis.CxxEnsembleState, loaded, dataLoaded };
+  return { z, schema, applier, parser, actors: globalThis.CxxEnsembleState, roster: globalThis.CxxRoster, loaded, dataLoaded };
 }
 
 /** 单独取一个已装载的卡内全局对象（如 `CxxGalParser`）。 */

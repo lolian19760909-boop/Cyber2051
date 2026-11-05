@@ -239,7 +239,7 @@
       "title": "MVU与字段协议",
       "sourcePatterns": [
         "MVU/(schema|variable|effects|preferences)",
-        "运行时/(growth-repair|reroll)"
+        "运行时/(growth-repair|reroll|variable-editor)"
       ],
       "stateOwner": "MVU与程序更新守卫",
       "consumers": [

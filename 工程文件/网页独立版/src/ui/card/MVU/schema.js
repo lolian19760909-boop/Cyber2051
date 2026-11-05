@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/MVU/schema.js; source SHA256 a766b105089592f606286be0c63f845514a0d48235e25943d960d5229a1413c7. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/MVU/schema.js; source SHA256 c79d94c3fa037b89f1f6801afc80d03a5299c399192b8d76912986e57cd0062a. Rebuild with tools/p3a-adapt-views.mjs. */
 /* Card schema: parsing returns a copy; callers choose when normalized values may be committed. */
 (function(root,factory){const local=typeof module==='object'&&module.exports;const value=factory(root,local?require("../运行时/numeric-host.js"):root.CxxNumericHost);if(local)module.exports=value;else root.Cxx236Schema=value;})(globalThis,function(root,N){
  'use strict';
@@ -17,22 +17,24 @@
   const loose=shape=>typeof z.looseObject==='function'?z.looseObject(shape):z.object(shape).passthrough(),optional=shape=>Object.fromEntries(Object.entries(shape).map(([k,v])=>[k,v.optional()]));
   const numeric=(min,max,integer=false)=>z.preprocess(numberInput,integer?z.number().int().min(min).max(max):z.number().min(min).max(max));
   const money=numeric(0,Number.MAX_SAFE_INTEGER,true),amount=numeric(0,1000000000,true),id=z.string().regex(/^[a-zA-Z][a-zA-Z0-9_-]{0,79}$/),text=z.string();
-  const ref=loose({packageId:id,version:text,kind:z.enum(['slots','resources','items','blueprints','recipes','skills','shops','services','encounters','starts']),id});
-  const questRef=loose({packageId:id,version:text,questId:id});
+  const packageId=z.string().regex(/^(?!(?:__proto__|constructor|prototype)$)[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$/),questId=z.string().regex(/^[A-Za-z][A-Za-z0-9_.-]{0,79}$/);
+  const ref=loose({packageId,version:text,kind:z.enum(['slots','resources','items','blueprints','recipes','skills','shops','services','encounters','starts']),id});
+  const questRef=loose({packageId,version:text,questId});
   const effects=loose(optional({resources:z.record(id,numeric(-1000000000,1000000000,true)),description:text}));
   const inventory=loose({quantity:amount,definitionRef:ref}),blueprint=loose({owned:z.boolean(),learned:z.boolean(),definitionRef:ref});
   const skill=loose({owned:z.boolean(),learned:z.boolean(),active:z.boolean(),definitionRef:ref,effects:effects.optional()});
   const equipment=loose({itemId:id,definitionRef:ref,effects:effects.optional()}).nullable(),event=loose({status:z.enum(['completed','refused']),outcomeId:id,definitionRef:ref});
   const result=loose({requestHash:text,status:z.enum(['success','refused']),reason:text.optional()});
-  const table=entry=>loose({$meta:z.unknown().optional()}).catchall(entry).superRefine((v,ctx)=>{for(const key of Object.keys(v))if(key!=='$meta'&&!id.safeParse(key).success)ctx.addIssue({code:'custom',path:[key],message:'记录编号格式错误'});});
+  const table=(entry,recordId=id)=>loose({$meta:z.unknown().optional()}).catchall(entry).superRefine((v,ctx)=>{for(const key of Object.keys(v))if(key!=='$meta'&&!recordId.safeParse(key).success)ctx.addIssue({code:'custom',path:[key],message:'记录编号格式错误'});});
   const location=loose({mapId:text,placeId:text}),story=loose(optional({eraId:text,eraName:text}));
   const origin=loose(optional({identityId:id,name:text,body:text,eraId:text,eraName:text,manifestVersion:text,initialState:loose({story:story.optional()}),timelineEvents:z.array(z.unknown()),definitionRef:ref}));
   const balance=numeric(-Number.MAX_SAFE_INTEGER,Number.MAX_SAFE_INTEGER,true),wallet=loose({id:z.literal('wallet').optional(),yen:balance,earned:money,spent:money});
-  const quest=loose({id:id.optional(),ownerActorId:id.optional(),state:z.enum(states),rank:z.string().max(100).optional(),objective:z.string().max(2000).optional(),knownFacts:z.string().max(8000).optional(),agreedYen:money.optional(),paidYen:money.optional(),refundedYen:money.optional(),settled:z.boolean().optional(),deadlineAt:z.string().max(100).optional(),acceptedFloor:money.optional(),definitionRef:questRef.optional()});
+  const quest=loose({id:questId.optional(),ownerActorId:id.optional(),state:z.enum(states),rank:z.string().max(100).optional(),objective:z.string().max(2000).optional(),knownFacts:z.string().max(8000).optional(),agreedYen:money.optional(),paidYen:money.optional(),refundedYen:money.optional(),settled:z.boolean().optional(),deadlineAt:z.string().max(100).optional(),acceptedFloor:money.optional(),definitionRef:questRef.optional()});
   const gameplay=loose(optional({schema:z.literal(1),inventory:table(inventory),blueprints:table(blueprint),skills:table(skill),equipment:table(equipment),resources:table(numeric(-1000000000,1000000000,true)),events:table(event),results:table(result),location,origin}));
   const opening=loose(optional({schemaVersion:z.literal(1),token:text,scopeHash:text,manifestVersion:text,confirmedFloor:money,initialState:z.unknown(),timelineEvents:z.array(z.unknown())}));
   const net=loose(optional({schemaVersion:z.literal(1),updatedAt:text,scopeHash:text,sourceFloor:numeric(-1,Number.MAX_SAFE_INTEGER,true),news:z.array(text),threads:z.array(text)}));
-  const terminal=loose(optional({wallet,quests:table(quest),gameplay,opening,net}));
+  const roster=loose(optional({present:z.array(text)}));
+  const terminal=loose(optional({wallet,quests:table(quest,questId),gameplay,opening,net,roster}));
   const stat=loose({terminal:terminal.optional()});
   function parse(schema,value,label){const result=schema.safeParse(value);if(!result.success)throw Error(label+'：'+result.error.issues.map(i=>i.path.join('.')+' '+i.message).slice(0,2).join('；'));return result.data;}
   function audit(value){const result=stat.safeParse(value);return result.success?[]:result.error.issues.map(i=>({path:'/'+i.path.join('/'),message:i.message}));}

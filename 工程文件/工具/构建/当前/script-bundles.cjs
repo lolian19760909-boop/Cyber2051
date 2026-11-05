@@ -39,6 +39,8 @@ function prefixModules(text, changes, s, {source, version, chipNightEnabled}) {
     prepend(source('运行时/growth-feedback.js'));
   if (modules.has('CxxUpdateHost'))
     prepend(source('运行时/character-comparison.js')+';\n'+source('运行时/chat-save-guard.js'), ";\n");
+  if (modules.has('CxxPlayerOperations'))prepend(source('运行时/variable-editor.js'));
+  if (modules.has('CxxPlayerUI'))prepend(source('运行时/variable-editor-ui.js'));
   if (modules.has('CxxPlayerHost'))
     prepend(['player-reader', 'player-save', 'player-refresh', 'quest-host'].map(name => source('运行时/' + name + '.js')).join(';\n'), ";\n");
   if (modules.has('CxxUpdateBackup'))

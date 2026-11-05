@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/运行时/roster.js; source SHA256 43407dac3facc9a460c0578f9f61bba3ede0b61acd4164a6fb2174a231c82c09. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/运行时/roster.js; source SHA256 30f407d2c1f31b9d15a4e202deb7473cd82524ac034415f9ec106a9d7862f78f. Rebuild with tools/p3a-adapt-views.mjs. */
 /* Scene-local NPC settlement. Actor records remain the sole numeric owner. */
 (function(root,factory){const local=typeof module==='object'&&module.exports;const api=factory(local?require('./ensemble-state.js'):root.CxxEnsembleState,local?require('../数值引擎/src/engine.js'):root.CxxNumericEngine,local?require('./ensemble-content.js'):root.CxxEnsembleContent,local?require('../共享/data-clone.js'):root.CxxDataClone);if(local)module.exports=api;else root.CxxRoster=api;})(globalThis,function(A,E,C,Clone){
  'use strict';
@@ -92,8 +92,8 @@
   }catch(error){ignored.push({path:paths[factKey(e)]||inputPath,reason:error.message});}
   }
  }
- function implantChanges(g,prior,p,source){
-  const s=sanity(g,p),priorValue=s.value,old=E.loadout.list(prior||{}),now=E.loadout.list(g),key=r=>r.record.instanceId||r.slot;
+ function implantChanges(g,prior,p,source,beforeSanity){
+  const s=sanity(g,p),priorValue=beforeSanity??s.value,old=E.loadout.list(prior||{}),now=E.loadout.list(g),key=r=>r.record.instanceId||r.slot;
   for(const r of now)if(r.definition.category==='cyberware'&&!old.some(v=>key(v)===key(r))){const loss=Math.round(baseLoss(r.definition.part)*factor(g));s.value=clamp(s.value-loss,0,100);s.implants[key(r)]={paid:loss,recovered:false,source:copy(source)};}
   for(const r of old)if(r.definition.category==='cyberware'&&!now.some(v=>key(v)===key(r))){const paid=s.implants[key(r)];if(paid&&!paid.recovered){s.value=clamp(s.value+Math.min(paid.paid,refund(r.definition.part)),0,100);paid.recovered=true;}}
   phase(s,priorValue);
@@ -129,6 +129,11 @@
  function context(stat){return (stat?.terminal?.roster?.present||[]).map(actorId=>project(stat,actorId)).filter(Boolean).map(r=>({actorId:r.actorId,name:r.name,level:r.level,xp:r.xp,attributes:r.attributes,perks:r.perks,vitals:r.vitals,san:r.san,state:r.state,maxima:r.maxima,power:r.power,gear:E.loadout.list(game(stat,r.actorId)).map(x=>({slot:x.slot,name:x.definition.name,tier:x.definition.tier})),sanItems:Object.entries(game(stat,r.actorId).inventory||{}).filter(([id,v])=>id!=='$meta'&&v?.quantity>0).map(([id,v])=>({id,quantity:v.quantity,name:E.loadout.get(game(stat,r.actorId),id,v.definitionRef)?.name||id})).filter(x=>/镇静|神经稳定|精神稳定|抑制剂/.test(x.name)),checkModifier:game(stat,r.actorId)?.sanity?.addiction>=3?-10:0}));}
  // Read-only model view. All wallets remain available for a newly arriving NPC;
  // present, controlled and explicitly referenced actors retain their full state.
+ function promptVariables(stat){
+  const next=copy(stat);if(!next?.terminal)return next;delete next.terminal.variableEdits;
+  for(const g of [next.terminal.gameplay,...Object.values(next.terminal.ensemble?.actors||{}).map(row=>row.gameplay)])if(g?.growth)delete g.growth.corrections;
+  return next;
+ }
  function promptState(stat,{text='',actorId}={}){
   if(!stat?.terminal)return null;const t=stat.terminal,active=new Set([...(t.roster?.present||[]),actorId||t.ensemble?.control?.actorId||'player']);
   const actors={};for(const [key,row]of Object.entries(t.ensemble?.actors||{})){
@@ -137,7 +142,7 @@
     if(g)entry.gameplay=selected?copy(g):{location:copy(g.location??null),inventory:copy(g.inventory||{}),equipment:copy(g.equipment||{}),growth:g.growth?{level:g.growth.level,attributes:copy(g.growth.attributes),perks:copy(g.growth.perks)}:null,numeric:{vitals:copy(g.numeric?.vitals??null)},sanity:g.sanity?{value:g.sanity.value,psychosis:g.sanity.psychosis,dead:g.sanity.dead,addiction:g.sanity.addiction}:null};
     actors[key]=entry;
   }
-  return {terminal:{wallet:copy(t.wallet??null),quests:copy(t.quests||{}),gameplay:copy(t.gameplay??null),ensemble:t.ensemble?{control:copy(t.ensemble.control),actors}:null,roster:t.roster?{present:copy(t.roster.present||[]),lastSeen:copy(t.roster.lastSeen||{})}:null}};
+  return promptVariables({terminal:{wallet:copy(t.wallet??null),quests:copy(t.quests||{}),gameplay:copy(t.gameplay??null),ensemble:t.ensemble?{control:copy(t.ensemble.control),actors}:null,roster:t.roster?{present:copy(t.roster.present||[]),lastSeen:copy(t.roster.lastSeen||{})}:null}});
  }
  function syncCombat(before,after,owner){
   const old=game(before,owner)?.numeric?.combat,now=game(after,owner)?.numeric?.combat,changed=[];
@@ -149,7 +154,7 @@
    if(did)changed.push(actorId);
   }return changed;
  }
- function program(before,after,actorId,request={}){const g=game(after,actorId);if(g?.sanity)implantChanges(g,game(before,actorId),profiles.get(actorId),{kind:'player-operation'});
+ function program(before,after,actorId,request={}){const g=game(after,actorId),previous=game(before,actorId);if(g?.sanity)implantChanges(g,previous,profiles.get(actorId),{kind:'player-operation'},request.action==='variables-edit'?previous?.sanity?.value:undefined);
   const c=g?.numeric?.combat;
   if(['battle-start','battle-roster'].includes(request.action)&&c?.mode==='system')for(const row of [...(c.allies||[]),...(c.enemies||[])]){const who=resolve(row.actorId||row.name),other=game(after,who);if(!other||who===actorId||['digital','engram'].includes(profiles.get(who)?.roster?.form))continue;row.actorId=who;row.level=other.growth.level;row.attributes=copy(other.growth.attributes);row.perks=copy(other.growth.perks);row.equipment=E.loadout.effects(other);row.vitals=copy(other.numeric.vitals);}
   syncCombat(before,after,actorId);return after;
@@ -185,5 +190,5 @@
   return {...earned,fromLevel,toLevel,hpMax,reasons,text:lines.join(' · ')};
  }
  function progress(g,{receipt=null,actorId='player'}={}){if(!g?.growth)return null;const s=E.growth.read(g.growth),i=Math.max(0,s.level-(s.levelOffset||0)-1),row=E.growth.rules.levels[i],next=E.growth.rules.levels[i+1],ids=Object.keys(s.rewards||{}).filter(id=>s.rewards[id]?.award),reward=receipt?.phase==='saved'&&receipt.growth?.actorId===actorId?settlement(g,receipt.growth.rewardIds||[]):null;return {level:s.level,xp:s.xp,into:s.xp-row.xp,required:next?next.xp-row.xp:null,remaining:next?Math.max(0,next.xp-s.xp):0,attributePoints:s.attributePoints,perkPoints:s.perkPoints,lastReward:copy(s.rewards[ids.at(-1)]||null),lastSummary:ids.length?settlement(g,ids.slice(-1)):null,currentSummary:reward,san:g.sanity?.value??null,checkModifier:g.sanity?.addiction>=3?-10:0};}
- return {version,inputPath,initialize,attendance,prepare,combine,project,context,promptState,resolve,protocol,profiles,allocateNPC,program,progress,questRewards};
+ return {version,inputPath,initialize,attendance,prepare,combine,project,context,promptState,promptVariables,resolve,protocol,profiles,allocateNPC,program,progress,questRewards};
 });
