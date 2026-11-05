@@ -71,6 +71,7 @@
           if(!same(profile,snapshot.storyProfile)||!same(table,snapshot.itemArt)){ctx().chatMetadata[Art.key]=table;ctx().chatMetadata[P.KEY]=profile;ctx().chatMetadata.tainted=true;dirty(s);}
           return;
         }
+        if(request.action==='variables-edit'&&request.storyContext&&!same(request.storyContext,snapshot.expected))throw Error('故事已切换，请重新打开变量修改器。');
         if(request.action==='workshop-action')operation.workshop=copy(workshopSource());
         if(request.action.startsWith('quest-')){trace?.stage('validating');Object.assign(operation,quests.authorize(request,snapshot));}
         top.__cxx_battle__?.assertOperation?.(request);
@@ -93,7 +94,7 @@
           if(trace){const before=value.stat_data.terminal||{},after=applied.stat_data.terminal||{};trace.stage('planned',{writes:['terminal.quests','terminal.questJournal','terminal.wallet'].filter(key=>!same(before[key.split('.').at(-1)],after[key.split('.').at(-1)])),revision:after.questJournal?.revision||0});trace.stage('applying');}
           return applied;
         },{type:'message',message_id:floor});applied=true;assertCurrent(s);dirty(s);trace?.stage('applied');
-      });return await flush(s,{trace});}catch(error){if(request.action==='workshop-action')error.actionPending=applied;throw error;}
+      });return await flush(s,{trace});}catch(error){if(['workshop-action','variables-edit'].includes(request.action))error.actionPending=applied;throw error;}
     }
     async function ensureReady(){const s=getState();if(s.flight||s.needsSave)return waitForSaved();const snapshot=read.local();if(!snapshot.stat.terminal?.gameplay?.growth||snapshot.stat.terminal.gameplay.numeric?.rulesRef?.version===1)return commit({action:'initialize'});if(snapshot.stat.terminal?.roster?.seedVersion!=='2051-npc-1')return commit({action:'roster-initialize'});return read({reuse:true});}
     async function waitOpeningRow(s){

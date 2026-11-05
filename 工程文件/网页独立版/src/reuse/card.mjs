@@ -37,7 +37,7 @@ export function cardRuleChain() {
   const validator = cardModule('数据/validator.js');
   const schema = cardModule('MVU/schema.js');
   const applier = cardModule('数据/applier.js');
-  return { z: validator.z, schema, applier, actors: cardModule('运行时/ensemble-state.js') };
+  return { z: validator.z, schema, applier, actors: cardModule('运行时/ensemble-state.js'), roster: cardModule('运行时/roster.js') };
 }
 
 export function cardParser() {

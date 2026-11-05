@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/数值引擎/src/growth.js; source SHA256 cd79bbf8ca5fc23fc98f724056cb14de72a76428fbea87cb012ef60814d1ce47. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/数值引擎/src/growth.js; source SHA256 dff2b2597d3170978c516fbbe2e50d0eded501e5220d69bdb00c643c052f676c. Rebuild with tools/p3a-adapt-views.mjs. */
 (function(root,factory){const local=typeof module==='object'&&module.exports;const value=factory(local?require('./growth-base.js'):root.CxxNumericGrowthBase,local?require('./talent-data.js'):root.CxxTalentData,local?require('./talent-effects.js'):root.CxxTalentEffects,local?require('./growth-rules.js'):root.CxxGrowthRules);if(local)module.exports=value;else root.CxxNumericGrowth=value;})(globalThis,function(base,data,effects,curve){
 'use strict';const G={growth:base,same:base.same};
   const clone=v=>JSON.parse(JSON.stringify(v)),fail=(code,message)=>{throw Object.assign(new Error(message),{code});};
@@ -36,10 +36,28 @@
       if(!plain(receipt)||!plain(receipt.award)||!plain(receipt.earned))fail('growth-receipt','成长奖励来源记录不完整');
       xp=num(xp+num(receipt.award.xp));ap=num(ap+num(receipt.earned.attributePoints));pp=num(pp+num(receipt.earned.perkPoints));
     }
-    for(const a of attributes){const spent=state.attributes[a]-num(state.initial.attributes?.[a]);if(spent<0)fail('growth-accounting','已保存属性低于初始值');ap-=spent;}
+    const baseline=clone(state.initial.attributes);
+    for(const correction of Object.values(state.corrections||{})){
+      if(!plain(correction)||!plain(correction.attributes))fail('growth-correction','手动成长校正记录不完整');
+      for(const key of ['xp','attributePoints','perkPoints'])num(correction[key],-Number.MAX_SAFE_INTEGER);
+      xp=num(xp+correction.xp,-Number.MAX_SAFE_INTEGER);ap=num(ap+correction.attributePoints,-Number.MAX_SAFE_INTEGER);pp=num(pp+correction.perkPoints,-Number.MAX_SAFE_INTEGER);
+      for(const a of attributes)baseline[a]=num(baseline[a]+num(correction.attributes[a]??0,-Number.MAX_SAFE_INTEGER),-Number.MAX_SAFE_INTEGER);
+    }
+    num(xp);for(const a of attributes){const spent=state.attributes[a]-num(baseline[a],-Number.MAX_SAFE_INTEGER);if(spent<0)fail('growth-accounting','已保存属性低于初始值');ap-=spent;}
     for(const [id,rank]of Object.entries(state.perks))if(id!=='$meta')pp-=rank;
     if(xp!==state.xp||ap!==state.attributePoints||pp!==state.perkPoints)fail('growth-accounting','成长点数与起点、奖励记录、已学专长不一致，请核对本轮MVU保存');
     return state;
+  }
+  function correct(value,target,id){
+    const current=read(value),next=clone(current);if(typeof id!=='string'||!/^[A-Za-z][A-Za-z0-9_-]{0,79}$/.test(id))fail('growth-correction','手动校正编号无效');
+    for(const key of ['xp','attributePoints','perkPoints'])if(target[key]!==undefined)next[key]=num(target[key]);
+    if(target.attributes)next.attributes={...next.attributes,...clone(target.attributes)};if(target.perks)next.perks=clone(target.perks);
+    next.level=rules.levels.reduce((level,row)=>row.xp<=next.xp?row.level:level,1)+(next.unrestricted?next.levelOffset||0:0);validateBuild(next);
+    const ranks=state=>Object.entries(state.perks).reduce((total,[key,rank])=>key==='$meta'?total:total+rank,0);
+    const correction={xp:next.xp-current.xp,attributePoints:next.attributePoints-current.attributePoints,perkPoints:next.perkPoints-current.perkPoints+ranks(next)-ranks(current),attributes:Object.fromEntries(attributes.map(a=>[a,next.attributes[a]-current.attributes[a]]))};
+    if(G.same(next,current))return current;
+    if(current.corrections?.[id])fail('growth-correction','校正编号已使用，请重新预览当前修改');
+    next.corrections={...current.corrections,[id]:correction};return read(next);
   }
   function status(state,id){
     const n=node(id),rank=state.perks[id]||0;
@@ -96,5 +114,5 @@ function planReward(state,grant){const result=base.planReward(read(state),rules,
   const result=planReward(current,{id:event.id,source:event.source,xp:Math.max(1,Math.round(step*achievementRates[event.category]))});
   result.state.rewards[event.id].fact=clone(event);result.state.rewards[event.id].rule={version:achievementVersion,category:event.category,rate:achievementRates[event.category],step};return result;
  }
-return {rules,ref,attributes,node,initialize,read,status,allocate,build,edit,reset,learned,planReward,planAchievement,achievementRates,achievementVersion};
+return {rules,ref,attributes,node,initialize,read,correct,status,allocate,build,edit,reset,learned,planReward,planAchievement,achievementRates,achievementVersion};
 });

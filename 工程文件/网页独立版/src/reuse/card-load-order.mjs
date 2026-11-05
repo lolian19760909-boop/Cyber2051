@@ -2,7 +2,7 @@
  * 卡内 UMD 模块的浏览器装载顺序（数据，不含逻辑）。
  *
  * 来源：对 `卡片源码` 内 `数据/validator.js`、`MVU/schema.js`、`数据/applier.js`、`Gal/parser.js`
- * 做 require 闭包遍历得到的装载序（当前数组 36 项，parser 重复，实际装载 35 份脚本）。
+ * 做 require 闭包遍历得到的装载序（当前数组 37 项，parser 重复，实际装载 36 份脚本）。
  * 顺序含义：被依赖者先于依赖者；`schema.js` 在工厂执行时就会读 `CxxNumericHost` / `CxxDataClone`
  * / `CxxQuests` / `CxxCivic` / `CxxEnsembleState`，所以这些必须在它之前完成装载。
  *
@@ -44,6 +44,7 @@ export const CARD_LOAD_ORDER = [
   '运行时/tactical-engine.js',
   '运行时/player-operations.js',
   'MVU/schema.js',
+  '运行时/variable-editor.js',
   '数据/applier.js',
   'Gal/parser.js',
 ];

@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/运行时/player-operations.js; source SHA256 6eee5b8543453895352f1c708effdeecff7d49cd292a3308d725cbb12d3dc18e. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/运行时/player-operations.js; source SHA256 72028a00e0aed853d4ebe7b29c11aae6464546baadae0e3f80d98cbe5d125eba. Rebuild with tools/p3a-adapt-views.mjs. */
 (function(root,factory){const local=typeof module==='object'&&module.exports;const api=factory(local?require('./loadout.js'):root.CxxLoadout,local?require("../数值引擎/src/engine.js"):root.CxxNumericEngine,local?require('./battle.js'):root.CxxBattle,local?require('./tactical-engine.js'):root.CxxTacticalEngine,local?require('./quests.js'):root.CxxQuests);if(local)module.exports=api;else root.CxxPlayerOperations=api;})(globalThis,function(L,E,B,T,Q){
   'use strict';
  const structuredClone=(typeof module==='object'&&module.exports?require('../共享/data-clone.js'):globalThis.CxxDataClone).clone;
@@ -108,8 +108,8 @@
     record.gameplay=calculated.terminal.gameplay;record.wallet=calculated.terminal.wallet;
     return next;
   }
-  function plan(stat,request,options={}){const after=planCore(stat,request,options);if(request.action==='initialize'&&after.terminal?.gameplay?.numeric&&after.terminal?.roster?.seedVersion!=='2051-npc-1')return (typeof module==='object'&&module.exports?require('./roster.js'):globalThis.CxxRoster).initialize(after);if(['roster-initialize','ensemble-initialize','actor-switch'].includes(request.action))return after;return (typeof module==='object'&&module.exports?require('./roster.js'):globalThis.CxxRoster).program(stat,after,options.actorBinding?.actorId||'player',request);}
+  function plan(stat,request,options={}){if(request.action==='variables-edit')return (typeof module==='object'&&module.exports?require('./variable-editor.js'):globalThis.CxxVariableEditor).plan(stat,request,options);const after=planCore(stat,request,options);if(request.action==='initialize'&&after.terminal?.gameplay?.numeric&&after.terminal?.roster?.seedVersion!=='2051-npc-1')return (typeof module==='object'&&module.exports?require('./roster.js'):globalThis.CxxRoster).initialize(after);if(['roster-initialize','ensemble-initialize','actor-switch'].includes(request.action))return after;return (typeof module==='object'&&module.exports?require('./roster.js'):globalThis.CxxRoster).program(stat,after,options.actorBinding?.actorId||'player',request);}
   function validate(before,after,operation){if(!operation)throw Error('此改动需要已校验的本地数值操作。');const expected=plan(before,operation.request,operation);if(!E.same(expected,after))throw Error('本地数值结果与引擎计算不一致。');return after;}
   function changes(before,after){const a=before.terminal?.gameplay,b=after.terminal?.gameplay;if(!a)return [{key:null,before:undefined,after:copy(b)}];return Object.keys(b).filter(k=>!E.same(a[k],b[k])).map(key=>({key,before:copy(a[key]),after:copy(b[key])}));}
-  return {fields,clamp,plan,validate,changes,workshopRequestKey};
+  return {fields,clamp,plan,validate,changes,workshopRequestKey,variableEditKey:request=>(typeof module==='object'&&module.exports?require('./variable-editor.js'):globalThis.CxxVariableEditor).key(request)};
 });

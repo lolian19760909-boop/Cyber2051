@@ -43,7 +43,7 @@
   },
   {
     "source": "卡片源码/数值引擎/src/growth.js",
-    "sha256": "cd79bbf8ca5fc23fc98f724056cb14de72a76428fbea87cb012ef60814d1ce47",
+    "sha256": "dff2b2597d3170978c516fbbe2e50d0eded501e5220d69bdb00c643c052f676c",
     "target": "src/ui/card/数值引擎/src/growth.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -73,7 +73,7 @@
   },
   {
     "source": "卡片源码/运行时/loadout.js",
-    "sha256": "db5459d4ad54f201d882571453776c3de6bfe0cfd354d3723cefbfcfe54f0cd0",
+    "sha256": "4f339c89a184fb6e3ce4edb37a0d87ac94ec4882cbe2fd18df1bab70eed5e8de",
     "target": "src/ui/card/运行时/loadout.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -133,7 +133,7 @@
   },
   {
     "source": "卡片源码/运行时/roster.js",
-    "sha256": "43407dac3facc9a460c0578f9f61bba3ede0b61acd4164a6fb2174a231c82c09",
+    "sha256": "ff9dbf7435f993678a2c54a7f622ef708a138120acb6d6829e787eb6e484a487",
     "target": "src/ui/card/运行时/roster.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -193,14 +193,20 @@
   },
   {
     "source": "卡片源码/运行时/player-operations.js",
-    "sha256": "6eee5b8543453895352f1c708effdeecff7d49cd292a3308d725cbb12d3dc18e",
+    "sha256": "72028a00e0aed853d4ebe7b29c11aae6464546baadae0e3f80d98cbe5d125eba",
     "target": "src/ui/card/运行时/player-operations.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
   {
     "source": "卡片源码/MVU/schema.js",
-    "sha256": "a766b105089592f606286be0c63f845514a0d48235e25943d960d5229a1413c7",
+    "sha256": "12dff0932a69be48a06a4bc6f53360ed8850625a47fcdf547d2346790f189527",
     "target": "src/ui/card/MVU/schema.js",
+    "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
+  },
+  {
+    "source": "卡片源码/运行时/variable-editor.js",
+    "sha256": "71b53aab2c6f8aa0bc1b154e6036bb98b480be2619ee667d1ce38b2a274e361b",
+    "target": "src/ui/card/运行时/variable-editor.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
   {
@@ -265,13 +271,13 @@
   },
   {
     "source": "卡片源码/运行时/player-ui.js",
-    "sha256": "0a8e0afbccde6d98ee95e1258f49054d9eb68362e720c02c734c927b2c992549",
+    "sha256": "68d88b0c8b32c31dceeb8754ee37ab0f15dc6668355ce9e11abd65304e29f76c",
     "target": "src/ui/card/运行时/player-ui.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
   {
     "source": "卡片源码/运行时/player-profile-ui.js",
-    "sha256": "0ffd25631276144a49b3c0f0a097e4c2530cc43ec731e371021352e3a9e6fa80",
+    "sha256": "eafcd4691a56f533ad7f71e055fcd5a3a556b46b0f48679db3a0c286c28d93f0",
     "target": "src/ui/card/运行时/player-profile-ui.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },

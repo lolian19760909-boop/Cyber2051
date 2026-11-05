@@ -128,6 +128,11 @@
  function context(stat){return (stat?.terminal?.roster?.present||[]).map(actorId=>project(stat,actorId)).filter(Boolean).map(r=>({actorId:r.actorId,name:r.name,level:r.level,xp:r.xp,attributes:r.attributes,perks:r.perks,vitals:r.vitals,san:r.san,state:r.state,maxima:r.maxima,power:r.power,gear:E.loadout.list(game(stat,r.actorId)).map(x=>({slot:x.slot,name:x.definition.name,tier:x.definition.tier})),sanItems:Object.entries(game(stat,r.actorId).inventory||{}).filter(([id,v])=>id!=='$meta'&&v?.quantity>0).map(([id,v])=>({id,quantity:v.quantity,name:E.loadout.get(game(stat,r.actorId),id,v.definitionRef)?.name||id})).filter(x=>/镇静|神经稳定|精神稳定|抑制剂/.test(x.name)),checkModifier:game(stat,r.actorId)?.sanity?.addiction>=3?-10:0}));}
  // Read-only model view. All wallets remain available for a newly arriving NPC;
  // present, controlled and explicitly referenced actors retain their full state.
+ function promptVariables(stat){
+  const next=copy(stat);if(!next?.terminal)return next;delete next.terminal.variableEdits;
+  for(const g of [next.terminal.gameplay,...Object.values(next.terminal.ensemble?.actors||{}).map(row=>row.gameplay)])if(g?.growth)delete g.growth.corrections;
+  return next;
+ }
  function promptState(stat,{text='',actorId}={}){
   if(!stat?.terminal)return null;const t=stat.terminal,active=new Set([...(t.roster?.present||[]),actorId||t.ensemble?.control?.actorId||'player']);
   const actors={};for(const [key,row]of Object.entries(t.ensemble?.actors||{})){
@@ -136,7 +141,7 @@
     if(g)entry.gameplay=selected?copy(g):{location:copy(g.location??null),inventory:copy(g.inventory||{}),equipment:copy(g.equipment||{}),growth:g.growth?{level:g.growth.level,attributes:copy(g.growth.attributes),perks:copy(g.growth.perks)}:null,numeric:{vitals:copy(g.numeric?.vitals??null)},sanity:g.sanity?{value:g.sanity.value,psychosis:g.sanity.psychosis,dead:g.sanity.dead,addiction:g.sanity.addiction}:null};
     actors[key]=entry;
   }
-  return {terminal:{wallet:copy(t.wallet??null),quests:copy(t.quests||{}),gameplay:copy(t.gameplay??null),ensemble:t.ensemble?{control:copy(t.ensemble.control),actors}:null,roster:t.roster?{present:copy(t.roster.present||[]),lastSeen:copy(t.roster.lastSeen||{})}:null}};
+  return promptVariables({terminal:{wallet:copy(t.wallet??null),quests:copy(t.quests||{}),gameplay:copy(t.gameplay??null),ensemble:t.ensemble?{control:copy(t.ensemble.control),actors}:null,roster:t.roster?{present:copy(t.roster.present||[]),lastSeen:copy(t.roster.lastSeen||{})}:null}});
  }
  function syncCombat(before,after,owner){
   const old=game(before,owner)?.numeric?.combat,now=game(after,owner)?.numeric?.combat,changed=[];
@@ -184,5 +189,5 @@
   return {...earned,fromLevel,toLevel,hpMax,reasons,text:lines.join(' · ')};
  }
  function progress(g,{receipt=null,actorId='player'}={}){if(!g?.growth)return null;const s=E.growth.read(g.growth),i=Math.max(0,s.level-(s.levelOffset||0)-1),row=E.growth.rules.levels[i],next=E.growth.rules.levels[i+1],ids=Object.keys(s.rewards||{}).filter(id=>s.rewards[id]?.award),reward=receipt?.phase==='saved'&&receipt.growth?.actorId===actorId?settlement(g,receipt.growth.rewardIds||[]):null;return {level:s.level,xp:s.xp,into:s.xp-row.xp,required:next?next.xp-row.xp:null,remaining:next?Math.max(0,next.xp-s.xp):0,attributePoints:s.attributePoints,perkPoints:s.perkPoints,lastReward:copy(s.rewards[ids.at(-1)]||null),lastSummary:ids.length?settlement(g,ids.slice(-1)):null,currentSummary:reward,san:g.sanity?.value??null,checkModifier:g.sanity?.addiction>=3?-10:0};}
- return {version,inputPath,initialize,attendance,prepare,combine,project,context,promptState,resolve,protocol,profiles,allocateNPC,program,progress,questRewards};
+ return {version,inputPath,initialize,attendance,prepare,combine,project,context,promptState,promptVariables,resolve,protocol,profiles,allocateNPC,program,progress,questRewards};
 });
