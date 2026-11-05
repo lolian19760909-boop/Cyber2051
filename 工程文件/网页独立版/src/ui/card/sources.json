@@ -307,7 +307,7 @@
   },
   {
     "source": "卡片源码/运行时/opening-ui.js",
-    "sha256": "95ad5f3e6b5f600c0b7838ee3ed454e25ddd045d63565bacff8e4d1b300f1a71",
+    "sha256": "c424b7b1d7f588a8c88b46162849d78f019e49252f24a4cc234be980fa8e39a9",
     "target": "src/ui/card/运行时/opening-ui.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },

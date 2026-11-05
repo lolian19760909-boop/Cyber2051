@@ -55,7 +55,7 @@
    const body=doc.createElement('div');body.className='opening-written-preview';pane.append(body);
    if(own){const label=doc.createElement('label'),input=doc.createElement('textarea');label.textContent='第一幕正文';input.setAttribute('aria-label','第一幕正文');input.dataset.openingField='openingText';input.maxLength=50000;input.rows=10;input.value=flow.state().draft.openingText||'';input.placeholder='写下时间、地点、在场人物，以及故事开始时的场景……';input.oninput=()=>{body.textContent=input.value;flow.patch({openingText:input.value});};label.append(input);pane.insertBefore(label,body);body.textContent=input.value;}else body.textContent=scene?.text||'';
   }
-  const preview={mount(parent){pane=parent;},unmount(){clearPreview();pane=null;},refresh(s){show(s.draft.scenario||1);if(frame)frame.style.pointerEvents=s.busy||s.status==='saved'?'none':'';},confirm(){
+  const preview={capture,mount(parent){pane=parent;},unmount(){clearPreview();pane=null;},refresh(s){show(s.draft.scenario||1);if(frame)frame.style.pointerEvents=s.busy||s.status==='saved'?'none':'';},confirm(){
    if(Flow.isDirect(flow.state().draft.scenario))return flow.review();
    const row=catalog.find(x=>x.id===flow.state().draft.scenario);if(!row)throw Error('请先选择剧情。');if(!row.action)return flow.review();
    const w=frame?.contentWindow;if(previewId!==row.id||typeof w?.[row.action]!=='function')throw Error('剧情仍在加载，请稍候再确认。');

@@ -1,8 +1,9 @@
 import {createRequire} from 'node:module';
 const B=createRequire(import.meta.url)('../../工具/lib/card-ast.cjs');
-export const creationFooterCSS=`@container cxx-opening (max-width:620px){
+export const creationFooterCSS=`.cxx-game-menu.cx77 .opening-footer .cx77-cc-emblem{display:none}
+@container cxx-opening (max-width:620px){
  .cxx-game-menu.cx77[data-page=create] .cxx-opening-flow .opening-footer{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;padding:10px 12px}
- .cxx-game-menu.cx77[data-page=create] .opening-footer>:is(.cx77-cc-emblem,.cx77-audio-dock,.cxx-orientation-toggle){grid-row:1;grid-column:span 2;min-width:0;margin:0}
+ .cxx-game-menu.cx77[data-page=create] .opening-footer>:is(.opening-templates,.cx77-audio-dock,.cxx-orientation-toggle){grid-row:1;grid-column:span 2;min-width:0;margin:0}
  .cxx-game-menu.cx77[data-page=create] .opening-footer .cx77-cc-emblem{font-size:10px;gap:5px}
  .cxx-game-menu.cx77[data-page=create] .opening-footer .cx77-cc-emblem svg{width:28px}
  .cxx-game-menu.cx77[data-page=create] .opening-footer .cxx-orientation-toggle{padding:0 6px;white-space:nowrap;font-size:13px}

@@ -46,7 +46,12 @@ export function adaptViews({only}={}){if(only&&only.some(name=>!views.includes(n
  if(name==='Gal/landscape.js')text=text.replace('function restoreLayer(){','function restoreLayer(){\n      if(win.__cxxStandaloneUI){viewport.removeAttribute("popover");return;}').replace('const vv=win?.visualViewport,width=vv?.width||win.innerWidth,height=win.innerHeight;','const vv=win?.visualViewport,width=vv?.width||win.innerWidth,appHeader=0,height=win.innerHeight-appHeader;').replace('const visibleHeight=vv?.height||height;','const visibleHeight=vv?.height?Math.max(1,vv.height-appHeader):height;').replace('const offset=vv?.offsetTop||0;','const offset=(vv?.offsetTop||0)+appHeader;');
  if(name==='运行时/resources.js')text=text.replace('if(root.parent)root.parent.CxxResourceRuntime=api;','');
  if(name==='通讯/reading-guard.js')text=text.replace('return {create};','return {create,validSnapshot};');
- if(name==='运行时/opening-ui.js')text=fs.readFileSync(path.join(OPENING_SOURCE,'build/opening-ui.web.js'),'utf8');
+ if(name==='运行时/opening-ui.js'){
+  text=fs.readFileSync(path.join(OPENING_SOURCE,'build/opening-ui.web.js'),'utf8');
+  const archive='return {mount,unmount,refresh,confirm(){if(mode===\'reading\')return delegate.confirm();showReading();}};';
+  if(text.split(archive).length!==2)throw Error('开场预览适配接点变化');
+  text=text.replace(archive,archive.replace('return {','return {...delegate,'));
+ }
  if(name==='运行时/entry-experience.js')text=text.replace("const placed=placement(win,el,{left:vv?.offsetLeft||0,top:vv?.offsetTop||0,width:vv?.width||win.innerWidth,height:vv?.height||win.innerHeight});","const appHeader=win.__cxxStandaloneUI&&el.classList.contains('cxx-opening-flow')?(win.document.querySelector('.topbar')?.getBoundingClientRect().height||0):0;const placed=placement(win,el,{left:vv?.offsetLeft||0,top:(vv?.offsetTop||0)+appHeader,width:vv?.width||win.innerWidth,height:Math.max(1,(vv?.height||win.innerHeight)-appHeader)});");
  if(name==='通讯/phone-ui.js')text=text.replaceAll('镜译 · 安装与声音配置','翻译与声音设置').replaceAll('连接与音色在镜译设置；这里调整本卡的阅读习惯。','在翻译与声音设置中选择可用的声音；这里调整本故事的阅读习惯。').replaceAll('正文支持原文／译文／对照与手动分角色朗读。镜译提取标签请设置 cxx-story；翻译、润色和自动朗读开关仍由镜译管理。','正文支持原文、译文、对照与分角色朗读。连接酒馆时可使用已配置的镜译声音和语音输入。');
  if(name==='Gal/controller.js')text=text.replace('selected&&!selected.is_user&&mirrorSource?mirrorSource.sync(floor):hostRaw','selected&&!snapshot.generating&&!selected.is_user&&mirrorSource?mirrorSource.sync(floor):hostRaw');
