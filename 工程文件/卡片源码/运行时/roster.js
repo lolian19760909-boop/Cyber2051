@@ -91,8 +91,8 @@
   }catch(error){ignored.push({path:paths[factKey(e)]||inputPath,reason:error.message});}
   }
  }
- function implantChanges(g,prior,p,source){
-  const s=sanity(g,p),priorValue=s.value,old=E.loadout.list(prior||{}),now=E.loadout.list(g),key=r=>r.record.instanceId||r.slot;
+ function implantChanges(g,prior,p,source,beforeSanity){
+  const s=sanity(g,p),priorValue=beforeSanity??s.value,old=E.loadout.list(prior||{}),now=E.loadout.list(g),key=r=>r.record.instanceId||r.slot;
   for(const r of now)if(r.definition.category==='cyberware'&&!old.some(v=>key(v)===key(r))){const loss=Math.round(baseLoss(r.definition.part)*factor(g));s.value=clamp(s.value-loss,0,100);s.implants[key(r)]={paid:loss,recovered:false,source:copy(source)};}
   for(const r of old)if(r.definition.category==='cyberware'&&!now.some(v=>key(v)===key(r))){const paid=s.implants[key(r)];if(paid&&!paid.recovered){s.value=clamp(s.value+Math.min(paid.paid,refund(r.definition.part)),0,100);paid.recovered=true;}}
   phase(s,priorValue);
@@ -153,7 +153,7 @@
    if(did)changed.push(actorId);
   }return changed;
  }
- function program(before,after,actorId,request={}){const g=game(after,actorId);if(g?.sanity)implantChanges(g,game(before,actorId),profiles.get(actorId),{kind:'player-operation'});
+ function program(before,after,actorId,request={}){const g=game(after,actorId),previous=game(before,actorId);if(g?.sanity)implantChanges(g,previous,profiles.get(actorId),{kind:'player-operation'},request.action==='variables-edit'?previous?.sanity?.value:undefined);
   const c=g?.numeric?.combat;
   if(['battle-start','battle-roster'].includes(request.action)&&c?.mode==='system')for(const row of [...(c.allies||[]),...(c.enemies||[])]){const who=resolve(row.actorId||row.name),other=game(after,who);if(!other||who===actorId||['digital','engram'].includes(profiles.get(who)?.roster?.form))continue;row.actorId=who;row.level=other.growth.level;row.attributes=copy(other.growth.attributes);row.perks=copy(other.growth.perks);row.equipment=E.loadout.effects(other);row.vitals=copy(other.numeric.vitals);}
   syncCombat(before,after,actorId);return after;

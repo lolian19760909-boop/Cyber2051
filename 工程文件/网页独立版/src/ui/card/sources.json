@@ -133,7 +133,7 @@
   },
   {
     "source": "卡片源码/运行时/roster.js",
-    "sha256": "ff9dbf7435f993678a2c54a7f622ef708a138120acb6d6829e787eb6e484a487",
+    "sha256": "30f407d2c1f31b9d15a4e202deb7473cd82524ac034415f9ec106a9d7862f78f",
     "target": "src/ui/card/运行时/roster.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -199,7 +199,7 @@
   },
   {
     "source": "卡片源码/MVU/schema.js",
-    "sha256": "12dff0932a69be48a06a4bc6f53360ed8850625a47fcdf547d2346790f189527",
+    "sha256": "c79d94c3fa037b89f1f6801afc80d03a5299c399192b8d76912986e57cd0062a",
     "target": "src/ui/card/MVU/schema.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },

@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/MVU/schema.js; source SHA256 12dff0932a69be48a06a4bc6f53360ed8850625a47fcdf547d2346790f189527. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/MVU/schema.js; source SHA256 c79d94c3fa037b89f1f6801afc80d03a5299c399192b8d76912986e57cd0062a. Rebuild with tools/p3a-adapt-views.mjs. */
 /* Card schema: parsing returns a copy; callers choose when normalized values may be committed. */
 (function(root,factory){const local=typeof module==='object'&&module.exports;const value=factory(root,local?require("../运行时/numeric-host.js"):root.CxxNumericHost);if(local)module.exports=value;else root.Cxx236Schema=value;})(globalThis,function(root,N){
  'use strict';
@@ -33,7 +33,8 @@
   const gameplay=loose(optional({schema:z.literal(1),inventory:table(inventory),blueprints:table(blueprint),skills:table(skill),equipment:table(equipment),resources:table(numeric(-1000000000,1000000000,true)),events:table(event),results:table(result),location,origin}));
   const opening=loose(optional({schemaVersion:z.literal(1),token:text,scopeHash:text,manifestVersion:text,confirmedFloor:money,initialState:z.unknown(),timelineEvents:z.array(z.unknown())}));
   const net=loose(optional({schemaVersion:z.literal(1),updatedAt:text,scopeHash:text,sourceFloor:numeric(-1,Number.MAX_SAFE_INTEGER,true),news:z.array(text),threads:z.array(text)}));
-  const terminal=loose(optional({wallet,quests:table(quest,questId),gameplay,opening,net}));
+  const roster=loose(optional({present:z.array(text)}));
+  const terminal=loose(optional({wallet,quests:table(quest,questId),gameplay,opening,net,roster}));
   const stat=loose({terminal:terminal.optional()});
   function parse(schema,value,label){const result=schema.safeParse(value);if(!result.success)throw Error(label+'：'+result.error.issues.map(i=>i.path.join('.')+' '+i.message).slice(0,2).join('；'));return result.data;}
   function audit(value){const result=stat.safeParse(value);return result.success?[]:result.error.issues.map(i=>({path:'/'+i.path.join('/'),message:i.message}));}

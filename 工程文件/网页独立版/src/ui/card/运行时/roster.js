@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/运行时/roster.js; source SHA256 ff9dbf7435f993678a2c54a7f622ef708a138120acb6d6829e787eb6e484a487. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/运行时/roster.js; source SHA256 30f407d2c1f31b9d15a4e202deb7473cd82524ac034415f9ec106a9d7862f78f. Rebuild with tools/p3a-adapt-views.mjs. */
 /* Scene-local NPC settlement. Actor records remain the sole numeric owner. */
 (function(root,factory){const local=typeof module==='object'&&module.exports;const api=factory(local?require('./ensemble-state.js'):root.CxxEnsembleState,local?require('../数值引擎/src/engine.js'):root.CxxNumericEngine,local?require('./ensemble-content.js'):root.CxxEnsembleContent,local?require('../共享/data-clone.js'):root.CxxDataClone);if(local)module.exports=api;else root.CxxRoster=api;})(globalThis,function(A,E,C,Clone){
  'use strict';
@@ -92,8 +92,8 @@
   }catch(error){ignored.push({path:paths[factKey(e)]||inputPath,reason:error.message});}
   }
  }
- function implantChanges(g,prior,p,source){
-  const s=sanity(g,p),priorValue=s.value,old=E.loadout.list(prior||{}),now=E.loadout.list(g),key=r=>r.record.instanceId||r.slot;
+ function implantChanges(g,prior,p,source,beforeSanity){
+  const s=sanity(g,p),priorValue=beforeSanity??s.value,old=E.loadout.list(prior||{}),now=E.loadout.list(g),key=r=>r.record.instanceId||r.slot;
   for(const r of now)if(r.definition.category==='cyberware'&&!old.some(v=>key(v)===key(r))){const loss=Math.round(baseLoss(r.definition.part)*factor(g));s.value=clamp(s.value-loss,0,100);s.implants[key(r)]={paid:loss,recovered:false,source:copy(source)};}
   for(const r of old)if(r.definition.category==='cyberware'&&!now.some(v=>key(v)===key(r))){const paid=s.implants[key(r)];if(paid&&!paid.recovered){s.value=clamp(s.value+Math.min(paid.paid,refund(r.definition.part)),0,100);paid.recovered=true;}}
   phase(s,priorValue);
@@ -154,7 +154,7 @@
    if(did)changed.push(actorId);
   }return changed;
  }
- function program(before,after,actorId,request={}){const g=game(after,actorId);if(g?.sanity)implantChanges(g,game(before,actorId),profiles.get(actorId),{kind:'player-operation'});
+ function program(before,after,actorId,request={}){const g=game(after,actorId),previous=game(before,actorId);if(g?.sanity)implantChanges(g,previous,profiles.get(actorId),{kind:'player-operation'},request.action==='variables-edit'?previous?.sanity?.value:undefined);
   const c=g?.numeric?.combat;
   if(['battle-start','battle-roster'].includes(request.action)&&c?.mode==='system')for(const row of [...(c.allies||[]),...(c.enemies||[])]){const who=resolve(row.actorId||row.name),other=game(after,who);if(!other||who===actorId||['digital','engram'].includes(profiles.get(who)?.roster?.form))continue;row.actorId=who;row.level=other.growth.level;row.attributes=copy(other.growth.attributes);row.perks=copy(other.growth.perks);row.equipment=E.loadout.effects(other);row.vitals=copy(other.numeric.vitals);}
   syncCombat(before,after,actorId);return after;

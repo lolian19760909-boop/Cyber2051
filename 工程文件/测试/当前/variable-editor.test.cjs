@@ -64,3 +64,22 @@ test('native prompt projection keeps corrected player and present NPC values whi
  assert.equal(projected.terminal.variableEdits,undefined);assert.equal(projected.terminal.gameplay.growth.corrections,undefined);assert.equal(projected.terminal.ensemble.actors.wb_4.gameplay.growth.corrections,undefined);
  assert.deepEqual(after,saved);assert(after.terminal.variableEdits.edit_one);assert(after.terminal.gameplay.growth.corrections.edit_one);assert(after.terminal.ensemble.actors.wb_4.gameplay.growth.corrections.edit_one);
 });
+
+test('SAN edits apply recovery once for player and NPC, retain implantation effects and undo the derived state',()=>{
+ for(const actorId of ['player','wb_4']){
+  const before=rosterFixture(),game=actorId==='player'?before.terminal.gameplay:before.terminal.ensemble.actors[actorId].gameplay;
+  game.sanity.value=10;game.sanity.psychosis=true;game.sanity.medications=3;
+  const edit=request(before,value=>{(actorId==='player'?value.terminal.gameplay:value.terminal.ensemble.actors[actorId].gameplay).sanity.value=80;}),after=O.plan(before,edit),saved=actorId==='player'?after.terminal.gameplay:after.terminal.ensemble.actors[actorId].gameplay;
+  assert.equal(saved.sanity.value,80);assert.equal(saved.sanity.psychosis,false);assert.equal(saved.sanity.course,1);assert.equal(saved.sanity.medications,0);assert.doesNotMatch(R.project(after,actorId).state,/精神病/);
+  const restored=O.plan(after,{action:'variables-edit',id:'undo_sanity',undoOf:edit.id,changes:V.undo(after,edit.id)});assert.deepEqual(V.editable(restored),V.editable(before));
+ }
+ const before=rosterFixture(),game=before.terminal.gameplay;game.sanity.value=10;game.sanity.psychosis=true;game.sanity.implants.fixture_neural_1.paid=8;
+ const after=O.plan(before,request(before,value=>{value.terminal.gameplay.sanity.value=55;value.terminal.gameplay.equipment=E.loadout.editEquipment(value.terminal.gameplay,{slot:'cyber_nervous_1',id:''}).equipment;}));
+ assert.equal(after.terminal.gameplay.sanity.value,63);assert.equal(after.terminal.gameplay.sanity.psychosis,false);assert.equal(after.terminal.gameplay.sanity.course,1);
+});
+
+test('advanced roster edits validate the known present array while preserving unknown roster fields',()=>{
+ const before=rosterFixture();before.terminal.roster.future={keep:true};
+ for(const present of [{player:true},[1],null])assert.throws(()=>O.plan(before,request(before,value=>{value.terminal.roster.present=present;})),/roster.present/);
+ const after=O.plan(before,request(before,value=>{value.terminal.roster.present=['player','wb_4'];}));assert.deepEqual(after.terminal.roster.present,['player','wb_4']);assert.deepEqual(after.terminal.roster.future,before.terminal.roster.future);assert.doesNotThrow(()=>R.context(after));assert.doesNotThrow(()=>R.promptState(after));assert.deepEqual(before.terminal.roster.present,['player']);
+});
