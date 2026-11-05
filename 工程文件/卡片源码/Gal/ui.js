@@ -685,6 +685,7 @@
 
     function safeSpriteUrl(value) {
       if (typeof value !== 'string' || !value) return '';
+      if (/^data:image\/webp;base64,[A-Za-z0-9+/]+={0,2}$/.test(value)) return value;
       try {
         const url = new URL(value, doc.baseURI);
         const origin = new URL(doc.baseURI).origin;

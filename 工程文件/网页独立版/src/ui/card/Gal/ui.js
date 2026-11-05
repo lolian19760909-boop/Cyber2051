@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/Gal/ui.js; source SHA256 7239485b3a0d2937b65ce11d62c5440405a2dfae87c78ed62f876ebdad0d04e4. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/Gal/ui.js; source SHA256 7d3c0b82fbe7bcb6d286848fe20aa60cfe23e2a78d600b21c93f168c138bff27. Rebuild with tools/p3a-adapt-views.mjs. */
 (function (root, factory) {
   'use strict';
   const Popover=typeof module==='object'&&module.exports?require('../共享/popover.js'):globalThis.CxxPopover;
@@ -690,6 +690,7 @@
 
     function safeSpriteUrl(value) {
       if (typeof value !== 'string' || !value) return '';
+      if (/^data:image\/webp;base64,[A-Za-z0-9+/]+={0,2}$/.test(value)) return value;
       try {
         const url = new URL(value, doc.baseURI);
         const origin = new URL(doc.baseURI).origin;

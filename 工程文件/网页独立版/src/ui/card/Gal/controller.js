@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/Gal/controller.js; source SHA256 05bd46bbf7337f9558a4e3da3dc14667a9bfa806abce98c18ce38db0114b6aa7. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/Gal/controller.js; source SHA256 9a64e0db7120a286f69adeccb3649faafd8b006cd50d8b77743559de68e785b5. Rebuild with tools/p3a-adapt-views.mjs. */
 /* G1: view state only; native messages and draft remain authoritative. */
 (function (root, factory) {
   const api = factory(typeof module === 'object' && module.exports ? require('./sprites.js') : root.CxxGalSprites);
@@ -60,7 +60,7 @@
         const mirrorSource=globalThis?.CxxSource,floor=floorNumbers.get(selected),hostRaw=selected?.mes||'';
         const raw = selected&&!snapshot.generating&&!selected.is_user&&mirrorSource?mirrorSource.sync(floor):hostRaw;
         if(!snapshot.generating&&!snapshot.opening)view.beginReading?.({floor,scope:chatKey});
-        const parseOptions=snapshot.readingOptions||{},optionKey=JSON.stringify(parseOptions);if (parsedMessage !== selected || parsedRaw !== raw || parsedSwipe !== selected?.swipe_id || parsedOptions!==optionKey || parsedDisplayRevision !== snapshot.displayRevision) {
+        const parseOptions={...snapshot.readingOptions,...(adapter.characters?{characters:adapter.characters(floor)}: {})},optionKey=JSON.stringify(parseOptions);if (parsedMessage !== selected || parsedRaw !== raw || parsedSwipe !== selected?.swipe_id || parsedOptions!==optionKey || parsedDisplayRevision !== snapshot.displayRevision) {
           const switched = parsedMessage !== selected || parsedSwipe !== selected?.swipe_id;
           const history=typeof globalThis!=='undefined'&&globalThis?.Cxx249History;
           if(history&&selected){
@@ -107,7 +107,7 @@
           hud: adapter.readHud?.({ messageId: selected ? floorNumbers.get(selected) : null,
             scene: parsed.scene, characterId: selected?.is_user ? null : parsed.paragraphs[paragraphIndex]?.characterId, history: selected !== latest }),
           draft: snapshot.draft, busy: snapshot.busy || pending, canStop: snapshot.canStop, history: selected !== latest,
-          sprites: selected?.is_user||illustration ? [] : sprites.select(parsed, paragraphIndex, (id, expression, options) => adapter.sprite?.(id, expression, options), adapter.battleBefore?.(floor) || {}),
+          sprites: selected?.is_user||illustration ? [] : sprites.select(parsed, paragraphIndex, (id, expression, options) => adapter.sprite?.(id, expression, options), adapter.battleBefore?.(floor) || {},parseOptions.characters),
           status: snapshot.status || (snapshot.busy ? '酒馆正在生成，结束后显示正文…' : pending ? '正在交给酒馆发送…' :
             parsed.warnings.length ? '部分标签无法识别，已保留原文。' : '草稿已同步'),
           error,

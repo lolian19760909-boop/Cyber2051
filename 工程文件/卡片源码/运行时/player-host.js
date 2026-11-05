@@ -59,15 +59,15 @@
         await writable(s);if(stamp(ctx().chat)!==requestedBranch)throw Error('回复分支已变化，请从当前分支重新操作。');const snapshot=read.local(),branches=stamp(ctx().chat),floor=snapshot.floor,choice=copy(snapshot.growthIdentity),newChat=isOpening(),operation={request:copy(request),identity:choice,newChat};
         if(actorBinding){A.assertBinding(snapshot.stat,actorBinding);operation.actorBinding=copy(actorBinding);if(request.actorBinding&&!same(request.actorBinding,actorBinding))throw Error('人物操作草稿已过期，请重新打开当前人物。');}
         if(request.floor!==undefined&&(request.floor!==floor||request.swipe!==(ctx().chat[floor].swipe_id||0)))throw Error('结算目标楼层或分支已变化。');
-        if(request.action==='profile-portrait'){
+        if(['profile-portrait','gal-portraits'].includes(request.action)){
           if(request.storyContext&&!same(request.storyContext,snapshot.expected))throw Error('故事已切换，人物图片草稿已保留。');
           const P=typeof module==='object'&&module.exports?require('./story-profile.js'):root.CxxStoryProfile;
           if(!P)throw Error('故事人物服务未就绪。');
-          const profile=P.withPortrait(snapshot.storyProfile,request),table=request.artAsset?await Art.merge(snapshot.itemArt,[request.artAsset]):snapshot.itemArt;
+          const assets=request.artAssets||(request.artAsset?[request.artAsset]:[]),profile=request.action==='gal-portraits'?P.withGalPortraits(snapshot.storyProfile,request):P.withPortrait(snapshot.storyProfile,request),table=assets.length?await Art.merge(snapshot.itemArt,assets):snapshot.itemArt;
           assertCurrent(s);idle();if(stamp(ctx().chat)!==branches)throw Error('回复分支已变化，图片草稿已保留。');
           if(!same(ctx().chatMetadata[P.KEY],snapshot.storyProfile)||!same(ctx().chatMetadata[Art.key]||{schema:1,assets:{}},snapshot.itemArt))throw Error('人物或图片资源在保存前已变化，请重新核对后保存。');
           if(request.artAsset&&profile.portrait?.id!==request.artAsset.id)throw Error('人物图片与引用不匹配。');
-          if(profile.portrait?.kind==='asset'&&!table.assets?.[profile.portrait.id])throw Error('人物图片资源缺失，请重新选择图片。');
+          if(P.artReferences(profile).some(id=>!table.assets?.[id]))throw Error('人物图片资源缺失，请重新选择图片。');
           if(!same(profile,snapshot.storyProfile)||!same(table,snapshot.itemArt)){ctx().chatMetadata[Art.key]=table;ctx().chatMetadata[P.KEY]=profile;ctx().chatMetadata.tainted=true;dirty(s);}
           return;
         }

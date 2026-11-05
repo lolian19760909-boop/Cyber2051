@@ -67,6 +67,7 @@ if(data.result){const rows=data.result.split(/\r?\n/).filter(Boolean).map(JSON.p
  if(process.env.CXX_IMAGE_CHECK==='1'){report.mode='story-images';await require('../lib/image-runtime-cases.cjs').native({page:p,context:p.context(),select,diskRows,report,out});report.pass=true;return;}
  if(process.env.CXX_NATIVE_TURN_CHECK==='1'){report.mode='native-continuation';await require('./native-continuation-host-cases.cjs')({page:p,select,diskRows,report,out});report.pass=true;return;}
  if(process.env.CXX_BATTLE_ENTRY_CHECK==='1'){report.mode='battle-entry';await require('./battle-entry-host-cases.cjs')({page:p,select,diskRows,report,out});report.pass=true;return;}
+ if(process.env.CXX_GAL_PORTRAITS_CHECK==='1'){report.mode='gal-portraits';await require('./gal-portraits-host-cases.cjs')({page:p,select,report,out});report.pass=true;return;}
  if(process.env.CXX_STORY_IMPORT_CHECK==='1'){report.mode='story-import';await require('./story-import-host-cases.cjs')({page:p,select,diskRows,report,out});report.pass=true;return;}
  if(process.env.CXX_PATCH_RECEPTION_CHECK==='1'){report.mode='model-patch-reception';await require('./model-patch-host-cases.cjs')({page:p,select,diskRows,report,out});report.pass=true;return;}
  if(process.env.CXX_POLICY_READ_CHECK==='1'){report.mode='variable-policy-read';await require('./variable-policy-host-cases.cjs')({page:p,select,diskRows,report,out});report.pass=true;return;}
