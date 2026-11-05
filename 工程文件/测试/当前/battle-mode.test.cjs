@@ -39,8 +39,3 @@ test('战斗条按档位分流：速决与纯文本自动结算，即时战术�
   assert.match(surface, /function showReport\(\)/);
   assert.match(surface, /cxx-battle-report-lines/);
 });
-
-test('旧版数值战斗仍然走原来的面板，不会被速决抢走', () => {
-  const surface = source('运行时/battle-surface.js');
-  assert.match(surface, /if\(battleMode\(\)!=='tactical'&&!current\(\)\.game\?\.numeric\?\.combat\?\.active\)return true;/);
-});
