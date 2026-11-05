@@ -545,6 +545,11 @@
    "name": "东京都2051-V2.3.33-13af00e03c78.json",
    "sha256": "8753695ae44f9db12df400bcd86cba833f69e9be3a67fbc139c253a15d94d30b",
    "seedSHA256": "df1643e1a64584e9af2996a70576cc07b734ae97a8b2b8497e6c395a89cc2ee8"
+  },
+  {
+   "name": "东京都2051-V3.0.0-4a5ec1c26d7b.json",
+   "sha256": "7e96fa45ed034c3cff7ad075f5e6ae688b4f020b360350d67b97adacc14b68d5",
+   "seedSHA256": "39401270f62f30111c9cce573c60bded3c6d7374185580c4a0bd0398e8107177"
   }
  ],
  "seedValues": []

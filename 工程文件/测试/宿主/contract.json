@@ -1,13 +1,13 @@
 {
   "target": "latest-stable",
-  "reviewedAt": "2026-10-08",
-  "reviewedRelease": "v2.3.0",
-  "reportedSillyTavernVersion": "1.18.0",
-  "releaseUrl": "https://github.com/Darkatse/TauriTavern/releases/tag/v2.3.0",
+  "reviewedAt": "2026-11-05",
+  "reviewedRelease": "v2.4.0",
+  "reportedSillyTavernVersion": "1.19.0",
+  "releaseUrl": "https://github.com/Darkatse/TauriTavern/releases/tag/v2.4.0",
   "sources": ["src/scripts/st-context.js", "src/compat-version.js"],
   "sourceHashes": {
-    "src/scripts/st-context.js": "274aee68915a364664d9c472f5888af9908663d27ac882dbd3583fe26633d4e4",
-    "src/compat-version.js": "a766eaeb81d395f4736e384015e3ea855a1f1eb3002e919918d17a20a9299fd7"
+    "src/scripts/st-context.js": "59e6fbce12fae8f07eeeffe85d7a694854ee6caf503abbda30dd536982e7177d",
+    "src/compat-version.js": "c19a9f1c9ae8e262127c82cd3bc04c90c3ceabfc11cad05da94121867d948b61"
   },
   "modules": {
     "Cxx238Dialogue": "正文/dialogue.js",
