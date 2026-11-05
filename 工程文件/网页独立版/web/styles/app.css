@@ -361,3 +361,6 @@ dialog.cxx-pack-choice{width:min(560px,94vw);border:1px solid var(--cxx-line,#5a
 .cxx-pack-manager-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .cxx-pack-manager-actions button{min-height:38px}
 
+
+.model-plans{display:grid;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid var(--cxx-line)}
+.model-plans h3,.model-plans p{margin:0}.model-plans p{font-size:14px;line-height:1.5}.model-plans label{display:grid;gap:6px}.model-plans :is(select,input){box-sizing:border-box;max-width:100%;min-width:0;width:100%;min-height:44px}.model-plan-actions{display:flex;gap:8px;flex-wrap:wrap}.model-plan-actions button{min-height:44px}.model-plans [role=status]{color:var(--cxx-interactive);white-space:pre-wrap}
