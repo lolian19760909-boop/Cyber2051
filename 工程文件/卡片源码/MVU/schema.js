@@ -32,7 +32,8 @@
   const gameplay=loose(optional({schema:z.literal(1),inventory:table(inventory),blueprints:table(blueprint),skills:table(skill),equipment:table(equipment),resources:table(numeric(-1000000000,1000000000,true)),events:table(event),results:table(result),location,origin}));
   const opening=loose(optional({schemaVersion:z.literal(1),token:text,scopeHash:text,manifestVersion:text,confirmedFloor:money,initialState:z.unknown(),timelineEvents:z.array(z.unknown())}));
   const net=loose(optional({schemaVersion:z.literal(1),updatedAt:text,scopeHash:text,sourceFloor:numeric(-1,Number.MAX_SAFE_INTEGER,true),news:z.array(text),threads:z.array(text)}));
-  const terminal=loose(optional({wallet,quests:table(quest,questId),gameplay,opening,net}));
+  const roster=loose(optional({present:z.array(text)}));
+  const terminal=loose(optional({wallet,quests:table(quest,questId),gameplay,opening,net,roster}));
   const stat=loose({terminal:terminal.optional()});
   function parse(schema,value,label){const result=schema.safeParse(value);if(!result.success)throw Error(label+'：'+result.error.issues.map(i=>i.path.join('.')+' '+i.message).slice(0,2).join('；'));return result.data;}
   function audit(value){const result=stat.safeParse(value);return result.success?[]:result.error.issues.map(i=>({path:'/'+i.path.join('/'),message:i.message}));}

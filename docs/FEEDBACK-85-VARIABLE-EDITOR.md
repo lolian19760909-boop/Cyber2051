@@ -44,3 +44,11 @@
 公开发行保持 `c6072f57eae0a5d54aee`。本批维护源与网页生成镜像已同步，保留并行文档和旧 stash。供应商真实生成及实体手机 IME 继续沿本轮既定现场验证范围；当前证据覆盖桌面 Edge 的双端实际入口、窄屏／横屏触摸仿真、受控模型响应与真实本机保存。
 
 关联补充：[V2 Replay 两种 WASM 签名核对](FEEDBACK-76-REPLAY.md)记录本轮已完成的查询栈机制实验与公开修复指纹。
+
+## 2026-11-05 合入前复核
+
+双轴独立审查复现两处变量问题：SAN 从 10 改为 80 后仍保留精神病阶段；高级编辑可将 `roster.present` 写成对象，随后人物投影读取失败。现仅对 `variables-edit` 使用修改前 SAN 作为既有阶段结算基线，并在现有 stat schema 边界将 present 约束为文本数组；未知字段与旧档缺省继续保留。普通程序恢复、义体退款、重放与撤回均按现有规则结算一次。
+
+相关维护检查 40 项、独立机制探针 5 组通过。冻结网页 `2920c2a37a79fb6c6da7` 实际变量流程 12 项通过。原生 JSON SHA-256 `7412975406e9bfaf424b1b917eaa08aa88c9f7b9b12fdeb4563860b7eba23dc3`：首轮前 13 项通过，宿主重新载入时的助手就绪等待超时；续接原导入角色和原故事，核对全部脚本字节后完成追加 5 项，覆盖坏类型、SAN 恢复、双撤回和最终磁盘刷新。受控模型付费及页面异常为 0。完整回归和数据克隆后备回归各 1629 项通过。
+
+6948 原进程已退出，本次按原 data/config 恢复隐藏宿主 PID 52988 并复用。证据根 `.cache/pr-review-merge-20261105/`，入口 `web-review-final/check.json`、`native-review/host.json`、`native-resume/check.json`、`standards/fix-review/review.md`、`spec/patch-review.md`；原失败回执保留。公开发行继续保持 `c6072f57eae0a5d54aee`。
