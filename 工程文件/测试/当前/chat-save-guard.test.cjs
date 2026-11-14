@@ -13,6 +13,28 @@ function fixture(normalize=async value=>value,locksOverride){
  }
  return {window,get disk(){return disk;},set disk(v){disk=v;},writes:()=>writes,warnings};
 }
+test('same-window autosave and creation checks share one consistent disk revision',async t=>{
+ for(const phase of ['before-work','after-work'])for(const secure of [true,false])await t.test(phase+' / '+(secure?'Web Locks':'local queue'),async()=>{
+  const target={characterKey:'card.png',chatId:'story'};let disk=[{chat_metadata:{integrity:'one'}},{mes:'before autosave'}],reads=0,writes=0,entered=false,signal,release;
+  const live=copy(disk),started=new Promise(r=>signal=r),gate=new Promise(r=>release=r);let tail=Promise.resolve();
+  const locks=secure?{request(_key,_options,fn){const next=tail.catch(()=>{}).then(fn);tail=next;return next;}}:null;
+  const guard=Guard.create({scope:()=>target,snapshot:()=>({metadata:live[0].chat_metadata,messages:live.slice(1)}),locks,
+   read:async()=>{const captured=copy(disk);if(++reads===(phase==='before-work'?2:3)){signal();await gate;}return captured;}});
+  await guard.reset();const creating=guard.run(target,async()=>{entered=true;});await started;
+  live[1].mes='confirmed autosave';const rows=copy(live),saving=guard.commit(target,rows,async()=>{disk=copy(rows);writes++;return {ok:true};});
+  // A serialized implementation can be waiting for the deliberately slow read.
+  await Promise.race([saving,new Promise(r=>setTimeout(r,20))]);release();await Promise.all([saving,creating]);
+  assert.equal(entered,true);assert.equal(writes,1);assert.deepEqual(disk,rows);assert.equal(guard.status().error,null);
+ });
+});
+
+test('native run keeps its existing outer lock without taking a nested check lock',async()=>{
+ const target={characterKey:'native.png',chatId:'story'},rows=[{chat_metadata:{}},{mes:'existing'}];let active=false,count=0;
+ const guard=Guard.create({scope:()=>target,snapshot:()=>({metadata:rows[0].chat_metadata,messages:rows.slice(1)}),read:async()=>copy(rows),native:true,
+  locks:{request:async(_key,_options,fn)=>{assert.equal(active,false);active=true;count++;try{return await fn();}finally{active=false;}}}});
+ await guard.reset();assert.equal(await guard.run(target,async()=> 'ready'),'ready');assert.equal(count,1);assert.equal(guard.status().error,null);
+});
+
 test('a chat-loaded event reuses the ticket already claimed by a plugin save',async()=>{
  let release;const gate=new Promise(r=>release=r),f=fixture(async value=>{await gate;return value;}),a=f.window();
  const Host=require('../../卡片源码/运行时/host.js');

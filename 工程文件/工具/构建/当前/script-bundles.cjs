@@ -78,7 +78,7 @@ function prefixModules(text, changes, s, {source, version, chipNightEnabled}) {
       JSON.stringify(source('运行时/talent-fullscreen.css')) +
       ';');
   if (modules.has('CxxStoryLibrary'))
-    prepend(source('运行时/entry-experience.js') + ';\n' + source('运行时/operations.js') + ';\n' +
+    prepend(source('共享/opening-draft-storage.js') + ';\n' + source('运行时/entry-experience.js') + ';\n' + source('运行时/operations.js') + ';\n' +
       'globalThis.CxxHubArt=' +
       source('运行时/hub-assets.json') +
       ';if(globalThis.parent)globalThis.parent.CxxHubArt=globalThis.CxxHubArt;globalThis.CxxHubStyle=' +

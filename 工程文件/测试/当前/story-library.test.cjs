@@ -2,9 +2,35 @@
 const test=require('node:test'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const Library=require('../../卡片源码/运行时/story-library.js'),Core=require('../../卡片源码/运行时/core.js'),Backup=require('../../卡片源码/运行时/backup.js');
 const clone=structuredClone,hash=v=>Core.sha256(v),K=Library.KEY;
-function fixture(){let current='A',seq=0,badWrite=false;const db={A:[{chat_metadata:{variables:{summary:'过去',news:'旧新闻'},unknown:{keep:true}}},{mes:'旧剧情',swipe_id:0,swipes:['旧剧情','另一条回复'],variables:[{stat_data:{hp:30,ammo:7,combat:{round:2}}},{stat_data:{hp:99}}]}]};
+function fixture(storage){let current='A',seq=0,badWrite=false;const db={A:[{chat_metadata:{variables:{summary:'过去',news:'旧新闻'},unknown:{keep:true}}},{mes:'旧剧情',swipe_id:0,swipes:['旧剧情','另一条回复'],variables:[{stat_data:{hp:30,ammo:7,combat:{round:2}}},{stat_data:{hp:99}}]}]};
  const adapter={current:async()=>({chatId:current,rows:clone(db[current])}),tagCurrent:async m=>{db[current][0].chat_metadata[K]=clone(m);},list:async()=>Object.entries(db).map(([chatId,rows])=>({chatId,meta:Library.metadata(rows)})),exists:async id=>!!db[id],read:async id=>clone(db[id]),write:async(id,rows)=>{db[id]=clone(rows);if(badWrite)db[id][1].mes='写入截断';},flush:async()=>{},capture:async()=>({format:1,type:'cyber2051.migration',source:{workId:'cyber2051'},sourceContext:{chatId:current},payload:{header:clone(db[current][0]),messages:clone(db[current].slice(1)),archive:{keep:true}}}),validateExport:async d=>{const value=clone(d),h=value.sha256;delete value.sha256;assert.equal(await hash(value),h);return clone(d);},importDocument:async d=>{const id='route'+(++seq);db[id]=[clone(d.payload.header),...clone(d.payload.messages)];return {chatId:id};},open:async id=>{current=id;},newChat:async()=>{current='route'+(++seq);db[current]=[{chat_metadata:{}},{mes:'新开场'}];}};
- const store=Library.createStore({adapter,hash,uuid:()=>crypto.randomUUID(),now:()=> '2051-04-01T00:00:00.000Z'});return {store,db,adapter,current:()=>current,setBad:v=>badWrite=v};}
+ const store=Library.createStore({adapter,hash,uuid:()=>crypto.randomUUID(),now:()=> '2051-04-01T00:00:00.000Z',storage});return {store,db,adapter,current:()=>current,setBad:v=>badWrite=v};}
+
+test('creation waits for prepared storage and durable journal before creating a chat',async()=>{
+ let prepare,writeStarted,writeFinished,clearFinished,holdWrite=true,holdClear=true;const values=new Map(),ready=new Promise(r=>prepare=r),writing=new Promise(r=>writeStarted=r);
+ const storage={getItem:key=>values.get(key),setItem(key,value){if(holdWrite){holdWrite=false;writeStarted();return new Promise(resolve=>writeFinished=()=>{values.set(key,value);resolve();});}values.set(key,value);return Promise.resolve();},removeItem(key){if(holdClear){holdClear=false;return new Promise(resolve=>clearFinished=()=>{values.delete(key);resolve();});}values.delete(key);return Promise.resolve();}};
+ const f=fixture(ready);let chats=0,settled=false;const original=f.adapter.newChat;f.adapter.newChat=async()=>{chats++;return original();};
+ const creating=f.store.newStory('异步创建',null,2,'stable-creation',{profile:{name:'保留的输入'}});creating.catch(()=>{});
+ await new Promise(r=>setImmediate(r));assert.equal(chats,0);prepare(storage);await writing;assert.equal(chats,0);assert.equal(values.size,0);
+ writeFinished();await creating;assert.equal(chats,1);const journal=JSON.parse(values.get('cxx-story-creation'));assert.equal(journal.creationId,'stable-creation');assert.equal(journal.created,true);
+ assert.equal((await f.store.inspectPending()).code,'creation-resumable');const finishing=f.store.finishCreation().then(()=>settled=true);
+ await new Promise(r=>setImmediate(r));assert.equal(settled,false);assert.equal(values.size,1);clearFinished();await finishing;assert.equal(values.size,0);assert.equal(f.db[f.current()][0].chat_metadata[K].stage,'playing');
+});
+
+test('asynchronous journal rejection preserves original input and retries one creation identity',async()=>{
+ const values=new Map();let rejected=true,chats=0;const storage={getItem:key=>values.get(key),async setItem(key,value){if(rejected)throw Object.assign(Error('磁盘拒绝'),{code:'opening-draft-write'});values.set(key,value);},async removeItem(key){values.delete(key);}};
+ const f=fixture(Promise.resolve(storage)),original=f.adapter.newChat;f.adapter.newChat=async()=>{chats++;return original();};const draft={creationId:'same-request',profile:{name:'保留的姓名',portraitUpload:{src:'保留的图片'}}};
+ await assert.rejects(f.store.newStory('重试创建',null,2,'same-request',draft),{code:'opening-draft-write'});assert.equal(chats,0);assert.equal(f.current(),'A');assert.equal(values.size,0);
+ rejected=false;await f.store.newStory('重试创建',null,2,'same-request',draft);assert.equal(chats,1);assert.equal(f.db[f.current()][0].chat_metadata[K].creationId,'same-request');assert.deepEqual(f.db[f.current()][0].chat_metadata[K].openingDraft,draft);
+ const reopened=Library.createStore({adapter:f.adapter,hash,uuid:()=>crypto.randomUUID(),storage:Promise.resolve(storage)});assert.equal((await reopened.inspectPending()).code,'creation-resumable');await reopened.newStory('重试创建',null,2,'same-request',draft);assert.equal(chats,1);
+});
+
+test('missing-chat replacement awaits retired journal preservation before publishing a replacement',async()=>{
+ const pending={creationId:'same-request',slot:2,chatId:'missing',created:true,rows:[{chat_metadata:{keep:'原稿'}}]},values=new Map([['cxx-story-creation',JSON.stringify(pending)]]);let rejectRetired=true;
+ const storage={getItem:key=>values.get(key),async setItem(key,value){if(rejectRetired&&key.includes(':retired:'))throw Error('旧记录保存失败');values.set(key,value);},async removeItem(key){values.delete(key);}},f=fixture(Promise.resolve(storage));
+ assert.equal((await f.store.inspectPending()).code,'creation-chat-missing');await assert.rejects(f.store.recoverPending({creationId:'same-request',slot:2}),/旧记录保存失败/);assert.deepEqual(JSON.parse(values.get('cxx-story-creation')),pending);assert.equal(f.current(),'A');
+ rejectRetired=false;const result=await f.store.recoverPending({creationId:'same-request',slot:2});assert.equal(result.code,'creation-replacement-ready');assert.deepEqual(JSON.parse(values.get('cxx-story-creation:retired:missing')),pending);const replacement=JSON.parse(values.get('cxx-story-creation'));assert.equal(replacement.creationId,'same-request');assert.equal(replacement.replacesChatId,'missing');assert.notEqual(replacement.chatId,'missing');assert.equal(replacement.created,false);
+});
 test('checkpoint restores all branches, combat and old summaries into a new route',async()=>{const f=fixture();const saved=await f.store.point('街口');const original=clone(f.db.A);f.db.A[0].chat_metadata.variables.summary='未来';f.db.A[1].variables[0].stat_data.hp=1;const result=await f.store.restore(saved.chatId);assert.notEqual(result.chatId,'A');assert.equal(f.db.A[0].chat_metadata.variables.summary,'未来');assert.deepEqual(f.db[result.chatId].slice(1),original.slice(1));assert.equal(f.db[result.chatId][0].chat_metadata.variables.summary,'过去');assert.equal(f.db[result.chatId][0].chat_metadata[K].parentPointId,saved.meta.pointId);});
 
 test('automatic opening point stays unique and retains the original opening after later play',async()=>{

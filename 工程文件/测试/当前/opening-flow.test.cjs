@@ -4,6 +4,24 @@ const Flow=require('../../卡片源码/运行时/opening-flow.js'),I=require('..
 const copy=structuredClone,deferred=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return {promise,resolve,reject};};
 const {fixture,ready}=require("../lib/opening-fixture.cjs");
 
+test('an asynchronous draft write must finish before final creation can submit',async()=>{
+ const data=new Map();let failed=false,submissions=0;
+ const storage={getItem:key=>data.get(key),setItem:(key,value)=>data.set(key,value),setItems:async items=>{if(failed)throw Object.assign(Error('磁盘拒绝草稿写入'),{code:'opening-draft-write'});for(const [key,value]of items)data.set(key,value);},removeItem:key=>data.delete(key)};
+ const flow=Flow.create({key:'async-draft',storage,identity:I,loadout:L,readIdentity:()=>null,readPreferences:()=>({}),prepare:async()=>{},submit:async()=>submissions++,verify:async()=>{},send:async()=>{}});
+ flow.patch({openingFunds:0,custom:'保留输入'});for(let i=0;i<4;i++)flow.next();flow.selectScenario(2);flow.review();await flow.persisted();failed=true;
+ await assert.rejects(flow.commit(),/磁盘拒绝草稿写入/);assert.equal(submissions,0);assert.equal(flow.state().draft.custom,'保留输入');
+ failed=false;await flow.retry();assert.equal(submissions,1);assert.equal(flow.state().status,'saved');flow.destroy();
+});
+
+test('declining an old draft preserves it until the replacement is durably stored',async()=>{
+ const scope={instanceId:'draft-owner',slot:1},key='draft:card.png:slot:1',index='cxx-opening-draft:v2:'+JSON.stringify([scope.instanceId,key]),oldKey=index+':old';
+ const old={schema:2,creationId:'old',owner:scope,origin:'street',step:'profile',completed:['origin'],profile:{schema:1,name:'已有完整人物稿'},custom:'已有背景',preferences:{}},values=new Map([[index,JSON.stringify('old')],[oldKey,JSON.stringify(old)]]);
+ let failed=true;const storage={getItem:key=>values.get(key),setItem(){},setItems:async items=>{if(failed)throw Error('磁盘拒绝新草稿');for(const [key,value]of items)values.set(key,value);},removeItem:key=>values.delete(key)};
+ const flow=Flow.create({key,scope,storage,identity:I,readIdentity:()=>null,readPreferences:()=>({})});
+ await assert.rejects(flow.resolveDraft(false),/磁盘拒绝新草稿/);assert.equal(values.get(oldKey),JSON.stringify(old));assert.equal(values.get(index),JSON.stringify('old'));assert(flow.state().restoreChoice);
+ failed=false;await flow.resolveDraft(false);assert.equal(values.has(oldKey),false);assert.notEqual(values.get(index),JSON.stringify('old'));assert.equal(flow.state().restoreChoice,null);flow.destroy();
+});
+
 test('one creation scope covers submission and verification, releasing before send or after failure and chat switch',async()=>{
  for(const outcome of ['saved','failed','switched']){
   let held=false;const events=[],gate=deferred(),f=fixture({withCommit:async work=>{held=true;events.push('paused');try{return await work();}finally{held=false;events.push('released');}},onSend:()=>events.push(held?'send-while-paused':'send')});

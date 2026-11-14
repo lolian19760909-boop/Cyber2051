@@ -2554,23 +2554,115 @@
         "match_whole_words": true,
         "case_sensitive": false
       }
+    },
+    {
+      "id": 90,
+      "file": "世界书/090-千石ユノ.txt",
+      "templateId": 43,
+      "comment": "千石ユノ",
+      "keys": [
+        "千石由乃",
+        "千石ユノ",
+        "ユノ",
+        "由乃",
+        "Yuno"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": 102,
+      "file": "世界书/102-仲町阿拉蕾.txt",
+      "comment": "仲町阿拉蕾",
+      "keys": [
+        "仲町阿拉蕾",
+        "阿拉蕾",
+        "Arale",
+        "艾蕾亚"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 103,
+      "file": "世界书/103-宫永野乃花.txt",
+      "comment": "宫永野乃花",
+      "keys": [
+        "宫永野乃花",
+        "野乃花",
+        "Nonoka"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 104,
+      "file": "世界书/104-峰月律.txt",
+      "comment": "峰月律",
+      "keys": [
+        "峰月律",
+        "Ritsu"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
+    },
+    {
+      "id": 105,
+      "file": "世界书/105-藤都子.txt",
+      "comment": "藤都子",
+      "keys": [
+        "藤都子",
+        "都子",
+        "Miyako"
+      ],
+      "enabled": true,
+      "extensions": {
+        "scan_depth": 2,
+        "exclude_recursion": true,
+        "prevent_recursion": true,
+        "match_whole_words": true,
+        "case_sensitive": false
+      },
+      "templateId": 4
     }
   ],
   "deferredEntries": [],
   "chapters": [
     "chip-night"
   ],
-  "scopeNote": "2026-10-20：67份人设保留；作者最后手改稿三线13节点以默认关闭世界书装载。新故事走13节点，已有实际旧盗芯进度保留原路线。插图描述为供图待办，不配置虚假图片。 2026-10-20：作者授权企业改编植入，原UID81—85扩写，UID180—203新增24家，原作来源与2051改编对照单列。 2026-10-20 R4：作者授权企业深化与11个东京街头势力植入；移除康陶UID180，编号不复用，保留原作与前后全文对照DOCX。 2026-10-20：梦限大五人暂移，62份完整人设及凛凛子简版保留；薇欧拉保留，前后稿见梦限大暂移归档。 2026-10-20：三份玩家投稿经作者确认后装入UID215—217；琳星夜保留先天超常体质并明确能力上限与弱点，Vesper的黑墙猎犬为网监追踪人员与程序的街头绰号。",
+  "scopeNote": "2026-10-20：67份人设保留；作者最后手改稿三线13节点以默认关闭世界书装载。新故事走13节点，已有实际旧盗芯进度保留原路线。插图描述为供图待办，不配置虚假图片。 2026-10-20：作者授权企业改编植入，原UID81—85扩写，UID180—203新增24家，原作来源与2051改编对照单列。 2026-10-20 R4：作者授权企业深化与11个东京街头势力植入；移除康陶UID180，编号不复用，保留原作与前后全文对照DOCX。 2026-10-20：梦限大五人暂移，62份完整人设及凛凛子简版保留；薇欧拉保留，前后稿见梦限大暂移归档。 2026-10-20：三份玩家投稿经作者确认后装入UID215—217；琳星夜保留先天超常体质并明确能力上限与弱点，Vesper的黑墙猎犬为网监追踪人员与程序的街头绰号。 2026-11-14：作者确认恢复梦限大五人，沿原UID90、102—105装入现有确认稿，恢复关联人物与剧情分工，其他退休编号保留。",
   "retiredIds": [
     30,
     31,
     32,
     34,
-    35,
-    90,
-    102,
-    103,
-    104,
-    105
+    35
   ]
 }

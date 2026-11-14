@@ -3282,6 +3282,81 @@
       "activation": "explicitly-retired",
       "featureToggleEligible": false,
       "evidence": "原注释明确旧变量配置已合并，正文仅为{}。"
+    },
+    {
+      "bookId": "card",
+      "entryId": "90",
+      "title": "千石ユノ",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "102",
+      "title": "仲町阿拉蕾",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "103",
+      "title": "宫永野乃花",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "104",
+      "title": "峰月律",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
+    },
+    {
+      "bookId": "card",
+      "entryId": "105",
+      "title": "藤都子",
+      "group": "narrative-output",
+      "domains": [
+        "character"
+      ],
+      "sourceEnabled": true,
+      "dependsOn": [],
+      "mutuallyExclusiveWith": [],
+      "mixedResponsibilities": [],
+      "activation": "source-default",
+      "featureToggleEligible": false
     }
   ]
 }

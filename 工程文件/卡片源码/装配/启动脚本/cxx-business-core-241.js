@@ -1126,6 +1126,8 @@ cxxOwner=parent.Cxx233Runtime;
 /* Trusted opening templates have a stable host, independent of native message mounts. */
 /* Trusted opening templates have a stable host, independent of native message mounts. */
 /* One opening surface and draft, shared by native chat and Gal. */
+(function(root,factory){root.CxxOpeningDraftStorage=factory();})(globalThis,function(){throw Error("Unassembled module: CxxOpeningDraftStorage");});
+parent.Cxx233Runtime.register("CxxOpeningDraftStorage",CxxOpeningDraftStorage);
 /* One chat owns one draft and one final submission. Views never write game state. */
 (function(root,factory){root.CxxOpeningFlow=factory();})(globalThis,function(){throw Error("Unassembled module: CxxOpeningFlow");});
 

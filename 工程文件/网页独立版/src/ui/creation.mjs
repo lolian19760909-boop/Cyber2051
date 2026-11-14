@@ -11,7 +11,7 @@ async function text(file){const response=await fetch(url(file));if(!response.ok)
 let resourcesReady;
 export function prepareCreation(){return resourcesReady??=(async()=>{
   const data=Promise.all([json('开场/groups.json'),json('开场/catalog.json'),json('运行时/menu-assets.json'),text('运行时/opening-ui.css'),text('运行时/creator-ui.css'),text('运行时/loadout-setup.css'),text('运行时/talent-ui.css')]);
-  const files=['crypto-compat','gameplay','player-assets','player-art','identity','appearance','story-profile','opening-templates','item-art','creator-ui','loadout-setup','talents','talent-ui','visual-projects','opening-flow','opening-ui'].map(file=>file==='opening-flow'?'@opening-ui/opening-flow.js':'运行时/'+file+'.js').concat('MVU/openings.js');
+  const files=['共享/opening-draft-storage.js',...['crypto-compat','gameplay','player-assets','player-art','identity','appearance','story-profile','opening-templates','item-art','creator-ui','loadout-setup','talents','talent-ui','visual-projects','opening-flow','opening-ui'].map(file=>file==='opening-flow'?'@opening-ui/opening-flow.js':'运行时/'+file+'.js'),'MVU/openings.js'];
   const [,result]=await Promise.all([sourceScripts(files,{adapted:new Set(['creator-ui','talent-ui','opening-ui'].map(file=>'运行时/'+file+'.js'))}),data]);
   return result;
 })();}
@@ -27,7 +27,9 @@ export async function mountCreation({parent,session,statePort,contentVersion,gam
   let view,previewNode,disposed=false,createdNode=null,frame=null,previewId=null,previewEpoch=0,bandId=null,personId=null,pendingCommand=null,authoredText='',stopAssets=null,stopSounds=null,stopSetup=null;
   const workshopView=await createWorkshopView({session,onChanged:()=>flow.refresh()});
   const identity=globalThis.CxxIdentity,Flow=globalThis.CxxOpeningFlow;
-  const flow=Flow.create({key:session.identity.runId,scope:{instanceId:session.identity.mode+':'+session.identity.accountId,slot:session.identity.runId},identity,loadout:globalThis.CxxLoadout,storage:localStorage,
+  const draftStorage=await globalThis.CxxOpeningDraftStorage.open(window);
+  if(!isCurrent()){await draftStorage.close();workshopView.destroy();return {destroy(){}};}
+  const flow=Flow.create({key:session.identity.runId,scope:{instanceId:session.identity.mode+':'+session.identity.accountId,slot:session.identity.runId},identity,loadout:globalThis.CxxLoadout,storage:draftStorage,
     readIdentity:()=>null,readPreferences:()=>({device:'auto',level:'medium',gal:true,mirror:false}),readProfile:()=>originalProfile.seed(window),readStarts:()=>session.content.startChoices(),readOpening:id=>groups.beginnings.find(row=>row.id===id)?.text||'',prepare:async()=>{},
     async submit(selection){
       const head=await statePort.readHead(session.identity.runId),operationId='creation:'+selection.creationId,nodeId='opening_'+selection.creationId;
@@ -89,6 +91,6 @@ export async function mountCreation({parent,session,statePort,contentVersion,gam
 
   parent.replaceChildren(view.root);
 
-  function destroy(){if(disposed)return;disposed=true;stopSetup?.();workshopView.destroy();clearPreview();view?.destroy();flow.destroy();globalThis.CxxStoryProfile=originalProfile;globalThis.Cxx236OpeningHost=priorOpeningHost;}
+  function destroy(){if(disposed)return;disposed=true;stopSetup?.();workshopView.destroy();clearPreview();view?.destroy();flow.destroy();void draftStorage.close().catch(onError);globalThis.CxxStoryProfile=originalProfile;globalThis.Cxx236OpeningHost=priorOpeningHost;}
   return {flow,destroy};
 }

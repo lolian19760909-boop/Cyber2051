@@ -1387,7 +1387,7 @@
           "武器：非战斗人员，随身仅携带一支伪装成录音笔的高压电击防狼器与高分贝声波致眩发生器。"
         ],
         "sourceFile": "世界书/088-馬橋心玖.txt",
-        "sourceSHA256": "3166a96b3ce16097a24c90dda0a26305787b976564c0d3805b79eefe0dd09eb8",
+        "sourceSHA256": "a7bb8f1515c9154cdd3b80523f4ede57d30fb56a3f46744b05607a9e570e8163",
         "calibration": "作者授权按人设与装备建立的游戏参数；不作为原世界书明确数字或角色主次档位",
         "walletKnown": false
       }
@@ -1529,7 +1529,7 @@
           "武器：随身背在吉他包侧袋里的铝合金配重改装棒球棒「全垒打王」、大口径街头防暴霰弹手枪。"
         ],
         "sourceFile": "世界书/089-須賀蕾葉.txt",
-        "sourceSHA256": "7769e22d1aa4d4a3fe4956abc4d1e29bcf126bbff90cb734534da6af1c40830d",
+        "sourceSHA256": "7e0a529522841960d12ca4495310cfa791a574e52db2e084053887a1d26e1431",
         "calibration": "作者授权按人设与装备建立的游戏参数；不作为原世界书明确数字或角色主次档位",
         "walletKnown": false
       }
@@ -2282,7 +2282,7 @@
           "武器：正面冲突时连防狼喷雾都会拿反，但随身携带经过改装的强光频闪致盲手电与能瘫痪民用监控探头的便携式激光炫目笔。"
         ],
         "sourceFile": "世界书/112-矢仓蓬咲.txt",
-        "sourceSHA256": "3240947ccfda29471f160245bdd92de9f4094f19d11679f93ea10bf8249a14f4",
+        "sourceSHA256": "1ea75724074295588d45219129b5e12d46ee79d87bc815bdd225d40a36ae8900",
         "calibration": "作者授权按人设与装备建立的游戏参数；不作为原世界书明确数字或角色主次档位",
         "walletKnown": false
       }
@@ -2367,7 +2367,7 @@
           "武器：内置高压电容模块的钨芯改装电击鼓棒「雷鸣双槌」、街头演出掩护用的强声波频闪震爆罐。"
         ],
         "sourceFile": "世界书/113-梅里千樱梨.txt",
-        "sourceSHA256": "73e60a04ff49e8110d15d415e664a24f29ce786a7072723227ae879e514fd4b0",
+        "sourceSHA256": "00c8fe64c9f6cfc4b430c2bb0e7c2b678695e2039ec3df7f33b10fb88bd2a138",
         "calibration": "作者授权按人设与装备建立的游戏参数；不作为原世界书明确数字或角色主次档位",
         "walletKnown": false
       }
@@ -2443,7 +2443,7 @@
           "武器：无杀伤性武器，随身携带一枚四宫本家配备的纳米级防身催泪香囊与高频求救信标。"
         ],
         "sourceFile": "世界书/114-四宫宁月.txt",
-        "sourceSHA256": "7048df6e41bc5248c5253f73d2a177b0ae070e5c45a8210310213a8b01d88f3b",
+        "sourceSHA256": "4456fdcabe7a1fa0e212f262a5d83a126bcf07bb45e494efbf5aa0a3514d4716",
         "calibration": "作者授权按人设与装备建立的游戏参数；不作为原世界书明确数字或角色主次档位",
         "walletKnown": false
       }
@@ -2541,7 +2541,7 @@
           "武器：身为坐镇幕后的2077式中间人，她从不亲自拔枪上阵；她的武器是遍布辖区的监控眼线、装满黑料与悬赏金的加密芯片、随时停在暗巷接应的后备箱专车，以及一通电话就能叫来清场的职业雇佣兵。"
         ],
         "sourceFile": "世界书/115-薇欧拉.txt",
-        "sourceSHA256": "1a95b1263a84fdf0ead027ed1b816d493ba974d8c570f5c6de42a75008d9f973",
+        "sourceSHA256": "b23cc04b75404a712a292ae03f9d22f0bc962015f93020a4353d152c90b15fe8",
         "calibration": "作者授权按人设与装备建立的游戏参数；不作为原世界书明确数字或角色主次档位",
         "walletKnown": false
       }
@@ -7047,6 +7047,585 @@
         ],
         "sourceFile": "世界书/217-Vesper.txt",
         "sourceSHA256": "4aa2f7cdbd5aef826011522d626e9999ec8f2e486602c7c35e0df16cfec5f69a",
+        "calibration": "作者授权按人设与装备建立的游戏参数；不作为原世界书明确数字或角色主次档位",
+        "walletKnown": false
+      }
+    },
+    {
+      "actorId": "wb_90",
+      "name": "千石由乃",
+      "worldbookUid": 90,
+      "sourceRef": {
+        "kind": "lore-calibration",
+        "version": "2051-npc-1",
+        "worldbookUid": 90
+      },
+      "growthInitial": {
+        "level": 5,
+        "xp": 4250,
+        "attributes": {
+          "body": 3,
+          "reflexes": 4,
+          "intelligence": 9,
+          "technical": 8,
+          "cool": 6
+        },
+        "attributePoints": 0,
+        "perkPoints": 4,
+        "perks": {
+          "Intelligence_Left_Milestone_1": 1,
+          "Intelligence_Left_Perk_1_1": 1,
+          "Intelligence_Left_Perk_1_2": 1,
+          "Intelligence_Central_Milestone_1": 1
+        }
+      },
+      "walletInitial": {
+        "yen": 0,
+        "earned": 0,
+        "spent": 0
+      },
+      "loadoutSetup": {
+        "schema": 1,
+        "items": [
+          {
+            "custom": true,
+            "id": "npc_90_face",
+            "name": "千石由乃·档案视觉装配",
+            "category": "cyberware",
+            "part": "face",
+            "tier": 2,
+            "numericEffects": [
+              {
+                "kind": "ability",
+                "text": "录音室级多轨声纹剥离与相位重构神经协处理器（能从极其嘈杂的酒店环境录像或街头监控录音中精准剥离出特定人物的呼吸、脚步与电子设备电流声）、自动社交应答AI代理插件、熬夜抗疲劳视觉滤光镜片。"
+              }
+            ],
+            "description": "义体：录音室级多轨声纹剥离与相位重构神经协处理器（能从极其嘈杂的酒店环境录像或街头监控录音中精准剥离出特定人物的呼吸、脚步与电子设备电流声）、自动社交应答AI代理插件、熬夜抗疲劳视觉滤光镜片。",
+            "status": "installed"
+          },
+          {
+            "custom": true,
+            "id": "npc_90_nervous",
+            "name": "千石由乃·档案神经装配",
+            "category": "cyberware",
+            "part": "nervous",
+            "tier": 2,
+            "numericEffects": [
+              {
+                "kind": "ability",
+                "text": "录音室级多轨声纹剥离与相位重构神经协处理器（能从极其嘈杂的酒店环境录像或街头监控录音中精准剥离出特定人物的呼吸、脚步与电子设备电流声）、自动社交应答AI代理插件、熬夜抗疲劳视觉滤光镜片。"
+              }
+            ],
+            "description": "义体：录音室级多轨声纹剥离与相位重构神经协处理器（能从极其嘈杂的酒店环境录像或街头监控录音中精准剥离出特定人物的呼吸、脚步与电子设备电流声）、自动社交应答AI代理插件、熬夜抗疲劳视觉滤光镜片。",
+            "status": "installed"
+          },
+          {
+            "custom": true,
+            "id": "npc_90_lore_kit",
+            "name": "千石由乃·档案随身装备",
+            "category": "text",
+            "description": "义体：录音室级多轨声纹剥离与相位重构神经协处理器（能从极其嘈杂的酒店环境录像或街头监控录音中精准剥离出特定人物的呼吸、脚步与电子设备电流声）、自动社交应答AI代理插件、熬夜抗疲劳视觉滤光镜片。 武器：体力极弱（连饮料瓶盖都拧不开），无近战能力；但随身携带的改装采样器可释放破坏电子义眼与录音探头的强电磁脉冲（EMP）与次声波眩晕脉冲。",
+            "numericEffects": [],
+            "status": "inventory",
+            "quantity": 1
+          }
+        ]
+      },
+      "controllable": false,
+      "roster": {
+        "schema": 1,
+        "displayId": "Yuno",
+        "aliases": [
+          "由乃",
+          "Yuno",
+          "千石ユノ",
+          "ユノ"
+        ],
+        "form": "human",
+        "san": 78,
+        "rookie": true,
+        "priority": [
+          "intelligence",
+          "technical",
+          "cool",
+          "reflexes",
+          "body"
+        ],
+        "basis": "职业编曲与声像证据分析及弱体力",
+        "loreEquipment": [
+          "义体：录音室级多轨声纹剥离与相位重构神经协处理器（能从极其嘈杂的酒店环境录像或街头监控录音中精准剥离出特定人物的呼吸、脚步与电子设备电流声）、自动社交应答AI代理插件、熬夜抗疲劳视觉滤光镜片。",
+          "武器：体力极弱（连饮料瓶盖都拧不开），无近战能力；但随身携带的改装采样器可释放破坏电子义眼与录音探头的强电磁脉冲（EMP）与次声波眩晕脉冲。"
+        ],
+        "sourceFile": "世界书/090-千石ユノ.txt",
+        "sourceSHA256": "ef7be7b5dd648a118f584d3efc7cae382958422fd6198ddaf5aa69a98578ce5b",
+        "calibration": "作者授权按人设与装备建立的游戏参数；不作为原世界书明确数字或角色主次档位",
+        "walletKnown": false
+      }
+    },
+    {
+      "actorId": "wb_102",
+      "name": "仲町阿拉蕾",
+      "worldbookUid": 102,
+      "sourceRef": {
+        "kind": "lore-calibration",
+        "version": "2051-npc-1",
+        "worldbookUid": 102
+      },
+      "growthInitial": {
+        "level": 3,
+        "xp": 2040,
+        "attributes": {
+          "body": 5,
+          "reflexes": 5,
+          "intelligence": 4,
+          "technical": 4,
+          "cool": 6
+        },
+        "attributePoints": 0,
+        "perkPoints": 2,
+        "perks": {
+          "Cool_Left_Milestone_1": 1,
+          "Cool_Central_Milestone_1": 1
+        }
+      },
+      "walletInitial": {
+        "yen": 0,
+        "earned": 0,
+        "spent": 0
+      },
+      "loadoutSetup": {
+        "schema": 1,
+        "items": [
+          {
+            "custom": true,
+            "id": "npc_102_legs",
+            "name": "仲町阿拉蕾·档案腿部装配",
+            "category": "cyberware",
+            "part": "legs",
+            "tier": 2,
+            "numericEffects": [
+              {
+                "kind": "ability",
+                "text": "声带共振微调与防疲劳修护贴片、轻量化全息动捕神经传感环（无需穿戴笨重动捕服即可在自家衣柜录音舱内实时驱动耳廓狐耳虚拟形象）、防恶意骚扰呼叫防火墙插件。 双腿有肤色仿生覆盖，小腿保留分段接缝，踝部露出黄黑色机械连接件。"
+              }
+            ],
+            "description": "义体：声带共振微调与防疲劳修护贴片、轻量化全息动捕神经传感环（无需穿戴笨重动捕服即可在自家衣柜录音舱内实时驱动耳廓狐耳虚拟形象）、防恶意骚扰呼叫防火墙插件。 双腿有肤色仿生覆盖，小腿保留分段接缝，踝部露出黄黑色机械连接件。",
+            "status": "installed"
+          },
+          {
+            "custom": true,
+            "id": "npc_102_nervous",
+            "name": "仲町阿拉蕾·档案神经装配",
+            "category": "cyberware",
+            "part": "nervous",
+            "tier": 2,
+            "numericEffects": [
+              {
+                "kind": "ability",
+                "text": "声带共振微调与防疲劳修护贴片、轻量化全息动捕神经传感环（无需穿戴笨重动捕服即可在自家衣柜录音舱内实时驱动耳廓狐耳虚拟形象）、防恶意骚扰呼叫防火墙插件。 双腿有肤色仿生覆盖，小腿保留分段接缝，踝部露出黄黑色机械连接件。"
+              }
+            ],
+            "description": "义体：声带共振微调与防疲劳修护贴片、轻量化全息动捕神经传感环（无需穿戴笨重动捕服即可在自家衣柜录音舱内实时驱动耳廓狐耳虚拟形象）、防恶意骚扰呼叫防火墙插件。 双腿有肤色仿生覆盖，小腿保留分段接缝，踝部露出黄黑色机械连接件。",
+            "status": "installed"
+          },
+          {
+            "template": "blunt",
+            "tier": 2,
+            "name": "魔法杖造型强光防身电击棒",
+            "status": "equipped",
+            "description": "武器：非战斗人员，随身仅携带一把改装成《魔法露露》魔法杖造型的强光防身电击棒与超分贝防狼报警器。"
+          },
+          {
+            "custom": true,
+            "id": "npc_102_lore_kit",
+            "name": "仲町阿拉蕾·档案随身装备",
+            "category": "text",
+            "description": "义体：声带共振微调与防疲劳修护贴片、轻量化全息动捕神经传感环（无需穿戴笨重动捕服即可在自家衣柜录音舱内实时驱动耳廓狐耳虚拟形象）、防恶意骚扰呼叫防火墙插件。 双腿有肤色仿生覆盖，小腿保留分段接缝，踝部露出黄黑色机械连接件。 武器：非战斗人员，随身仅携带一把改装成《魔法露露》魔法杖造型的强光防身电击棒与超分贝防狼报警器。",
+            "numericEffects": [],
+            "status": "inventory",
+            "quantity": 1
+          }
+        ]
+      },
+      "controllable": false,
+      "roster": {
+        "schema": 1,
+        "displayId": "Arale",
+        "aliases": [
+          "阿拉蕾",
+          "Arale",
+          "仲町あられ",
+          "艾蕾亚"
+        ],
+        "form": "human",
+        "san": 82,
+        "rookie": true,
+        "priority": [
+          "cool",
+          "body",
+          "reflexes",
+          "intelligence",
+          "technical"
+        ],
+        "basis": "声乐训练与轻型声波防身",
+        "loreEquipment": [
+          "义体：声带共振微调与防疲劳修护贴片、轻量化全息动捕神经传感环（无需穿戴笨重动捕服即可在自家衣柜录音舱内实时驱动耳廓狐耳虚拟形象）、防恶意骚扰呼叫防火墙插件。 双腿有肤色仿生覆盖，小腿保留分段接缝，踝部露出黄黑色机械连接件。",
+          "武器：非战斗人员，随身仅携带一把改装成《魔法露露》魔法杖造型的强光防身电击棒与超分贝防狼报警器。"
+        ],
+        "sourceFile": "世界书/102-仲町阿拉蕾.txt",
+        "sourceSHA256": "23defa501a65a1d42925ea5ea723d3d4d5cfd23752bc08da8f1e248f776d5b4b",
+        "calibration": "作者授权按人设与装备建立的游戏参数；不作为原世界书明确数字或角色主次档位",
+        "walletKnown": false
+      }
+    },
+    {
+      "actorId": "wb_103",
+      "name": "宫永野乃花",
+      "worldbookUid": 103,
+      "sourceRef": {
+        "kind": "lore-calibration",
+        "version": "2051-npc-1",
+        "worldbookUid": 103
+      },
+      "growthInitial": {
+        "level": 3,
+        "xp": 2040,
+        "attributes": {
+          "body": 4,
+          "reflexes": 4,
+          "intelligence": 5,
+          "technical": 3,
+          "cool": 7
+        },
+        "attributePoints": 0,
+        "perkPoints": 2,
+        "perks": {
+          "Cool_Left_Milestone_1": 1,
+          "Cool_Central_Milestone_1": 1
+        }
+      },
+      "walletInitial": {
+        "yen": 0,
+        "earned": 0,
+        "spent": 0
+      },
+      "loadoutSetup": {
+        "schema": 1,
+        "items": [
+          {
+            "custom": true,
+            "id": "npc_103_face",
+            "name": "宫永野乃花·档案视觉装配",
+            "category": "cyberware",
+            "part": "face",
+            "tier": 2,
+            "numericEffects": [
+              {
+                "kind": "ability",
+                "text": "全息直播伴侣级光学美颜与情绪共振光环投射件、心率与微表情亲和力感知插件（能一眼看出谁在强颜欢笑或心里憋着事）、声学温暖度增益模块。 双腿为肤色仿生覆盖的机械义肢，膝部关节轮廓可见。"
+              }
+            ],
+            "description": "义体：全息直播伴侣级光学美颜与情绪共振光环投射件、心率与微表情亲和力感知插件（能一眼看出谁在强颜欢笑或心里憋着事）、声学温暖度增益模块。 双腿为肤色仿生覆盖的机械义肢，膝部关节轮廓可见。",
+            "status": "installed"
+          },
+          {
+            "custom": true,
+            "id": "npc_103_legs",
+            "name": "宫永野乃花·档案腿部装配",
+            "category": "cyberware",
+            "part": "legs",
+            "tier": 2,
+            "numericEffects": [
+              {
+                "kind": "ability",
+                "text": "全息直播伴侣级光学美颜与情绪共振光环投射件、心率与微表情亲和力感知插件（能一眼看出谁在强颜欢笑或心里憋着事）、声学温暖度增益模块。 双腿为肤色仿生覆盖的机械义肢，膝部关节轮廓可见。"
+              }
+            ],
+            "description": "义体：全息直播伴侣级光学美颜与情绪共振光环投射件、心率与微表情亲和力感知插件（能一眼看出谁在强颜欢笑或心里憋着事）、声学温暖度增益模块。 双腿为肤色仿生覆盖的机械义肢，膝部关节轮廓可见。",
+            "status": "installed"
+          },
+          {
+            "custom": true,
+            "id": "npc_103_lore_kit",
+            "name": "宫永野乃花·档案随身装备",
+            "category": "text",
+            "description": "义体：全息直播伴侣级光学美颜与情绪共振光环投射件、心率与微表情亲和力感知插件（能一眼看出谁在强颜欢笑或心里憋着事）、声学温暖度增益模块。 双腿为肤色仿生覆盖的机械义肢，膝部关节轮廓可见。 武器：毫无攻击性的和平主义者，随身包包里只有能把人牙甜倒的高糖分定制太妃糖、全息礼花发射器，以及一保温桶杀伤力堪比生化武器的自制「爱心黑暗炖菜」。",
+            "numericEffects": [],
+            "status": "inventory",
+            "quantity": 1
+          }
+        ]
+      },
+      "controllable": false,
+      "roster": {
+        "schema": 1,
+        "displayId": "Nonoka",
+        "aliases": [
+          "野乃花",
+          "Nonoka",
+          "宮永野乃花",
+          "宮永ののか"
+        ],
+        "form": "human",
+        "san": 85,
+        "rookie": true,
+        "priority": [
+          "cool",
+          "intelligence",
+          "body",
+          "reflexes",
+          "technical"
+        ],
+        "basis": "普通吉他与情绪亲和力辅助",
+        "loreEquipment": [
+          "义体：全息直播伴侣级光学美颜与情绪共振光环投射件、心率与微表情亲和力感知插件（能一眼看出谁在强颜欢笑或心里憋着事）、声学温暖度增益模块。 双腿为肤色仿生覆盖的机械义肢，膝部关节轮廓可见。",
+          "武器：毫无攻击性的和平主义者，随身包包里只有能把人牙甜倒的高糖分定制太妃糖、全息礼花发射器，以及一保温桶杀伤力堪比生化武器的自制「爱心黑暗炖菜」。"
+        ],
+        "sourceFile": "世界书/103-宫永野乃花.txt",
+        "sourceSHA256": "fb06b1d2ece5aac17521834162ddf093afd4e33a4a27c159764f09de3c3c2508",
+        "calibration": "作者授权按人设与装备建立的游戏参数；不作为原世界书明确数字或角色主次档位",
+        "walletKnown": false
+      }
+    },
+    {
+      "actorId": "wb_104",
+      "name": "峰月律",
+      "worldbookUid": 104,
+      "sourceRef": {
+        "kind": "lore-calibration",
+        "version": "2051-npc-1",
+        "worldbookUid": 104
+      },
+      "growthInitial": {
+        "level": 5,
+        "xp": 4250,
+        "attributes": {
+          "body": 8,
+          "reflexes": 8,
+          "intelligence": 5,
+          "technical": 5,
+          "cool": 6
+        },
+        "attributePoints": 0,
+        "perkPoints": 4,
+        "perks": {
+          "Body_Central_Milestone_1": 1,
+          "Body_Central_Perk_1_1": 1,
+          "Body_Central_Perk_1_2": 1,
+          "Body_Central_Perk_1_3": 1
+        }
+      },
+      "walletInitial": {
+        "yen": 0,
+        "earned": 0,
+        "spent": 0
+      },
+      "loadoutSetup": {
+        "schema": 1,
+        "items": [
+          {
+            "custom": true,
+            "id": "npc_104_legs",
+            "name": "峰月律·档案腿部装配",
+            "category": "cyberware",
+            "part": "legs",
+            "tier": 2,
+            "numericEffects": [
+              {
+                "kind": "ability",
+                "text": "高密度肌肉储能与消化代谢强化系统（解释了她纤细体型下能一顿吃下十斤牛肉并转化为高强度演奏体能的秘密）、手部神经反射增幅芯片（支撑其职业级零失误的吉他指法）、针对网络水军与社工追踪的反制匿名插件（由乃协助配置）。 双腿有肤色仿生覆盖，大腿至膝部保留分段接缝与关节线。"
+              }
+            ],
+            "description": "义体：高密度肌肉储能与消化代谢强化系统（解释了她纤细体型下能一顿吃下十斤牛肉并转化为高强度演奏体能的秘密）、手部神经反射增幅芯片（支撑其职业级零失误的吉他指法）、针对网络水军与社工追踪的反制匿名插件（由乃协助配置）。 双腿有肤色仿生覆盖，大腿至膝部保留分段接缝与关节线。",
+            "status": "installed"
+          },
+          {
+            "custom": true,
+            "id": "npc_104_nervous",
+            "name": "峰月律·档案神经装配",
+            "category": "cyberware",
+            "part": "nervous",
+            "tier": 2,
+            "numericEffects": [
+              {
+                "kind": "ability",
+                "text": "高密度肌肉储能与消化代谢强化系统（解释了她纤细体型下能一顿吃下十斤牛肉并转化为高强度演奏体能的秘密）、手部神经反射增幅芯片（支撑其职业级零失误的吉他指法）、针对网络水军与社工追踪的反制匿名插件（由乃协助配置）。 双腿有肤色仿生覆盖，大腿至膝部保留分段接缝与关节线。"
+              }
+            ],
+            "description": "义体：高密度肌肉储能与消化代谢强化系统（解释了她纤细体型下能一顿吃下十斤牛肉并转化为高强度演奏体能的秘密）、手部神经反射增幅芯片（支撑其职业级零失误的吉他指法）、针对网络水军与社工追踪的反制匿名插件（由乃协助配置）。 双腿有肤色仿生覆盖，大腿至膝部保留分段接缝与关节线。",
+            "status": "installed"
+          },
+          {
+            "template": "blunt",
+            "tier": 2,
+            "name": "碳纤维折叠甩棍",
+            "status": "equipped",
+            "description": "武器：平时不主动携枪，但吉他硬壳箱内备有高强度碳纤维折叠甩棍，且自身握力与手腕爆发力远超常人。"
+          },
+          {
+            "custom": true,
+            "id": "npc_104_lore_kit",
+            "name": "峰月律·档案随身装备",
+            "category": "text",
+            "description": "义体：高密度肌肉储能与消化代谢强化系统（解释了她纤细体型下能一顿吃下十斤牛肉并转化为高强度演奏体能的秘密）、手部神经反射增幅芯片（支撑其职业级零失误的吉他指法）、针对网络水军与社工追踪的反制匿名插件（由乃协助配置）。 双腿有肤色仿生覆盖，大腿至膝部保留分段接缝与关节线。 武器：平时不主动携枪，但吉他硬壳箱内备有高强度碳纤维折叠甩棍，且自身握力与手腕爆发力远超常人。",
+            "numericEffects": [],
+            "status": "inventory",
+            "quantity": 1
+          }
+        ]
+      },
+      "controllable": false,
+      "roster": {
+        "schema": 1,
+        "displayId": "Ritsu",
+        "aliases": [
+          "律",
+          "Ritsu",
+          "克蕾玛琪丝",
+          "Clematis"
+        ],
+        "form": "human",
+        "san": 78,
+        "rookie": true,
+        "priority": [
+          "body",
+          "reflexes",
+          "cool",
+          "intelligence",
+          "technical"
+        ],
+        "basis": "职业吉他指法与肌肉代谢强化",
+        "loreEquipment": [
+          "义体：高密度肌肉储能与消化代谢强化系统（解释了她纤细体型下能一顿吃下十斤牛肉并转化为高强度演奏体能的秘密）、手部神经反射增幅芯片（支撑其职业级零失误的吉他指法）、针对网络水军与社工追踪的反制匿名插件（由乃协助配置）。 双腿有肤色仿生覆盖，大腿至膝部保留分段接缝与关节线。",
+          "武器：平时不主动携枪，但吉他硬壳箱内备有高强度碳纤维折叠甩棍，且自身握力与手腕爆发力远超常人。"
+        ],
+        "sourceFile": "世界书/104-峰月律.txt",
+        "sourceSHA256": "ae767510c3031621e659f45b932451b3968323c43a67f2bbe1b2005d1f8755bd",
+        "calibration": "作者授权按人设与装备建立的游戏参数；不作为原世界书明确数字或角色主次档位",
+        "walletKnown": false
+      }
+    },
+    {
+      "actorId": "wb_105",
+      "name": "藤都子",
+      "worldbookUid": 105,
+      "sourceRef": {
+        "kind": "lore-calibration",
+        "version": "2051-npc-1",
+        "worldbookUid": 105
+      },
+      "growthInitial": {
+        "level": 4,
+        "xp": 3123,
+        "attributes": {
+          "body": 3,
+          "reflexes": 5,
+          "intelligence": 8,
+          "technical": 8,
+          "cool": 4
+        },
+        "attributePoints": 0,
+        "perkPoints": 3,
+        "perks": {
+          "Intelligence_Left_Milestone_1": 1,
+          "Intelligence_Left_Perk_1_1": 1,
+          "Intelligence_Left_Perk_1_2": 1
+        }
+      },
+      "walletInitial": {
+        "yen": 0,
+        "earned": 0,
+        "spent": 0
+      },
+      "loadoutSetup": {
+        "schema": 1,
+        "items": [
+          {
+            "custom": true,
+            "id": "npc_105_face",
+            "name": "藤都子·档案视觉装配",
+            "category": "cyberware",
+            "part": "face",
+            "tier": 2,
+            "numericEffects": [
+              {
+                "kind": "ability",
+                "text": "职业画师级高色准视网膜色彩校准与全息3D笔刷直连神经插件（能在空气或视网膜图层中以极高速度完成原画与Live2D/3D虚拟皮套建模）、腕部防腱鞘炎微电流舒缓模组。 右小腿为外露机械义肢，细长杆件与踝部关节可见。"
+              }
+            ],
+            "description": "义体：职业画师级高色准视网膜色彩校准与全息3D笔刷直连神经插件（能在空气或视网膜图层中以极高速度完成原画与Live2D/3D虚拟皮套建模）、腕部防腱鞘炎微电流舒缓模组。 右小腿为外露机械义肢，细长杆件与踝部关节可见。",
+            "status": "installed"
+          },
+          {
+            "custom": true,
+            "id": "npc_105_legs",
+            "name": "藤都子·档案腿部装配",
+            "category": "cyberware",
+            "part": "legs",
+            "tier": 2,
+            "numericEffects": [
+              {
+                "kind": "ability",
+                "text": "职业画师级高色准视网膜色彩校准与全息3D笔刷直连神经插件（能在空气或视网膜图层中以极高速度完成原画与Live2D/3D虚拟皮套建模）、腕部防腱鞘炎微电流舒缓模组。 右小腿为外露机械义肢，细长杆件与踝部关节可见。"
+              }
+            ],
+            "description": "义体：职业画师级高色准视网膜色彩校准与全息3D笔刷直连神经插件（能在空气或视网膜图层中以极高速度完成原画与Live2D/3D虚拟皮套建模）、腕部防腱鞘炎微电流舒缓模组。 右小腿为外露机械义肢，细长杆件与踝部关节可见。",
+            "status": "installed"
+          },
+          {
+            "custom": true,
+            "id": "npc_105_nervous",
+            "name": "藤都子·档案神经装配",
+            "category": "cyberware",
+            "part": "nervous",
+            "tier": 2,
+            "numericEffects": [
+              {
+                "kind": "ability",
+                "text": "职业画师级高色准视网膜色彩校准与全息3D笔刷直连神经插件（能在空气或视网膜图层中以极高速度完成原画与Live2D/3D虚拟皮套建模）、腕部防腱鞘炎微电流舒缓模组。 右小腿为外露机械义肢，细长杆件与踝部关节可见。"
+              }
+            ],
+            "description": "义体：职业画师级高色准视网膜色彩校准与全息3D笔刷直连神经插件（能在空气或视网膜图层中以极高速度完成原画与Live2D/3D虚拟皮套建模）、腕部防腱鞘炎微电流舒缓模组。 右小腿为外露机械义肢，细长杆件与踝部关节可见。",
+            "status": "installed"
+          },
+          {
+            "custom": true,
+            "id": "npc_105_lore_kit",
+            "name": "藤都子·档案随身装备",
+            "category": "text",
+            "description": "义体：职业画师级高色准视网膜色彩校准与全息3D笔刷直连神经插件（能在空气或视网膜图层中以极高速度完成原画与Live2D/3D虚拟皮套建模）、腕部防腱鞘炎微电流舒缓模组。 右小腿为外露机械义肢，细长杆件与踝部关节可见。 武器：无杀伤性武器，但手上的智能戏偶「丸君」内部被她塞进了高功率变声扩音器、微型全息投影灯与防身强光闪光弹模块。",
+            "numericEffects": [],
+            "status": "inventory",
+            "quantity": 1
+          }
+        ]
+      },
+      "controllable": false,
+      "roster": {
+        "schema": 1,
+        "displayId": "Miyako",
+        "aliases": [
+          "都子",
+          "Miyako",
+          "富士见夜子"
+        ],
+        "form": "human",
+        "san": 80,
+        "rookie": true,
+        "priority": [
+          "intelligence",
+          "technical",
+          "reflexes",
+          "cool",
+          "body"
+        ],
+        "basis": "职业数字绘画与全息视觉制作",
+        "loreEquipment": [
+          "义体：职业画师级高色准视网膜色彩校准与全息3D笔刷直连神经插件（能在空气或视网膜图层中以极高速度完成原画与Live2D/3D虚拟皮套建模）、腕部防腱鞘炎微电流舒缓模组。 右小腿为外露机械义肢，细长杆件与踝部关节可见。",
+          "武器：无杀伤性武器，但手上的智能戏偶「丸君」内部被她塞进了高功率变声扩音器、微型全息投影灯与防身强光闪光弹模块。"
+        ],
+        "sourceFile": "世界书/105-藤都子.txt",
+        "sourceSHA256": "aa333723473afd5e0eede331996eab875684329b0917fa46eb62f16c4b2eece4",
         "calibration": "作者授权按人设与装备建立的游戏参数；不作为原世界书明确数字或角色主次档位",
         "walletKnown": false
       }

@@ -1,0 +1,39 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {chromium} from 'playwright';
+import {createPackagedServer} from './local-runtime.mjs';
+
+const root=path.resolve(process.argv[2]||'.cache/mew-integration-20261114/package'),out=path.resolve(process.argv[3]||'.cache/mew-integration-20261114/web-final');
+const release=JSON.parse(fs.readFileSync(path.join(root,'current.json'))).release;
+const names=['仲町阿拉蕾','宫永野乃花','峰月律','藤都子','千石由乃'];
+const story='<cxx-story>'+names.map(name=>'<cxx-say speaker="'+name+'" expression="normal">'+name+'，五人立绘验收。</cxx-say>').join('')+'</cxx-story><ztl>'+JSON.stringify({date:'2051-11-14',time:'12:00',location:'RING-Live!',characters:names.map(name=>({name,outfit:'日常服装',thought:'在场。'}))})+'</ztl>';
+fs.mkdirSync(out,{recursive:true});
+const server=createPackagedServer({root});await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+const base='http://127.0.0.1:'+server.address().port,report={release,checks:[],errors:[],fixtureModelRequests:0};
+let browser,page,phase='boot';
+const shot=async name=>{await page.locator('.cxx-boot:visible').waitFor({state:'hidden',timeout:120000});await page.waitForTimeout(450);await page.evaluate(async()=>{await Promise.all(document.getAnimations().filter(a=>a.effect?.getTiming().iterations!==Infinity).map(a=>a.finished.catch(()=>{})));});await page.screenshot({path:path.join(out,name+'.png')});};
+try{
+ browser=await chromium.launch({headless:true,channel:'msedge'});const context=await browser.newContext({viewport:{width:1280,height:900}});page=await context.newPage();page.setDefaultTimeout(30000);page.on('pageerror',error=>report.errors.push(error.message));
+ await context.route('**/api/workshop/announcements',route=>route.fulfill({json:{ok:true,items:[]}}));
+ await context.route('**/api/play/connect',route=>{report.fixtureModelRequests++;return route.fulfill({json:{choices:[{message:{content:story},finish_reason:'stop'}]}});});
+ await page.goto(base+'/releases/'+release+'/index.html?mode=local&baseUrl=https%3A%2F%2Ffixture.invalid%2Fv1&model=synthetic');
+ await page.locator('.cxx-pack-choice button').first().waitFor({timeout:60000});await page.locator('.cxx-pack-choice button').first().click();await page.waitForFunction(()=>!!window.CxxOpeningPage&&!document.querySelector('.cxx-boot'),null,{timeout:180000});
+ const title=async()=>{const later=page.getByRole('button',{name:'稍后再说',exact:true});if(await later.isVisible())await later.click();await page.locator('.cx77-splash[data-phase=title]').waitFor({timeout:120000});await page.locator('.cx77-splash[data-phase=title]').click();await page.locator('.cx77-splash').waitFor({state:'detached'});if(await later.isVisible())await later.click();};await title();
+ phase='storage-pressure';report.quota=await page.evaluate(()=>{localStorage.setItem('mew-test-foreign','retained');const keys=[];let characters=0;try{for(let i=0;i<200;i++){const key='mew-test-pressure-'+i;localStorage.setItem(key,'q'.repeat(65536));keys.push(key);characters+=65536;}}catch{}localStorage.removeItem(keys.pop());return {characters:characters-65536,headroom:65536};});
+ await page.getByRole('button',{name:'新游戏',exact:true}).click();await page.locator('.cxx-game-setup').waitFor();await page.getByRole('button',{name:'下一步',exact:true}).click();await page.getByRole('button',{name:'创建角色',exact:true}).click();await page.locator('.cxx-opening-flow').waitFor();
+ const next=async step=>{await page.locator('.opening-next').click();if(step)await page.locator('.cxx-opening-flow[data-step="'+step+'"]').waitFor();};
+ await next('origin');await next('profile');await page.getByLabel('姓名',{exact:true}).fill('网页满额实测');
+ const upload=()=>page.getByLabel('上传人物立绘',{exact:true}).setInputFiles(path.resolve('图片/2051_character_tachi_2/Mew Type/Arale_tachi_normal.png'));
+ await upload();await page.waitForFunction(()=>!!CxxWebApp.read().creation.draft.profile.portraitUpload);
+ report.quota.portraitBytes=await page.evaluate(()=>CxxWebApp.read().creation.draft.profile.portraitUpload.src.length);assert(report.quota.portraitBytes>report.quota.headroom);
+ await page.getByRole('button',{name:'使用当前头像',exact:true}).click();await page.waitForFunction(()=>!CxxWebApp.read().creation.draft.profile.portraitUpload&&!CxxWebApp.read().creation.draft.profile.portrait);
+ report.checks.push('actual creator clears uploaded image bytes when choosing current avatar');await upload();await page.waitForFunction(()=>!!CxxWebApp.read().creation.draft.profile.portraitUpload);await next('growth');
+ report.persistedDraft=await page.evaluate(async()=>{const d=CxxWebApp.read().creation.draft,store=await CxxOpeningDraftStorage.open(window);try{const keys=Object.keys(localStorage).filter(k=>k.startsWith('cxx-opening-draft:'));return {name:d.profile.name,portrait:!!d.profile.portraitUpload,localStorageDraftKeys:keys};}finally{await store.close();}});assert.equal(report.persistedDraft.name,'网页满额实测');assert.equal(report.persistedDraft.localStorageDraftKeys.length,0);await shot('01-quota-draft-saved');
+ phase='creation';await next('loadout');await page.getByLabel('开局资金',{exact:true}).fill('0');await next('scenario');await page.getByRole('button',{name:/街头/}).last().click();await page.getByRole('button',{name:'查看剧情',exact:true}).click();await page.getByRole('button',{name:'确认开局',exact:true}).click();await page.locator('.cxx-opening-flow[data-step=review]').waitFor();await next();
+ await page.waitForFunction(()=>!!CxxWebApp.ui&&!CxxWebApp.read().busy&&CxxWebApp.session?.nodes?.some(n=>n.message?.raw?.includes('五人立绘验收')),null,{timeout:90000});
+ report.created=await page.evaluate(()=>({runId:CxxWebApp.session.identity.runId,name:CxxWebApp.session.profile.name,portrait:!!CxxWebApp.session.profile.portrait,foreign:localStorage.getItem('mew-test-foreign'),actors:[90,102,103,104,105].map(uid=>CxxWebApp.session.currentState.terminal.ensemble.actors['wb_'+uid]?.name)}));assert.equal(report.created.name,'网页满额实测');assert(report.created.portrait);assert.equal(report.created.foreign,'retained');assert(report.created.actors.every(n=>names.includes(n)));report.checks.push('full localStorage accepts uploaded portrait, final story and five actor records');
+ phase='portraits';report.portraits=[];for(let i=0;i<names.length;i++){const name=names[i];await page.waitForFunction(name=>[...document.querySelectorAll('.cxx-gal-sprite')].some(img=>img.alt===name+'立绘'&&img.naturalWidth>0),name);report.portraits.push({name,decoded:true});await shot('02-mew-'+i);if(i+1<names.length)await page.getByRole('button',{name:'下一句',exact:true}).click();}report.checks.push('all five restored portraits decode through packaged web entry');
+ phase='reload';await page.reload();await title();await page.getByRole('button',{name:/^继续游戏/}).click();await page.waitForFunction(id=>!!CxxWebApp.ui&&!CxxWebApp.read().busy&&CxxWebApp.session.identity.runId===id,report.created.runId,{timeout:90000});report.reload=await page.evaluate(()=>{const s=CxxWebApp.ui.snapshot(),p=CxxWebApp.session.profile;return {name:p.name,portrait:!!s.itemArt.assets[p.portrait.id]?.src,foreign:localStorage.getItem('mew-test-foreign')};});assert.deepEqual(report.reload,{name:'网页满额实测',portrait:true,foreign:'retained'});await page.setViewportSize({width:390,height:844});await shot('03-reloaded-mobile');report.checks.push('browser reload retains uploaded image and story; mobile layout rendered');assert.deepEqual(report.errors,[]);report.ok=true;
+}catch(error){report.ok=false;report.phase=phase;report.error=error.stack;process.exitCode=1;if(page){await shot('failure').catch(()=>{});report.surface=await page.locator('body').innerText().catch(()=>null);}}
+finally{fs.writeFileSync(path.join(out,'check.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report));await browser?.close();await new Promise(resolve=>server.close(resolve));}
