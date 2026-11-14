@@ -170,7 +170,7 @@ export function mountBulletinView({scope,container,articles,openId='',logoUrl,se
     const heading = element('h2', 'cxx-article-heading', selected.title);
     heading.tabIndex = -1;
     articleRoot.append(tools, heading, element('p', 'cxx-article-summary', selected.summary));
-    if (selected.cover) {
+    if (selected.cover && logoUrl) {
       const cover = element('div', 'cxx-cover');
       cover.setAttribute('role', 'img');
       cover.setAttribute('aria-label', 'Tokyo 2051，卡内标志');

@@ -1,0 +1,138 @@
+{
+  "schema": 1,
+  "assets": [
+    {
+      "reference": "../assets/terminal-2x/BlenderPro-Book.woff2",
+      "source": "网页独立版/web/assets/terminal-2x/BlenderPro-Book.woff2",
+      "bytes": 31284,
+      "sha256": "f61522910e44e97845aecbd493038320d2cc131f1f6e4546211b56c513123530",
+      "url": "https://cyber2051.top/resources/bulletin/f61522910e44e97845aecbd493038320d2cc131f1f6e4546211b56c513123530/BlenderPro-Book.woff2"
+    },
+    {
+      "reference": "../assets/terminal-2x/BlenderPro-Bold.woff2",
+      "source": "网页独立版/web/assets/terminal-2x/BlenderPro-Bold.woff2",
+      "bytes": 31508,
+      "sha256": "0c997bce1383ba1dc79671c39a34b7e8fb23e316a445204fd646dfedfd87e660",
+      "url": "https://cyber2051.top/resources/bulletin/0c997bce1383ba1dc79671c39a34b7e8fb23e316a445204fd646dfedfd87e660/BlenderPro-Bold.woff2"
+    },
+    {
+      "reference": "../assets/terminal-2x/backdrop.png",
+      "source": "网页独立版/web/assets/terminal-2x/backdrop.png",
+      "bytes": 2413,
+      "sha256": "9b4da0955cdb8a7f0404535ad99d62c87e24679fa8b17972b7b887a4f9d63434",
+      "url": "https://cyber2051.top/resources/bulletin/9b4da0955cdb8a7f0404535ad99d62c87e24679fa8b17972b7b887a4f9d63434/backdrop.png"
+    },
+    {
+      "reference": "../assets/terminal-2x/edge-left.png",
+      "source": "网页独立版/web/assets/terminal-2x/edge-left.png",
+      "bytes": 32500,
+      "sha256": "f575aa1e7a9a9c00fb4fd515da555c5190401583520f28efdc2720bdde59b37f",
+      "url": "https://cyber2051.top/resources/bulletin/f575aa1e7a9a9c00fb4fd515da555c5190401583520f28efdc2720bdde59b37f/edge-left.png"
+    },
+    {
+      "reference": "../assets/terminal-2x/edge-right.png",
+      "source": "网页独立版/web/assets/terminal-2x/edge-right.png",
+      "bytes": 29997,
+      "sha256": "17bc2f845b8e19a934b7b3745351e4be48ac45b5642494cf1c3fc36d850eff89",
+      "url": "https://cyber2051.top/resources/bulletin/17bc2f845b8e19a934b7b3745351e4be48ac45b5642494cf1c3fc36d850eff89/edge-right.png"
+    },
+    {
+      "reference": "../assets/terminal-2x/archive-row.png",
+      "source": "网页独立版/web/assets/terminal-2x/archive-row.png",
+      "bytes": 30029,
+      "sha256": "4bc4947b97f3ad633c2f05ab6289fb84c512703ed85decbe41e6dbd6e68154ce",
+      "url": "https://cyber2051.top/resources/bulletin/4bc4947b97f3ad633c2f05ab6289fb84c512703ed85decbe41e6dbd6e68154ce/archive-row.png"
+    },
+    {
+      "reference": "../assets/terminal-2x/archive-current.png",
+      "source": "网页独立版/web/assets/terminal-2x/archive-current.png",
+      "bytes": 33917,
+      "sha256": "a1535fcab3598bbbb51ecd0b9e28dd6cbda46d7ced7ef3bc76ae0de2620a789e",
+      "url": "https://cyber2051.top/resources/bulletin/a1535fcab3598bbbb51ecd0b9e28dd6cbda46d7ced7ef3bc76ae0de2620a789e/archive-current.png"
+    },
+    {
+      "reference": "../assets/terminal-2x/archive-arrow.png",
+      "source": "网页独立版/web/assets/terminal-2x/archive-arrow.png",
+      "bytes": 2434,
+      "sha256": "4dd38bcfe69563ba2fe9ed8f33b93ec4037c56ba0f1c93a5dc4b4fa7ee1a849f",
+      "url": "https://cyber2051.top/resources/bulletin/4dd38bcfe69563ba2fe9ed8f33b93ec4037c56ba0f1c93a5dc4b4fa7ee1a849f/archive-arrow.png"
+    },
+    {
+      "reference": "../assets/terminal-2x/nav-active.png",
+      "source": "网页独立版/web/assets/terminal-2x/nav-active.png",
+      "bytes": 1271,
+      "sha256": "409eb5cbf64017543c5c13876ad8646cd1a2b81c58cb3a9892b9c80d46085876",
+      "url": "https://cyber2051.top/resources/bulletin/409eb5cbf64017543c5c13876ad8646cd1a2b81c58cb3a9892b9c80d46085876/nav-active.png"
+    },
+    {
+      "reference": "../assets/terminal-2x/slot-texture.png",
+      "source": "网页独立版/web/assets/terminal-2x/slot-texture.png",
+      "bytes": 4864,
+      "sha256": "4629b601b7869955f58da24dbcee41eafde567cda9faf565452a93ba1ca50c16",
+      "url": "https://cyber2051.top/resources/bulletin/4629b601b7869955f58da24dbcee41eafde567cda9faf565452a93ba1ca50c16/slot-texture.png"
+    },
+    {
+      "reference": "../assets/terminal-2x/frame-action.png",
+      "source": "网页独立版/web/assets/terminal-2x/frame-action.png",
+      "bytes": 2035,
+      "sha256": "c31ad4bfed8b7efd059f175b7a207e0a24d2d40910debbac30723f6aef422202",
+      "url": "https://cyber2051.top/resources/bulletin/c31ad4bfed8b7efd059f175b7a207e0a24d2d40910debbac30723f6aef422202/frame-action.png"
+    },
+    {
+      "reference": "../assets/terminal-2x/frame-active.png",
+      "source": "网页独立版/web/assets/terminal-2x/frame-active.png",
+      "bytes": 2343,
+      "sha256": "5fd73394b39686ef224841903756ebb46dd6c21dd0f800a1311537c7bc28dd8d",
+      "url": "https://cyber2051.top/resources/bulletin/5fd73394b39686ef224841903756ebb46dd6c21dd0f800a1311537c7bc28dd8d/frame-active.png"
+    },
+    {
+      "reference": "art/theme-red.svg",
+      "source": "网页独立版/web/bulletin/art/theme-red.svg",
+      "bytes": 1573,
+      "sha256": "9ae796cf6fc5a3dfc3c8cafed1b09191205830df22c31cbaeee1f51b8cf72ac8",
+      "url": "https://cyber2051.top/resources/bulletin/9ae796cf6fc5a3dfc3c8cafed1b09191205830df22c31cbaeee1f51b8cf72ac8/theme-red.svg"
+    },
+    {
+      "reference": "art/theme-yellow.svg",
+      "source": "网页独立版/web/bulletin/art/theme-yellow.svg",
+      "bytes": 991,
+      "sha256": "b0e707c0ea41b11f4b860f393d88a9d82311f5fae3f0d53b624648a3dab417f3",
+      "url": "https://cyber2051.top/resources/bulletin/b0e707c0ea41b11f4b860f393d88a9d82311f5fae3f0d53b624648a3dab417f3/theme-yellow.svg"
+    },
+    {
+      "reference": "art/theme-night.svg",
+      "source": "网页独立版/web/bulletin/art/theme-night.svg",
+      "bytes": 2532,
+      "sha256": "3cd0b788c1892b93ea24217ce2771e4de6894dbc5db1ed1a128b47af56d75b52",
+      "url": "https://cyber2051.top/resources/bulletin/3cd0b788c1892b93ea24217ce2771e4de6894dbc5db1ed1a128b47af56d75b52/theme-night.svg"
+    },
+    {
+      "reference": "art/tab-notices.svg",
+      "source": "网页独立版/web/bulletin/art/tab-notices.svg",
+      "bytes": 5327,
+      "sha256": "33301f196607effdc1a19069ee6380f5f0208ce3cbe4c478cfc8e915e33ef33d",
+      "url": "https://cyber2051.top/resources/bulletin/33301f196607effdc1a19069ee6380f5f0208ce3cbe4c478cfc8e915e33ef33d/tab-notices.svg"
+    },
+    {
+      "reference": "art/tab-updates.svg",
+      "source": "网页独立版/web/bulletin/art/tab-updates.svg",
+      "bytes": 6220,
+      "sha256": "382cdca739b10ed8dffc617d8e5dff6d08d12cb7627fb00c42428c72d9ac3dbf",
+      "url": "https://cyber2051.top/resources/bulletin/382cdca739b10ed8dffc617d8e5dff6d08d12cb7627fb00c42428c72d9ac3dbf/tab-updates.svg"
+    },
+    {
+      "reference": "art/tab-letters.svg",
+      "source": "网页独立版/web/bulletin/art/tab-letters.svg",
+      "bytes": 3812,
+      "sha256": "361a3163d5e1d5e9c067e0ae33bccfb7030d9c06c6065edd15a8a4e086fcc3f4",
+      "url": "https://cyber2051.top/resources/bulletin/361a3163d5e1d5e9c067e0ae33bccfb7030d9c06c6065edd15a8a4e086fcc3f4/tab-letters.svg"
+    },
+    {
+      "reference": "art/tab-guide.svg",
+      "source": "网页独立版/web/bulletin/art/tab-guide.svg",
+      "bytes": 6780,
+      "sha256": "326620799e174e9491ff5442ad9524e7865bbcac3d581fed2c0ef4ffd8eddb57",
+      "url": "https://cyber2051.top/resources/bulletin/326620799e174e9491ff5442ad9524e7865bbcac3d581fed2c0ef4ffd8eddb57/tab-guide.svg"
+    }
+  ]
+}

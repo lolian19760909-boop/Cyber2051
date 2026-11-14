@@ -8,12 +8,13 @@ export function announcementArticles(items=[]){
  }));
 }
 
-export function createBulletin({win=window,assets}){
- const doc=win.document,base=appUrl('web/bulletin/'),api=new URL('/api/workshop/announcements',win.location.hostname==='cyber2051.top'?win.location.origin:'https://cyber2051.top').href;
+export function createBulletin({win=window,assets,baseUrl=appUrl('web/bulletin/'),layoutContent,digestBytes}){
+ const doc=win.document,base=baseUrl,api=new URL('/api/workshop/announcements',win.location.hostname==='cyber2051.top'?win.location.origin:'https://cyber2051.top').href;
  let current=null,flight=null,disposed=false,automaticRevision=null,staticContent=null;
  const controllers=new Set(),readKey=revision=>'cxx2051:bulletin:read:'+revision;
  async function request(url,kind){const controller=new AbortController();controllers.add(controller);const timer=win.setTimeout(()=>controller.abort(),10000);try{const response=await win.fetch(url,{cache:'no-store',credentials:'omit',signal:controller.signal});if(!response.ok)throw Error('HTTP '+response.status);return await response[kind]();}finally{win.clearTimeout(timer);controllers.delete(controller);}}
  async function layout(){
+  if(layoutContent)return layoutContent;
   if(!staticContent)staticContent=Promise.all([request(new URL('dialog.html',base),'text'),request(new URL('notice.css',base),'text'),request(new URL('content.json',base),'json')]).then(([html,css,authored])=>({html,css:css.replace(/url\(["']?([^)'"\s]+)["']?\)/g,(_,url)=>'url("'+new URL(url,new URL('notice.css',base)).href+'")'),authored:authored.items||[]})).catch(error=>{staticContent=null;throw error;});
   return staticContent;
  }
@@ -22,6 +23,7 @@ export function createBulletin({win=window,assets}){
   current=null;view.unsubscribe?.();
   if(remember&&view.revision)try{win.localStorage.setItem(readKey(view.revision),'1');}catch{}
   view.host.remove();
+  view.resolveClosed();
  }
  function close(){const view=current;if(!view)return;view.view.close();disposeView(view);}
  async function open({automatic=false}={}){
@@ -31,15 +33,16 @@ export function createBulletin({win=window,assets}){
    if(disposed)return;
    const articles=[...feed.items,...content.authored];
    const announcements=articles.filter(article=>article.kind!=='guide');
-   const digest=await win.crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(announcements)));
+   const bytes=new TextEncoder().encode(JSON.stringify(announcements)),digest=await (digestBytes?digestBytes(bytes):win.crypto.subtle.digest('SHA-256',bytes));
    const revision=Array.from(new Uint8Array(digest),n=>n.toString(16).padStart(2,'0')).join('');
    if(disposed)return;let seen=false;try{seen=win.localStorage.getItem(readKey(revision))==='1';}catch{}
    if(automatic){if(!announcements.length||seen||automaticRevision===revision)return;automaticRevision=revision;}
    const returnFocus=doc.activeElement,host=doc.createElement('div'),scope=host.attachShadow({mode:'open'}),style=doc.createElement('style'),container=doc.createElement('div');
    host.dataset.cxxTheme=win.CxxTheme?.read?.()||doc.documentElement.dataset.cxxTheme||'red';
    style.textContent=content.css;container.className='cxx-notice-preview';container.innerHTML=content.html;scope.append(style,container);doc.body.append(host);
-   for(const placeholder of scope.querySelectorAll('[data-bulletin-brand]')){const logo=doc.createElement('img');logo.className='cxx-brand-mark';logo.src=assets.logo;logo.alt='Tokyo 2051';placeholder.replaceWith(logo);}
-   const holder={host,revision};current=holder;
+   host.addEventListener('keydown',event=>event.stopPropagation());
+   for(const placeholder of scope.querySelectorAll('[data-bulletin-brand]')){const logo=doc.createElement(assets.logo?'img':'span');logo.className='cxx-brand-mark';if(assets.logo){logo.src=assets.logo;logo.alt='Tokyo 2051';}else logo.textContent='Tokyo 2051';placeholder.replaceWith(logo);}
+   const holder={host,revision};holder.closed=new Promise(resolve=>holder.resolveClosed=resolve);current=holder;
    const syncTheme=theme=>{host.dataset.cxxTheme=theme;holder.view?.syncTheme(theme);};
    holder.view=mountBulletinView({scope,container,articles,logoUrl:assets.logo,returnFocus,
     setTheme:theme=>{win.CxxTheme?.set?.(theme);syncTheme(theme);},onClose:remember=>disposeView(holder,remember),
@@ -52,5 +55,5 @@ export function createBulletin({win=window,assets}){
   })().finally(()=>{flight=null;});
   return flight;
  }
- return {open,close,destroy(){disposed=true;for(const controller of controllers)controller.abort();close();}};
+ return {open,close,whenClosed:()=>current?.closed||Promise.resolve(),destroy(){disposed=true;for(const controller of controllers)controller.abort();close();}};
 }

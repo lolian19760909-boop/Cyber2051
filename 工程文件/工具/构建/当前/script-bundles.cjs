@@ -149,6 +149,7 @@ function prefixModules(text, changes, s, {source, version, chipNightEnabled}) {
       ';');
   if(s.id==='cxx-business-core-241')prepend('globalThis.CxxCityData='+JSON.stringify(require('../../../卡片源码/地图/place-build.cjs').load(source))+';globalThis.CxxPoliceRules='+source('运行时/police-rules.json')+';globalThis.CxxCivicStyle='+JSON.stringify(style('运行时/civic-ui.css'))+';\n'+['city','police','civic','civic-ui'].map(name=>source('运行时/'+name+'.js')).join(';\n'));
   if(s.id==='cxx-business-core-241'||s.id==='cxx-native-ui-231'||modules.has('CxxGalUI')||modules.has('CxxStoryLibrary'))prepend(require('../../lib/reading-ui-build.cjs').runtime(source,version));
+  if(modules.has('CxxStoryLibrary')||s.id==='cxx-business-core-241')prepend(require('../../lib/bulletin-ui-build.cjs').runtime(source));
   return text;
 }
 function bootstrap({scripts, source, version, resourcePack}) {
