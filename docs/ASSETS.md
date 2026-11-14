@@ -7,7 +7,8 @@
 现有公开资源：
 
 - [基础资源母版2.2.7](https://cyber2051.top/resources/2.2.7/6d21106f02e69bbff05c321aa1d0d5fb01002a6c22c1da38b18e7974cb910ae0/bundle.zip)
-- [玩家资源包2.3.4](https://cyber2051.top/resources/2.3.4/535bdd32ccb0ffb05970d89f985be0ef375d678db8565393e43b3496110b31ac/bundle.zip)
+- [玩家资源包2.3.5](https://cyber2051.top/resources/2.3.5/df5a91d0611ae7895f7e8b1f6fdfc0323120e2bb75e56e0ee93d90d0cb1fc435/bundle.zip)：3.2.0配套867项资源，含梦限大45张差分。
+- [玩家资源包2.3.4](https://cyber2051.top/resources/2.3.4/535bdd32ccb0ffb05970d89f985be0ef375d678db8565393e43b3496110b31ac/bundle.zip)：前一公开资源。
 
 当前构建仍依赖历史2.3.0派生底包，本地文件名为 `P4玩家资源包-2.3.0.zip`。它的旧bundle直链已核对为404，需要另行提供该构建输入或修正资源构建链，不能称为干净克隆后已能完整打包。
 
