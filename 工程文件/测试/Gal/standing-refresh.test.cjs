@@ -9,9 +9,9 @@ const resolve=(id,face,options)=>Sprites.sprite(id,origin,face,media,options);
 const filename=url=>decodeURIComponent(new URL(url).pathname.split('/').at(-1));
 function selected(raw,index=0,initial){return Sprites.select(Parser.parseMessage(raw),index,resolve,initial);}
 
-test('61 distinct worldbook identities accept names and official file prefixes without changing saved IDs',()=>{
- const mapping=[...require('../../资源/立绘/20261020/character-map.json').characters,...require('../../资源/立绘/20261020-oc/character-map.json').characters];
- assert.equal(new Set(Sprites.characters.map(p=>p.id)).size,61);
+test('66 distinct worldbook identities accept names and official file prefixes without changing saved IDs',()=>{
+ const mapping=[...require('../../资源/立绘/20261020/character-map.json').characters,...require('../../资源/立绘/20261020-oc/character-map.json').characters,...require('../../资源/立绘/20261021-mew/character-map.json').characters];
+ assert.equal(new Set(Sprites.characters.map(p=>p.id)).size,66);
  for(const p of mapping)for(const name of [p.characterName,p.filePrefix,p.filePrefix.toLowerCase()]){
   const raw=story(say(name,'regret')),snapshot=raw,value=Parser.parseMessage(raw);
   assert.equal(value.paragraphs[0].characterId,p.characterId,name);

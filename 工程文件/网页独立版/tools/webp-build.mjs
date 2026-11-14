@@ -21,7 +21,7 @@ export async function buildWebpAssets(manifest,{force=false}={}){
   const missing=rows.filter(row=>!resolved(row,receipt?.files?.[row.id]));
   if(missing.length){
     const job={manifest:path.join(GENERATED,'manifest.json'),sourceRoot:GENERATED,out:OUT,receipt:RECEIPT,quality:QUALITY,workers:Math.max(1,Math.min(4,Number(process.env.CXX_WEBP_WORKERS||4)))};
-    fs.writeFileSync(path.join(ROOT,'工程文件/.cache/webp-job.json'),JSON.stringify(job));
+    fs.writeFileSync(path.join(ROOT,'.cache/webp-job.json'),JSON.stringify(job));
     const result=spawnSync(python(),[path.join(WEB,'tools/webp-encode.py'),'--manifest',job.manifest,'--source-root',job.sourceRoot,'--out',job.out,'--receipt',job.receipt,'--quality',String(QUALITY),'--workers',String(job.workers)],{stdio:'inherit'});
     if(result.error)throw new Error('WebP 转码器无法启动：'+result.error.message+'（可用 CXX_PYTHON 指定 Python）');
     if(result.status!==0)throw new Error('WebP 转码未完成，见上方输出');

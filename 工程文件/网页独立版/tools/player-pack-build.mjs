@@ -9,7 +9,7 @@ import {ROOT,WEB} from './workspace-paths.mjs';
 const {writePack}=createRequire(import.meta.url)('../../工具/lib/resource-pack.cjs');
 const hash=value=>createHash('sha256').update(value).digest('hex');
 const MIME={'.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.gif':'image/gif','.svg':'image/svg+xml','.m4a':'audio/mp4','.wav':'audio/wav','.mp3':'audio/mpeg','.ogg':'audio/ogg'};
-const VERSION='3.1.0';
+const VERSION='3.2.0';
 const receiptAt=name=>path.join(ROOT,'资源',name+'.json');
 function readReceipt(name){try{return JSON.parse(fs.readFileSync(receiptAt(name),'utf8'));}catch{return null;}}
 function collect(manifest,kind){

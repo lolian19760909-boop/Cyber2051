@@ -37,6 +37,7 @@
     "Cxx236Schema": "MVU/schema.js",
     "Cxx236VariablePolicy": "MVU/variable-policy.js",
     "CxxGalLandscape": "Gal/landscape.js",
+    "CxxOpeningDraftStorage": "共享/opening-draft-storage.js",
     "CxxOpeningFlow": "运行时/opening-flow.js",
     "CxxOpeningUI": "运行时/opening-ui.js",
     "CxxPlayerHost": "运行时/player-host.js",

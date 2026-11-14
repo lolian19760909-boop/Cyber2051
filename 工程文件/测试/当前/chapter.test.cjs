@@ -18,7 +18,7 @@ test('P4 legacy heist remains in content registry without modifying player recor
 });
 test('P4 restored lore keeps stable IDs and only the current stage is injected',()=>{
  const manifest=require('../../卡片源码/世界书/entries.json'),ids=[88,89,93,94,95,96,97,98,99,100,101];assert.deepEqual(manifest.deferredEntries,[]);
- for(const id of [90,102,103,104,105]){assert(manifest.retiredIds.includes(id));assert(!manifest.entries.some(row=>row.id===id));}
+ for(const id of [90,102,103,104,105]){assert(!manifest.retiredIds.includes(id));const entry=manifest.entries.find(row=>row.id===id);assert(entry?.enabled);assert(fs.statSync(path.resolve(__dirname,'../../卡片源码',entry.file)).size>0);}
  for(const id of ids){const e=manifest.entries.find(x=>x.id===id);assert(e);assert(fs.statSync(path.resolve(__dirname,'../../卡片源码',e.file)).size>0);if(id>=94)assert.equal(e.enabled,false);}
  assert.deepEqual(manifest.chapters,['chip-night']);
 });

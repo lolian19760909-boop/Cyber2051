@@ -66,7 +66,7 @@ test('candidate main and worker contain current codec and produce the same compl
  const {parse,findNodes}=require('../../工具/lib/source-edits.cjs'),scripts=card.data.extensions.tavern_helper.scripts,slots=[];
  for(const script of scripts)if(script.content)for(const node of findNodes(parse(script.content),n=>n.type==='VariableDeclarator'&&n.id.name==='CXX_GAL_STANDING'))slots.push(vm.runInNewContext('('+script.content.slice(node.init.start,node.init.end)+')'));
  assert.equal(slots.length,1);assert.deepEqual(JSON.parse(JSON.stringify(slots[0])),require('../../卡片源码/Gal/standing-media.json'));
- assert.equal(Object.keys(B.profiles(card)).length,61);
+ assert.equal(Object.keys(B.profiles(card)).length,66);
  let result;const box=vm.createContext({postMessage:r=>result=r});box.self=box;vm.runInContext(worker,box);for(const raw of [f.raw,wrap(line),'<cxx-story>'+line.slice(0,-2)]){box.onmessage({data:{id:1,kind:'parse',payload:{raw}}});assert.ok(!result.error);assert.deepEqual(JSON.parse(JSON.stringify(result.value)),JSON.parse(JSON.stringify(p.parseMessage(raw,{cache:false}))));}
 });
 test('replacement accepts the superseded 2.1.27 save identity without downgrading its schema',async()=>{

@@ -38,7 +38,7 @@
    if(!win.__cxx_player__)throw Error('人物保存服务未启动。打开错误详情查看启动错误。');
    if(!context().instanceId)await win.Cxx233Updater?.initialize();if(!context().instanceId)throw Error('角色实例尚未建立，草稿未写入。请在运行诊断查看更新与存档启动错误。');
    page='create';selected=number;render();const pane=el.querySelector('.game-create-body');
-   try{creation=resume?{chatId:resume.chatId,meta:(await store.details(resume.chatId)).meta}:null;draft=opening.beginDraft({key:context().characterKey+':slot:'+number,parent:pane,scope:{instanceId:context().instanceId,slot:number},resumeDraft:creation?.meta?.openingDraft,creationId:creation?.meta?.creationId,resuming:!!creation,
+   try{creation=resume?{chatId:resume.chatId,meta:(await store.details(resume.chatId)).meta}:null;draft=await opening.beginDraft({key:context().characterKey+':slot:'+number,parent:pane,scope:{instanceId:context().instanceId,slot:number},resumeDraft:creation?.meta?.openingDraft,creationId:creation?.meta?.creationId,resuming:!!creation,
     inspect:()=>store.inspectPending(),recover:async options=>{const result=await store.recoverPending(options);if(result.code==='creation-replacement-ready')creation=null;return result;},openRecovery:async id=>{await store.openRecovery(id);draft?.cancel();draft=null;creation=null;close({cancel:false});await open('home');},
     async withCommit(work){const resume=await win.Cxx233Updater.pauseForStory();try{return await work();}finally{resume();}},
     async submit(options){

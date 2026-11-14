@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/运行时/creator-ui.js; source SHA256 c95563705cab3a503fb824a8edd26c76c46312a7b21c2be4765c214ca24938a5. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/运行时/creator-ui.js; source SHA256 9917cdcb6b2697c39be01937e08bb6e772755db24c65a8caa217e390e37cc591. Rebuild with tools/p3a-adapt-views.mjs. */
 (function(root,factory){const api=factory(root);if(typeof module==='object'&&module.exports)module.exports=api;else root.CxxCreatorUI=api;})(globalThis,function(global){
  'use strict';
  const structuredClone=(typeof module==='object'&&module.exports?require('../共享/data-clone.js'):globalThis.CxxDataClone).clone;
@@ -19,7 +19,7 @@
   const imageTools=node('div','creator-image-tools',undefined,visual),upload=node('input','',undefined,imageTools);upload.type='file';upload.accept='image/png,image/jpeg,image/webp';upload.hidden=true;upload.setAttribute('aria-label','上传人物立绘');
   const uploadButton=button('上传立绘',()=>upload.click(),imageTools),fit=button('填满画面',()=>{const cover=image.dataset.fit!=='cover';image.dataset.fit=cover?'cover':'contain';fit.textContent=cover?'适应画面':'填满画面';},imageTools);
   button('查看原图',()=>{if(!image.getAttribute('src'))return;fullImage?.remove();fullImage=node('dialog','creator-image-dialog',undefined,host);button('关闭原图',()=>{fullImage.close();fullImage.remove();fullImage=null;},fullImage);const large=node('img','',undefined,fullImage);large.src=image.src;large.alt='人物图片原始比例';fullImage.addEventListener('cancel',()=>{fullImage.remove();fullImage=null;});fullImage.showModal();},imageTools);
-  button('使用当前头像',()=>{delete p.portrait;delete p.portraitUpload;emit();},imageTools);
+  button('使用当前头像',()=>{p.portrait=null;p.portraitUpload=null;emit();},imageTools);
   upload.onchange=async()=>{const file=upload.files?.[0];if(!file)return;const epoch=++uploadEpoch;uploadButton.disabled=true;try{const a=await art.upload(file,doc,{purpose:'portrait'});if(disposed||epoch!==uploadEpoch)return;p.portrait={schema:1,kind:'asset',id:a.id};p.portraitUpload=a;emit();}catch(e){onError(e);}finally{if(!disposed){uploadButton.disabled=false;upload.value='';}}};
   const file=node('details','creator-file',undefined,visual);node('summary','','人物文字档案',file);const summary=node('p','creator-summary','',file);
   const panel=node('section','creator-controls',undefined,grid),tabs=node('nav','creator-tabs',undefined,panel);tabs.setAttribute('aria-label','人物设定分类');const scroll=node('div','creator-parameters',undefined,panel),sections=new Map(),tabButtons=new Map();

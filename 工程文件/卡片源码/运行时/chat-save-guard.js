@@ -161,7 +161,9 @@
      if(!sameScope(expected,scope()))fail('context-changed','角色或聊天已切换，停止保存。');
      const s=await ready(),version=errorVersion;
      const action=async()=>{
-      await current(s);const commits=s.commits;
+      // ST autosaves may finish while this preflight is reading the old file.
+      // Read under the same lock as commit so the disk and baseline agree.
+      await (native?current(s):locked(s,()=>current(s)));const commits=s.commits;
       const value=await work();assert(s);
       if(errorVersion!==version)throw lastFailure;
       if(native){
@@ -170,7 +172,7 @@
        if(canonical(actual)!==canonical(intended))
         fail('chat-save-unconfirmed','故事尚未完整保存，当前修改仍保留，请重试确认。',{phase:'native-readback',left:'intended',right:'disk',differences:await differences(intended,actual)});
        s.baseline=canonical(disk);
-      }else if(s.commits===commits)await current(s);
+      }else if(s.commits===commits)await locked(s,()=>current(s));
       // A completed commit already checked the baseline under the shared lock
       // and read back the full write. Keep a final check for work with no commit.
       lastError=null;return value;

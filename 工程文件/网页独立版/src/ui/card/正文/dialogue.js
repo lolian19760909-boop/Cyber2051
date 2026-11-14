@@ -1,4 +1,4 @@
-/* Derived from 卡片源码/正文/dialogue.js; source SHA256 56d6cf29eacdd577f7c737308364af9ac2f56af26205c72b0e92c673fe02c4ce. Rebuild with tools/p3a-adapt-views.mjs. */
+/* Derived from 卡片源码/正文/dialogue.js; source SHA256 0a28f00d956fc646a6cf6e1e583e2b3803a1cc06c55815030756d73a71127ce0. Rebuild with tools/p3a-adapt-views.mjs. */
 /* One dialogue reader for Gal, native bubbles and outbound assistant history.
  * Transforms copies only. CSS classes remain compatible with the preset skin.
  */
@@ -26,6 +26,11 @@
     Object.freeze({"id":"Mana","name":"纯田真奈","aliases":["真奈","Mana"],"filePrefix":"Mana","worldbookUid":18,"anchorX":0.5,"heightCm":160}),
     Object.freeze({"id":"Miku","name":"马桥心玖","aliases":["心玖","Miku","馬橋心玖"],"filePrefix":"Miku","worldbookUid":88,"anchorX":0.5,"heightCm":158}),
     Object.freeze({"id":"Raika","name":"须贺蕾叶","aliases":["蕾叶","Raika","須賀蕾葉","蕾葉"],"filePrefix":"Raika","worldbookUid":89,"anchorX":0.5,"heightCm":163}),
+    Object.freeze({"id":"Yuno","name":"千石由乃","aliases":["由乃","Yuno","千石ユノ","ユノ"],"filePrefix":"Yuno","worldbookUid":90,"anchorX":0.5,"heightCm":151}),
+    Object.freeze({"id":"Arale","name":"仲町阿拉蕾","aliases":["阿拉蕾","Arale","仲町あられ","艾蕾亚"],"filePrefix":"Arale","worldbookUid":102,"anchorX":0.5,"heightCm":154}),
+    Object.freeze({"id":"Nonoka","name":"宫永野乃花","aliases":["野乃花","Nonoka","宮永野乃花","宮永ののか"],"filePrefix":"Nonoka","worldbookUid":103,"anchorX":0.5,"heightCm":161}),
+    Object.freeze({"id":"Ritsu","name":"峰月律","aliases":["律","Ritsu","克蕾玛琪丝","Clematis"],"filePrefix":"Ritsu","worldbookUid":104,"anchorX":0.5,"heightCm":157}),
+    Object.freeze({"id":"Miyako","name":"藤都子","aliases":["都子","Miyako","富士见夜子"],"filePrefix":"Miyako","worldbookUid":105,"anchorX":0.5,"heightCm":155}),
     Object.freeze({"id":"Kanata","name":"泽海奏多","aliases":["奏多","Kanata","Kanade"],"filePrefix":"Kanata","worldbookUid":106,"anchorX":0.5,"heightCm":161}),
     Object.freeze({"id":"Hotaru","name":"汐见萤","aliases":["萤","Hotaru"],"filePrefix":"Hotaru","worldbookUid":107,"anchorX":0.5,"heightCm":155}),
     Object.freeze({"id":"Natsume","name":"伊泽枣","aliases":["枣","Natsume"],"filePrefix":"Natsume","worldbookUid":108,"anchorX":0.5,"heightCm":161}),

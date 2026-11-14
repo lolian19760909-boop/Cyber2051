@@ -29,11 +29,18 @@
     }
     if(!locked&&draft.openingFunds===''&&steps.indexOf(draft.step)>3){draft.step='loadout';draft.completed=steps.slice(0,3);}
     let status='editing',error='',lastError=null,guidance=null,guidanceRevision=0;
-    const stats={draftChanges:0,submissions:0,sends:0};
+    const stats={draftChanges:0,submissions:0,sends:0};let draftWrite=Promise.resolve(),draftRevision=0,draftFailure='';
     const state=()=>({draft:copy(draft),status,error,lastError:lastError?copy(lastError):null,guidance:guidance?copy(guidance):null,locked,busy:!!flight,restoreChoice:restoreChoice?{legacy:restoreChoice.legacy,name:restoreChoice.draft.profile?.name||'未命名人物'}:null,stats:{...stats}});
     function notify(){for(const fn of listeners)fn(state());}
-    function cache(required=false){try{if(!storage?.setItem)throw Error('草稿存储不可用');storage.setItem(storageKey,JSON.stringify(draft));if(scope)storage.setItem(indexKey,JSON.stringify(draft.creationId));return true;}catch(e){error='草稿保存失败：'+(e.message||String(e))+'。内容仍在当前页面，请重试。';if(required)throw Error(error);return false;}}
-    function clearCache(){storage?.removeItem(storageKey);if(scope)storage?.removeItem(indexKey);}
+    function cache(required=false){
+      const revision=++draftRevision;
+      const failed=e=>{draftFailure='草稿保存失败：'+(e.message||String(e))+'。内容仍在当前页面。';error=draftFailure;lastError={message:error,code:e.code||'opening-draft-write',...(e.details?{saveCheck:copy(e.details)}:{})};return Object.assign(Error(error),{code:lastError.code,details:e.details});};
+      try{if(!storage?.setItem)throw Error('草稿存储不可用');const items=[[storageKey,JSON.stringify(draft)],...(scope?[[indexKey,JSON.stringify(draft.creationId)]]:[])];let result;if(storage.setItems)result=storage.setItems(items);else for(const [key,value]of items)result=storage.setItem(key,value);
+        draftWrite=Promise.resolve(result).then(()=>{if(!ended&&revision===draftRevision&&draftFailure&&error===draftFailure){error='';lastError=null;draftFailure='';notify();}return true;},e=>{if(!ended&&revision===draftRevision){const cause=failed(e);onFailure(cause);notify();throw cause;}throw e;});draftWrite.catch(()=>{});return result?.then?draftWrite:true;
+      }catch(e){const cause=failed(e);if(required)throw cause;return false;}
+    }
+    async function persisted(){await draftWrite;await storage?.flush?.();return true;}
+    function clearCache(){const keys=[storageKey,...(scope?[indexKey]:[])];if(storage?.removeItems)return storage.removeItems(keys);for(const key of keys)storage?.removeItem(key);}
     function active(){if(ended)throw Error('聊天已切换，原开场操作已停止。');}
     function editable(){active();if(restoreChoice)throw Error('请先选择继续草稿或重新填写。');if(flight||status==='saved'||status==='saving'||status==='error'&&locked)throw Error('请先完成或重试当前开局保存。');}
     function growth(){return draft.growth[draft.origin]||(draft.growth[draft.origin]=I.initialSetup(draft.origin));}
@@ -75,13 +82,13 @@
       const selection=choice(),openingText=directText(),target=isDirect(draft.scenario)?1:draft.scenario,preferences=copy(draft.preferences),profile=copy(draft.profile);
       cache(true);status='saving';error='';lastError=null;guidance=null;locked=true;creationStarted=true;
       flight=Promise.resolve().then(async()=>{
-        active();await withCommit(async()=>{
+        active();await persisted();active();await withCommit(async()=>{
           active();stats.submissions++;await submit({value:selection,swipe:target,...(openingText!==undefined?{openingText}:{}),preferences,profile,creationId:draft.creationId,draft:copy(draft)});active();await verify();active();
         });active();
         // Only retry saving. Never automatically resend a command whose dispatch began.
         status='saved';notify();
-        if(draft.pendingCommand&&!dispatched){draft.dispatchStarted=true;cache(true);dispatched=true;stats.sends++;await send(draft.pendingCommand);}
-        try{clearCache();}catch{}onComplete({preferences});
+        if(draft.pendingCommand&&!dispatched){draft.dispatchStarted=true;await cache(true);dispatched=true;stats.sends++;await send(draft.pendingCommand);}
+        try{await clearCache();}catch{}onComplete({preferences});
       }).catch(e=>{if(!ended){lastError={message:e.message||String(e),code:e.code||'opening-save-failed',detail:e.stack||'',...(e.details?{saveCheck:copy(e.details)}:{}),creationId:draft.creationId};try{onFailure(e);}catch{}error=e.message||'开局保存失败。';if(status!=='saved')status='error';else error='开局已保存；发送未确认，请检查聊天后手动继续。';notify();}throw e;}).finally(()=>{flight=null;if(!ended)notify();});
       notify();return flight;
     }
@@ -90,8 +97,8 @@
       guidance=!locked&&!flight&&target&&canGo(target.step)?{...target,revision:++guidanceRevision}:null;
       if(guidance){lastError=null;draft.step=guidance.step;if(!cache())guidance=null;}else lastError={message:error,code:e.code||'opening-action-failed',detail:e.stack||'',...(e.details?{saveCheck:copy(e.details)}:{}),creationId:draft.creationId};notify();
     }
-    return {state,patch,chooseOrigin,chooseStart,starts:()=>copy(readStarts()),refresh:notify,go,canGo,markError,next:()=>advance(),selectScenario,rememberScenario,template,applyTemplate,review(command=null){if(draft.step!=='scenario')throw Error('请先进入乐队与开局。');advance(command);},commit,retry:()=>commit(draft.pendingCommand),choice,wait:()=>flight||Promise.reject(Error('请先确认开局配置。')),
-      resolveDraft(use){active();if(!restoreChoice)return;const old=restoreChoice,oldKey=indexKey+':'+old.draft.creationId;if(use){const freshId=draft.creationId;adopt(old.draft);if(old.legacy){draft.creationId=freshId;draft.dispatchStarted=false;dispatched=false;draft.completed=['origin'];draft.step='profile';}draft.owner=copy(scope);storageKey=indexKey+':'+draft.creationId;draft.completed=steps.filter((s,i)=>i<5&&steps.slice(0,i+1).every(k=>draft.completed?.includes(k)));if(steps.indexOf(draft.step)>draft.completed.length)draft.step=steps[draft.completed.length];}cache(true);if(!use&&!old.legacy)storage?.removeItem(oldKey);restoreChoice=null;notify();},
+    return {state,patch,chooseOrigin,chooseStart,starts:()=>copy(readStarts()),refresh:notify,go,canGo,markError,next:()=>advance(),selectScenario,rememberScenario,template,applyTemplate,persisted,review(command=null){if(draft.step!=='scenario')throw Error('请先进入乐队与开局。');advance(command);},commit,retry:()=>commit(draft.pendingCommand),choice,wait:()=>flight||Promise.reject(Error('请先确认开局配置。')),
+      resolveDraft(use){active();if(!restoreChoice)return;const old=restoreChoice,oldKey=indexKey+':'+old.draft.creationId;if(use){const freshId=draft.creationId;adopt(old.draft);if(old.legacy){draft.creationId=freshId;draft.dispatchStarted=false;dispatched=false;draft.completed=['origin'];draft.step='profile';}draft.owner=copy(scope);storageKey=indexKey+':'+draft.creationId;draft.completed=steps.filter((s,i)=>i<5&&steps.slice(0,i+1).every(k=>draft.completed?.includes(k)));if(steps.indexOf(draft.step)>draft.completed.length)draft.step=steps[draft.completed.length];}const finish=()=>{active();restoreChoice=null;notify();},remove=()=>{active();const result=!use&&!old.legacy?storage?.removeItem(oldKey):null;return result?.then?result.then(finish):finish();},saved=cache(true);return saved?.then?saved.then(remove):remove();},
       inspect:()=>inspect?inspect():Promise.resolve({code:'creation-unavailable',action:'rescue',message:'尚未取得创建记录，请打开救援与导出查看详细诊断。'}),
       openRecovery:id=>openRecovery?.(id),rescue:()=>rescue?.(),
       async recover(){active();if(flight)throw Error('当前操作仍在执行。');if(!recover)throw Error('恢复服务未就绪，请打开更新与存档。');const result=await recover({creationId:draft.creationId,slot:draft.owner?.slot});active();if(result.action==='retry'&&draft.step==='review'){await commit(draft.pendingCommand);return {code:'creation-complete',action:'none',message:'人物与故事已保存。'};}error=result.message||'';notify();return result;},

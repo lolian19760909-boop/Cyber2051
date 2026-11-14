@@ -54,9 +54,9 @@ test('人物不影响背景，空资源或错误 URL 只返回空',()=>{
  assert.equal(select({location:'皇核'},{assets:[]}),null);assert.equal(select({location:'皇核'},{assets:null}),null);
  assert.ok(pick('Mujica 据点 军械库').url.includes('mujica%20hideout'));
 });
-test('549 张立绘逐图匹配清单，缺场景及换背景不改变人物选择',()=>{
+test('594 张立绘逐图匹配清单，缺场景及换背景不改变人物选择',()=>{
  const local=standingSource.listFiles();
- assert.equal(local.length,549);assert.deepEqual(standing.map(x=>x.file).sort(),local);
+ assert.equal(local.length,594);assert.deepEqual(standing.map(x=>x.file).sort(),local);
  for(const asset of standing){
   const bytes=standingSource.read(asset.file);
   assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'),asset.sha256,asset.file);

@@ -103,7 +103,7 @@
   },
   {
     "source": "卡片源码/运行时/ensemble-content.js",
-    "sha256": "43ad9b562105d3c4264378f24aab0790c70f3adfd09949867a80df0710b51ef2",
+    "sha256": "9b7c8f073d93de5dd69fd25beb9332ce06fa33fc20224416b8f18a4a57ab650a",
     "target": "src/ui/card/运行时/ensemble-content.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -121,7 +121,7 @@
   },
   {
     "source": "卡片源码/正文/dialogue.js",
-    "sha256": "56d6cf29eacdd577f7c737308364af9ac2f56af26205c72b0e92c673fe02c4ce",
+    "sha256": "0a28f00d956fc646a6cf6e1e583e2b3803a1cc06c55815030756d73a71127ce0",
     "target": "src/ui/card/正文/dialogue.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -247,7 +247,7 @@
   },
   {
     "source": "卡片源码/运行时/resources.js",
-    "sha256": "2048b1f35821a1fb257294a3ada47ac50a7d4471162baf7de5673bf3a8009776",
+    "sha256": "1e51e6823276b0ea94bbd5cd2ef05b731802036097824fab632ca5d52bf76dbb",
     "target": "src/ui/card/运行时/resources.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },
@@ -319,7 +319,7 @@
   },
   {
     "source": "卡片源码/运行时/creator-ui.js",
-    "sha256": "c95563705cab3a503fb824a8edd26c76c46312a7b21c2be4765c214ca24938a5",
+    "sha256": "9917cdcb6b2697c39be01937e08bb6e772755db24c65a8caa217e390e37cc591",
     "target": "src/ui/card/运行时/creator-ui.js",
     "adaptation": "parent-window access becomes this application window; maintained layout and behavior retained"
   },

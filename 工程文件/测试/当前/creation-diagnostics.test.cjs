@@ -1,5 +1,21 @@
-const test=require('node:test'),assert=require('node:assert/strict');
+const test=require('node:test'),assert=require('node:assert/strict'),path=require('node:path');
 const Startup=require('../../卡片源码/MVU/opening-startup.js'),Diagnostics=require('../../卡片源码/运行时/diagnostics.js');
+
+test('creation save checks replace prior results, actions and field evidence',async()=>{
+ const DOM=require('../lib/dom.cjs'),Operations=require(path.join(process.env.CXX_SAVE_SOURCE_ROOT||path.resolve(__dirname,'../../卡片源码'),'运行时/operations.js')),doc=DOM.document('<html><head></head><body></body></html>'),create=doc.createElement;
+ const decorate=node=>{node.style={};node.replaceChildren=(...children)=>{for(const child of [...(node.children||[])])child.remove();node.append(...children);};return node;};
+ doc.querySelectorAll('*').forEach(decorate);doc.createElement=tag=>decorate(create(tag));
+ const service=Operations.create({scope:()=> 'same-creation',report(){}}),win={document:doc,clearTimeout,navigator:{clipboard:{writeText:async()=>{}}}},unmount=Operations.mount(win,service);
+ const message='已保存的故事在本窗口载入后发生了变化。当前修改仍在页面中，请先导出，再重新打开故事。';let fieldPath='/0/chat_metadata/variables/old';
+ const details=()=>({phase:'changed',differences:[{path:fieldPath}]});
+ try{
+  await assert.rejects(service.run('newStory','创建故事',async()=>{throw Object.assign(Error(message),{code:'chat-save-conflict',details:details()});},{check:async()=>({message,details:details(),action:'rescue'}),rescue(){}}));
+  const check=doc.querySelectorAll('button').find(button=>button.textContent==='检查保存结果');await check.onclick();fieldPath='/1/mes';await check.onclick();await check.onclick();
+  const box=doc.querySelector('.cxx-operation-feedback'),buttons=box.querySelectorAll('button');
+  assert.equal(buttons.filter(button=>button.textContent==='救援与导出').length,1);assert.equal(buttons.filter(button=>button.textContent==='复制诊断').length,1);
+  assert.equal(box.textContent.split(message).length-1,1);assert.match(box.textContent,/保存前核对/);assert.match(box.textContent,/\/1\/mes/);assert(!box.textContent.includes('/0/chat_metadata/variables/old'));assert.equal(box.querySelectorAll('details').length,1);
+ }finally{unmount();service.destroy();}
+});
 test('creation starts without a reader and retries a failed initialization once requested',()=>{
  const rows=[],registry=new Map(),win={CxxDiagnostics:{report:e=>rows.push(e),resolve:()=>{}}};let fail=true,creates=0,destroys=0;
  win.Cxx236OpeningMap={create(){creates++;if(fail)throw Error('test: initialization failed');const service={beginDraft(){},destroy(){destroys++;if(win.Cxx236OpeningHost===service)delete win.Cxx236OpeningHost;}};win.Cxx236OpeningHost=service;return service;}};

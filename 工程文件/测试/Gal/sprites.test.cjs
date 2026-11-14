@@ -15,7 +15,7 @@ const parsed = (speakers, ranking) => ({
 });
 
 test('sprite heights match the maintained character profiles and survive cast selection', () => {
-  const profiles = [...require('../../资源/立绘/20261020/character-map.json').characters,...require('../../资源/立绘/20261020-oc/character-map.json').characters];
+  const profiles = [...require('../../资源/立绘/20261020/character-map.json').characters,...require('../../资源/立绘/20261020-oc/character-map.json').characters,...require('../../资源/立绘/20261021-mew/character-map.json').characters];
   for (const character of sprites.characters) {
     const source = fs.readFileSync(path.join(__dirname, "../../卡片源码", profiles.find(p=>p.characterId===character.id).worldbookSource), 'utf8');
     const heightCm = (source.match(/身高[^\d\r\n]{0,4}(\d+)\s*cm/i)?.[1] ? Number(source.match(/身高[^\d\r\n]{0,4}(\d+)\s*cm/i)[1]) : null);
@@ -89,8 +89,8 @@ test('URL generation remains limited to allowlisted normal assets', () => {
   assert.equal(sprites.sprite('Saki', 'http://127.0.0.1:6911/'), 'http://127.0.0.1:6911/assets/Saki_normal.png');
 });
 
-test('all 61 characters have a real default portrait, including Kokoro smile', () => {
-  assert.equal(sprites.characters.length, 61);
+test('all 66 characters have a real default portrait, including Kokoro smile', () => {
+  assert.equal(sprites.characters.length, 66);
   const media=require('../../卡片源码/Gal/standing-media.json');
   for (const { id, anchorX } of sprites.characters) {
     const url=sprites.sprite(id,'https://cyber2051.top','normal',media);
@@ -120,11 +120,11 @@ test('expression URLs keep old normal paths and reject injected identities, base
   }
 });
 
-test('549 mapped assets match the verified upload batch byte for byte', () => {
+test('594 mapped assets match the verified upload batch byte for byte', () => {
   const media = require("../../卡片源码/Gal/standing-media.json");
-  const upload = {files:[...require("../../资源/立绘/20261020/standing-media.json").files,...require("../../资源/立绘/20261020-oc/standing-media.json").files]};
+  const upload = {files:[...require("../../资源/立绘/20261020/standing-media.json").files,...require("../../资源/立绘/20261020-oc/standing-media.json").files,...require("../../资源/立绘/20261021-mew/standing-inventory.json").assets.map(({characterId,filePrefix,expressionId,file,sha256,remoteUrl})=>({characterId,filePrefix,expressionId,file,sha256,remoteUrl}))]};
   const inventory=require("../../卡片源码/Gal/standing-inventory.json");
-  assert.equal(media.files.length, 549);
+  assert.equal(media.files.length, 594);
   assert.deepEqual(media.files,upload.files);
   const unique = new Set();
   for (const asset of media.files) {
@@ -132,7 +132,7 @@ test('549 mapped assets match the verified upload batch byte for byte', () => {
     assert.equal(asset.sha256,inventory.assets.find(item => item.file === asset.file).sha256);
     if(sprites.expressions.includes(asset.expressionId))assert.equal(sprites.sprite(asset.characterId, 'https://cyber2051.top', asset.expressionId, media),asset.remoteUrl);
   }
-  assert.equal(unique.size, 549);
+  assert.equal(unique.size, 594);
 });
 
 test('hosted lookup cannot fall through to nonexistent assets or accept missing, duplicate or malformed entries', () => {
@@ -166,7 +166,7 @@ test('swipes and edits recompute expressions without leaking old or unknown mark
   assert.equal(sprites.select(first, 0, resolveSprite)[0].expression, 'smile');
 });
 
-test('all 549 original PNGs retain their recorded bytes, dimensions and transparency', () => {
+test('all 594 original PNGs retain their recorded bytes, dimensions and transparency', () => {
   for (const asset of require('../../卡片源码/Gal/standing-inventory.json').assets) {
     const bytes = standingSource.read(asset.file);
     assert.equal(bytes.subarray(1, 4).toString(), 'PNG');
